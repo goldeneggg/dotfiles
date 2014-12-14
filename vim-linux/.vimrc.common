@@ -112,9 +112,12 @@ filetype plugin indent off
 if v:version > 701
     if has('vim_starting')
         set runtimepath+=~/.vim/neobundle.vim
-        call neobundle#rc(expand('~/.bundle'))
     endif
+    call neobundle#begin(expand('~/.bundle'))
+    NeoBundleFetch 'Shougo/neobundle.vim'
+    call neobundle#end()
 
+    " plugins
     NeoBundle 'Shougo/unite.vim'
     NeoBundle 'ujihisa/unite-colorscheme'
     NeoBundle 'Shougo/neomru.vim'
@@ -156,6 +159,9 @@ set runtimepath+=$GOPATH/src/github.com/golang/lint/misc/vim
 
 "==================== Plugin ON
 filetype plugin indent on
+
+"==================== neobundle check
+NeoBundleCheck
 
 "==================== plugin
 if v:version > 701
