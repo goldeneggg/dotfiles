@@ -1,0 +1,408 @@
+"==================== basic settings
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set autoindent
+set incsearch
+set hlsearch
+set wrapscan  "検索がファイル末尾に到達したら先頭から再検索
+set ignorecase
+set smartcase
+set showcmd
+set hidden
+set wildmenu
+set number
+" backspaceキーを有効化
+set backspace=indent,eol,start
+" 折り畳みはいらない人なんです
+set nofoldenable
+
+"noshowmatch is unable from version 7
+"set showmatch
+let loaded_matchparen=1
+
+"==================== status line
+set laststatus=2
+"set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l/%L,%c%V%8P
+
+"==================== filetype and encoding
+set fileformats=unix,dos,mac
+
+if has('mac')
+    set termencoding=utf-8
+    set encoding=utf-8
+    set fileencoding=utf-8
+    set fileencodings=utf-8,cp932
+endif
+
+if &encoding !=# 'utf-8'
+    set encoding=japan
+    set fileencoding=japan
+endif
+
+if has('iconv')
+    let s:enc_euc = 'euc-jp'
+    let s:enc_jis = 'iso-2022-jp'
+    if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
+        let s:enc_euc = 'eucjp-ms'
+        let s:enc_jis = 'iso-2022-jp-3'
+    elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
+        let s:enc_euc = 'euc-jisx0213'
+        let s:enc_jis = 'iso-2022-jp-3'
+    endif
+    if &encoding ==# 'utf-8'
+        let s:fileencodings_default = &fileencodings
+        if has('mac')
+            let &fileencodings = s:enc_jis .','. s:enc_euc
+        else
+            let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
+        endif
+
+        " Macなのに has('mac') 判定が効かない時があって、utf-8 <=> cp932な文字化けがたまに起こってしまうので、utf-8を無理やり先頭に付加するという苦肉の策
+        "let &fileencodings = &fileencodings .','. s:fileencodings_default
+        let &fileencodings = 'utf-8,' . &fileencodings .','. s:fileencodings_default
+        unlet s:fileencodings_default
+    else
+        let &fileencodings = &fileencodings .','. s:enc_jis
+        set fileencodings+=utf-8,ucs-2le,ucs-2
+        if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
+            set fileencodings+=cp932
+            set fileencodings-=euc-jp
+            set fileencodings-=euc-jisx0213
+            set fileencodings-=eucjp-ms
+            let &encoding = s:enc_euc
+            let &fileencoding = s:enc_euc
+        else
+            let &fileencodings = &fileencodings .','. s:enc_euc
+        endif
+    endif
+    unlet s:enc_euc
+    unlet s:enc_jis
+endif
+
+"==================== listchar
+set list
+set listchars=tab:>-,trail:-,nbsp:%
+highlight SpecialKey ctermfg=darkgray
+
+"=================== cursor set for zenkaku char
+if exists('&ambiwidth')
+    set ambiwidth=double
+endif
+
+"==================== macro
+"show parentheses pair
+source $VIMRUNTIME/macros/matchit.vim
+
+"==================== key map
+"(ref: http://vim-jp.org/vimdoc-ja/map.html)
+" - カレントバッファだけで使用できるマップを作成するには、マップコマンドの引数に"<buffer>" を指定
+" - 実行するコマンドがコマンドラインに表示されないようにするには、マップコマンドの引数に "<silent>" を指定
+" - マップや短縮入力を定義するときに "<unique>" 引数を指定すると、同じ名前のものがすでに定義されていた場合に、コマンドは失敗
+" - マップや短縮入力を定義するときに "<expr>" 引数を指定すると、引数が式 (スクリプト) として扱われ、マップが実行されたときに式が評価され、その値が {rhs}として使われる
+"nnoremap <Space>e :edit .<CR>
+nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
+nnoremap <C-j>n :bn<CR>
+
+"==================== neobundle
+filetype off
+filetype plugin indent off
+
+" for v7.2 later
+if v:version > 701
+    if has('vim_starting')
+        set runtimepath+=~/.vim/neobundle.vim
+        call neobundle#rc(expand('~/.bundle'))
+    endif
+
+    NeoBundle 'Shougo/unite.vim'
+    NeoBundle 'ujihisa/unite-colorscheme'
+    NeoBundle 'Shougo/neomru.vim'
+    NeoBundle 'tpope/vim-surround'  "囲む奴  の操作をより良くする
+    NeoBundle 'tpope/vim-fugitive'  ":Gxxxx でgitのコマンドを実行, :Gblame = git blame
+    NeoBundle 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルにヤンク・ペースト
+    NeoBundle 'vim-scripts/Smooth-Scroll'
+    NeoBundle 'Shougo/neocomplcache'  "補完
+    NeoBundle 'Shougo/neosnippet'  "スニペット
+    NeoBundle 'Shougo/neosnippet-snippets'
+    NeoBundle 'vim-scripts/taglist.vim'
+    NeoBundle 'thinca/vim-quickrun'  "\r で開いているファイルを実行
+    NeoBundle 'tpope/vim-markdown'
+    NeoBundle 'derekwyatt/vim-scala'
+    NeoBundle 'AndrewRadev/switch.vim'
+    NeoBundle 'scrooloose/syntastic'  "保存時にsyntax check
+    NeoBundle 'Lokaltog/vim-easymotion'  "移動,ジャンプ  をより良くする
+    NeoBundle 'nathanaelkane/vim-indent-guides'
+    NeoBundle 'itchyny/lightline.vim'  "しゃれおつステータスライン
+    NeoBundle 'honza/vim-snippets'
+    NeoBundle 'Shougo/vimfiler'  "ファイラ
+    NeoBundle 'rgarver/Kwbd.vim'  "ウインドウ分割時にバッファを閉じた際, ウインドウレイアウトはそのまま残す
+    NeoBundle 'kchmck/vim-coffee-script'
+    NeoBundle 'nsf/gocode', {'rtp': 'vim/'} "install: go get github.com/nsf/gocode
+    NeoBundle 'kana/vim-smartinput'  " 対応する括弧 系, http://labs.timedia.co.jp/2012/09/vim-smartinput.html
+    NeoBundle 'fatih/vim-go'  " Go 1.4+ removed misc/vim directory
+    " color schemes
+    NeoBundle 'flazz/vim-colorschemes'
+    NeoBundle 'cocopon/colorswatch.vim'  "for 256 color check, using ':ColorSwatchGenerate'
+
+endif
+
+"==================== colorscheme
+colorscheme hybrid
+
+"==================== additional runtime
+"========== golang runtime
+set runtimepath+=$GOPATH/src/github.com/golang/lint/misc/vim
+
+"==================== Plugin ON
+filetype plugin indent on
+
+"==================== plugin
+if v:version > 701
+    "==================== yanktmp
+    map <silent> sy :call YanktmpYank()<CR>
+    map <silent> sp :call YanktmpPaste_p()<CR>
+    map <silent> sP :call YanktmpPaste_P()<CR>
+    let g:yanktmp_file = $HOME . '/vimyanktmp'
+
+    "==================== Unite
+    cnoremap Un :<C-u>Unite
+
+    nnoremap <silent> ,ub :<C-u>Unite buffer<CR>
+    nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+    nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
+    nnoremap <silent> ,um :<C-u>Unite file_mru<CR>
+    nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
+    nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
+
+    "==================== neocomlcache
+    let g:neocomplcache_enable_at_startup = 1
+    let g:neocomplcache_enable_smart_case = 1
+    let g:neocomplcache_enable_camel_case_completion = 1
+    let g:neocomplcache_enable_underbar_completion = 1
+    let g:neocomplcache_min_syntax_length = 3
+    let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+
+    " Define dictionary.
+    let g:neocomplcache_dictionary_filetype_lists = {
+        \ 'default' : '',
+        \ }
+
+    " Define keyword.
+    if !exists('g:neocomplcache_keyword_patterns')
+        let g:neocomplcache_keyword_patterns = {}
+    endif
+    let g:neocomplcache_keyword_patterns['default'] = '\h\w*\.\?'
+
+    " for gocode  *install: go get github.com/nsf/gocode
+    if !exists('g:neocomplcache_omni_patterns')
+        let g:neocomplcache_omni_patterns = {}
+    endif
+    let g:neocomplcache_omni_patterns.go = '\h\w*\.'
+
+
+    "==================== neosnippet
+    imap <C-k> <Plug>(neosnippet_expand_or_jump)
+    smap <C-k> <Plug>(neosnippet_expand_or_jump)
+    xmap <C-k> <Plug>(neosnippet_expand_target)
+    imap <expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+    smap <expr><TAB> neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+    if has('conceal')
+        set conceallevel=2 concealcursor=i
+    endif
+    let g:neosnippet#enable_snipmate_compatibility = 1
+    ""let g:neosnippet#snippets_directory = '~/.vim/bundle/vim-snippets/snippets'
+    let g:neosnippet#snippets_directory = '~/.bundle/neosnippet-snippets/neosnippets, ~/mysnippets'
+
+    "with unite
+    imap <C-s> <Plug>(neosnippet_start_unite_snippet)
+
+    "==================== Use quickrun
+    "========== call bluecloth for markdown convert
+    let g:quickrun_config = {}
+    let g:quickrun_config.markdown = {
+        \ 'command' : 'bluecloth',
+        \ 'exec' : '%c -f %s'
+        \ }
+    let g:quickrun_config.coffee = {
+        \ 'command' : 'coffee',
+        \ 'exec' : '%c -cbp %s'
+        \ }
+
+    "==================== syntastic
+    let g:syntastic_mode_map = { 'mode': 'active',
+        \ 'active_filetypes': [],
+        \ 'passive_filetypes': ['ruby', 'scala'] }
+    let g:syntastic_auto_loc_list = 1
+    "let g:syntastic_ruby_checkers = ['rubocop'] " required 'gem install rubocop'
+    "let g:syntastic_quiet_warnings = 0
+    nnoremap <silent> Sc :SyntasticCheck<CR>
+    nnoremap <silent> Sr :SyntasticReset<CR>
+
+    "==================== switch
+    nnoremap <Space>m  :<C-u>Switch<CR>
+
+    "==================== easymotion
+    let g:EasyMotion_keys='hjklasdfgyuiopqwertnmzxcvbHJKLASDFGYUIOPQWERTNMZXCVB'
+    " 2-character search motionを使いたいので、デフォルトのキーマッピングは無効化
+    let g:EasyMotion_do_mapping = 0
+    " 2-character search motion
+    " '<Space> => 移動したい先の文字列の1文字目 => 2文字目'  でlabelが強調表示されるのでlabel文字を選択
+    nmap <Space> <Plug>(easymotion-s2)
+
+    "==================== vim-indent-guides
+    " vim立ち上げたときに、自動的にvim-indent-guidesをオンにする
+    let g:indent_guides_enable_on_vim_startup=1
+    let g:indent_guides_auto_colors=0
+    autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=#3c3c3c ctermbg=237
+    autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#262626 ctermbg=236
+    let g:indent_guides_start_level=2
+    let g:indent_guides_guide_size = 1
+
+    "==================== lightline
+    let g:lightline = {
+        \ 'colorscheme': 'Tomorrow_Night',
+        \ 'mode_map': {'c': 'NORMAL'},
+        \ 'active': {
+        \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+        \   'right': [ ['bufnum'], ['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype'] ]
+        \ },
+        \ 'inactive': {
+        \   'right': [ ['bufnum'], ['lineinfo'], ['percent'] ]
+        \ },
+        \ 'separator': { 'left': '》', 'right': '《' },
+        \ 'subseparator': { 'left': '〉', 'right': '〈' },
+        \ 'component_function': {
+        \   'mode': 'MyMode',
+        \   'modified': 'MyModified',
+        \   'readonly': 'MyReadonly',
+        \   'fugitive': 'MyFugitive',
+        \   'filename': 'MyFilename',
+        \   'bufnum': 'MyBufnum',
+        \   'fileformat': 'MyFileformat',
+        \   'fileencoding': 'MyFileencoding',
+        \   'filetype': 'MyFiletype'
+        \ }
+  \ }
+
+    function! MyMode()
+      return winwidth(0) > 60 ? lightline#mode() : ''
+    endfunction
+
+    function! MyModified()
+      return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+    endfunction
+
+    function! MyReadonly()
+      return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? '[RO]' : ''
+    endfunction
+
+    function! MyFugitive()
+      try
+        if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+          return fugitive#head()
+        endif
+      catch
+      endtry
+      return ''
+    endfunction
+
+    function! MyFilename()
+      return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
+            \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+            \  &ft == 'unite' ? unite#get_status_string() :
+            \  &ft == 'vimshell' ? vimshell#get_status_string() :
+            \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+            \ ('' != MyModified() ? ' ' . MyModified() : '')
+    endfunction
+
+    function! MyBufnum()
+      return 'Buf.' . bufnr('%')
+    endfunction
+
+    function! MyFileformat()
+      return winwidth(0) > 70 ? &fileformat : ''
+    endfunction
+
+    function! MyFileencoding()
+      return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+    endfunction
+
+    function! MyFiletype()
+      return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+    endfunction
+
+    "==================== vimfiler
+    nnoremap <silent> ,vf :<C-u>VimFiler -split -simple -winwidth=35 -toggle -no-quit<CR>
+
+endif
+
+"==================== autocmd
+if has("autocmd")
+    autocmd fileType * set comments=
+    autocmd fileType php set tabstop=4 shiftwidth=4
+    autocmd fileType java set tabstop=4 shiftwidth=4
+    autocmd fileType coffee set tabstop=2 softtabstop=2 shiftwidth=2 expandtab
+
+    ""highlight StatusLine ctermfg=darkgray ctermbg=white
+
+    augroup InsertHook
+        autocmd!
+        ""autocmd InsertEnter * highlight StatusLine ctermfg=white ctermbg=darkgray
+        ""autocmd InsertLeave * highlight StatusLine ctermfg=darkgray ctermbg=white
+    augroup END
+
+    function! AU_ReCheck_FENC()
+        if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
+            let &fileencoding=&encoding
+        endif
+    endfunction
+    autocmd BufReadPost * call AU_ReCheck_FENC()
+
+    "auto moved to last saved position
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+    "check syntax
+    if has("syntax")
+        syntax on
+        "zenkaku space highlight
+        function! JISX0208SpaceHilight()
+            syntax match JISX0208Space "　" display containedin=ALL
+            highlight JISX0208Space term=underline ctermbg=darkgray
+        endfunction
+        augroup invisible
+            autocmd! invisible
+            autocmd BufNew,BufRead * call JISX0208SpaceHilight()
+        augroup END
+    endif
+
+    "========== PHP
+    "make command is php syntax check
+    autocmd filetype php :set makeprg=php\ -l\ %
+    autocmd filetype php :set errorformat=%m\ in\ %f\ on\ line\ %l
+
+    "========== ruby
+    autocmd filetype ruby :set makeprg=ruby\ -c\ %
+    autocmd filetype ruby :set errorformat=%m\ in\ %f\ on\ line\ %l
+
+    " v7.2 later
+    if v:version > 701
+        "========== Unite
+        autocmd fileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+        autocmd fileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+        autocmd fileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+        autocmd fileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+        autocmd fileType unite nnoremap <silent> <buffer> <ESC><ESC> q
+        autocmd fileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>q
+    endif
+
+    "========== golang
+    "========== Fmt には goimportsを使う *install: go get code.google.com/p/go.tools/cmd/goimports
+    let g:go_fmt_command = "goimports"
+    "========== 保存時にgolintを実行する *install: go get github.com/golang/lint/golint
+    autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
+    "========== スニペットpost時にブラウザを開かない
+    let g:go_play_open_browser = 0
+
+endif

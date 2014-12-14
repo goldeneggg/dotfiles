@@ -1,0 +1,230 @@
+#- キーバインド
+#-- -e = emacs風
+#-- `bindkey -l` キーマップ名の一覧を表示
+#-- `bindkey -M emacs` でキーマップを確認可能
+#-- `bindkey -L` 現在のキー割り当て一覧を表示
+#-- `bindkey <InString> <COMMAND>` キー InString に COMMAND を割り当て
+#--- <InString>でのキー表記 - `^x` Ctrl-x,  `\M-x` Meta-x,  `^[x` ESC-x
+#---- * InString はダブルクォートで囲った方がハマらずに済む("^" 等の特殊文字使用時の挙動的な意味で)
+bindkey -e
+
+
+#-  autoload : 関数定義のロードを実行時まで遅延させる
+#-- 読み込み元は「環境変数FPATHで指定したパス配下の関数と同名のファイル」
+#--- -U : 関数定義ロード時にエイリアス展開を抑止する(-Uしなければ、ロード時点で定義されているエイリアスが展開される)
+#--- -t : 関数実行時にトレースする（デバッグ用）
+#--- -z : KSH_AUTOLOADオプションの状態によらず、zsh風にオートロードする
+
+#- colors
+autoload -Uz colors
+colors
+
+
+#- 補完を有効にする
+#-- `compinit` 全ての補完機能を有効にする関数
+autoload -Uz compinit
+#--- compinitは初回起動時に「いつどの補完定義を読み込むか」の情報収集をする（ちょっと重い）
+#--- 収集結果は ~/.zcompdump にダンプされ、次回以降はこれを使う
+compinit
+
+
+#- ヒストリ関連変数
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+
+
+#- ヒストリ検索 (refer: /usr/share/zsh/5.0.2/functions/history-search-end)
+autoload -Uz history-search-end
+#-- ウィジェット定義
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^p" history-beginning-search-backward-end
+bindkey "^n" history-beginning-search-forward-end
+bindkey "^l" backward-word
+
+
+#- ウィジェット = ZSHラインエディタ(ZLE)で機能しているものの単位 の事, 独自の関数を作りウィジェット登録すれば好きなように機能拡張する事が出来る
+#-- `zle -N WIDGET [FUNCTION]` で WIDGETという名前のシェル関数から同名ウィジェットを作成する(FUNCTION はWIDGETと別名の関数を使いたい場合に指定)
+#-- `zle -l` ユーザー定義ウィジェット一覧を表示
+#-- `zle -U STRING` ウィジェット終了後, 文字列 STRING をタイプしたかのように振る舞わせる. スタックのように機能する(LIFO)
+#-- `zle -R [-c] [MSG [WORDS...]]` コマンドライン再表示, MSGを指定するとステータス行に表示する, WORDSを指定すると補完候補表示と同形式で表示する, -c は既存一覧表示を消去してから動作
+#-- `zle -M MSG` MSGをステータス行に表示、ウィジェット終了後も残存. 再表示するまで実際に表示はされないので動作中に表示したい場合は-Rを使う
+#-- `zle -U STRING` 次にタイプされる文字列 としてSTRINGをスタックに積む, スタックなので後入れ先出し
+#-- `zle WIDGET [-n NUM] ARGS`別のウィジェットWIDGETを呼ぶ。NUMは数引数指定
+#-- ウィジェット用のシェル関数から参照可能な変数群
+#--- `$BUFFER` バッファ(プロンプトへの入力)の内容, ココに代入するとバッファの内容が置き換わる
+#--- `$LBUFFER` バッファ中カーソルより左側に位置する内容, 代入時の挙動はBUFFERと同じ
+#--- `$RBUFFER` バッファ中カーソルより右側に位置する内容, 代入時の挙動はBUFFERと同じ
+#--- `$CURSOR` バッファ中カーソルの桁位置(を示す整数), バッファ先頭は0となる
+#--- `$KEYS` そのウィジェットを呼び出したキーストロークを文字列として表したもの
+#--- `$LASTSEARCH` 直近にインタラクティブに行った検索文字列
+#--- `$LASTWIDGET` 直近に実行されたウィジェット名
+#--- `$MARK` マークした場所の桁位置を表す整数
+#-- zleについて詳しくは `man zshzle` を参照
+#-- "widgets can only be called when ZLE is active" ってエラーは...
+#--- とりえあずbindkeyで当該ウィジェットをキー割り当てすれば回避できる
+#--- ウィジェット名だけ入力して実行した際にエラーが出るのを回避したければ、`ESC-x <WIDGET>`(execute-named-cmd) する
+
+#-- 'Ctrl-^' key is cdup
+function cdup() {
+    echo
+    cd ..
+    zle reset-prompt
+}
+zle -N cdup
+bindkey "^^" cdup
+
+#-- 主な組み込みウィジェット
+#--- `self-insert STRING` STRINGをBUFFERのCURSOR位置に挿入
+#--- `clear-screen`(Ctrl-l OR ESC-l)
+#--- `reset-prompt`
+#--- `beginning-of-line`(Ctrl-a)
+#--- `end-of-line`(Ctrl-e)
+#--- `kill-line`(Ctrl-k) カーソル位置から行末までを削除
+#--- `accept-line`(Ctrl-j OR Ctrl-m) バッファの編集を終了し、その内容をコマンドとして実行する
+#--- `accept-line-and-down-history`(Ctrl-o) Ctrl-p等でヒストリのコマンドを呼び出した場合、それを実行した後でヒストリリストの次のコマンドラインを自動的に挿入
+#--- `push-line`(Ctrl-q OR ESC-q) 現在のコマンドラインをスタックに積んでコマンドラインを空にする, 新しくコマンドを入力・実行した後でスタックに積んだコマンドラインを取り戻す
+#--- `accept-and-hold`(ESC-a) 現在のコマンドラインをスタックに積むと同時に実行する
+
+
+#- オプション
+#-- オプション : 動作する/しないをsetopt(ON)/unsetopt(OFF)で定義する為に用いる。値は持たない
+setopt hist_ignore_dups
+setopt hist_ignore_all_dups
+setopt hist_ignore_space
+setopt hist_no_store
+setopt share_history
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt list_packed
+setopt nolistbeep
+setopt auto_cd
+setopt extended_glob
+setopt correct
+setopt no_beep
+setopt auto_remove_slash
+setopt magic_equal_subst
+
+
+#- プロンプト
+#-- PROMPT変数に変数展開やコマンド置換を施す
+setopt prompt_subst
+#-- プロンプトフォーマット
+#--- 標準組込のプロンプト設定を使用したい場合, `autoload -U promptinit` `promptinit` することで`prompt`コマンドが利用できるようになる
+#--- (`prompt [option] [theme]`)
+PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}%n@%m'"%{${reset_color}%}:%~ %(!.#.%%) "
+PROMPT2=$'%{\e[$[32+$RANDOM % 5]m%}%n@%m'"%{${reset_color}%}:%~ %_ %(!.#.%%) "
+#SPROMPT="%{${fg[red]}%}%r is correct?%{${reset_color}%}[n,y,a,e]: "
+
+
+#- terminal title
+case "${TERM}" in
+    kterm*|xterm*)
+        precmd() {
+            echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
+        }
+    ;;
+esac
+
+
+#- 共通エイリアス
+alias rmi='rm -i'
+alias cpi='cp -i'
+alias mvi='mv -i'
+alias df='df -h'
+alias du='du -h'
+alias diff='diff -uw'
+alias patch='patch -u'
+alias fcl='fc -l'
+alias pd='popd'
+alias w3m='w3m -reqlog'
+alias od='od -tx1c'
+#-- golang
+alias gb='go build'
+alias gt='go test'
+alias gr='go run'
+alias gg='go get'
+#-- mysql
+#alias mysql="mysql --pager='less -S' --safe-updates"  #lessだと化ける
+alias mysql="mysql --pager='lv' --safe-updates"
+#-- global alias
+alias -g V="| vim -R -"
+alias -g M="| more"
+alias -g W="| wc -l"
+alias -g B="| col -bx"
+#-- vi
+if ! type vim > /dev/null 2>&1
+then
+    alias vim=vi
+fi
+
+#- manをvimで読む
+function manv() {
+  c=$1
+  man ${c} | col -bx | vim -R -
+}
+
+#- oneliner
+ONELINER_DIR=~/.oneliner
+ONELINER_TXT=${ONELINER_DIR}/oneliner.txt
+ONELINER_PARAM_MARKER_PREFIX="%%"
+
+function _insert-oneliner() {
+  autoload -Uz read-from-minibuffer
+  read-from-minibuffer "Insert oneliner comment:"
+  if [ -n ${REPLY} ]
+  then
+    if [ ! -d ${ONELINER_DIR} ]
+    then
+      mkdir ${ONELINER_DIR}
+    fi
+    echo ${BUFFER}"\t#"${REPLY} >> ${ONELINER_TXT}
+    zle -M "Inserted \"${BUFFER}\" >> ${ONELINER_TXT}"
+  fi
+}
+zle -N _insert-oneliner
+bindkey "^[i" _insert-oneliner
+
+#-- type "ESC-j", kill paramword forward
+#-- paramword is "%%WORD" format
+function _kill-oneliner-param-forward() {
+  local AT
+  AT=$(echo ${RBUFFER} | awk -v marker="${ONELINER_PARAM_MARKER_PREFIX}" '{print index($0, marker)}')
+  if [ $AT -ne 0 ]
+  then
+    CURSOR=$((CURSOR+AT-1))
+    for i in {1..${#ONELINER_PARAM_MARKER_PREFIX}}
+    do
+      zle delete-char-or-list
+    done
+    zle kill-word
+  else
+    zle end-of-line
+  fi
+}
+zle -N _kill-oneliner-param-forward
+bindkey "^[j" _kill-oneliner-param-forward
+
+#- using git
+if which git &> /dev/null
+then
+  source ~/.zshrc.gitpjt
+fi
+
+#- using tmux
+if which tmux &> /dev/null
+then
+  source ~/.zshrc.tmux
+fi
+
+#- using peco
+if which peco &> /dev/null
+then
+  source ~/.zshrc.peco
+fi
+
+if [ -s ~/.zshrc.tests ]
+then
+  source ~/.zshrc.tests
+fi

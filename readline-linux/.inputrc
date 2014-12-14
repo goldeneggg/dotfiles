@@ -1,0 +1,5 @@
+$if mysql
+
+    "\C-xd": "SHOW DATABASES;\n"
+
+$endif

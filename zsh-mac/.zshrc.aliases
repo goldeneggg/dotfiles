@@ -1,0 +1,10 @@
+#- [mac]エイリアス
+alias ll='ls -lFG'
+alias la='ls -laFG'
+
+##- クリップボードへのパイプ用
+alias cb='reattach-to-user-namespace pbcopy'
+
+#- gat (https://github.com/goldeneggg/gat)
+alias ggist='gat gist'
+alias gplay='gat play'

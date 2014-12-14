@@ -1,0 +1,2 @@
+#- [mac]GNU grep is high priority
+alias grep='grep --color=auto'

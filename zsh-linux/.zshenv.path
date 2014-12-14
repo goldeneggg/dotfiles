@@ -1,0 +1,41 @@
+#- [linux]PATH environment settings
+export JAVA_HOME=$HOME/local/java
+export SCALA_HOME=$HOME/local/scala
+export PLAY_HOME=$HOME/local/play
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/gopath
+export GOBIN=$GOPATH/bin
+#-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
+#-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
+#-- (N-/) を付けた場合、該当パスが存在しなければ無視してくれる
+path=(
+    $JAVA_HOME/bin(N-/)
+    $SCALA_HOME/bin(N-/)
+    $PLAY_HOME(N-/)
+    $HOME/.rbenv/bin(N-/)
+    $GOROOT/bin(N-/)
+    $GOBIN(N-/)
+    $HOME/bin(N-/)
+    /usr/local/mysql/bin(N-/)
+    $HOME/.cabal/bin(N-/)
+    {/usr/local,/usr,}/bin(N-/)
+    {/usr/local,/usr,}/sbin(N-/)
+    )
+manpath=({$HOME/local,/usr/local,/usr}/share/man(N-/))
+sudo_path=({,/usr,/usr/local}/sbin(N-/))
+
+#- typeset = declare
+#-- typeset -U : 重複要素削除
+typeset -U path
+typeset -U manpath
+#-- typeset -xT : -Tで(シェル変数と環境変数の)2変数の連動関係を築く, -xで環境変数として自動export(第1引数を)
+typeset -xT SUDO_PATH sudo_path
+typeset -U sudo_path
+
+#- cdpath
+#-- `cd hoge/huga` で $GOPATH/src/github.com/hoge/huga へcd出来るようにする
+cdpath=(
+    $GOPATH/src/github.com/goldeneggg(N-/)
+    $GOPATH/src/github.com(N-/)
+    $GOPATH/src/code.google.com/p(N-/)
+    )

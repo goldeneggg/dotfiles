@@ -1,0 +1,461 @@
+#- for git and github
+#-- output README.md template
+#-- output LICENSE of MIT
+function _ghreadme() {
+  account=$1
+  name=$2
+
+  cat <<EOL
+${name}
+==========
+__${name}__ is hoge huga.
+
+
+## Usage
+
+
+## Getting Started
+
+
+## Contact
+
+* Bugs: [issues](https://github.com/${account}/${name}/issues)
+
+
+## ChangeLog
+[CHANGELOG](CHANGELOG) file for details.
+
+
+## License
+
+[LICENSE](LICENSE) file for details.
+EOL
+}
+
+#-- output CHANGELOG tmpl
+function _ghchangelog() {
+  account=$1
+
+  cat <<EOL
+v0.1.0
+* Initial commit
+
+Contributors:
+* YOUR_NAME (@${account})
+EOL
+}
+
+#-- output MIT license
+function _ghmit() {
+  account=$1
+  year=$(date +"%Y")
+
+  cat <<EOL
+The MIT License (MIT)
+
+Copyright (c) ${year} ${account}
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+EOL
+}
+
+#-- output .gitignore
+function _ghignore() {
+  cat <<EOL
+.DS_Store
+*.swp
+*.log
+EOL
+}
+
+#-- shortcut function for git init
+function ghinit() {
+  account=$1
+  name=$2
+
+  _ghreadme ${account} ${name} > README.md
+  _ghchangelog ${account} ${name} > CHANGELOG
+  _ghmit ${account} > LICENSE
+  _ghignore > .gitignore
+  git init
+  git config user.name ${account}
+}
+
+#-- add status badge into README
+function ghaddbadge() {
+  account=$1
+  name=$2
+  t=$3
+
+  if [ ! -f README.md ]
+  then
+    echo "Not exist README.md"
+    return 1
+  fi
+
+  current=$(head -n 1 README.md)
+  exheader=$(tail -n +2 README.md)
+
+  case ${t} in
+    "mit")
+      add=" [![MIT License](http://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/${account}/${name}/blob/master/LICENSE)"
+      ;;
+    "drone")
+      add=" [![Build Status](https://drone.io/github.com/${account}/${name}/status.png)](https://drone.io/github.com/${account}/${name}/latest)"
+      ;;
+    "godoc")
+      add=" [![GoDoc](https://godoc.org/github.com/${account}/${name}?status.png)](https://godoc.org/github.com/${account}/${name})"
+      ;;
+    "travis")
+      add=" [![Build Status](https://travis-ci.org/${account}/${name}.svg?branch=master)](https://travis-ci.org/${account}/${name})"
+      ;;
+    *)
+      echo "type is not supported: ${t}"
+      ;;
+  esac
+
+  echo "${current}${add}" > README.md
+  echo "${exheader}" >> README.md
+}
+
+#-- output Makefile for Go project
+function _gh_gomakefilehead() {
+  name=$1
+
+  cat <<EOH
+BINNAME := ${name}
+EOH
+
+  cat <<'EOL'
+GO ?= go
+GOLINT ?= golint
+PGMPKGPATH := .
+TESTTARGET := ./...
+SAVETARGET := ./...
+LINTTARGET := ./...
+PROFTARGET := ./...
+PROFDIR := ./.profile
+
+EOL
+}
+
+#-- output Makefile for Go project with godep
+function _gh_gomakefile() {
+  cat <<'EOL'
+all: build
+
+build:
+	$(GO) build -o $(GOBIN)/$(BINNAME) $(PGMPKGPATH)
+
+test: vet
+	$(GO) test -race -v $(TESTTARGET)
+
+vet:
+	$(GO) vet -n $(TESTTARGET)
+
+EOL
+}
+
+#-- output Makefile for Go project with godep
+function _gh_godepmakefile() {
+  cat <<'EOL'
+GODEP ?= godep
+
+all: depbuild
+
+depbuild: depsave
+	$(GODEP) $(GO) build -o $(GOBIN)/$(BINNAME) $(PGMPKGPATH)
+
+deptest: depvet
+	$(GODEP) $(GO) test -race -v $(TESTTARGET)
+
+depvet: depsave
+	$(GODEP) $(GO) vet -n $(TESTTARGET)
+
+depsave:
+	$(GODEP) save $(SAVETARGET)
+
+EOL
+}
+
+function _gh_gomakefilefoot() {
+  cat <<'EOL'
+proftest:
+	[ ! -d $(PROFDIR) ] && mkdir $(PROFDIR); $(GO) test -bench . -benchmem -blockprofile $(PROFDIR)/block.out -cover -coverprofile $(PROFDIR)/cover.out -cpuprofile $(PROFDIR)/cpu.out -memprofile $(PROFDIR)/mem.out $(PROFTARGET)
+
+lint:
+	$(GOLINT) $(LINTTARGET)
+EOL
+}
+
+function gh_gomakefile() {
+  name=$1
+
+  _gh_gomakefilehead ${name}
+  _gh_gomakefile
+  _gh_gomakefilefoot
+}
+
+function gh_godepmakefile() {
+  name=$1
+
+  _gh_gomakefilehead ${name}
+  _gh_godepmakefile
+  _gh_gomakefilefoot
+}
+
+#-- output main.go for Go project
+function _gh_gomain() {
+  name=$1
+
+  cat <<'EOL'
+package main
+
+import (
+	"fmt"
+	"os"
+	"runtime"
+
+	"github.com/jessevdk/go-flags"
+)
+
+const (
+	Version = "0.1.0"
+)
+
+// element names need to Uppercase
+type options struct {
+	//Sage        string `short:"s" long:"sage" description:"Sage" default:""`
+	Debug       bool   `short:"d" long:"debug" description:"Debug detail information"`
+	Version     bool   `short:"v" long:"version" description:"Print version"`
+	Help        bool   `short:"h" long:"help" description:"Show help message"` // not "help" but "Help", because cause error using "-h" option
+}
+
+func main() {
+	// handler for return
+	var sts int
+	defer func() { os.Exit(sts) }()
+
+	// parse option args
+	opts := &options{}
+	parser := flags.NewParser(opts, flags.PrintErrors)
+	args, err := parser.Parse()
+	if err != nil {
+		//fmt.Fprintln(os.Stderr, err)
+		printHelp()
+		sts = 1
+		return
+	}
+
+	// print help
+	if opts.Help {
+		printHelp()
+		return
+	}
+
+	// print version
+	if opts.Version {
+EOL
+
+  cat <<EOM
+		fmt.Fprintf(os.Stderr, "${name}: version %s (%s)\n", Version, runtime.GOARCH)
+EOM
+
+  cat <<'EON'
+		return
+	}
+
+	// validate args
+	if len(args) != 1 {
+		fmt.Fprintf(os.Stderr, "Arg is not assigned: %+v\n", args)
+		printHelp()
+		sts = 1
+		return
+	}
+
+  // main contents...
+  // :
+}
+
+func printHelp() {
+	h := `
+Usage:
+EON
+
+  cat <<EOO
+  ${name} [OTHER OPTIONS]
+EOO
+
+  cat <<'EOP'
+
+Application Options:
+  -s, --sage=        TODO
+  -d, --debug        Debug detail information
+  -v, --version      Print version
+
+Help Options:
+  -h, --help         Show this help message
+`
+	os.Stderr.Write([]byte(h))
+}
+EOP
+}
+
+#-- output main.go for Go project using codegangsta/cli1
+function _gh_gomaingang() {
+  account=$1
+  name=$2
+
+  cat <<'EOL'
+package main
+
+import (
+	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/codegangsta/cli"
+)
+
+const (
+  // VERSION info
+	VERSION = "0.1.0"
+)
+
+var globalFlags = []cli.Flag{}
+/*
+var globalFlags = []cli.Flag{
+	cli.BoolFlag{
+		Name:  "debug, d",
+		Usage: "Debug detail information",
+	},
+}
+*/
+
+var commands = []cli.Command{}
+/*
+var commands = []cli.Command{
+	cli.Command{
+		Name:  "COMMAND_NAME",
+		Usage: "USAGE",
+		Flags: []cli.Flag{
+			cli.StringFlag{
+				Name:  "s",
+				Usage: "USAGE FLAG",
+			},
+		},
+		Action: cmdAction,
+	},
+}
+*/
+
+func main() {
+	var sts int
+	defer finalize(sts)
+
+	app := cli.NewApp()
+
+	app.Version = VERSION
+	app.Usage = "TODO Usage"
+	app.Flags = globalFlags
+	app.Commands = commands
+	//app.Action = appAction
+EOL
+
+  cat <<EOM
+	app.Author = "@${account}"
+	app.Name = "${name}"
+	//app.Email = "jpshadowapps@gmail.com"
+EOM
+
+
+  cat <<'EON'
+	if err := app.Run(os.Args); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		sts = 1
+	}
+}
+
+func finalize(sts int) {
+	os.Exit(sts)
+}
+
+func appAction(c *cli.Context) {
+	// gDebug := c.GlobalBool("debug")
+  // args := c.Args()
+
+  /*
+	start := time.Now()
+	defer func() {
+		elapsed := time.Since(start)
+	}()
+  */
+}
+
+func cmdAction(c *cli.Context) {
+	// cs := c.String("s")
+  // args := c.Args()
+
+  /*
+	start := time.Now()
+	defer func() {
+		elapsed := time.Since(start)
+	}()
+  */
+}
+
+func flags2map(c *cli.Context) map[string]interface{} {
+	m := make(map[string]interface{})
+
+	for _, fName := range c.FlagNames() {
+		if c.IsSet(fName) {
+			m[fName] = c.Generic(fName)
+		}
+	}
+
+	return m
+}
+EON
+}
+
+function _gh_goinit() {
+  account=$1
+  name=$2
+
+  ghinit ${account} ${name}
+
+  #gh_gomakefile ${name} > Makefile
+  gh_godepmakefile ${name} > Makefile
+  echo ".profile" >> .gitignore
+  echo "Godeps/Readme" >> .gitignore
+  echo "Godeps/_workspace" >> .gitignore
+}
+
+#-- ghinit for Go project with godep
+function gh_goinit() {
+  _gh_goinit $1 $2
+  _gh_gomain $2 > main.go
+}
+
+#-- ghinit for Go project using codegangsta/cli with godep
+function gh_goinitgang() {
+  _gh_goinit $1 $2
+  _gh_gomaingang $1 $2 > main.go
+}

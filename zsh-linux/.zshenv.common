@@ -1,0 +1,29 @@
+#- pager
+if type lv > /dev/null 2>&1
+then
+    export PAGER="lv"
+else
+    export PAGER="less"
+fi
+if [ "$PAGER" = "lv" ]
+then
+    export LV="-c -l"
+else
+    alias lv="$PAGER"
+fi
+
+#- vim
+export EDITOR=vim
+export GIT_EDITOR=vim
+#-- fcコマンド実行時の起動エディタ
+export FCEDIT=vim
+
+#- remove "/" from default WORDCHARS 
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+
+#- color
+MY_YELLOW=$'\e[1;31m'
+MY_CLEAR=$'\e[0m'
+
+#- \nの改行が効いてなさげ
+export MYSQL_PS1="\U[\v]{\d} \nmysql> "

@@ -1,0 +1,133 @@
+#- pecoで履歴表示用コマンド
+CMD_HIST_PECO="fc -l -n 1 | tail -r | peco"
+
+function _peco-history() {
+  BUFFER=`eval ${CMD_HIST_PECO}`
+  zle end-of-line
+  zle ${1}
+}
+zle -N _peco-history
+
+#-- pecoで選択した履歴コマンドを表示
+function peco-search-history() {
+  zle _peco-history "clear-screen"
+}
+zle -N peco-search-history
+bindkey "^ps" peco-search-history
+
+#-- pecoで選択した履歴コマンドを実行
+function peco-execute-history() {
+  zle _peco-history "accept-line"
+}
+zle -N peco-execute-history
+bindkey "^pe" peco-execute-history
+
+#-- pecoで選択した履歴コマンドを現在表示中のコマンド末尾にパイプで繋ぐ
+function peco-pipe-history() {
+  RBUFFER=" | "`eval ${CMD_HIST_PECO}`
+  zle end-of-line
+  zle clear-screen
+}
+zle -N peco-pipe-history
+bindkey "^pp" peco-pipe-history
+
+
+#- for oneliner
+if [[ -n $ONELINER_TXT ]]
+then
+  #-- pecoで選択したonelinerコマンドを表示
+  function peco-search-oneliner() {
+    BUFFER=$(cat ${ONELINER_TXT} | sort | peco | awk -F"\t" '{print $1}')
+    zle clear-screen
+    #zle -M "type [ESC-j], kill parameter word and replace into real word"
+    zle beginning-of-line
+  }
+  zle -N peco-search-oneliner
+  bindkey "^po" peco-search-oneliner
+fi
+
+#- grep => open vim by filename and line number
+function vig {
+    STR="$1"
+    F=$(grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "vi ${F}"
+    fi
+}
+function _vigext {
+    STR="$1"
+    EXT=$2
+
+    F=$(grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "vi ${F}"
+    fi
+}
+function _vigextcomex {
+    STR="$1"
+    EXT=$2
+    REGEXP="$3"
+
+    F=$(grep -H -n ${STR} **/*.${EXT} | grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "vi ${F}"
+    fi
+}
+
+function vigg {
+    STR="$1"
+    _vigextcomex "${STR}" "go" "[0-9]:\s*//"
+}
+#function vigig {
+#    STR="$1"
+#    vi $(grep -i -n ${STR} **/*.go | grep -v "[0-9]:\s*//" | peco --no-ignore-case | awk -F ":" '{print "-c "$2" "$1}')
+#}
+function vigp {
+    STR="$1"
+    _vigextcomex "${STR}" "php" "[0-9]:\s*//"
+}
+function vigs {
+    STR="$1"
+    _vigextcomex "${STR}" "scala" "[0-9]:\s*//"
+}
+function vigr {
+    STR="$1"
+    _vigextcomex "${STR}" "rb" "[0-9]:\s*#"
+}
+function vigcf {
+    STR="$1"
+    _vigextcomex "${STR}" "coffee" "[0-9]:\s*#"
+}
+
+#- process control
+#-- process kill
+function peco-proc-kill() {
+  P=$(ps aux | peco | awk '{print $2}')
+  if [ $? -eq 0 -a ${P} != "" ]
+  then
+    BUFFER="kill -9 "${P}
+  fi
+  zle clear-screen
+}
+zle -N peco-proc-kill
+bindkey "^pk" peco-proc-kill
+
+#- for git
+function peco-git-add() {
+  BUFFER="git add "$(git status -s | peco | awk '{print $2}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
+}
+zle -N peco-git-add
+bindkey "^pga" peco-git-add
+
+function peco-git-rm() {
+  BUFFER="git rm "$(git status -s | peco | awk '{print $2}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
+}
+zle -N peco-git-rm
+bindkey "^pgr" peco-git-rm

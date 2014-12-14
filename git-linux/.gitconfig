@@ -1,0 +1,68 @@
+[user]
+    name = %GITHUB_USER%
+    email = %GITHUB_MAIL%
+[core]
+    autocrlf = input
+[color]
+    ui = auto
+[alias]
+    # fetch,pull,checkout
+    ft = fetch
+    fa = fetch --all
+    ftpr = fetch origin +refs/pull/*:refs/remotes/pullreq/*
+    pl = pull
+    plr = pull --rebase
+    co = checkout
+    # branch
+    br = branch
+    brv = branch -v
+    bra = branch -a
+    brva = branch -v -a
+    # status,diff
+    st = status
+    sst = status -s
+    di = diff --ignore-space-change
+    dic = diff --ignore-space-change --cached
+    di1 = diff --ignore-space-change HEAD~
+    di2 = diff --ignore-space-change HEAD~~
+    di3 = diff --ignore-space-change HEAD~~~
+    di4 = diff --ignore-space-change HEAD~~~~
+    di5 = diff --ignore-space-change HEAD~~~~~
+    di10 = diff --ignore-space-change HEAD~~~~~~~~~~
+    # add,commit,merge
+    ci = commit
+    ciam = commit --amend
+    mg = merge
+    mgnf = merge --no-ff
+    cherry = cherry-pick
+    # log
+    bl = blame
+    sh = show
+    wc = whatchanged
+    hist = log --pretty=\"format:%ad %C(yellow)%h %C(cyan)(%an)%Creset: %s\" --date=iso
+    histc = log --pretty=\"format:%cd %C(yellow)%h %C(cyan)(%cn)%Creset: %s\" --date=iso
+    logs = log --stat --date=iso
+    logp = log -p --date=iso
+    logr = log origin --date=iso
+    oneline = log --pretty=oneline
+    ranking = shortlog -s -n --no-merges
+    log-graph = log --graph --date=short --pretty=format:'%h %cd %C(cyan)%cn %Creset%s'
+    log-all = log --graph --all --color --pretty='%x09%h %C(cyan)%cn%Creset%x09%s %Cred%d%Creset'
+    # remote
+    rev = remote -v
+    rea = remote add
+    # submodule
+    sub = submodule
+    subup = submodule update
+    subupi = submodule update --init
+    # rebase
+    reb = rebase
+    # grep
+    ## fixed string
+    gr = grep -I --full-name -F -n --color
+    ## ignore matching
+    gri = grep -I --full-name -F -n --color -i
+    ## regex
+    grr = grep -I --full-name -n --color
+    ## target is indexed files
+    grc = grep --cached -I --full-name -F -n --color

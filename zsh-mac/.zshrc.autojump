@@ -1,0 +1,9 @@
+#- [mac]autojump
+#-- require `brew install autojump`
+#-- `j <ディレクトリ名のパターン> [TAB]`でマッチするディレクトリを展開(候補が複数の場合は選択)してcdする
+#-- 候補のリストは`$HOME/.local/share/autojump/autojump.txt`, cdする度に追記される
+#--- `j --stat`で確認可能
+AUTOJUMP_FILE=autojump.zsh
+[[ -s `brew --prefix`/etc/${AUTOJUMP_FILE} ]] && . `brew --prefix`/etc/${AUTOJUMP_FILE}
+
+#-- autojumpの補完関数`_j`は通常は`/usr/local/share/zsh/site-functions`にある
