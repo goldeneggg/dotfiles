@@ -118,13 +118,13 @@ if v:version > 701
     call neobundle#end()
 
     " plugins
-    NeoBundle 'Shougo/unite.vim'
-    NeoBundle 'ujihisa/unite-colorscheme'
+"    NeoBundle 'Shougo/unite.vim'
+"    NeoBundle 'ujihisa/unite-colorscheme'
     NeoBundle 'Shougo/neomru.vim'
     NeoBundle 'tpope/vim-surround'  "囲む奴  の操作をより良くする
     NeoBundle 'tpope/vim-fugitive'  ":Gxxxx でgitのコマンドを実行, :Gblame = git blame
     NeoBundle 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルにヤンク・ペースト
-    NeoBundle 'vim-scripts/Smooth-Scroll'
+"    NeoBundle 'vim-scripts/Smooth-Scroll'
     NeoBundle 'Shougo/neocomplcache'  "補完
     NeoBundle 'Shougo/neosnippet'  "スニペット
     NeoBundle 'Shougo/neosnippet-snippets'
@@ -172,14 +172,14 @@ if v:version > 701
     let g:yanktmp_file = $HOME . '/vimyanktmp'
 
     "==================== Unite
-    cnoremap Un :<C-u>Unite
-
-    nnoremap <silent> ,ub :<C-u>Unite buffer<CR>
-    nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-    nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
-    nnoremap <silent> ,um :<C-u>Unite file_mru<CR>
-    nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
-    nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
+"    cnoremap Un :<C-u>Unite
+"
+"    nnoremap <silent> ,ub :<C-u>Unite buffer<CR>
+"    nnoremap <silent> ,uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+"    nnoremap <silent> ,ur :<C-u>Unite -buffer-name=register register<CR>
+"    nnoremap <silent> ,um :<C-u>Unite file_mru<CR>
+"    nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
+"    nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
 
     "==================== neocomlcache
     let g:neocomplcache_enable_at_startup = 1
@@ -222,7 +222,7 @@ if v:version > 701
     let g:neosnippet#snippets_directory = '~/.bundle/neosnippet-snippets/neosnippets, ~/mysnippets'
 
     "with unite
-    imap <C-s> <Plug>(neosnippet_start_unite_snippet)
+    "imap <C-s> <Plug>(neosnippet_start_unite_snippet)
 
     "==================== Use quickrun
     "========== call bluecloth for markdown convert
@@ -317,7 +317,6 @@ if v:version > 701
     function! MyFilename()
       return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
             \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
-            \  &ft == 'unite' ? unite#get_status_string() :
             \  &ft == 'vimshell' ? vimshell#get_status_string() :
             \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
             \ ('' != MyModified() ? ' ' . MyModified() : '')
@@ -393,15 +392,15 @@ if has("autocmd")
     autocmd filetype ruby :set errorformat=%m\ in\ %f\ on\ line\ %l
 
     " v7.2 later
-    if v:version > 701
-        "========== Unite
-        autocmd fileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-        autocmd fileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
-        autocmd fileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-        autocmd fileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
-        autocmd fileType unite nnoremap <silent> <buffer> <ESC><ESC> q
-        autocmd fileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>q
-    endif
+"    if v:version > 701
+"        "========== Unite
+"        autocmd fileType unite nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+"        autocmd fileType unite inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+"        autocmd fileType unite nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+"        autocmd fileType unite inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+"        autocmd fileType unite nnoremap <silent> <buffer> <ESC><ESC> q
+"        autocmd fileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>q
+"    endif
 
     "========== golang
     "========== Fmt には goimportsを使う *install: go get code.google.com/p/go.tools/cmd/goimports
