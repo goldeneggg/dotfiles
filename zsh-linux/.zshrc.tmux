@@ -6,8 +6,6 @@ GH_DIR=~/github/${GH_ACCOUNT}
 
 DIR_NOTE=${GH_DIR}/notes
 DIR_DOTFILES=~/dotfiles
-DIR_PROVI=${GH_DIR}/provisioning-bash
-DIR_VM=${GH_DIR}/vagrant
 DIR_BOT=${GH_DIR}/myhubot
 
 
@@ -55,9 +53,10 @@ function tminit() {
     SESS=${DEFAULT_SESS_NAME}
   fi
 
-  WINDOWS=("note" "dot" "provi" "bot" "go" "gosrc" "work")
-  START_DIRS=(${DIR_NOTE} ${DIR_DOTFILES} ${DIR_PROVI} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${GOROOT}/src ${HOME})
+  WINDOWS=("note" "dot" "bot" "go" "gosrc" "work")
+  START_DIRS=(${DIR_NOTE} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${GOROOT}/src ${HOME})
   # 新規セッション作成
+  ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   ${TM} new -d -s ${SESS}
   IND=${MY_BASE_INDEX}
   # ウインドウ * 7
@@ -98,6 +97,10 @@ function tminit() {
   ${TM} a -t ${SESS}
 }
 
+DIR_VM=${GH_DIR}/vagrant
+DIR_MYMG=${GH_DIR}/mysql-manage
+DIR_PROVI=${GH_DIR}/provisioning-bash
+
 #- tmux session for vm
 function tmvminit() {
   TM=`which tmux`
@@ -109,9 +112,10 @@ function tmvminit() {
 
   SESS=vmmain
 
-  WINDOWS=("vmcn7" "vmubu14app" "mymanage")
-  START_DIRS=("${DIR_VM}/vagrant-centos70-x86" "${DIR_VM}/vagrant-ubuntu14-x86-app" "${DIR_VM}/mysql-manage")
+  WINDOWS=("vmcn7" "vmubu14app" "vmubu14mas" "vmubu14sla" "provi")
+  START_DIRS=("${DIR_VM}/vagrant-centos70-x86" "${DIR_VM}/vagrant-ubuntu14-x86-app" "${DIR_MYMG}/replication/mas1" "${DIR_MYMG}/replication/sla1" "${DIR_PROVI}")
   # 新規セッション作成
+  ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   ${TM} new -d -s ${SESS}
   IND=${MY_BASE_INDEX}
   # ウインドウ
