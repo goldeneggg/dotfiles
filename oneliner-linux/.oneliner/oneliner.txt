@@ -37,3 +37,5 @@ dig -f %%DIGFILE	#digコマンドを羅列したファイルを指定してバ�
 mysqlbinlog --start-datetime '%%START' --stop-datetime '%%STOP' %%BINLOGPATH	#from,to日時指定でbinlogの内容を確認する
 mysqlbinlog --start-position '%%START' --stop-position '%%STOP' %%BINLOGPATH	#from,toポジション指定でbinlogの内容を確認する
 mysqlbinlog --start-position '%%START' --stop-position '%%STOP' %%BINLOGPATH | mysql -u %%USER -p %%DB	#from,toポジション指定でbinlogの内容を取得しDBに流し込む（リカバリ用途）
+for v in $(vagrant status | grep %%VMSTR | awk '{print $1}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,vagrantコマンド使用
+for v in $(VBoxManage list runningvms | grep %%VMSTR | awk -F"_" '{print $2}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,VBoxManage使用
