@@ -56,7 +56,7 @@ function tminit() {
   fi
 
   WINDOWS=("note" "dot" "provi" "bot" "go" "gosrc" "work")
-  START_DIRS=(${DIR_NOTE} ${DIR_DOTFILES} ${DIR_PROVI} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${GOROOT}/src/pkg ${HOME})
+  START_DIRS=(${DIR_NOTE} ${DIR_DOTFILES} ${DIR_PROVI} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${GOROOT}/src ${HOME})
   # 新規セッション作成
   ${TM} new -d -s ${SESS}
   IND=${MY_BASE_INDEX}
@@ -109,8 +109,8 @@ function tmvminit() {
 
   SESS=vmmain
 
-  WINDOWS=("vmcn7" "vmubu14" "vmcn6")
-  START_DIRS=("${DIR_VM}/vagrant-centos70-x86" "${DIR_VM}/vagrant-ubuntu14-x86" "${DIR_VM}/vagrant-centos65-x86")
+  WINDOWS=("vmcn7" "vmubu14app" "mymanage")
+  START_DIRS=("${DIR_VM}/vagrant-centos70-x86" "${DIR_VM}/vagrant-ubuntu14-x86-app" "${DIR_VM}/mysql-manage")
   # 新規セッション作成
   ${TM} new -d -s ${SESS}
   IND=${MY_BASE_INDEX}
