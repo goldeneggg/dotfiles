@@ -144,6 +144,7 @@ if v:version > 701
     NeoBundle 'nsf/gocode', {'rtp': 'vim/'} "install: go get github.com/nsf/gocode
     NeoBundle 'kana/vim-smartinput'  " 対応する括弧 系, http://labs.timedia.co.jp/2012/09/vim-smartinput.html
     NeoBundle 'fatih/vim-go'  " Go 1.4+ removed misc/vim directory
+    NeoBundle 'Shougo/vimproc'  " need to execute make (`cd ~/.bundle/vimproc; make -f make_{mac,unix}.mak`)
     " color schemes
     NeoBundle 'flazz/vim-colorschemes'
     NeoBundle 'cocopon/colorswatch.vim'  "for 256 color check, using ':ColorSwatchGenerate'
@@ -180,6 +181,15 @@ if v:version > 701
 "    nnoremap <silent> ,um :<C-u>Unite file_mru<CR>
 "    nnoremap <silent> ,uu :<C-u>Unite buffer file_mru<CR>
 "    nnoremap <silent> ,ua :<C-u>UniteWithBufferDir -buffer-name=files buffer file_mru bookmark file<CR>
+
+    "if executable('ack-grep')
+      "let g:unite_source_grep_command = 'ack-grep'
+    if executable('ack')
+      " Use ack in unite grep source.
+      let g:unite_source_grep_command = 'ack'
+      let g:unite_source_grep_default_opts = '-i --no-heading --no-color -k -H'
+      let g:unite_source_grep_recursive_opt = ''
+    endif
 
     "==================== neocomlcache
     let g:neocomplcache_enable_at_startup = 1
