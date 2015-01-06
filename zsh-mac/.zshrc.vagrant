@@ -1,0 +1,59 @@
+VAG_SSH_CONFIG=~/.ssh/config_vag
+VAG_NULL="null"
+
+#- shortcut functions
+#-- hostname
+function vag-host() {
+  echo $(vagrant status | awk 'NR == 3 {print $1}')
+}
+
+#-- if hostname exists in VAG_SSH_CONFIG, then return 0 else return 1
+function vag-ex-host-sshconf(){
+  grep "$(vag-host)" ${VAG_SSH_CONFIG} > /dev/null
+  echo $?
+}
+
+#-- hostname in VAG_SSH_CONFIG
+function vag-host-sshconf() {
+  if [ $(vag-ex-host-sshconf) -eq 0 ]
+  then
+    echo $(grep "$(vag-host)" ${VAG_SSH_CONFIG} | awk '{print $2}')
+  else
+    echo ${VAG_NULL}
+  fi
+}
+
+#-- ssh
+function vag-ssh() {
+  ssh -F ${VAG_SSH_CONFIG} $(vag-host)
+}
+
+#-- first up
+function vag-first() {
+  vagrant up --provision
+  vagrant reload
+  if [ $(vag-ex-host-sshconf) -ne 0 ]
+  then
+    vagrant ssh-config >> ${VAG_SSH_CONFIG}
+  fi
+}
+
+#-- up
+function vag-u() {
+  vagrant up
+}
+
+#-- destroy
+function vag-d() {
+  vagrant destroy
+}
+
+#-- (test)
+function vag-t(){
+  if [ $(vag-ex-host-sshconf) -eq 0 ]
+  then
+    echo "OK"
+  else
+    echo "NG"
+  fi
+}
