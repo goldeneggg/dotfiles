@@ -131,3 +131,15 @@ function peco-git-rm() {
 }
 zle -N peco-git-rm
 bindkey "^pgr" peco-git-rm
+
+#-- pecoでディレクトリスタック間をcd(pushd)
+#--- recommend setting: "setopt autp_pushd"
+#--- recommend setting: "setopt pushd_ignore_dups"
+function peco-dirstack-cd() {
+  BUFFER="cd "`dirs -l -p | tail -n +2 | peco`
+  zle end-of-line
+  zle accept-line
+}
+
+zle -N peco-dirstack-cd
+bindkey "^pc" peco-dirstack-cd
