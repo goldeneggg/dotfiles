@@ -39,3 +39,6 @@ cdpath=(
     $GOPATH/src/github.com(N-/)
     $GOPATH/src/code.google.com/p(N-/)
     )
+
+#- rbenv
+[[ -s "$HOME/.rbenv/bin/rbenv" ]] && eval "$(rbenv init -)"
