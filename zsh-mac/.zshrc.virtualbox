@@ -1,0 +1,13 @@
+#- shortcut functions
+#-- hostname
+function vb-vms() {
+  if [ $# -eq 1 ]
+  then
+    if [ "${1}" = "r" ]
+    then
+      VBoxManage list runningvms
+    fi
+  else
+    VBoxManage list vms
+  fi
+}
