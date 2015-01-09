@@ -144,7 +144,16 @@ if v:version > 701
     NeoBundle 'nsf/gocode', {'rtp': 'vim/'} "install: go get github.com/nsf/gocode
     NeoBundle 'kana/vim-smartinput'  " 対応する括弧 系, http://labs.timedia.co.jp/2012/09/vim-smartinput.html
     NeoBundle 'fatih/vim-go'  " Go 1.4+ removed misc/vim directory
-    NeoBundle 'Shougo/vimproc'  " need to execute make (`cd ~/.bundle/vimproc; make -f make_{mac,unix}.mak`)
+    " need to execute make (`cd ~/.bundle/vimproc; make -f make_{mac,unix}.mak`)
+    NeoBundle 'Shougo/vimproc', {
+      \ 'build' : {
+        \ 'windows' : 'make -f make_mingw32.mak',
+        \ 'cygwin' : 'make -f make_cygwin.mak',
+        \ 'mac' : 'make -f make_mac.mak',
+        \ 'unix' : 'make -f make_unix.mak',
+      \ },
+    \ }
+
     " color schemes
     NeoBundle 'flazz/vim-colorschemes'
     NeoBundle 'cocopon/colorswatch.vim'  "for 256 color check, using ':ColorSwatchGenerate'

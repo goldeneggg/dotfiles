@@ -111,6 +111,8 @@ fi
 
 # for neobundle.vim
 git submodule update --init
+
+# install vim plugins
 /usr/bin/vim -e -S vim-linux/init.ex
 
 # replace token of .gitconfig
