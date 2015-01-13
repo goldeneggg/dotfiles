@@ -40,7 +40,12 @@ function vag-first() {
 
 #-- up
 function vag-u() {
-  vagrant up
+  vagrant up ${1}
+}
+
+#-- halt
+function vag-h() {
+  vagrant halt
 }
 
 #-- destroy
