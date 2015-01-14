@@ -53,6 +53,11 @@ function vag-d() {
   vagrant destroy
 }
 
+#-- reload
+function vag-r() {
+  vagrant reload
+}
+
 #-- (test)
 function vag-t(){
   if [ $(vag-ex-host-sshconf) -eq 0 ]
