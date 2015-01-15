@@ -50,7 +50,7 @@ function vag-h() {
 
 #-- destroy
 function vag-d() {
-  vagrant destroy
+  vagrant destroy -f
 }
 
 #-- reload
