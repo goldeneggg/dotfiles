@@ -1,6 +1,6 @@
 VAGC_SSH_CONFIG=~/.ssh/config_vag_coreos
 VAGC_NULL="null"
-VAGC_CLOUD_CONFIG="./user-data"
+VAGC_CLOUD_CONFIG="user-data"
 
 #- shortcut functions
 #-- hostname
@@ -60,8 +60,8 @@ function vagc-d() {
 
   # reset discovery token for next time
   newtoken=$(curl https://discovery.etcd.io/new)
-  sed -i "s/discovery:.*/discovery: ${newtoken}" ${VAGC_CLOUD_CONFIG}
   echo "reset discovery token: ${newtoken}"
+  sed -i "" "s|discovery:.*|discovery: ${newtoken}|g" ${VAGC_CLOUD_CONFIG}
 }
 
 #-- reload, $1 = option
