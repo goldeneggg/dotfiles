@@ -1,0 +1,70 @@
+VAGC_SSH_CONFIG=~/.ssh/config_vag_coreos
+VAGC_NULL="null"
+VAGC_CLOUD_CONFIG="./user-data"
+
+#- shortcut functions
+#-- hostname
+function vagc-hosts() {
+  # *required* machine name startsWith "core"
+  echo $(vagrant status | awk '{if ($1 ~ /^core/) print $1}')
+}
+
+#-- if $1 hostname exists in VAGC_SSH_CONFIG, then return 0 else return 1
+function vagc-ex-host-sshconf(){
+  grep ${1} ${VAGC_SSH_CONFIG} > /dev/null
+  echo $?
+}
+
+#-- $1 hostname in VAGC_SSH_CONFIG
+function vagc-host-sshconf() {
+  if [ $(vagc-ex-host-sshconf ${1}) -eq 0 ]
+  then
+    echo $(grep ${1} ${VAGC_SSH_CONFIG} | awk '{print $2}')
+  else
+    echo ${VAGC_NULL}
+  fi
+}
+
+#-- ssh
+function vagc-ssh() {
+  ssh -F ${VAGC_SSH_CONFIG} -A ${1}
+}
+
+#-- first up
+function vagc-first() {
+  vagrant up --provision
+  vagrant reload
+  for h in $(vagc-hosts)
+  do
+    echo "coreos host: ${h}"
+    if [ $(vagc-ex-host-sshconf ${h}) -ne 0 ]
+    then
+      vagrant ssh-config ${h} >> ${VAGC_SSH_CONFIG}
+    fi
+  done
+}
+
+#-- up, $1 = option
+function vagc-u() {
+  vagrant up ${1}
+}
+
+#-- halt
+function vagc-h() {
+  vagrant halt
+}
+
+#-- destroy
+function vagc-d() {
+  vagrant destroy -f
+
+  # reset discovery token for next time
+  newtoken=$(curl https://discovery.etcd.io/new)
+  sed -i "s/discovery:.*/discovery: ${newtoken}" ${VAGC_CLOUD_CONFIG}
+  echo "reset discovery token: ${newtoken}"
+}
+
+#-- reload, $1 = option
+function vagc-r() {
+  vagrant reload ${1}
+}

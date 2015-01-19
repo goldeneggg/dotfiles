@@ -38,7 +38,7 @@ function vag-first() {
   fi
 }
 
-#-- up
+#-- up, $1 = option
 function vag-u() {
   vagrant up ${1}
 }
@@ -53,9 +53,9 @@ function vag-d() {
   vagrant destroy -f
 }
 
-#-- reload
+#-- reload, $1 = option
 function vag-r() {
-  vagrant reload
+  vagrant reload ${1}
 }
 
 #-- (test)
