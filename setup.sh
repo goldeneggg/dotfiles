@@ -74,9 +74,9 @@ then
     if [ ${GITHUB_USER} ]
     then
         GH_U=${GITHUB_USER}
-#    else
-#        echo "$0: github user or GITHUB_USER env value is not assigned"
-#        exit 1
+    else
+        echo "$0: github user or GITHUB_USER env value is not assigned"
+        exit 1
     fi
 fi
 
@@ -86,9 +86,9 @@ then
     if [ ${GITHUB_MAIL} ]
     then
         GH_M=${GITHUB_MAIL}
-#    else
-#        echo "$0: github user or GITHUB_MAIL env value is not assigned"
-#        exit 1
+    else
+        echo "$0: github user or GITHUB_MAIL env value is not assigned"
+        exit 1
     fi
 fi
 
@@ -125,10 +125,7 @@ sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ~/.gitconfig
 
 echo ""
 echo "---------------------------------------------------------"
-echo "Next step:"
-echo "  - 'chsh -s zsh' : execute 'chsh' from original shell to zsh"
-echo "  - install screen ver 4.2 later"
-echo "  - convert to 256 colors of terminal"
+echo "Success!"
 echo "---------------------------------------------------------"
 
 exit 0
