@@ -113,6 +113,14 @@ fi
 git submodule update --init
 
 # install vim plugins
+## dependency for golang
+if [ -x `which go` ]
+then
+  go get github.com/nsf/gocode
+  go get github.com/golang/lint
+  go get golang.org/x/tools/cmd/goimports
+fi
+## main
 /usr/bin/vim -e -S vim-linux/init.ex
 
 # replace token of .gitconfig

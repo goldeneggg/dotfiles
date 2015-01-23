@@ -40,3 +40,5 @@ mysqlbinlog --start-position '%%START' --stop-position '%%STOP' %%BINLOGPATH | m
 for v in $(vagrant status | grep %%VMSTR | awk '{print $1}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,vagrantコマンド使用
 for v in $(VBoxManage list runningvms | grep %%VMSTR | awk -F"_" '{print $2}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,VBoxManage使用
 curl -L -o %%FILENAME %%URL	#[curl]curlによるファイルダウンロードの一般形
+time -f '%Uu %Ss %er %MkB %C' "$@"	#[prof]timeコマンドの出力結果を見やすくしてコマンドプロファイリングする(https://blog.golang.org/profiling-go-programs)
+[[ -x `which %%CMD` ]] && %%CMD %%ARGS	#[shell]CMDで指定したコマンドが存在していれば実行する

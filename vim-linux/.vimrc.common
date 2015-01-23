@@ -165,6 +165,7 @@ colorscheme hybrid
 
 "==================== additional runtime
 "========== golang runtime
+" *install: go get github.com/golang/lint
 set runtimepath+=$GOPATH/src/github.com/golang/lint/misc/vim
 
 "==================== Plugin ON
@@ -424,7 +425,7 @@ if has("autocmd")
     "========== golang
     "========== Fmt には goimportsを使う *install: go get code.google.com/p/go.tools/cmd/goimports
     let g:go_fmt_command = "goimports"
-    "========== 保存時にgolintを実行する *install: go get github.com/golang/lint/golint
+    "========== 保存時にgolintを実行する
     autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
     "========== スニペットpost時にブラウザを開かない
     let g:go_play_open_browser = 0
