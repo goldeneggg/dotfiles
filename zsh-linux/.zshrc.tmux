@@ -98,7 +98,7 @@ function tminit() {
 }
 
 DIR_VM=${GH_DIR}/vagrant
-DIR_MYMG=${GH_DIR}/mysql-manage
+DIR_MYMG=${DIR_VM}/vagrant-mysql-ubuntu14
 DIR_PROVI=${GH_DIR}/provisioning-bash
 
 #- tmux session for vm
