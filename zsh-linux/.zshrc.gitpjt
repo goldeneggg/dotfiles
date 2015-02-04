@@ -228,6 +228,92 @@ function _gh_gomain() {
 package main
 
 import (
+	"flag"
+	"fmt"
+	"os"
+	"runtime"
+)
+
+const (
+	Version = "0.1.0"
+)
+
+var (
+	debug   = flag.Bool("d", false, "Debug detail information")
+	version = flag.Bool("v", false, "Print version")
+	help    = flag.Bool("h", false, "Show help message")
+)
+
+func main() {
+	// handler for return
+	var sts int
+	defer func() { os.Exit(sts) }()
+
+	// parse option args
+	flag.Parse()
+
+	// print help
+	if help {
+		printHelp()
+		return
+	}
+
+	// print version
+	if version {
+EOL
+
+  cat <<EOM
+		fmt.Fprintf(os.Stderr, "${name}: version %s (%s)\n", Version, runtime.GOARCH)
+EOM
+
+  cat <<'EON'
+		return
+	}
+
+	// validate args
+	if flag.NArg() != 1 {
+		fmt.Fprintf(os.Stderr, "Arg is not assigned: %+v\n", args)
+		//printHelp()
+		sts = 1
+		return
+	}
+
+  // main contents...
+  // :
+}
+
+func printHelp() {
+	h := `
+Usage:
+EON
+
+  cat <<EOO
+  ${name} [OTHER OPTIONS]
+EOO
+
+  cat <<'EOP'
+
+Application Options:
+  -s, --sage=        TODO
+  -d, --debug        Debug detail information
+  -v, --version      Print version
+
+Help Options:
+  -h, --help         Show this help message
+`
+	os.Stderr.Write([]byte(h))
+}
+EOP
+}
+
+#-- output main.go for Go project using jessevdk/go-flags
+function _gh_gomainflags() {
+  name=$1
+
+  cat <<'EOL'
+package main
+
+import (
 	"fmt"
 	"os"
 	"runtime"
@@ -451,7 +537,9 @@ function _gh_goinit() {
 #-- ghinit for Go project with godep
 function gh_goinit() {
   _gh_goinit $1 $2
-  _gh_gomain $2 > main.go
+  _gh_gomain $2 > main.go  # flag parser is go original library
+  #_gh_gomainflags $2 > main.go  # flag parser is jessevdk/go-flags
+  #_gh_gomaingang $2 > main.go  # flag parser is codegangsta/cli
 }
 
 #-- ghinit for Go project using codegangsta/cli with godep
