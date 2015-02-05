@@ -143,3 +143,15 @@ function peco-dirstack-cd() {
 
 zle -N peco-dirstack-cd
 bindkey "^pc" peco-dirstack-cd
+
+#-- pecoでコミットハッシュを2つ選択してdiff
+function git-pdi() {
+  setopt ksharrays  # 0 base array index for zsh
+  HASHES=($(git log --pretty="format:%ad %h (%an): %s" --date=iso | peco | awk '{print $4}'))
+  if [ ${#HASHES[@]} -eq 2 ]
+  then
+    git diff ${HASHES[1]}..${HASHES[0]}
+  else
+    echo "selected commit count must be 2, but ${#HASHES[@]}"
+  fi
+}
