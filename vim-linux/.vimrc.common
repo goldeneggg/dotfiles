@@ -153,6 +153,7 @@ if v:version > 701
         \ 'unix' : 'make -f make_unix.mak',
       \ },
     \ }
+    NeoBundle 'tpope/vim-endwise'  "自動でend入力
 
     " color schemes
     NeoBundle 'flazz/vim-colorschemes'
