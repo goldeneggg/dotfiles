@@ -529,6 +529,7 @@ function _gh_goinit() {
 
   #gh_gomakefile ${name} > Makefile
   gh_godepmakefile ${name} > Makefile
+  echo ".test" >> .gitignore
   echo ".profile" >> .gitignore
   echo "Godeps/Readme" >> .gitignore
   echo "Godeps/_workspace" >> .gitignore
