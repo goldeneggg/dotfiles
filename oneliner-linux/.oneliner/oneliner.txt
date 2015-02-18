@@ -42,3 +42,8 @@ for v in $(VBoxManage list runningvms | grep %%VMSTR | awk -F"_" '{print $2}'); 
 curl -L -o %%FILENAME %%URL	#[curl]curlによるファイルダウンロードの一般形
 time -f '%Uu %Ss %er %MkB %C' "$@"	#[prof]timeコマンドの出力結果を見やすくしてコマンドプロファイリングする(https://blog.golang.org/profiling-go-programs)
 [[ -x `which %%CMD` ]] && %%CMD %%ARGS	#[shell]CMDで指定したコマンドが存在していれば実行する
+bin/rails g scaffold %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]scaffoldを作成
+bin/rails g model %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]modelを作成
+bin/rails g resource %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]resourceを作成
+bin/rails g migration %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]migrationを作成
+bin/rails g controller %%NAME %%ACTIONS	#[rails]controllerを作成
