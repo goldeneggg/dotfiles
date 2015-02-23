@@ -155,6 +155,7 @@ if v:version > 701
     \ }
     NeoBundle 'tpope/vim-endwise'  "自動でend入力
     NeoBundle 'tpope/vim-rails'
+    NeoBundle 'mattn/emmet-vim'
 
     " color schemes
     NeoBundle 'flazz/vim-colorschemes'
