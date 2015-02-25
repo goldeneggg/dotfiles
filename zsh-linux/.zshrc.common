@@ -158,6 +158,10 @@ if ! type vim > /dev/null 2>&1
 then
     alias vim=vi
 fi
+#-- gat (https://github.com/goldeneggg/gat)
+alias gagi='gat gist'
+alias gasl='gat slack'
+alias gapl='gat play'
 
 #- manをvimで読む
 function manv() {

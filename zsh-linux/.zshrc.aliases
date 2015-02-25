@@ -3,8 +3,3 @@ alias ll='ls -lF --time-style="+%Y-%m-%d %H:%M:%S"'
 alias la='ls -laF --time-style="+%Y-%m-%d %H:%M:%S"'
 alias lld='ls -lF --time-style="+%Y-%m-%d %H:%M:%S" | grep /'
 alias llf='ls -lF --time-style="+%Y-%m-%d %H:%M:%S" | grep -v /'
-
-#- gat (https://github.com/goldeneggg/gat)
-alias gagi='gat gist'
-alias gasl='gat slack'
-alias gapl='gat play'
