@@ -244,7 +244,7 @@ if v:version > 701
     ""let g:neosnippet#snippets_directory = '~/.vim/bundle/vim-snippets/snippets'
     let g:neosnippet#snippets_directory = '~/mysnippets, ~/.bundle/neosnippet-snippets/neosnippets'
     let g:neosnippet#scope_aliases = {}
-    let g:neosnippet#scope_aliases['ruby'] = 'ruby,rails' "TODO railsっぽいファイル開いた時のみ とか、rspecとか、諸々対応したい
+    let g:neosnippet#scope_aliases['ruby'] = 'ruby,rails,rspec' "TODO railsっぽいファイル開いた時のみ とか、rspecとか、諸々対応したい
     let g:neosnippet#scope_aliases['eruby'] = 'eruby,html'
 
     "with unite
