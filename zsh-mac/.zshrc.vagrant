@@ -29,7 +29,7 @@ function vag-ssh() {
 }
 
 #-- first up
-function vag-first() {
+function vag-u-first() {
   vagrant up --provision
   vagrant reload
   if [ $(vag-ex-host-sshconf) -ne 0 ]
