@@ -34,3 +34,4 @@ for v in $(VBoxManage list runningvms | grep %%VMSTR | awk -F"_" '{print $2}'); 
 curl -L -o %%FILENAME %%URL	#[curl]curlによるファイルダウンロードの一般形
 time -f '%Uu %Ss %er %MkB %C' "$@"	#[prof]timeコマンドの出力結果を見やすくしてコマンドプロファイリングする(https://blog.golang.org/profiling-go-programs)
 [[ -x `which %%CMD` ]] && %%CMD %%ARGS	#[shell]CMDで指定したコマンドが存在していれば実行する
+ctags --langmap=Ruby:.rb --exclude="*.js"  --exclude=".git*" -R .	#[ctags][ruby]カレントディレクトリ下のrubyソース群に対して再帰的にctagを生成
