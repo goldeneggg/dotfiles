@@ -33,11 +33,11 @@ bindkey "^pp" peco-pipe-history
 
 
 #- for oneliner
-if [[ -n $ONELINER_TXT ]]
+if [[ -d $ONELINER_DIR ]]
 then
   #-- pecoで選択したonelinerコマンドを表示
   function peco-search-oneliner() {
-    BUFFER=$(cat ${ONELINER_TXT} | sort | peco | awk -F"\t" '{print $1}')
+    BUFFER=$(cat ${ONELINER_DIR}/*.txt | sort | peco | awk -F"\t" '{print $1}')
     zle clear-screen
     #zle -M "type [ESC-j], kill parameter word and replace into real word"
     zle beginning-of-line

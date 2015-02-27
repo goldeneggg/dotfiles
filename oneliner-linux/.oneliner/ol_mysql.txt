@@ -1,0 +1,8 @@
+mysqldump -u %%USER -p -r %%OUTPUTFILE -e %%DB %%TABLE	#mysqldump基本形
+mysqldump -u %%USER -p -h %%HOST -P%%PORT -S %%SOCKET_FILE -r %%OUTPUTFILE -e %%DB %%TABLE	#mysqldump ホスト・ポート・ソケットファイル指定
+mysqldump -u %%USER -p -r %%OUTPUTFILE -d %%DB %%TABLE	#mysqldump DDLのみ
+mysqldump -u %%USER -p -r %%OUTPUTFILE -t %%DB %%TABLE	#mysqldump データのみ
+mysqldump -u %%USER -p -T %%OUTPUTDIR %%DB %%TABLE	#mysqldump OUTPUTDIRへDDL(sql)とデータ(tsv)を別々に出力
+mysqlbinlog --start-datetime '%%START' --stop-datetime '%%STOP' %%BINLOGPATH	#from,to日時指定でbinlogの内容を確認する
+mysqlbinlog --start-position '%%START' --stop-position '%%STOP' %%BINLOGPATH	#from,toポジション指定でbinlogの内容を確認する
+mysqlbinlog --start-position '%%START' --stop-position '%%STOP' %%BINLOGPATH | mysql -u %%USER -p %%DB	#from,toポジション指定でbinlogの内容を取得しDBに流し込む（リカバリ用途）

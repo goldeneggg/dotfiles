@@ -4,11 +4,6 @@ openssl x509 -in %%CRTFILE -text | grep Not	#SSL証明書の期限確認
 openssl s_client -connect %%DOMAIN:443 -showcerts	#SSL証明書の内容表示
 ssh-keygen -t rsa -f /home/%%USER/.ssh/%%RSAFILE -q -N ""	#ノンパスSSH鍵を作成
 ssh -t %%GATEWAY sudo -u admin ssh %%TARGET	GATEWAYからの多段ssh時にsudoする
-mysqldump -u %%USER -p -r %%OUTPUTFILE -e %%DB %%TABLE	#mysqldump基本形
-mysqldump -u %%USER -p -h %%HOST -P%%PORT -S %%SOCKET_FILE -r %%OUTPUTFILE -e %%DB %%TABLE	#mysqldump ホスト・ポート・ソケットファイル指定
-mysqldump -u %%USER -p -r %%OUTPUTFILE -d %%DB %%TABLE	#mysqldump DDLのみ
-mysqldump -u %%USER -p -r %%OUTPUTFILE -t %%DB %%TABLE	#mysqldump データのみ
-mysqldump -u %%USER -p -T %%OUTPUTDIR %%DB %%TABLE	#mysqldump OUTPUTDIRへDDL(sql)とデータ(tsv)を別々に出力
 wget --user=%%USER --password=%%PASS %%URL	#wget BASIC認証有り
 du /home --max-depth=1 | sort -nr	#/home直下の使用容量を降順表示
 du -h | egrep '^[0-9\.]+M' | sort -nr	#MB以上のサイズのファイル・ディレクトリを降順表示
@@ -34,16 +29,8 @@ lsof -a %%COND1 %%COND2	#複数条件をAND条件で指定してプロセス・�
 pgrep -fl %%STR	#プロセスをSTRで検索し、PIDとコマンドラインを一覧表示する
 cp /proc/%%PID/fd/%%FD %%TOFILE	#プロセスで使用中のファイルを削除したが復元したい場合、TOFILEで指定したファイルパスに復元する
 dig -f %%DIGFILE	#digコマンドを羅列したファイルを指定してバッチモードでdigを実行する,バッチモード用ファイルの記法やオプションは通常のコマンド実行時と同じ
-mysqlbinlog --start-datetime '%%START' --stop-datetime '%%STOP' %%BINLOGPATH	#from,to日時指定でbinlogの内容を確認する
-mysqlbinlog --start-position '%%START' --stop-position '%%STOP' %%BINLOGPATH	#from,toポジション指定でbinlogの内容を確認する
-mysqlbinlog --start-position '%%START' --stop-position '%%STOP' %%BINLOGPATH | mysql -u %%USER -p %%DB	#from,toポジション指定でbinlogの内容を取得しDBに流し込む（リカバリ用途）
 for v in $(vagrant status | grep %%VMSTR | awk '{print $1}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,vagrantコマンド使用
 for v in $(VBoxManage list runningvms | grep %%VMSTR | awk -F"_" '{print $2}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,VBoxManage使用
 curl -L -o %%FILENAME %%URL	#[curl]curlによるファイルダウンロードの一般形
 time -f '%Uu %Ss %er %MkB %C' "$@"	#[prof]timeコマンドの出力結果を見やすくしてコマンドプロファイリングする(https://blog.golang.org/profiling-go-programs)
 [[ -x `which %%CMD` ]] && %%CMD %%ARGS	#[shell]CMDで指定したコマンドが存在していれば実行する
-bin/rails g scaffold %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]scaffoldを作成
-bin/rails g model %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]modelを作成
-bin/rails g resource %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]resourceを作成
-bin/rails g migration %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]migrationを作成
-bin/rails g controller %%NAME %%ACTIONS	#[rails]controllerを作成
