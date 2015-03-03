@@ -1,6 +1,7 @@
 #- [mac]PATH environment settings
-jdk_version="1.8.0_25"
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk${jdk_version}.jdk/Contents/Home"
+#-- dmg経由でjavaをインストールした場合はJAVA_HOME関連の設定は不要
+#jdk_version="1.8.0_25"
+#export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk${jdk_version}.jdk/Contents/Home"
 export SCALA_HOME=/usr/local/scala
 export ANDROID_SDK="/Applications/Android Studio.app/sdk"
 export PLAY_HOME=/usr/local/play
@@ -9,13 +10,14 @@ export GOPATH=$HOME/gopath
 export GOBIN=$GOPATH/bin
 python_version=2.7
 julia_version=0.2.1
+redis_version=2.8
 #export JULIA_HOME=/Applications/Julia-${julia_version}.app/Contents/Resources/julia
 
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
 #-- (N-/) を付けた場合、該当パスが存在しなければ無視してくれる
 path=(
-    $JAVA_HOME/bin(N-/)
+    #$JAVA_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
     $ANDROID_SDK/platform-tools(N-/)
     $PLAY_HOME(N-/)
@@ -26,6 +28,7 @@ path=(
     $HOME/Library/Python/${python_version}/bin(N-/)
     $HOME/bin(N-/)
     /usr/local/mysql/bin(N-/)
+    /usr/local/redis-${redis_version}/bin(N-/)
     $HOME/.cabal/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
     {/usr/local,/usr,}/sbin(N-/)
