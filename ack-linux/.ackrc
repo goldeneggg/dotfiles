@@ -1,3 +1,6 @@
 --ignore-dir=.svn
 --ignore-dir=.git
+--ignore-dir=log
+--ignore-dir=public/assets
+--ignore-dir=vendor/bundle
 --nogroup
