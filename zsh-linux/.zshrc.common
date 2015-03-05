@@ -140,6 +140,7 @@ alias fcl='fc -l'
 alias pd='popd'
 alias w3m='w3m -reqlog'
 alias od='od -tx1c'
+alias so='source ~/.zshenv ~/.zshrc'
 #-- golang
 alias gb='go build'
 alias gt='go test'
