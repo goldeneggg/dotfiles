@@ -7,6 +7,10 @@
     ui = auto
 #[url "git@github.com:"]
     #insteadOf = https://github.com/
+[credential]
+  helper = osxkeychain
+[credential "https://github.com"]
+  username = goldeneggg
 [alias]
     # fetch,pull,checkout
     ft = fetch
