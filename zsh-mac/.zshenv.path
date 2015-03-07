@@ -29,6 +29,7 @@ path=(
     $HOME/bin(N-/)
     /usr/local/mysql/bin(N-/)
     /usr/local/redis-${redis_version}/bin(N-/)
+    /usr/local/redis/bin(N-/)
     $HOME/.cabal/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
     {/usr/local,/usr,}/sbin(N-/)
