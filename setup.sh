@@ -120,7 +120,7 @@ then
   go get github.com/golang/lint
   go get golang.org/x/tools/cmd/goimports
 fi
-## main
+## run ex commands
 /usr/bin/vim -e -S vim-linux/init.ex
 
 # replace token of .gitconfig
