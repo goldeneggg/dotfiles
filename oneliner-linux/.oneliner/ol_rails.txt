@@ -1,5 +1,0 @@
-bin/rails g scaffold %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]scaffoldを作成
-bin/rails g model %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]modelを作成
-bin/rails g resource %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]resourceを作成
-bin/rails g migration %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]migrationを作成
-bin/rails g controller %%NAME %%ACTIONS	#[rails]controllerを作成
