@@ -1,2 +1,3 @@
 hub pull-request -m '%%COMMENT' -b %%OWNER:%%DST_BRANCH -h %%OWNER:%%SRC_BRANCN	#pull requestを作成する
+hub pull-request -i %%ISSUE -b %%OWNER:%%DST_BRANCH -h %%OWNER:%%SRC_BRANCN	#issueと連動したpull requestを作成する
 hub create -d '%%COMMENT'	#github上にpublic repositoryを作成する
