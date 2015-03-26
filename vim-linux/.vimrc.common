@@ -416,6 +416,9 @@ if has("autocmd")
     "========== ruby
     autocmd filetype ruby :set makeprg=ruby\ -c\ %
     autocmd filetype ruby :set errorformat=%m\ in\ %f\ on\ line\ %l
+    autocmd BufNewFile,BufRead Gemfile set filetype=ruby
+    autocmd BufNewFile,BufRead Vagrantfile set filetype=ruby
+    autocmd BufNewFile,BufRead .pryrc set filetype=ruby
 
     " v7.2 later
 "    if v:version > 701
