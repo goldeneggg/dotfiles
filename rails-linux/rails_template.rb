@@ -37,6 +37,11 @@ gem_group :development, :test do
   gem 'pry-rails'
   gem 'pry-remote'
   gem 'pry-byebug'
+  gem 'pry-stack_explorer'
+  gem 'pry-macro'
+  gem 'pry-theme'
+  gem 'hirb'
+  gem 'hirb-unicode'
 end
 
 
