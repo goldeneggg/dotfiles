@@ -168,7 +168,7 @@ colorscheme hybrid
 
 "==================== additional runtime
 "========== golang runtime
-" *install: go get github.com/golang/lint
+" *install: go get -u github.com/golang/lint/golint
 set runtimepath+=$GOPATH/src/github.com/golang/lint/misc/vim
 
 "==================== Plugin ON
