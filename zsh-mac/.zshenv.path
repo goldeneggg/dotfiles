@@ -35,7 +35,9 @@ path=(
     {/usr/local,/usr,}/sbin(N-/)
     #$JULIA_HOME/bin(N-/)
     /Applications/Julia-${julia_version}.app/Contents/Resources/julia/bin(N-/)  # Julia
+    $path
     )
+fpath=($HOME/zsh-functions(N-/) $fpath)
 manpath=({$HOME/local,/usr/local,/usr}/share/man(N-/))
 sudo_path=({,/usr,/usr/local}/sbin(N-/))
 
