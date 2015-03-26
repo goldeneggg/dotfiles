@@ -429,7 +429,7 @@ if has("autocmd")
 "    endif
 
     "========== golang
-    "========== Fmt には goimportsを使う *install: go get code.google.com/p/go.tools/cmd/goimports
+    "========== Fmt には goimportsを使う *install: go get golang.org/x/tools/cmd/goimports
     let g:go_fmt_command = "goimports"
     "========== 保存時にgolintを実行する
     autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
