@@ -7,6 +7,8 @@ GH_ACCOUNT=goldeneggg
 GH_DIR=~/github/${GH_ACCOUNT}
 DIR_NOTE=${GH_DIR}/notes
 DIR_BOT=${GH_DIR}/myhubot
+DIR_RUBY=${GH_DIR}/ruby
+DIR_RAILS=${GH_DIR}/rails
 
 
 #- aliases for tmux
@@ -46,8 +48,8 @@ function tminit() {
     SESS=${DEFAULT_SESS_NAME}
   fi
 
-  WINDOWS=("note" "dot" "bot" "go" "gosrc" "work")
-  START_DIRS=(${DIR_NOTE} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${GOROOT}/src ${HOME})
+  WINDOWS=("note" "dot" "bot" "go" "r" "ra" "ra_wk")
+  START_DIRS=(${DIR_NOTE} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${DIR_RUBY} ${DIR_RAILS} ${DIR_RAILS})
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   tmux new -d -s ${SESS}
@@ -64,17 +66,15 @@ function tminit() {
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
-      gosrc)
-        # 垂直 下部=40%
-        tmux splitw -v -p 40 -c ${START_DIRS[${IND}]}
-        ;;
       bot)
         # 垂直 下部=20%
         tmux splitw -v -p 20 -c ${START_DIRS[${IND}]}
         ;;
+      ra_wk)
+        # 垂直 下部=25%
+        tmux splitw -v -p 25 -c ${START_DIRS[${IND}]}
+        ;;
       *)
-        # 垂直 下部=15%
-        tmux splitw -v -p 15 -c ${START_DIRS[${IND}]}
         ;;
     esac
 
