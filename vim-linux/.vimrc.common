@@ -375,7 +375,7 @@ if v:version > 701
     endfunction
 
     "==================== vimfiler
-    nnoremap <silent> ,vf :<C-u>VimFiler -split -simple -winwidth=35 -toggle -no-quit<CR>
+    nnoremap <silent> ,vf :<C-u>VimFiler -split -simple -winwidth=28 -toggle -no-quit<CR>
 
 endif
 

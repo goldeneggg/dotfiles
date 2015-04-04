@@ -114,11 +114,28 @@ git submodule update --init
 
 # install vim plugins
 ## dependency for golang
-if [ -x `which go` ]
+if [ ! -z "${GOROOT+x}" ]
 then
+  export GOROOT=/usr/local/go
+fi
+
+if [ ! -z "${GOPATH+x}" ]
+then
+  export GOPATH=~/gopath
+  if [ ! -d ${GOPATH} ]
+  then
+    mkdir -p ${GOPATH}
+  fi
+fi
+
+if [ -x ${GOROOT}/bin/go ]
+then
+  PATH=${GOROOT}/bin:${PATH}
   go get github.com/nsf/gocode
   go get github.com/golang/lint
+  go get -u github.com/golang/lint/golint
   go get -u golang.org/x/tools/cmd/goimports
+  go get github.com/github/hub
 fi
 ## run ex commands
 /usr/bin/vim -e -S vim-linux/init.ex
