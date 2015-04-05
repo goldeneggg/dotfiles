@@ -136,6 +136,8 @@ then
   go get -u github.com/golang/lint/golint
   go get -u golang.org/x/tools/cmd/goimports
   go get github.com/github/hub
+  go get github.com/peco/peco
+  go get github.com/peco/peco/cmd/peco
 fi
 ## run ex commands
 /usr/bin/vim -e -S vim-linux/init.ex
