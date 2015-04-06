@@ -429,6 +429,7 @@ if has("autocmd")
     autocmd BufNewFile,BufRead Gemfile set filetype=ruby
     autocmd BufNewFile,BufRead Vagrantfile set filetype=ruby
     autocmd BufNewFile,BufRead .pryrc set filetype=ruby
+    autocmd BufNewFile,BufRead config.ru set filetype=ruby
 
     " v7.2 later
 "    if v:version > 701
