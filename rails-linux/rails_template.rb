@@ -24,6 +24,8 @@ end
 
 gem_group :test do
   gem 'database_rewinder'
+  gem 'selenium-webdriver'
+  gem 'capybara'
 end
 
 gem_group :development, :test do
