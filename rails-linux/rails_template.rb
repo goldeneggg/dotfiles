@@ -7,9 +7,9 @@
 #- "gem"
 #-- Adds gem entry
 
-gem 'kaminari'
-gem 'kaminari-bootstrap'
-gem 'active_model_serializers'
+gem 'kaminari', '~> 0.16'
+gem 'kaminari-bootstrap', '~> 3.0'
+gem 'active_model_serializers', '~> 0.9'
 gem 'annotate', git: 'git://github.com/ctran/annotate_models.git'
 
 
@@ -30,7 +30,7 @@ end
 
 gem_group :development, :test do
   gem 'rspec-rails', '~> 3.2'
-  gem 'rspec-given'
+  gem 'rspec-given', '~> 3.7'
   gem 'factory_girl_rails', '~> 4.5'
   #gem 'shoulda-matchers', '~> 2.8'
 
@@ -142,12 +142,12 @@ on = {}
 # omniauth
 on["omniauth"] = yes?("Use omniauth for login by other service? (y/n) > ")
 if on["omniauth"]
-  gem 'omniauth'
+  gem 'omniauth', '~> 1.2'
 
   initializer_omniauth = ''
 
   if yes?("Use twitter login? (y/n) > ")
-    gem 'omniauth-twitter'
+    gem 'omniauth-twitter', '~> 1.1'
     initializer_omniauth.concat <<-CODE
       Rails.application.config.middleware.use OmniAuth::Builder do
         provider :twitter,
