@@ -1,6 +1,9 @@
 #- manage ssh-agent using keychain
-if [ type keychain >/dev/null 2>&1 ]
+if [ "type keychain >/dev/null 2>&1" ]
 then
+  echo "start keychain manage"
   keychain --nogui --quiet ~/.ssh/id_rsa
   source ~/.keychain/${HOST}-sh
+else
+  echo "keychain was not found"
 fi
