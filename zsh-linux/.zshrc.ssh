@@ -1,0 +1,6 @@
+#- manage ssh-agent using keychain
+if [ type keychain >/dev/null 2>&1 ]
+then
+  keychain --nogui --quiet ~/.ssh/id_rsa
+  source ~/.keychain/${HOST}-sh
+fi
