@@ -24,6 +24,7 @@ path=(
     $GOBIN(N-/)
     $HOME/.rbenv/bin(N-/)
     $HOME/Library/Python/${python_version}/bin(N-/)
+    $HOME/.nodebrew/current/bin(N-/)
     $HOME/bin(N-/)
     /usr/local/mysql/bin(N-/)
     /usr/local/redis-${redis_version}/bin(N-/)
