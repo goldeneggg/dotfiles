@@ -9,9 +9,7 @@ export GOROOT=/usr/local/go
 export GOPATH=$HOME/gopath
 export GOBIN=$GOPATH/bin
 python_version=2.7
-julia_version=0.2.1
 redis_version=2.8
-#export JULIA_HOME=/Applications/Julia-${julia_version}.app/Contents/Resources/julia
 
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
@@ -33,8 +31,6 @@ path=(
     $HOME/.cabal/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
     {/usr/local,/usr,}/sbin(N-/)
-    #$JULIA_HOME/bin(N-/)
-    /Applications/Julia-${julia_version}.app/Contents/Resources/julia/bin(N-/)  # Julia
     $path
     )
 fpath=($HOME/zsh-functions(N-/) $fpath)
