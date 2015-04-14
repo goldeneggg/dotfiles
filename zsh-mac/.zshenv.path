@@ -31,7 +31,6 @@ path=(
     $HOME/.cabal/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
     {/usr/local,/usr,}/sbin(N-/)
-    $path
     )
 fpath=($HOME/zsh-functions(N-/) $fpath)
 manpath=({$HOME/local,/usr/local,/usr}/share/man(N-/))
