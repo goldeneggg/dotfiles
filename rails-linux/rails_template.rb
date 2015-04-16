@@ -7,40 +7,96 @@
 #- "gem"
 #-- Adds gem entry
 
-gem 'kaminari', '~> 0.16'
-gem 'kaminari-bootstrap', '~> 3.0'
-gem 'active_model_serializers', '~> 0.9'
-gem 'annotate', git: 'git://github.com/ctran/annotate_models.git'
+# an HTML, XML, SAX, and Reader parser
+gem 'nokogiri', '~> 1.6.6'
+
+# a Scope & Engine based, clean, powerful, agnostic, customizable and sophisticated paginator for Rails 3+
+gem 'kaminari', '~> 0.16.3'
+gem 'kaminari-bootstrap', '~> 3.0.1'
+
+# adds an object-oriented layer of presentation logic to your Rails apps
+#gem 'draper', '~> 2.1.0'
+
+# Upload files in your Ruby applications, map them to a range of ORMs, store them on different backends.
+gem 'carrierwave', '~> 0.10.0'
+
+# Annotates Rails/ActiveRecord Models, routes, fixtures, and others based on the database schema
+#gem 'annotate', git: 'git://github.com/ctran/annotate_models.git'
+gem 'annotate', '~> 2.6.8'
+
+# Making it easy to serialize models for client-side use
+gem 'active_model_serializers', '~> 0.9.3'
+
+# Switching database connection between readonly one and writable one
+gem 'switch_point', '~> 0.6.0'
 
 
 #- "gem_group"
 #-- Adds gem inside a group(specified by envrinment symbols)
 
 gem_group :development do
-  gem 'rack-mini-profiler'
-  gem 'http-dump'
-  gem 'unicorn'
+  # help to kill N+1 queries and unused eager loading
+  gem 'bullet', '~> 4.14.4'
+
+  # Provides a better error page for Rails and other Rack apps
+  gem 'better_errors', '~> 2.1.1'
+
+  # is a command line tool to easily handle events on file system modifications
+  gem 'guard', '~> 2.12.5'
+
+  # Dump http request use WebMock
+  gem 'http-dump', '~> 0.1.0'
+
+  # Profiling toolkit for Rack applications with Rails integration
+  gem 'rack-mini-profiler', '~> 0.9.3'
+
+  # is an HTTP server for Rack applications designed to only serve fast clients
+  # on low-latency, high-bandwidth connections and take advantage of features in Unix/Unix-like kernels
+  gem 'unicorn', '~> 4.8.3'
 end
 
 gem_group :test do
+  # Making tests easy on the fingers and eyes
+  gem 'shoulda-matchers', '~> 2.8.0'
+
+  # allows stubbing HTTP requests and setting expectations on HTTP requests
+  gem 'webmock', '~> 1.21.0'
+
+  # A minimalist's tiny and ultra-fast database cleaner
   gem 'database_rewinder'
-  gem 'selenium-webdriver'
-  gem 'capybara'
+
+  # WebDriver is a tool for writing automated tests of websites
+  gem 'selenium-webdriver', '~> 2.45.0'
+
+  # is an integration testing tool for rack based web applications
+  gem 'capybara', '~> 2.4.4'
+
+  # provides a simple API to record and replay your test suite's HTTP interactions
+  gem 'vcr', '~> 2.9.3'
 end
 
 gem_group :development, :test do
-  gem 'rspec-rails', '~> 3.2'
-  gem 'rspec-given', '~> 3.7'
-  gem 'factory_girl_rails', '~> 4.5'
-  #gem 'shoulda-matchers', '~> 2.8'
+  gem 'rspec-rails', '~> 3.2.0'
+  gem 'factory_girl_rails', '~> 4.5.0'
+  #gem 'rspec-given', '~> 3.7.0'
 
-  gem 'pry', '~> 0.10'
-  gem 'pry-doc' ,'~> 0.6'
-  gem 'pry-rails', '~> 0.3'
-  gem 'pry-remote', '~> 0.1'
-  gem 'pry-byebug', '~> 3.1'
-  gem 'pry-stack_explorer', '~> 0.4'
-  gem 'pry-macro', '~> 1.0'
+  # a port of Data::Faker from Perl, is used to easily generate fake data: names, addresses, phone numbers, etc
+  gem 'faker', '~> 1.4.3'
+
+  # A gem providing "time travel" and "time freezing" capabilities, making it dead simple to test time-dependent code
+  gem 'timecop', '~> 0.7.3'
+
+  # Code coverage for Ruby 1.9+ with a powerful configuration library and automatic merging of coverage across test suites
+  gem 'simplecov', require: false
+
+  # for debug
+  gem 'pry'
+  gem 'pry-doc'
+  gem 'pry-rails'
+  gem 'pry-remote'
+  gem 'pry-byebug'
+  gem 'pry-stack_explorer'
+  gem 'pry-macro'
   gem 'pry-theme'
   gem 'hirb'
   gem 'hirb-unicode'
@@ -50,14 +106,43 @@ end
 #- "add_source"
 #-- Adds the given source to the generated application's Gemfile
 
-# add_source https://raw.githubusercontent.com/goldenegggg/hoge/master/rails_template_source.rb
+#add_source https://raw.githubusercontent.com/goldenegggg/hoge/master/rails_template_source.rb
+
+run 'bundle install --path vendor/bundle'
 
 
 #- "environment", "application"
 #-- Adds a line inside the Application class for config/application.rb.
 #-- If options[:env] is specified, the line is appended to the corresponding file in config/environments.
 
-# environment 'config.action_mailer.default_url_options = {host: "http://yourwebsite.example.com"}', env: 'production'
+#environment 'config.action_mailer.default_url_options = {host: "http://yourwebsite.example.com"}', env: 'production'
+
+#application do
+#  %q(
+#    # Custom directories with classes and modules you want to be autoloadable
+#    config.autoload_paths += %W(#{config.root}/extras)
+#
+#    # Force all environments to use the same logger level
+#    config.log_level = :debug
+#
+#    # Use SQL instead of Active Record's schema dumper when creating the
+#    # test database. This is necessary if your schema can't be completely
+#    # dumped by the schema dumper, for example, if you have constraints
+#    # or db-specific column types
+#    config.active_record.schema_format = :sql
+#  )
+#end
+
+application do
+  %q(
+    config.time_zone = 'Tokyo'
+    config.i18n.default_locale = :ja
+
+    config.generators do |g|
+      g.template_engine :haml
+    end
+  )
+end
 
 
 #- "vendor" "lib" "file" "initializer"
@@ -66,6 +151,34 @@ end
 #---  lib to the generated application's config/lib directory.
 #---  initializer to the generated application's config/initializers directory.
 #---  file  which accepts a relative path from Rails.root and creates all the directories/files needed
+
+#initializer 'backtrace_silencers.rb', <<-CODE
+  # You can add backtrace silencers for libraries that you're using but
+  # don't wish to see in your backtraces.
+  #Rails.backtrace_cleaner.add_silencer{|line|line=~/my_noisy_library/}
+
+  # You can also remove all the silencers if you're trying to debug a
+  # problem that might stem from framework code.
+  #Rails.backtrace_cleaner.remove_silencers!
+#CODE
+
+#initializer 'filter_parameter_logging.rb', <<-CODE
+  # Configure sensitive parameters which will be filtered from the log file
+  #Rails.application.config.filter_parameters += [:password]
+#CODE
+
+#initializer 'mime_types.rb', <<-CODE
+  # Add new mime types for use in respond_to blocks:
+  #Mime::Type.register "text/richtext", :rtf
+  #Mime::Type.register_alias "text/html", :iphone
+#CODE
+
+#initializer 'session_store.rb', <<-CODE
+  #Rails.application.config.session_store :cookie_store,
+  #  key: '_example_session'
+
+  # The session cookies are signed using the secret_key_base set in the config/secrets.yml configuration file.
+#CODE
 
 #initializer 'omniauth.rb', <<-CODE
 #  Rails.application.config.middleware.use OmniAuth::Builder do
@@ -99,6 +212,8 @@ end
 #-- run "rails generate"
 
 #generate(:scaffold, "person", "name:string", "address:text", "age:number")
+
+generate 'rspec:install'
 
 
 #- "run"
@@ -136,7 +251,7 @@ end
 #- "yes", "no"
 #-- et you ask questions from templates and decide the flow based on the user's answer. 
 
-# rake("rails:freeze:gems") if yes?("Freeze rails gems?")
+#rake("rails:freeze:gems") if yes?("Freeze rails gems?")
 
 on = {}
 # omniauth
@@ -191,5 +306,5 @@ after_bundle do
 end
 
 
-rake("db:create") if yes?("Run db:create task? (y/n) > ")
-rake("db:migrate") if yes?("Run db:migrate task? (y/n) > ")
+#rake("db:create") if yes?("Run db:create task? (y/n) > ")
+#rake("db:migrate") if yes?("Run db:migrate task? (y/n) > ")
