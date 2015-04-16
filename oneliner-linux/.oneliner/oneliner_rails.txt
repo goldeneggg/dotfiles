@@ -3,3 +3,4 @@ bundle exec rails g model %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]modelを�
 bundle exec rails g resource %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]resourceを作成
 bundle exec rails g migration %%NAME %%COL1:%%TYPE1 %%COL2:%%TYPE2	#[rails]migrationを作成
 bundle exec rails g controller %%NAME %%ACTIONS	#[rails]controllerを作成
+rails new %%NAME -d mysql -T --skip-bundle -m ~/rails_template.rb	#[rails]rspec,mysql,bundleインストールをskip,application template指定, でrails appを新規作成
