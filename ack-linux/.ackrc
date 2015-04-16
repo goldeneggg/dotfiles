@@ -1,6 +1,21 @@
+# basic
+-s
+--color
+--nogroup
+
+# ignores
 --ignore-dir=.svn
 --ignore-dir=.git
 --ignore-dir=log
+--ignore-dir=logs
 --ignore-dir=public/assets
---ignore-dir=vendor/bundle
---nogroup
+--ignore-dir=vendor
+--ignore-dir=node_modules
+--ignore-file=match:tags
+--ignore-file=match:/[._].*\.swp$/
+
+# types
+--type-add=css=scss
+--type-add=ruby=.haml,.rselm,.feature,.ru,.lock
+--type-set=coffeescript=.coffee
+--type-set=coffee=.coffee
