@@ -30,6 +30,9 @@ gem 'active_model_serializers', '~> 0.9.3'
 # Switching database connection between readonly one and writable one
 gem 'switch_point', '~> 0.6.0'
 
+# is an attempt to once and for all solve the problem of inserting and maintaining seed data in a database
+gem 'seed-fu', '~> 2.3.5'
+
 
 #- "gem_group"
 #-- Adds gem inside a group(specified by envrinment symbols)
@@ -290,6 +293,7 @@ add_gitignore = <<CODE
 vendor/bundle
 *.swp
 tags
+.ruby-version
 CODE
 File.open('.gitignore', 'a') do |f|
   f.write add_gitignore
