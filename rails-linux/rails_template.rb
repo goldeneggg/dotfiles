@@ -33,6 +33,9 @@ gem 'switch_point', '~> 0.6.0'
 # is an attempt to once and for all solve the problem of inserting and maintaining seed data in a database
 gem 'seed-fu', '~> 2.3.5'
 
+# HTTP/REST API client librar
+gem 'faraday', '~> 0.9.1'
+
 
 #- "gem_group"
 #-- Adds gem inside a group(specified by envrinment symbols)
