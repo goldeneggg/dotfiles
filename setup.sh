@@ -30,10 +30,10 @@ install() {
         do
             if [ "${f}" != "." -a "${f}" != ".."  ]
             then
-                if [ -f ~/${f} ]
+                if [ -f ${HOME}/${f} ]
                 then
                     echo "already exist ${f} in HOME"
-                    rm ~/${f}
+                    rm ${HOME}/${f}
                 fi
             fi
         done
@@ -121,7 +121,7 @@ fi
 
 if [ ! -z "${GOPATH+x}" ]
 then
-  export GOPATH=~/gopath
+  export GOPATH=${HOME}/gopath
   if [ ! -d ${GOPATH} ]
   then
     mkdir -p ${GOPATH}
@@ -143,11 +143,11 @@ fi
 /usr/bin/vim -e -S vim-linux/init.ex
 
 # replace token of .gitconfig
-cp ~/.gitconfig ~/.gitconfig.org
-rm ~/.gitconfig
-cp ~/.gitconfig.org ~/.gitconfig
-sed -i -e "s/%GITHUB_USER%/${GH_U}/g" ~/.gitconfig
-sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ~/.gitconfig
+cp ${HOME}/.gitconfig ${HOME}/.gitconfig.org
+rm ${HOME}/.gitconfig
+cp ${HOME}/.gitconfig.org ${HOME}/.gitconfig
+sed -i -e "s/%GITHUB_USER%/${GH_U}/g" ${HOME}/.gitconfig
+sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ${HOME}/.gitconfig
 
 
 echo ""
