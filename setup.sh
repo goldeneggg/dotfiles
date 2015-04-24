@@ -149,6 +149,22 @@ cp ${HOME}/.gitconfig.org ${HOME}/.gitconfig
 sed -i -e "s/%GITHUB_USER%/${GH_U}/g" ${HOME}/.gitconfig
 sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ${HOME}/.gitconfig
 
+# $HOME/bin
+if [ ! -d ${HOME}/bin ]
+then
+  mkdir -p ${HOME}/bin
+fi
+
+# keychain
+if [ ! `which keychain` ]
+then
+  KEYCHAIN_VER="2.8.0"
+  KEYCHAIN_TAR=keychain-${KEYCHAIN_VER}.tar.bz2
+  curl -L http://www.funtoo.org/distfiles/keychain/keychain-${KEYCHAIN_VER}.tar.bz2 -o ${KEYCHAIN_TAR}
+  tar zxf ${KEYCHAIN_TAR}
+  mv keychain-${KEYCHAIN_VER}/keychain ${HOME}/bin/
+  mv keychain-${KEYCHAIN_VER}/keychain.pod ${HOME}/bin/
+fi
 
 echo ""
 echo "---------------------------------------------------------"
