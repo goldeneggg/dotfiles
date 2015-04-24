@@ -15,6 +15,7 @@ path=(
     $HOME/.rbenv/bin(N-/)
     $GOROOT/bin(N-/)
     $GOBIN(N-/)
+    $HOME/.nodebrew/current/bin(N-/)
     $HOME/bin(N-/)
     /usr/local/mysql/bin(N-/)
     $HOME/.cabal/bin(N-/)
