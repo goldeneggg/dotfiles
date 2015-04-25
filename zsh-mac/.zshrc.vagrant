@@ -30,7 +30,7 @@ function vag-ssh() {
 
 #-- first up
 function vag-u-first() {
-  vagrant up --provision
+  vagrant up --provision $@
   vagrant reload
   if [ $(vag-ex-host-sshconf) -ne 0 ]
   then
@@ -38,9 +38,9 @@ function vag-u-first() {
   fi
 }
 
-#-- up, $1 = option
+#-- up
 function vag-u() {
-  vagrant up ${1}
+  vagrant up $@
 }
 
 #-- halt
@@ -53,9 +53,9 @@ function vag-d() {
   vagrant destroy -f
 }
 
-#-- reload, $1 = option
+#-- reload
 function vag-r() {
-  vagrant reload ${1}
+  vagrant reload $@
 }
 
 #-- (test)
