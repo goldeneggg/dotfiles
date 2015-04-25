@@ -5,6 +5,7 @@ then
 else
     export PAGER="less"
 fi
+
 if [ "$PAGER" = "lv" ]
 then
     export LV="-c -l"

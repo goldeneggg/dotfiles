@@ -11,20 +11,24 @@
 ZSH=`which zsh`
 ZSH_OPT=-l
 
-if [ -x $ZSH ]; then
+if [ -x $ZSH ]
+then
     export SHELL=$ZSH
     exec $ZSH $ZSH_OPT
 else
     ## original bashrc content
     # if running bash
-    if [ -n "$BASH_VERSION" ]; then
+    if [ -n "$BASH_VERSION" ]
+    then
         # include .bashrc if it exists
-        if [ -f "$HOME/.bashrc" ]; then
+        if [ -f "$HOME/.bashrc" ]
+        then
         . "$HOME/.bashrc"
         fi
     fi
     # set PATH so it includes user's private bin if it exists
-    if [ -d "$HOME/bin" ] ; then
+    if [ -d "$HOME/bin" ]
+    then
         PATH="$HOME/bin:$PATH"
     fi
 fi
