@@ -3,6 +3,9 @@ Pry.config.prompt = proc do |obj, nest_level, _pry_|
 version = ''
 version << "[#{RUBY_VERSION}]"
 version << "[Rails#{Rails.version}]" if defined? Rails
+version << "\001\e[0;31m\002"
+version << "[#{File.split(File.absolute_path("."))[1]}]"
+version << "\001\e[0m\002"
 
 "#{version} #{Pry.config.prompt_name}(#{Pry.view_clip(obj)})> "
 end
