@@ -1,6 +1,6 @@
 #- [linux]PATH environment settings
-export JAVA_HOME=$HOME/local/java
-export SCALA_HOME=$HOME/local/scala
+export JAVA_HOME=/usr/local/java
+export SCALA_HOME=/usr/local/scala
 export PLAY_HOME=$HOME/local/play
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/gopath
