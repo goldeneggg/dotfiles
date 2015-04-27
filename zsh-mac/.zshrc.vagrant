@@ -63,7 +63,7 @@ function vag-d() {
 
 #-- reload
 function vag-r() {
-  vagrant reload $@
+  VAGRANT_LOG=debug vagrant reload $@
 }
 
 #-- (test)
