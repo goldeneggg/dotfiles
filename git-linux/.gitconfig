@@ -29,6 +29,7 @@
     sst = status -s
     di = diff --ignore-space-change
     dic = diff --ignore-space-change --cached
+    dis = diff --ignore-space-change --patch-with-stat
     di1 = diff --ignore-space-change HEAD~
     di2 = diff --ignore-space-change HEAD~~
     di3 = diff --ignore-space-change HEAD~~~
