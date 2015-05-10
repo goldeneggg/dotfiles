@@ -1,19 +1,19 @@
 # prompt
 Pry.config.prompt = proc do |obj, nest_level, _pry_|
-version = ''
-version << "[Ruby#{RUBY_VERSION}]"
-version << "[Rails#{Rails.version}]" if defined? Rails
+  version = ''
+  version << "[Ruby#{RUBY_VERSION}]"
+  version << "[Rails#{Rails.version}]" if defined? Rails
 
-current = ''
-current << "\001\e[0;36m\002"
-current << "#{File.split(File.absolute_path("."))[1]}"
-current << "\001\e[0m\002"
+  current = ''
+  current << "\001\e[0;36m\002"
+  current << "#{File.split(File.absolute_path("."))[1]}"
+  current << "\001\e[0m\002"
 
-branch = ''
-branch << `git branch | awk '{print $2}'`.gsub(/\n/,"")
+  branch = ''
+  branch << `git branch | awk '{print $2}'`.gsub(/\n/,"")
 
-#"#{version}#{current}\n#{Pry.config.prompt_name}(#{Pry.view_clip(obj)})> "
-"#{version}(#{current}|#{branch})> "
+  #"#{version}#{current}\n#{Pry.config.prompt_name}(#{Pry.view_clip(obj)})> "
+  "#{version}(#{current}|#{branch})> "
 end
 
 # editor
