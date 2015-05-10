@@ -37,8 +37,8 @@
     di5 = diff --ignore-space-change HEAD~~~~~
     di10 = diff --ignore-space-change HEAD~~~~~~~~~~
     # add,commit,merge
-    ci = commit
-    ciam = commit --amend
+    ci = commit -v
+    ciam = commit -v--amend
     mg = merge
     mgnf = merge --no-ff
     cherry = cherry-pick
