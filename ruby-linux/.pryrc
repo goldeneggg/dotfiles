@@ -10,7 +10,7 @@ Pry.config.prompt = proc do |obj, nest_level, _pry_|
   current << "\001\e[0m\002"
 
   branch = ''
-  branch << `git branch | awk '{print $2}'`.gsub(/\n/,"")
+  branch << `git branch | awk '{print $2}'`.chomp!
 
   #"#{version}#{current}\n#{Pry.config.prompt_name}(#{Pry.view_clip(obj)})> "
   "#{version}(#{current}|#{branch})> "
