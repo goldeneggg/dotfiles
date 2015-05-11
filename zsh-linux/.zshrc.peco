@@ -52,6 +52,15 @@ function vig {
     F=$(grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
+      echo "${F}"
+      eval "vi ${F}"
+    fi
+}
+function viack {
+    STR="$1"
+    F=$(ack --nocolor ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
       eval "vi ${F}"
     fi
 }
