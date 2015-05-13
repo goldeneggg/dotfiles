@@ -10,7 +10,7 @@ Pry.config.prompt = proc do |obj, nest_level, _pry_|
   current << "\001\e[0m\002"
 
   branch = ''
-  branch << `git branch --contains=HEAD | awk '{print $2}'`.chomp!
+  branch << `git rev-parse --abbrev-ref HEAD`.chomp!
 
   #"#{version}#{current}\n#{Pry.config.prompt_name}(#{Pry.view_clip(obj)})> "
   "#{version}(#{current}|#{branch})> "
