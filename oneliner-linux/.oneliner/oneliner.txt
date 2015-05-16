@@ -36,4 +36,4 @@ time -f '%Uu %Ss %er %MkB %C' "$@"	#[prof]timeコマンドの出力結果を見�
 [[ -x `which %%CMD` ]] && %%CMD %%ARGS	#[shell]CMDで指定したコマンドが存在していれば実行する
 ctags --langmap=Ruby:.rb --exclude="*.js"  --exclude=".git*" -R .	#[ctags][ruby]カレントディレクトリ下のrubyソース群に対して再帰的にctagを生成
 type %%CMD >/dev/null 2>&1	#[sh]コマンドの存在チェックを行う
-find . -name "*.go" | xargs sed -i "" 's|%%BEFORE|%%AFTER|g'	#[sed]カレントディレクトリ下のgoファイルを再帰的に置換
+find . -type f -name "*.go" | xargs sed -i "" 's|%%BEFORE|%%AFTER|g'	#[sed]カレントディレクトリ下のgoファイルを再帰的に置換
