@@ -30,7 +30,8 @@ function vag-ssh() {
 
 #-- first up
 function vag-u-first() {
-  VAGRANT_LOG=debug vagrant up --provision $@
+  #VAGRANT_LOG=debug vagrant up --provision $@
+  vagrant up --provision $@
   vagrant reload
   if [ $(vag-ex-host-sshconf) -ne 0 ]
   then
@@ -39,7 +40,8 @@ function vag-u-first() {
 }
 
 function vag-u-first-aws() {
-  VAGRANT_LOG=debug vagrant up --provision $@
+  #VAGRANT_LOG=debug vagrant up --provision $@
+  vagrant up --provision $@
   if [ $(vag-ex-host-sshconf) -ne 0 ]
   then
     vagrant ssh-config >> ${VAG_SSH_CONFIG}
@@ -48,7 +50,8 @@ function vag-u-first-aws() {
 
 #-- up
 function vag-u() {
-  VAGRANT_LOG=debug vagrant up $@
+  #VAGRANT_LOG=debug vagrant up $@
+  vagrant up $@
 }
 
 #-- halt
