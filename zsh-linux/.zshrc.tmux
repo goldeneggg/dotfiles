@@ -87,14 +87,16 @@ function tminit() {
 
 DIR_VM=${GH_DIR}/vagrant
 DIR_MYMG=${DIR_VM}/vagrant-mysql-ubuntu14
+DIR_COREOS=${DIR_VM}/coreos-vagrant
 DIR_PROVI=${GH_DIR}/provisioning-bash
+DIR_DOCKER=${GH_DIR}/docker
 
 #- tmux session for vm
 function tmvminit() {
   SESS=vmmain
 
-  WINDOWS=("vmcn7" "vmubu14app" "vmubu14mas" "vmubu14sla" "provi")
-  START_DIRS=("${DIR_VM}/vagrant-centos70-x86" "${DIR_VM}/vagrant-ubuntu14-x86-app" "${DIR_MYMG}/replication/mas1" "${DIR_MYMG}/replication/sla1" "${DIR_PROVI}")
+  WINDOWS=("vmcn7" "vmubu14app" "vmubu14mas" "vmubu14sla" "provi" "coreos" "docker")
+  START_DIRS=("${DIR_VM}/vagrant-centos70-x86" "${DIR_VM}/vagrant-ubuntu14-x86-app" "${DIR_MYMG}/replication/mas1" "${DIR_MYMG}/replication/sla1" "${DIR_PROVI}" "${DIR_COREOS}" "${DIR_DOCKER}")
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   tmux new -d -s ${SESS}
