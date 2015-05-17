@@ -6,6 +6,7 @@ DIR_DOTFILES=~/dotfiles
 GH_ACCOUNT=goldeneggg
 GH_DIR=~/github/${GH_ACCOUNT}
 DIR_NOTE=${GH_DIR}/notes
+DIR_WATCH=~/github/_watch
 DIR_BOT=${GH_DIR}/myhubot
 DIR_RUBY=${GH_DIR}/ruby
 DIR_RAILS=${GH_DIR}/rails
@@ -48,8 +49,8 @@ function tminit() {
     SESS=${DEFAULT_SESS_NAME}
   fi
 
-  WINDOWS=("note" "dot" "bot" "go" "r" "ra" "ra_wk")
-  START_DIRS=(${DIR_NOTE} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${DIR_RUBY} ${DIR_RAILS} ${DIR_RAILS})
+  WINDOWS=("watch" "dot" "bot" "go" "r" "ra" "ra_wk")
+  START_DIRS=(${DIR_WATCH} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${DIR_RUBY} ${DIR_RAILS} ${DIR_RAILS})
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   tmux new -d -s ${SESS}
