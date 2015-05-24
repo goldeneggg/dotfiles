@@ -27,4 +27,4 @@ MY_YELLOW=$'\e[1;31m'
 MY_CLEAR=$'\e[0m'
 
 #- \nの改行が効いてなさげ
-export MYSQL_PS1="\U[\v]{\d} \nmysql> "
+export MYSQL_PS1="\U[\v] \d> "
