@@ -106,6 +106,9 @@ gem_group :development, :test do
   gem 'pry-theme'
   gem 'hirb'
   gem 'hirb-unicode'
+
+  # a documentation generation tool for the Ruby programming language
+  gem 'yard'
 end
 
 
