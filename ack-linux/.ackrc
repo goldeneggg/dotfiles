@@ -12,6 +12,7 @@
 --ignore-dir=vendor
 --ignore-dir=node_modules
 --ignore-dir=coverage
+--ignore-dir=doc
 --ignore-file=match:tags
 --ignore-file=match:/[._].*\.swp$/
 
