@@ -158,7 +158,7 @@ fi
 # keychain
 if [ ! `which keychain` ]
 then
-  KEYCHAIN_VER="2.8.0"
+  KEYCHAIN_VER="2.8.1"
   KEYCHAIN_TAR=keychain-${KEYCHAIN_VER}.tar.bz2
   curl -L http://www.funtoo.org/distfiles/keychain/keychain-${KEYCHAIN_VER}.tar.bz2 -o ${KEYCHAIN_TAR}
   tar zxf ${KEYCHAIN_TAR}
