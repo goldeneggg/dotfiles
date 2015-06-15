@@ -18,36 +18,20 @@ alias tmspl='tmux splitw'
 
 # new session
 function tm() {
-  if [ $# -eq 1 ]
-  then
-    SESS=${1}
-  else
-    SESS=${DEFAULT_SESS_NAME}
-  fi
-
+  SESS=${1:-${DEFAULT_SESS_NAME}}
   tmux new -s ${SESS}
 }
 
 # kill session
 function tmkl() {
-  if [ $# -eq 1 ]
-  then
-    SESS=${1}
-  else
-    SESS=${DEFAULT_SESS_NAME}
-  fi
-
+  SESS=${1:-${DEFAULT_SESS_NAME}}
   tmux kill-session -t ${SESS}
 }
 
 #- tmux session initialize function
+#-- 1st arg = session name
 function tminit() {
-  if [ $# -eq 1 ]
-  then
-    SESS=${1}
-  else
-    SESS=${DEFAULT_SESS_NAME}
-  fi
+  SESS=${1:-${DEFAULT_SESS_NAME}}
 
   WINDOWS=("watch" "dot" "bot" "go" "r" "ra" "ra_wk")
   START_DIRS=(${DIR_WATCH} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${DIR_RUBY} ${DIR_RAILS} ${DIR_RAILS})
