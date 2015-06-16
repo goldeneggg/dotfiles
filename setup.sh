@@ -128,6 +128,7 @@ then
   fi
 fi
 
+# install go tools
 if [ -x ${GOROOT}/bin/go ]
 then
   PATH=${GOROOT}/bin:${PATH}
