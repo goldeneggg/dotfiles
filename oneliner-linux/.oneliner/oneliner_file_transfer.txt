@@ -1,0 +1,5 @@
+gzip [-fast] -c %%LARGEFILE | ssh %%USER@%%SERVER "gunzip -c - > %%OUTPUT"	#[transfer]ファイル圧縮コピーとコピー先での展開をsshで1step化してディスクI/Oを大幅削減するファイル転送
+nc -l -p 12345 | gunzip -c - > %%OUTPUT	#[transfer]ssh使用版での暗号化・復号化オーバヘッドをnc使ってネットワーク経由転送する事で回避(受信側)
+gzip [-fast] -c - %%LARGEFILE | nc -q 1 %%TARGETSERVER 12345	#[transfer]ssh使用版での暗号化・復号化オーバヘッドをnc使ってネットワーク経由転送する事で回避(送信側)
+nc -l -p 12345 | tar xzf -	#[transfer]ssh使用版での暗号化・復号化オーバヘッドをnc使ってネットワーク経由転送する事で回避, tar使ってファイル名指定も回避(受信側)
+tar czf - %%LARGEFILE | nc -q 1 %%TARGETSERVER 12345	#[transfer]ssh使用版での暗号化・復号化オーバヘッドをnc使ってネットワーク経由転送する事で回避,tar使ってファイル名指定も回避(送信側)
