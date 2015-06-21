@@ -242,6 +242,7 @@ var (
 	debug   = flag.Bool("d", false, "Debug detail information")
 	version = flag.Bool("v", false, "Print version")
 	help    = flag.Bool("h", false, "Show help message")
+	args    = flag.Args
 )
 
 func main() {
@@ -253,13 +254,13 @@ func main() {
 	flag.Parse()
 
 	// print help
-	if help {
+	if *help {
 		printHelp()
 		return
 	}
 
 	// print version
-	if version {
+	if *version {
 EOL
 
   cat <<EOM
