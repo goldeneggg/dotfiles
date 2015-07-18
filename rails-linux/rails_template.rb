@@ -59,6 +59,9 @@ gem_group :development do
   # is an HTTP server for Rack applications designed to only serve fast clients
   # on low-latency, high-bandwidth connections and take advantage of features in Unix/Unix-like kernels
   gem 'unicorn', '~> 4.8.3'
+
+  # This gem logs where ActiveRecord actually loads record
+  gem 'activerecord-cause', '~> 0.3.0'
 end
 
 gem_group :test do
