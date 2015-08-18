@@ -33,8 +33,8 @@ function tmkl() {
 function tminit() {
   SESS=${1:-${DEFAULT_SESS_NAME}}
 
-  WINDOWS=("watch" "dot" "bot" "go" "r" "ra" "ra_wk")
-  START_DIRS=(${DIR_WATCH} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${DIR_RUBY} ${DIR_RAILS} ${DIR_RAILS})
+  WINDOWS=("watch" "dot" "bot" "go" "r" "ra")
+  START_DIRS=(${DIR_WATCH} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${DIR_RUBY} ${DIR_RAILS})
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   tmux new -d -s ${SESS}
