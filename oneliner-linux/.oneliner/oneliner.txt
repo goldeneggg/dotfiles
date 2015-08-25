@@ -39,4 +39,5 @@ type %%CMD >/dev/null 2>&1	#[sh]コマンドの存在チェックを行う
 find . -type f -name "*.go" | xargs sed -i "" 's|%%BEFORE|%%AFTER|g'	#[sed]カレントディレクトリ下のgoファイルを再帰的に置換
 sed '/^$/d' %%FILE	#[sed]改行のみの行を削除する
 sed '/^ *$/d' %%FILE	#[sed]改行とスペースのみの行を削除する
+ps -efL	#[ps]スレッド関連情報も表示(LWP, NLWP)
 
