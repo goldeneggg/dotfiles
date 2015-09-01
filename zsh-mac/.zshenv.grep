@@ -1,2 +1,6 @@
-#- [mac]GNU grep is high priority
-alias grep='grep --color=auto'
+#- should install newest GNU grep
+#
+#-- $ brew tap homebrew/dupes
+#-- $ brew update
+#-- $ brew install homebrew/dupes/grep
+alias grep='/usr/local/bin/ggrep --color=auto'
