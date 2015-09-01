@@ -1,6 +1,1 @@
-#- should install newest GNU grep
-#
-#-- $ brew tap homebrew/dupes
-#-- $ brew update
-#-- $ brew install homebrew/dupes/grep
-alias grep='/usr/local/bin/ggrep --color=auto'
+../zsh-linux/.zshenv.grep
