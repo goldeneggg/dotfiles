@@ -6,3 +6,4 @@ source ~/.zshrc.vagrant
 source ~/.zshrc.vagrant-core
 source ~/.zshrc.virtualbox
 source ~/.zshrc.ssh
+source ~/.zshrc.prompt
