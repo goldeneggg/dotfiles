@@ -79,7 +79,9 @@ function _vigextcomex {
     EXT=$2
     REGEXP="$3"
 
-    F=$(grep -H -n ${STR} **/*.${EXT} | grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
+    #F=$(grep -H -n -E ${STR} **/*.${EXT} | grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(grep -H -n -E ${STR} **/*.${EXT} | grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$3" "$2}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
       eval "vi ${F}"
@@ -105,6 +107,14 @@ function vigs {
 function vigr {
     STR="$1"
     _vigextcomex "${STR}" "rb" "[0-9]:\s*#"
+}
+function vigr_method {
+    STR="$1"
+    _vigextcomex "def (self\.)?${STR}" "rb" "[0-9]:\s*#"
+}
+function vigr_class_module {
+    STR="$1"
+    _vigextcomex "(class|module) ${STR}" "rb" "[0-9]:\s*#"
 }
 function vigcf {
     STR="$1"

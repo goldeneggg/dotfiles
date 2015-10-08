@@ -152,6 +152,11 @@ fi
 alias gagi='gat gist'
 alias gasl='gat slack'
 alias gapl='gat play'
+#-- grep for ruby
+function grep_ruby_method() {
+  method=${1}
+  { grep -n "def ${method}" **/*.rb; grep -n "def self.${method}" **/*.rb; }
+}
 
 #- manをvimで読む
 function manv() {
