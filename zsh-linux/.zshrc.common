@@ -155,7 +155,7 @@ alias gapl='gat play'
 #-- grep for ruby
 function grep_ruby_method() {
   method=${1}
-  { grep -n "def ${method}" **/*.rb; grep -n "def self.${method}" **/*.rb; }
+  grep -n -E "def (self\.)?${method}" **/*.rb
 }
 
 #- manをvimで読む
