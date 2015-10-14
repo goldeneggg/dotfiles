@@ -135,7 +135,7 @@ if v:version > 701
     NeoBundle 'AndrewRadev/switch.vim'
     NeoBundle 'scrooloose/syntastic'  "保存時にsyntax check
     NeoBundle 'Lokaltog/vim-easymotion'  "移動,ジャンプ  をより良くする
-    NeoBundle 'nathanaelkane/vim-indent-guides'
+    NeoBundle 'nathanaelkane/vim-indent-guides'  "インデントに色を付ける
     NeoBundle 'itchyny/lightline.vim'  "しゃれおつステータスライン
     NeoBundle 'honza/vim-snippets'
     NeoBundle 'Shougo/vimfiler'  "ファイラ
@@ -155,7 +155,7 @@ if v:version > 701
     \ }
     NeoBundle 'tpope/vim-endwise'  "自動でend入力
     NeoBundle 'tpope/vim-rails'
-    NeoBundle 'mattn/emmet-vim'
+    NeoBundle 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C-Y ,」でそれを展開 http://motw.mods.jp/Vim/emmet-vim.html
     NeoBundle 'slim-template/vim-slim'
     NeoBundle 'ngmy/vim-rubocop'
 
