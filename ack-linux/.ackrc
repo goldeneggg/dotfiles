@@ -15,6 +15,7 @@
 --ignore-dir=doc
 --ignore-file=match:tags
 --ignore-file=match:/[._].*\.swp$/
+--ignore-dir=tmp
 
 # types
 --type-add=css=scss
