@@ -39,6 +39,7 @@
     # add,commit,merge
     ci = commit -v
     ciam = commit -v --amend
+    ciemp = commit -v --allow-empty
     mg = merge
     mgnf = merge --no-ff
     cherry = cherry-pick
