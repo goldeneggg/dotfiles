@@ -151,6 +151,22 @@ function peco-git-rm() {
 zle -N peco-git-rm
 bindkey "^pgr" peco-git-rm
 
+function peco-git-brd() {
+  BUFFER="git branch -D "$(git branch | peco | awk '{print $1}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
+}
+zle -N peco-git-brd
+bindkey "^pgd" peco-git-brd
+
+function peco-git-co() {
+  BUFFER="git checkout "$(git branch | peco | awk '{print $1}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
+}
+zle -N peco-git-co
+bindkey "^pgo" peco-git-co
+
 #-- pecoでディレクトリスタック間をcd(pushd)
 #--- recommend setting: "setopt autp_pushd"
 #--- recommend setting: "setopt pushd_ignore_dups"
