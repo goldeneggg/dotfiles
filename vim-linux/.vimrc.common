@@ -158,6 +158,7 @@ if v:version > 701
     NeoBundle 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C-Y ,」でそれを展開 http://motw.mods.jp/Vim/emmet-vim.html
     NeoBundle 'slim-template/vim-slim'
     NeoBundle 'ngmy/vim-rubocop'
+    NeoBundle 'vim-ruby/vim-ruby'
 
     " color schemes
     NeoBundle 'flazz/vim-colorschemes'
