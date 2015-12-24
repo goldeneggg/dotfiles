@@ -7,6 +7,8 @@ export GOPATH=$HOME/gopath
 export GOBIN=$GOPATH/bin
 export ERLANG_HOME=/usr/local/erlang
 export ELIXIR_HOME=/usr/local/elixir
+export PYTHON_HOME=/usr
+export PIP_HOME=$HOME/.local
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
 #-- (N-/) を付けた場合、該当パスが存在しなければ無視してくれる
@@ -19,6 +21,8 @@ path=(
     $GOBIN(N-/)
     $ERLANG_HOME/bin(N-/)
     $ELIXIR_HOME/bin(N-/)
+    $PYTHON_HOME/bin(N-/)
+    $PIP_HOME/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
     $HOME/bin(N-/)
     /usr/local/mysql/bin(N-/)
