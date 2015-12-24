@@ -40,4 +40,4 @@ find . -type f -name "*.go" | xargs sed -i "" 's|%%BEFORE|%%AFTER|g'	#[sed]カ�
 sed '/^$/d' %%FILE	#[sed]改行のみの行を削除する
 sed '/^ *$/d' %%FILE	#[sed]改行とスペースのみの行を削除する
 ps -efL	#[ps]スレッド関連情報も表示(LWP, NLWP)
-
+vmstat -S M 1	#[vmstat]1秒間隔で統計情報を表示する、単位はメガバイトで
