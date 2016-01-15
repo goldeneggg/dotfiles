@@ -79,8 +79,8 @@ DIR_DOCKER=${GH_DIR}/docker
 function tmvminit() {
   SESS=vmmain
 
-  WINDOWS=("vmcn7" "vmubu14app" "vmubu14mas" "vmubu14sla" "provi" "coreos" "docker")
-  START_DIRS=("${DIR_VM}/vagrant-centos70-x86" "${DIR_VM}/vagrant-ubuntu14-x86-app" "${DIR_MYMG}/replication/mas1" "${DIR_MYMG}/replication/sla1" "${DIR_PROVI}" "${DIR_COREOS}" "${DIR_DOCKER}")
+  WINDOWS=("vmubu15app" "vmubu14app" "vmubu14mas" "vmubu14sla" "vmubu14my57" "vmubu15my57" "provi")
+  START_DIRS=("${DIR_VM}/vagrant-ubuntu15-x86-app" "${DIR_VM}/vagrant-ubuntu14-x86-app" "${DIR_MYMG}/replication/mas1" "${DIR_MYMG}/replication/sla1" "${DIR_VM}/vagrant-mysql57-ubuntu14/replication/mas1" "${DIR_VM}/vagrant-mysql57-ubuntu15/replication/mas1" "${DIR_PROVI}")
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   tmux new -d -s ${SESS}
