@@ -1,0 +1,7 @@
+ssh-keygen -t rsa -f /home/%%USER/.ssh/%%RSAFILE -q -N ""	#ノンパスSSH鍵を作成
+ssh -t %%GATEWAY sudo -u admin ssh %%TARGET	GATEWAYからの多段ssh時にsudoする
+sudo ssh -N -f -L 80:%%WEBSERVER:80 %%USER@%%GATEWAY	#[mac]ポート80をGATEWAYを介してlocalforward,hostsに "127.0.0.1 WEBSERVER" を追記してブラウザアクセスする
+ssh -n <account>@<server> exit	#死活確認、失敗時はexitcode=255
+ssh-keygen -t rsa -f /home/{user}/.ssh/id_rsa -q -N ""	#入力待ちのないノンパスssh鍵生成
+ssh -o "StrictHostKeyChecking=no"	#未知のホスト鍵のconfirmを抑止
+sudo -u admin scp -o 'ProxyCommand sudo -u %%DEVUESR ssh %%GWUSER@%%GWSERVER nc -w 1 %h %p' admin@%%PRODSERVER:%%PRODFILE %%LOCALPATH	#本番からdevへ一発scp

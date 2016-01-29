@@ -1,14 +1,9 @@
 while true ;do ls /proc/`ps -ef | grep %%PROC_NAME | grep -v grep | awk '{print $2}'`/fd | wc -l ;sleep 1 ;done	特定のプロセスが使用しているファイルディスクリプタを1秒ごとに表示
 watch --interval=1 'netstat -ent | grep %%WORD'	#TCPの通信発生を1秒毎に確認
-openssl x509 -in %%CRTFILE -text | grep Not	#SSL証明書の期限確認
-openssl s_client -connect %%DOMAIN:443 -showcerts	#SSL証明書の内容表示
-ssh-keygen -t rsa -f /home/%%USER/.ssh/%%RSAFILE -q -N ""	#ノンパスSSH鍵を作成
-ssh -t %%GATEWAY sudo -u admin ssh %%TARGET	GATEWAYからの多段ssh時にsudoする
 wget --user=%%USER --password=%%PASS %%URL	#wget BASIC認証有り
 du /home --max-depth=1 | sort -nr	#/home直下の使用容量を降順表示
 du -h | egrep '^[0-9\.]+M' | sort -nr	#MB以上のサイズのファイル・ディレクトリを降順表示
 find . -type f -daystart -ctime -1 | xargs ls -lrt	#カレントディレクトリ下の当日更新されたファイルを再帰的に検索して日時昇順で表示
-sudo ssh -N -f -L 80:%%WEBSERVER:80 %%USER@%%GATEWAY	#[mac]ポート80をGATEWAYを介してlocalforward
 vi $(grep -n -i %%STR %%TARGET | peco | awk -F ":" '{print "-c "$2" "$1}')	#pecoを使用して、vimでgrep結果を行番号指定付きで開く
 vi $(grep -n -i %%STR %%TARGET | grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	##pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須
 vi $(grep -n -i %%STR **/*.go | grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須

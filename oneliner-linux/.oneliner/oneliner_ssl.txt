@@ -1,0 +1,3 @@
+openssl x509 -in %%CRTFILE -text | grep Not	#SSL証明書の期限確認
+openssl s_client -connect %%DOMAIN:443 -showcerts	#SSL証明書の内容表示
+openssl verify %%CERT	#SSL証明書の検証, "wget 証明書使用ドメイン" でも検証可能
