@@ -10,6 +10,7 @@ DIR_WATCH=~/github/_watch
 DIR_BOT=${GH_DIR}/myhubot
 DIR_RUBY=${GH_DIR}/ruby
 DIR_RAILS=${GH_DIR}/rails
+DIR_GOROOT=/usr/local/go
 
 
 #- aliases for tmux
@@ -33,8 +34,8 @@ function tmkl() {
 function tminit() {
   SESS=${1:-${DEFAULT_SESS_NAME}}
 
-  WINDOWS=("watch" "dot" "bot" "go" "r" "ra")
-  START_DIRS=(${DIR_WATCH} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${DIR_RUBY} ${DIR_RAILS})
+  WINDOWS=("watch" "dot" "bot" "go" "gosrc" "r" "ra" "ra2")
+  START_DIRS=(${DIR_WATCH} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${DIR_GOROOT} ${DIR_RUBY} ${DIR_RAILS} ${DIR_RAILS})
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   tmux new -d -s ${SESS}
@@ -79,8 +80,8 @@ DIR_DOCKER=${GH_DIR}/docker
 function tmvminit() {
   SESS=vmmain
 
-  WINDOWS=("vmubu15app" "vmubu14app" "vmubu14mas" "vmubu14sla" "vmubu14my57" "vmubu15my57" "provi")
-  START_DIRS=("${DIR_VM}/vagrant-ubuntu15-x86-app" "${DIR_VM}/vagrant-ubuntu14-x86-app" "${DIR_MYMG}/replication/mas1" "${DIR_MYMG}/replication/sla1" "${DIR_VM}/vagrant-mysql57-ubuntu14/replication/mas1" "${DIR_VM}/vagrant-mysql57-ubuntu15/replication/mas1" "${DIR_PROVI}")
+  WINDOWS=("vmubu15app" "vmubu14mas" "vmubu14sla" "vmubu15my57" "provi")
+  START_DIRS=("${DIR_VM}/vagrant-ubuntu15-x86-app" "${DIR_MYMG}/replication/mas1" "${DIR_MYMG}/replication/sla1" "${DIR_VM}/vagrant-mysql57-ubuntu15/replication/mas1" "${DIR_PROVI}")
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   tmux new -d -s ${SESS}
