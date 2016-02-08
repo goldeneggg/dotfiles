@@ -36,6 +36,8 @@ gem 'seed-fu', '~> 2.3.5'
 # HTTP/REST API client librar
 gem 'faraday', '~> 0.9.1'
 
+# An email validator for Rails 3+.
+gem 'email_validator', '~> 1.6.0'
 
 #- "gem_group"
 #-- Adds gem inside a group(specified by envrinment symbols)
@@ -163,6 +165,24 @@ end
 #---  lib to the generated application's config/lib directory.
 #---  initializer to the generated application's config/initializers directory.
 #---  file  which accepts a relative path from Rails.root and creates all the directories/files needed
+
+initializer 'ar_innodb_row_format.rb', <<-CODE
+ActiveSupport.on_load :active_record do
+  module ActiveRecord::ConnectionAdapters
+
+    class AbstractMysqlAdapter
+      def create_table_with_innodb_row_format(table_name, options = {})
+        table_options = options.merge(:options => 'ENGINE=InnoDB ROW_FORMAT=DYNAMIC')
+        create_table_without_innodb_row_format(table_name, table_options) do |td|
+          yield td if block_given?
+        end
+      end
+      alias_method_chain :create_table, :innodb_row_format
+    end
+
+  end
+end
+CODE
 
 #initializer 'backtrace_silencers.rb', <<-CODE
   # You can add backtrace silencers for libraries that you're using but
