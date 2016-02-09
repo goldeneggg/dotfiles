@@ -128,7 +128,7 @@ if v:version > 701
     NeoBundle 'Shougo/neocomplcache'  "補完
     NeoBundle 'Shougo/neosnippet'  "スニペット
     NeoBundle 'Shougo/neosnippet-snippets'
-    NeoBundle 'vim-scripts/taglist.vim'
+    NeoBundle 'vim-scripts/taglist.vim'  "メソッド宣言、変数宣言の一覧を別ウィンドウで表示する
     NeoBundle 'thinca/vim-quickrun'  "<Leader>(=\)r で開いているファイルを実行
     NeoBundle 'tpope/vim-markdown'
     NeoBundle 'derekwyatt/vim-scala'
@@ -380,6 +380,9 @@ if v:version > 701
     "==================== vimfiler
     nnoremap <silent> ,vf :<C-u>VimFiler -split -simple -winwidth=28 -toggle -no-quit<CR>
 
+    "==================== ctags
+    nmap <C-[> :pop<CR> "TODO: なんかモッサリするので調べる
+
 endif
 
 "==================== autocmd
@@ -435,8 +438,8 @@ if has("autocmd")
     autocmd BufNewFile,BufRead config.ru set filetype=ruby
 
     "========== ruby
-    autocmd BufNewFile,BufRead *.erb set filetype=html
-    autocmd BufNewFile,BufRead *.eco set filetype=html  "embedded coffee script
+    autocmd BufNewFile,BufRead *.erb set filetype=html.eruby
+    autocmd BufNewFile,BufRead *.eco set filetype=html.eruby  "embedded coffee script
 
     " v7.2 later
 "    if v:version > 701
