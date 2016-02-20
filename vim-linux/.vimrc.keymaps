@@ -1,41 +1,10 @@
-"==================== basic settings
-set tabstop=2
-set shiftwidth=2
-set expandtab
-set autoindent
-set incsearch
-set hlsearch
-set wrapscan  "検索がファイル末尾に到達したら先頭から再検索
-set ignorecase
-set smartcase
-set showcmd
-set hidden
-set wildmenu
-set number
-set backspace=indent,eol,start  "backspaceキーを有効化
-set nofoldenable  "折り畳みはいらない人なんです
-set fileformats=unix,dos,mac
-
-" status line
-set laststatus=2
-"set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l/%L,%c%V%8P
-
-" listchar
-set list
-set listchars=tab:>-,trail:-,nbsp:%
-highlight SpecialKey ctermfg=darkgray
-
-" cursor set for zenkaku char
-if exists('&ambiwidth')
-    set ambiwidth=double
-endif
-
 "==================== key map
-"(ref: http://vim-jp.org/vimdoc-ja/map.html)
+"See: http://vim-jp.org/vimdoc-ja/map.html
 " - カレントバッファだけで使用できるマップを作成するには、マップコマンドの引数に"<buffer>" を指定
 " - 実行するコマンドがコマンドラインに表示されないようにするには、マップコマンドの引数に "<silent>" を指定
 " - マップや短縮入力を定義するときに "<unique>" 引数を指定すると、同じ名前のものがすでに定義されていた場合に、コマンドは失敗
 " - マップや短縮入力を定義するときに "<expr>" 引数を指定すると、引数が式 (スクリプト) として扱われ、マップが実行されたときに式が評価され、その値が {rhs}として使われる
+
 "nnoremap <Space>e :edit .<CR>
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 nnoremap <C-j>n :bn<CR>

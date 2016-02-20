@@ -1,7 +1,8 @@
 "source $HOME/.vimrc.common
 
 " basic settings
-source $HOME/.vimrc.basic
+source $HOME/.vimrc.settings
+source $HOME/.vimrc.keymaps
 source $HOME/.vimrc.lets
 source $HOME/.vimrc.encoding
 source $HOME/.vimrc.macros
@@ -39,7 +40,7 @@ if has("autocmd")
   source $HOME/.vimrc.autocmd-basic
   source $HOME/.vimrc.autocmd-php
   source $HOME/.vimrc.autocmd-java
-  source $HOME/.vimrc.autocmd-coffee
-  source $HOME/.vimrc.autocmd-ruby
   source $HOME/.vimrc.autocmd-golang
+  source $HOME/.vimrc.autocmd-ruby
+  source $HOME/.vimrc.autocmd-coffee
 endif
