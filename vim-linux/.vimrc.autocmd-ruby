@@ -1,0 +1,9 @@
+autocmd filetype ruby :set makeprg=ruby\ -c\ %
+autocmd filetype ruby :set errorformat=%m\ in\ %f\ on\ line\ %l
+autocmd BufNewFile,BufRead Gemfile set filetype=ruby
+autocmd BufNewFile,BufRead Vagrantfile set filetype=ruby
+autocmd BufNewFile,BufRead .pryrc set filetype=ruby
+autocmd BufNewFile,BufRead config.ru set filetype=ruby
+
+autocmd BufNewFile,BufRead *.erb set filetype=html.eruby
+autocmd BufNewFile,BufRead *.eco set filetype=html.eruby  "embedded coffee script

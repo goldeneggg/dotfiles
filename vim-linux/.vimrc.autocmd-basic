@@ -1,0 +1,32 @@
+autocmd fileType * set comments=
+
+"augroup InsertHook
+"  autocmd!
+"  autocmd InsertEnter * highlight StatusLine ctermfg=white ctermbg=darkgray
+"  autocmd InsertLeave * highlight StatusLine ctermfg=darkgray ctermbg=white
+"augroup END
+
+function! AU_ReCheck_FENC()
+    if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
+        let &fileencoding=&encoding
+    endif
+endfunction
+autocmd BufReadPost * call AU_ReCheck_FENC()
+
+"auto moved to last saved position
+autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+
+"check syntax
+if has("syntax")
+    syntax on
+
+    "zenkaku space highlight
+    function! JISX0208SpaceHilight()
+        syntax match JISX0208Space "　" display containedin=ALL
+        highlight JISX0208Space term=underline ctermbg=darkgray
+    endfunction
+    augroup invisible
+        autocmd! invisible
+        autocmd BufNew,BufRead * call JISX0208SpaceHilight()
+    augroup END
+endif

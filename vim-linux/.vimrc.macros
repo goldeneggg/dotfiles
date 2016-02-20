@@ -1,0 +1,3 @@
+"==================== macro
+"show parentheses pair
+source $VIMRUNTIME/macros/matchit.vim

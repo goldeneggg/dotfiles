@@ -1,0 +1,9 @@
+"==================== syntastic
+let g:syntastic_mode_map = { 'mode': 'active',
+    \ 'active_filetypes': ['ruby'],
+    \ 'passive_filetypes': ['scala'] }
+let g:syntastic_auto_loc_list = 1
+"let g:syntastic_ruby_checkers = ['rubocop'] " required 'gem install rubocop'
+"let g:syntastic_quiet_warnings = 0
+nnoremap <silent> Sc :SyntasticCheck<CR>
+nnoremap <silent> Sr :SyntasticReset<CR>

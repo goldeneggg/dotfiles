@@ -1,0 +1,2 @@
+"==================== switch
+nnoremap <Space>m  :<C-u>Switch<CR>
