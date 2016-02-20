@@ -1,2 +1,2 @@
 "==================== ctags
-nmap <C-[> :pop<CR> "TODO: なんかモッサリするので調べる
+nmap <C-[> :pop<CR>
