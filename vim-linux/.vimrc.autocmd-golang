@@ -1,0 +1,7 @@
+let g:go_fmt_command = "goimports"
+
+"========== 保存時にgolintを実行する
+autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
+
+"========== スニペットpost時にブラウザを開かない
+let g:go_play_open_browser = 0

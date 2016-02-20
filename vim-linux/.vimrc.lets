@@ -1,0 +1,3 @@
+"noshowmatch is unable from version 7
+"set showmatch
+let loaded_matchparen=1

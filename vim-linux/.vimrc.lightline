@@ -1,0 +1,71 @@
+"==================== lightline
+let g:lightline = {
+    \ 'colorscheme': 'Tomorrow_Night',
+    \ 'mode_map': {'c': 'NORMAL'},
+    \ 'active': {
+    \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+    \   'right': [ ['bufnum'], ['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype'] ]
+    \ },
+    \ 'inactive': {
+    \   'right': [ ['bufnum'], ['lineinfo'], ['percent'] ]
+    \ },
+    \ 'separator': { 'left': '》', 'right': '《' },
+    \ 'subseparator': { 'left': '〉', 'right': '〈' },
+    \ 'component_function': {
+    \   'mode': 'MyMode',
+    \   'modified': 'MyModified',
+    \   'readonly': 'MyReadonly',
+    \   'fugitive': 'MyFugitive',
+    \   'filename': 'MyFilename',
+    \   'bufnum': 'MyBufnum',
+    \   'fileformat': 'MyFileformat',
+    \   'fileencoding': 'MyFileencoding',
+    \   'filetype': 'MyFiletype'
+    \ }
+\ }
+
+function! MyMode()
+  return winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
+function! MyModified()
+  return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
+
+function! MyReadonly()
+  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? '[RO]' : ''
+endfunction
+
+function! MyFugitive()
+  try
+    if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+      return fugitive#head()
+    endif
+  catch
+  endtry
+  return ''
+endfunction
+
+function! MyFilename()
+  return ('' != MyReadonly() ? MyReadonly() . ' ' : '') .
+        \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \  &ft == 'vimshell' ? vimshell#get_status_string() :
+        \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+        \ ('' != MyModified() ? ' ' . MyModified() : '')
+endfunction
+
+function! MyBufnum()
+  return 'Buf.' . bufnr('%')
+endfunction
+
+function! MyFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! MyFileencoding()
+  return winwidth(0) > 70 ? (strlen(&fenc) ? &fenc : &enc) : ''
+endfunction
+
+function! MyFiletype()
+  return winwidth(0) > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
+endfunction

@@ -1,0 +1,5 @@
+autocmd fileType php set tabstop=4 shiftwidth=4
+
+"make command is php syntax check
+autocmd filetype php :set makeprg=php\ -l\ %
+autocmd filetype php :set errorformat=%m\ in\ %f\ on\ line\ %l

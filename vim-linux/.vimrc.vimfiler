@@ -1,0 +1,2 @@
+"==================== vimfiler
+nnoremap <silent> ,vf :<C-u>VimFiler -split -simple -winwidth=28 -toggle -no-quit<CR>

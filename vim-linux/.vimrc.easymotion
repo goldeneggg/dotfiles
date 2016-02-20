@@ -1,0 +1,7 @@
+"==================== easymotion
+let g:EasyMotion_keys='hjklasdfgyuiopqwertnmzxcvbHJKLASDFGYUIOPQWERTNMZXCVB'
+" 2-character search motionを使いたいので、デフォルトのキーマッピングは無効化
+let g:EasyMotion_do_mapping = 0
+" 2-character search motion
+" '<Space> => 移動したい先の文字列の1文字目 => 2文字目'  でlabelが強調表示されるのでlabel文字を選択
+nmap <Space> <Plug>(easymotion-s2)
