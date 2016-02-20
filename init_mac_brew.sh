@@ -15,6 +15,7 @@ declare -ar APPS=("git" \
   "ack" \
   "stow" \
   "zsh" \
+  "diff-so-fancy" \
   "cmake" \
   "readline" \
   "ctags" \
