@@ -12,10 +12,8 @@ set showcmd
 set hidden
 set wildmenu
 set number
-" backspaceキーを有効化
-set backspace=indent,eol,start
-" 折り畳みはいらない人なんです
-set nofoldenable
+set backspace=indent,eol,start  "backspaceキーを有効化
+set nofoldenable  "折り畳みはいらない人なんです
 
 "noshowmatch is unable from version 7
 "set showmatch
