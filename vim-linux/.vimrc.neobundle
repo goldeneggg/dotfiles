@@ -48,6 +48,7 @@ NeoBundle 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き,
 NeoBundle 'slim-template/vim-slim'
 NeoBundle 'ngmy/vim-rubocop'
 NeoBundle 'vim-ruby/vim-ruby'
+NeoBundle 'kien/ctrlp.vim' "http://qiita.com/oahiroaki/items/d71337fb9d28303a54a8
 
 " color schemes
 NeoBundle 'flazz/vim-colorschemes'
