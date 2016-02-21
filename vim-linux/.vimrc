@@ -21,17 +21,20 @@ if v:version > 701
   " later assumed to be set plugins
   source $HOME/.vimrc.colorscheme
 
-  source $HOME/.vimrc.yanktmp
   source $HOME/.vimrc.unite
+  source $HOME/.vimrc.vimfiler
   source $HOME/.vimrc.neocomplcache
   source $HOME/.vimrc.neosnippet
+
+  source $HOME/.vimrc.ctrlp
+
   source $HOME/.vimrc.quickrun
   source $HOME/.vimrc.syntastic
+  "source $HOME/.vimrc.easymotion
   source $HOME/.vimrc.switchvim
-  source $HOME/.vimrc.easymotion
+  source $HOME/.vimrc.yanktmp
   source $HOME/.vimrc.indentguides
   source $HOME/.vimrc.lightline
-  source $HOME/.vimrc.vimfiler
 endif
 
 if has("autocmd")

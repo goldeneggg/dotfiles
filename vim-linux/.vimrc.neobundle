@@ -10,8 +10,8 @@ call neobundle#end()
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'Shougo/neomru.vim'
-NeoBundle 'tpope/vim-surround'  "囲む奴  の操作をより良くする
-NeoBundle 'tpope/vim-fugitive'  ":Gxxxx でgitのコマンドを実行, :Gblame = git blame
+NeoBundle 'tpope/vim-surround'  "囲む奴の操作をより良くする
+NeoBundle 'tpope/vim-fugitive'  "gitのコマンドを実行
 NeoBundle 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルにヤンク・ペースト
 " NeoBundle 'vim-scripts/Smooth-Scroll'
 NeoBundle 'Shougo/neocomplcache'  "補完
@@ -23,7 +23,7 @@ NeoBundle 'tpope/vim-markdown'
 NeoBundle 'derekwyatt/vim-scala'
 NeoBundle 'AndrewRadev/switch.vim'
 NeoBundle 'scrooloose/syntastic'  "保存時にsyntax check
-NeoBundle 'Lokaltog/vim-easymotion'  "移動,ジャンプ  をより良くする
+"NeoBundle 'Lokaltog/vim-easymotion'  "移動,ジャンプ  をより良くする
 NeoBundle 'nathanaelkane/vim-indent-guides'  "インデントに色を付ける
 NeoBundle 'itchyny/lightline.vim'  "しゃれおつステータスライン
 NeoBundle 'honza/vim-snippets'
@@ -31,7 +31,7 @@ NeoBundle 'Shougo/vimfiler'  "ファイラ
 NeoBundle 'rgarver/Kwbd.vim'  "ウインドウ分割時にバッファを閉じた際, ウインドウレイアウトはそのまま残す
 NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'} "install: go get github.com/nsf/gocode
-NeoBundle 'kana/vim-smartinput'  " 対応する括弧 系, http://labs.timedia.co.jp/2012/09/vim-smartinput.html
+NeoBundle 'kana/vim-smartinput'  " http://labs.timedia.co.jp/2012/09/vim-smartinput.html
 NeoBundle 'fatih/vim-go'  " Go 1.4+ removed misc/vim directory
 " need to execute make (`cd ~/.bundle/vimproc; make -f make_{mac,unix}.mak`)
 NeoBundle 'Shougo/vimproc', {
@@ -49,6 +49,7 @@ NeoBundle 'slim-template/vim-slim'
 NeoBundle 'ngmy/vim-rubocop'
 NeoBundle 'vim-ruby/vim-ruby'
 NeoBundle 'kien/ctrlp.vim' "http://qiita.com/oahiroaki/items/d71337fb9d28303a54a8
+NeoBundle 'mattn/libcallex-vim' "http://mattn.kaoriya.net/software/lang/go/20150609021917.htm
 
 " color schemes
 NeoBundle 'flazz/vim-colorschemes'

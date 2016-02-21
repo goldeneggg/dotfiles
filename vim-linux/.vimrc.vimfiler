@@ -1,2 +1,4 @@
 "==================== vimfiler
-nnoremap <silent> ,vf :<C-u>VimFiler -split -simple -winwidth=28 -toggle -no-quit<CR>
+" http://archiva.jp/web/tool/vim_grep2.html
+
+nnoremap <silent> ,vf :<C-u>VimFiler -split -simple -winwidth=30 -toggle -no-quit<CR>
