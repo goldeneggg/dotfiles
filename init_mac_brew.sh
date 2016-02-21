@@ -10,11 +10,13 @@ brew update
 
 declare -ar APPS=("git" \
   "vim" \
+  "zsh" \
+  "tmux" \
   "wget" \
   "lv" \
   "ack" \
+  "the_silver_searcher" \
   "stow" \
-  "zsh" \
   "diff-so-fancy" \
   "cmake" \
   "readline" \
