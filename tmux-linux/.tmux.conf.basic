@@ -1,0 +1,19 @@
+#####
+# 初期設定
+#####
+# prefix keyをCtrl-tに変更
+unbind C-b
+set -g prefix C-t
+bind C-t send-prefix
+# 256色
+set -g default-terminal "screen-256color"
+# シェルで色を確認するスクリプト
+#    fgbg=("38" "48")  # 38 = fg, 48 = bg
+#    for fb in ${fgbg[@]}
+#    do
+#      for i in {0..255} ; do
+#        printf "\x1b[${fb};5;${i}mcolour${i}\n"
+#      done
+#    done
+# スクロールバック
+set -g history-limit 10000

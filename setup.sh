@@ -167,6 +167,13 @@ then
   mv keychain-${KEYCHAIN_VER}/keychain.pod ${HOME}/bin/
 fi
 
+# tmux plugin manager
+if [ ! -d ${HOME}/.tmux/plugins ]
+then
+  mkdir -p ${HOME}/.tmux/plugins
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
 echo ""
 echo "---------------------------------------------------------"
 echo "Success!"

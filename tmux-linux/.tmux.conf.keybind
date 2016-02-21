@@ -1,0 +1,22 @@
+#####
+# キーバインド
+#####
+# `PREFIX C-r` - tmux.confの再読み込み
+bind C-r source-file ~/.tmux.conf \; display "Reloaded!"
+# `PREFIX- C-h`で1つ手前のウインドウをアクティブ化, その後prefix無しでC-hを連続押下したらさらに手前のウインドウへ(`-r`で実現)
+bind -r C-h select-window -t :-
+# `PREFIX- C-l`で1つ後ろのウインドウをアクティブ化, その後prefix無しでC-lを連続押下したらさらに手前のウインドウへ(`-r`で実現)
+bind -r C-l select-window -t :+
+# vim風キーバインドでペイン間を移動
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+# 元々のlに設定されてた前回選択ウインドウの再選択(last-window)は C-t へ割り当てる(screen風)
+## prefix C-t は、コマンド実行中ウインドウで押下するとロードアベレージが表示されるが、この機能は無効化
+bind C-t last-window
+# ペインのサイズ変更
+bind H resize-pane -L 5
+bind J resize-pane -D 5
+bind K resize-pane -U 5
+bind L resize-pane -R 5

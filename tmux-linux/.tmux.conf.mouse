@@ -1,0 +1,10 @@
+#####
+# マウス
+#####
+# マウスでの操作を有効化 (iTerm使用時は "Enable xterm mouse reporting" をONにする)
+# マウスドラッグ（からのC-c）によるクリップボード連携が効かなくなる
+# が、iTerm2ならOptionを押しながらドラッグすれば通常のドラッグ時同様にクリップボードにコピーされる
+#setw -g mode-mouse on
+set -g mouse on
+bind -n WheelUpPane   select-pane -t= \; copy-mode -e \; send-keys -M
+bind -n WheelDownPane select-pane -t= \;                 send-keys -M

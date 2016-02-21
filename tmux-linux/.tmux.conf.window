@@ -1,0 +1,7 @@
+#####
+# ウインドウ
+#####
+# ウインドウの開始番号=1
+set -g base-index 1
+# サイズの異なる端末からアタッチした際にリサイズ
+setw -g aggressive-resize on
