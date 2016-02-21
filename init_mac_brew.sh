@@ -21,6 +21,7 @@ declare -ar APPS=("git" \
   "cmake" \
   "readline" \
   "ctags" \
+  "reattach-to-user-namespace" \
   "libevent" \
   "pstree")
 for app in ${APPS[@]}

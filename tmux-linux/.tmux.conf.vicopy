@@ -3,4 +3,27 @@
 #####
 bind -t vi-copy v begin-selection
 bind -t vi-copy C-v rectangle-toggle
+
+#####
+# copy mode
+#####
+# See: http://rcmdnk.github.io/blog/2015/01/02/computer-tmux-screen/
+#   prefix + [ = コピーモード開始 *カスタマイズする*
+#   Space = 選択開始
+#   V = 行選択開始
+#   v = 選択中に矩形選択モードon/off切り替え(rectangle-toggle)
+#   Enter = 選択終了(コピー)  *カスタマイズする*
+#   prefix + ] = ペースト
+
+#bind -t vi-copy v begin-selection
+#bind v copy-mode \; display "Copy mode!"
+bind [ copy-mode \; display "Start copy mode"
+
+# 選択中に C-v で矩形選択切り替え
+bind -t vi-copy C-v rectangle-toggle
+
+# 選択中に Enter (or y) でコピー
+bind -t vi-copy Enter copy-selection
 bind -t vi-copy y copy-selection
+
+bind ] paste-buffer \; display "Pasted"
