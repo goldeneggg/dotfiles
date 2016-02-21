@@ -16,6 +16,9 @@ let g:unite_enable_ignore_case = 1
 let g:unite_enable_smart_case = 1
 " 最近開いたファイル一覧の最大数
 let g:unite_source_file_mru_limit = 200
+" dotfileも表示対象にする TODO
+"call unite#custom#source('file', 'matchers', "matcher_default")
+"call unite#custom#source('grep', 'matchers', "matcher_default")
 " 無視パターンをスクリプト変数で定義
 let s:unite_ignore_patterns=
   \ ''

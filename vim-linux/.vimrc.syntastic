@@ -5,5 +5,10 @@ let g:syntastic_mode_map = { 'mode': 'active',
 let g:syntastic_auto_loc_list = 1
 "let g:syntastic_ruby_checkers = ['rubocop'] " required 'gem install rubocop'
 "let g:syntastic_quiet_warnings = 0
+
+" ignore erb<=>html error
+let g:syntastic_eruby_ruby_quiet_messages =
+    \ {'regex': 'possibly useless use of a variable in void context'}
+
 nnoremap <silent> Sc :SyntasticCheck<CR>
 nnoremap <silent> Sr :SyntasticReset<CR>

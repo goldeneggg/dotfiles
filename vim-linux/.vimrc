@@ -11,6 +11,7 @@ source $HOME/.vimrc.ctags
 if v:version > 701
   " configure plugins(using neobundle) and runtimes
   " See: http://mattn.kaoriya.net/software/vim/20120618123848.htm
+
   filetype off
   filetype plugin indent off
   source $HOME/.vimrc.neobundle
@@ -45,5 +46,5 @@ if has("autocmd")
   source $HOME/.vimrc.autocmd-java
   source $HOME/.vimrc.autocmd-golang
   source $HOME/.vimrc.autocmd-ruby
-  source $HOME/.vimrc.autocmd-coffee
+  source $HOME/.vimrc.autocmd-markdown
 endif

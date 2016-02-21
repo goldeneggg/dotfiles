@@ -1,1 +1,1 @@
-autocmd fileType java set tabstop=4 shiftwidth=4
+autocmd fileType java set tabstop=4 softtabstop=4 shiftwidth=4
