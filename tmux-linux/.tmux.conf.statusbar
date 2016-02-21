@@ -1,0 +1,48 @@
+#####
+# ステータスバー
+#####
+## utf8を有効に
+set -g status-utf8 on
+## 描画間隔
+set -g status off
+set -g status-interval 0
+## ウインドウリストの位置
+set -g status-justify left
+## サイズ
+#set -g status-left-length 60
+#set -g status-right-length 90
+### カラー
+#set -g status-fg white
+#set -g status-bg black
+### 固定表示
+#set -g status-left "<#S @#h> "
+#set -g status-right "[%Y-%m-%d(%a) %H:%M]"
+## tmux-powerline使用
+##set -g status-left "#(~/tmux-powerline/powerline.sh left)"
+##set -g status-right "#(~/tmux-powerline/powerline.sh right)"
+## ウインドウ表示部
+#setw -g window-status-current-fg white
+#setw -g window-status-current-bg brightred
+
+## ** using powerline **
+if-shell 'test -z "$POWERLINE_CONFIG_COMMAND"' 'set-environment -g POWERLINE_CONFIG_COMMAND powerline-config'
+run-shell 'eval $POWERLINE_CONFIG_COMMAND tmux source'
+### カラー
+set -g status-fg colour231
+set -g status-bg colour234
+### 左部分
+set -g status-left-length 20
+set -qg status-left '#{?client_prefix,#[fg=colour254]#[bg=colour31]#[bold],#[fg=colour16]#[bg=colour254]#[bold]} #S #{?client_prefix,#[fg=colour31]#[bg=colour234]#[nobold],#[fg=colour254]#[bg=colour234]#[nobold]}#(eval $POWERLINE_COMMAND tmux left)'
+### 右部分
+set -g status-right-length 150
+#set -g status-right '#(eval $POWERLINE_COMMAND tmux right -R pane_id=`tmux display -p "#D"`)'
+set -g status-right "[%Y-%m-%d(%a) %H:%M]"
+### ウインドウ
+set -g window-status-format "#[fg=colour244,bg=colour234]  #I #[fg=colour240] #[default]#W "
+set -g window-status-current-format "#[fg=colour234,bg=colour31]#[fg=colour117,bg=colour31] #I  #[fg=colour231,bold]#W #[fg=colour31,bg=colour234,nobold]"
+setw -g window-status-fg colour249
+set -qg window-status-last-fg colour31
+setw -g window-status-activity-attr none
+setw -g window-status-activity-fg yellow
+setw -g window-status-bell-attr none
+setw -g window-status-bell-fg red

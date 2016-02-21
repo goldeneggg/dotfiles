@@ -1,4 +1,10 @@
 #####
+# モードkey
+#####
+# = vi
+setw -g mode-keys vi
+
+#####
 # copy mode
 #####
 bind -t vi-copy v begin-selection

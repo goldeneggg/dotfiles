@@ -1,0 +1,12 @@
+#####
+# ペイン
+#####
+# ペインの開始番号=1
+setw -g pane-base-index 1
+# ペインのローテート(Ctrl-o)を無効化  *あまり使わないし、ペイン移動(o)とキーストロークが近くてよく誤るので*
+unbind C-o
+# 境界線
+set -g pane-border-fg colour237
+set -g pane-border-bg colour233
+set -g pane-active-border-fg colour82
+set -g pane-active-border-bg colour233
