@@ -1,14 +1,37 @@
 #####
 # プラグイン
 #####
-# List of plugins
+# plugin manager
 set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'nhdaly/tmux-scroll-copy-mode'
+# uninstall by prefix + C-u
+set -g @tpm-clean 'C-u'
 
-# Other examples:
-# set -g @plugin 'github_username/plugin_name'
-# set -g @plugin 'git@github.com/user/plugin'
-# set -g @plugin 'git@bitbucket.com/user/plugin'
+# prefix-highlight
+set -g @plugin 'tmux-plugins/tmux-prefix-highlight'
+set -g @prefix_highlight_bg 'red'
+
+# cpu
+set -g @plugin 'tmux-plugins/tmux-cpu'
+
+# urlview
+set -g @plugin 'tmux-plugins/tmux-urlview'
+#set -g @urlview-key 'x'
+
+# tmux-open
+set -g @plugin 'tmux-plugins/tmux-open'
+# How can I change the default "o" key binding to something else? For example, key "x"?
+#set -g @open 'x' in tmux.conf
+# How can I change the default "Ctrl-o" key binding to "Ctrl-x"?
+# set -g @open-editor 'C-x''
+
+# tmux-pain-control
+#set -g @plugin 'tmux-plugins/tmux-pain-control'
+
+# tmux-continuum
+# See: https://github.com/tmux-plugins/tmux-continuum
+#set -g @plugin 'tmux-plugins/tmux-resurrect'
+#set -g @plugin 'tmux-plugins/tmux-continuum'
+# set -g @continuum-restore 'on'
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run '~/.tmux/plugins/tpm/tpm'

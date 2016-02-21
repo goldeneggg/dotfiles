@@ -36,6 +36,7 @@ if v:version > 701
   source $HOME/.vimrc.yanktmp
   source $HOME/.vimrc.indentguides
   source $HOME/.vimrc.lightline
+  source $HOME/.vimrc.dash
 endif
 
 if has("autocmd")
@@ -47,4 +48,5 @@ if has("autocmd")
   source $HOME/.vimrc.autocmd-golang
   source $HOME/.vimrc.autocmd-ruby
   source $HOME/.vimrc.autocmd-markdown
+  source $HOME/.vimrc.autocmd-tmux
 endif

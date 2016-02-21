@@ -22,6 +22,8 @@ declare -ar APPS=("git" \
   "readline" \
   "ctags" \
   "reattach-to-user-namespace" \
+  "urlview" \
+  "extract_url" \
   "libevent" \
   "pstree")
 for app in ${APPS[@]}
@@ -36,6 +38,10 @@ for app in ${DUPES_APPS[@]}
 do
   brew install homebrew/dupes/${app}
 done
+
+# highway
+brew tap tkengo/highway
+brew install highway
 
 
 exit 0
