@@ -29,10 +29,17 @@ set -g @plugin 'tmux-plugins/tmux-open'
 set -g @plugin 'tmux-plugins/tmux-pain-control'
 #set-option -g @pane_resize "10"
 
-# tmux-continuum
+# tmux-resurrect
 # See: https://github.com/tmux-plugins/tmux-continuum
 # See: https://github.com/tmux-plugins/tmux-resurrect
+# See: http://kiririmode.hatenablog.jp/entry/20150206/1423148400
 set -g @plugin 'tmux-plugins/tmux-resurrect'
+
+# save and restore
+set -g @resurrect-save 'S'
+set -g @resurrect-save 'R'
+
+# tmux-continuum *tmux -resurrect is required*
 set -g @plugin 'tmux-plugins/tmux-continuum'
 # restore setting
 set -g @continuum-restore 'on'
