@@ -31,13 +31,14 @@ set -g @plugin 'tmux-plugins/tmux-pain-control'
 
 # tmux-continuum
 # See: https://github.com/tmux-plugins/tmux-continuum
-#set -g @plugin 'tmux-plugins/tmux-resurrect'
-#set -g @plugin 'tmux-plugins/tmux-continuum'
+# See: https://github.com/tmux-plugins/tmux-resurrect
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
 # restore setting
-#set -g @continuum-restore 'on'
+set -g @continuum-restore 'on'
 # autostart setting
-#set -g @continuum-boot 'on'
-#set -g @continuum-boot-options 'iterm'
+set -g @continuum-boot 'on'
+set -g @continuum-boot-options 'iterm'
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run '~/.tmux/plugins/tpm/tpm'

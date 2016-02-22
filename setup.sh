@@ -172,6 +172,9 @@ if [ ! -d ${HOME}/.tmux/plugins ]
 then
   mkdir -p ${HOME}/.tmux/plugins
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+  # for tmux-resurrect
+  mkdir -p ${HOME}/.tmux/resurrect
 fi
 
 echo ""
