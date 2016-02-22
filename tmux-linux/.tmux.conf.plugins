@@ -37,7 +37,7 @@ set -g @plugin 'tmux-plugins/tmux-resurrect'
 
 # save and restore
 set -g @resurrect-save 'S'
-set -g @resurrect-save 'R'
+set -g @resurrect-restore 'R'
 
 # tmux-continuum *tmux -resurrect is required*
 set -g @plugin 'tmux-plugins/tmux-continuum'
