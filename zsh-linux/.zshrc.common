@@ -131,6 +131,8 @@ alias w3m='w3m -reqlog'
 alias od='od -tx1c'
 alias so='source ~/.zshenv ~/.zshrc'
 alias tokyo='curl wttr.in/Tokyo'
+#-- highway
+alias hw='hw -a --no-group'
 #-- golang
 alias gb='go build'
 alias gt='go test'
