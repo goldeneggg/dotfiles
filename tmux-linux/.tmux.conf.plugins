@@ -20,18 +20,24 @@ set -g @plugin 'tmux-plugins/tmux-urlview'
 # tmux-open
 set -g @plugin 'tmux-plugins/tmux-open'
 # How can I change the default "o" key binding to something else? For example, key "x"?
-#set -g @open 'x' in tmux.conf
+#set -g @open 'C-o'
 # How can I change the default "Ctrl-o" key binding to "Ctrl-x"?
 # set -g @open-editor 'C-x''
 
 # tmux-pain-control
-#set -g @plugin 'tmux-plugins/tmux-pain-control'
+# See: https://github.com/tmux-plugins/tmux-pain-control
+set -g @plugin 'tmux-plugins/tmux-pain-control'
+#set-option -g @pane_resize "10"
 
 # tmux-continuum
 # See: https://github.com/tmux-plugins/tmux-continuum
 #set -g @plugin 'tmux-plugins/tmux-resurrect'
 #set -g @plugin 'tmux-plugins/tmux-continuum'
-# set -g @continuum-restore 'on'
+# restore setting
+#set -g @continuum-restore 'on'
+# autostart setting
+#set -g @continuum-boot 'on'
+#set -g @continuum-boot-options 'iterm'
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run '~/.tmux/plugins/tpm/tpm'
