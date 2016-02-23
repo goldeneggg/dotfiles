@@ -1,5 +1,6 @@
 VAG_SSH_CONFIG=~/.ssh/config_vag
 VAG_NULL="null"
+VAG_UP_CMD="vagrant up --provider virtualbox"
 
 #- shortcut functions
 #-- hostname
@@ -30,8 +31,7 @@ function vag-ssh() {
 
 #-- first up
 function vag-u-first() {
-  #VAGRANT_LOG=debug vagrant up --provision $@
-  vagrant up --provision $@
+  ${VAG_UP_CMD} --provision $@
   vagrant reload
   if [ $(vag-ex-host-sshconf) -ne 0 ]
   then
@@ -49,8 +49,7 @@ function vag-u-first-aws() {
 
 #-- up
 function vag-u() {
-  #VAGRANT_LOG=debug vagrant up $@
-  vagrant up $@
+  ${VAG_UP_CMD} $@
 }
 
 #-- halt
