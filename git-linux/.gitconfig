@@ -81,3 +81,9 @@
   grr = grep -I --full-name -n --color
   ## target is indexed files
   grc = grep --cached -I --full-name -F -n --color
+  ## pull request
+  showpr = !"f() { git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1; }; f"
+  ## using hub
+  open = browse
+  pullreq = pull-request
+  openpr = "!f() { hub browse -- `git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1 | cut -f5 -d' ' | sed -e 's%#%pull/%'`; }; f"
