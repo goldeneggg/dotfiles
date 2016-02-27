@@ -45,6 +45,7 @@
   ci = commit -v
   ciam = commit -v --amend
   ciemp = commit -v --allow-empty
+  cifix = commit --fixup
   mg = merge
   mgnf = merge --no-ff
   cherry = cherry-pick
