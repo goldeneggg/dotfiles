@@ -1,6 +1,6 @@
 VAG_SSH_CONFIG=~/.ssh/config_vag
 VAG_NULL="null"
-VAG_UP_CMD="vagrant up --provider virtualbox"
+VAG_UP_CMD="vagrant up"
 
 #- shortcut functions
 #-- hostname
