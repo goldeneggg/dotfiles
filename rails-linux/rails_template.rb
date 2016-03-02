@@ -2,6 +2,9 @@
 # my rails Gemfile template
 #    http://tech.kayac.com/archive/adventcalendar2014_12.html
 #    http://guides.rubyonrails.org/rails_application_templates.html
+#
+# example of 'rails new' command as follows
+#  rails new APPNAME -d mysql -T --skip-bundle -m ~/rails_template.rb
 # -----
 
 #- "gem"
@@ -28,7 +31,7 @@ gem 'annotate', '~> 2.6.8'
 gem 'active_model_serializers', '~> 0.9.3'
 
 # Switching database connection between readonly one and writable one
-gem 'switch_point', '~> 0.6.0'
+#gem 'switch_point', '~> 0.6.0'
 
 # is an attempt to once and for all solve the problem of inserting and maintaining seed data in a database
 gem 'seed-fu', '~> 2.3.5'
@@ -73,8 +76,8 @@ gem_group :test do
   # allows stubbing HTTP requests and setting expectations on HTTP requests
   gem 'webmock', '~> 1.21.0'
 
-  # A minimalist's tiny and ultra-fast database cleaner
-  gem 'database_rewinder'
+  # Strategies for cleaning databases. Can be used to ensure a clean state for testing.
+  gem 'database_cleaner', '~> 1.5.1'
 
   # WebDriver is a tool for writing automated tests of websites
   gem 'selenium-webdriver', '~> 2.45.0'
