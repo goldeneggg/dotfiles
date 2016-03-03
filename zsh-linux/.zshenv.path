@@ -25,6 +25,7 @@ path=(
     $PIP_HOME/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
     $HOME/bin(N-/)
+    $HOME/local/bin(N-/)
     /usr/local/mysql/bin(N-/)
     $HOME/.cabal/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
