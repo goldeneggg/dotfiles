@@ -162,7 +162,7 @@ then
   KEYCHAIN_VER="2.8.1"
   KEYCHAIN_TAR=keychain-${KEYCHAIN_VER}.tar.bz2
   curl -L http://www.funtoo.org/distfiles/keychain/keychain-${KEYCHAIN_VER}.tar.bz2 -o ${KEYCHAIN_TAR}
-  tar zxf ${KEYCHAIN_TAR}
+  tar jxf ${KEYCHAIN_TAR}
   mv keychain-${KEYCHAIN_VER}/keychain ${HOME}/bin/
   mv keychain-${KEYCHAIN_VER}/keychain.pod ${HOME}/bin/
 fi
