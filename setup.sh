@@ -114,12 +114,12 @@ git submodule update --init
 
 # install vim plugins
 ## dependency for golang
-if [ ! -z "${GOROOT+x}" ]
+if [ ! -z "${GOROOT}" ]
 then
   export GOROOT=/usr/local/go
 fi
 
-if [ ! -z "${GOPATH+x}" ]
+if [ ! -z "${GOPATH}" ]
 then
   export GOPATH=${HOME}/gopath
   if [ ! -d ${GOPATH} ]
