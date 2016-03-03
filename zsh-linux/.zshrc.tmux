@@ -10,7 +10,7 @@ DIR_WATCH=~/github/_watch
 DIR_BOT=${GH_DIR}/myhubot
 DIR_RUBY=${GH_DIR}/ruby
 DIR_RAILS=${GH_DIR}/rails
-DIR_GOROOT=/usr/local/go
+DIR_GOROOT=${GOROOT}
 
 
 #- aliases for tmux
