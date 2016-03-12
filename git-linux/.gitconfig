@@ -23,8 +23,10 @@
   pl = pull
   plr = pull --rebase
   co = checkout
+  # push
+  pushforce = push --force-with-lease
   # branch
-  b = branch
+  br = branch
   brv = branch -v
   bra = branch -a
   brva = branch -v -a
