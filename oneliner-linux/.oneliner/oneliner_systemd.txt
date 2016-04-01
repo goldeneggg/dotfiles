@@ -1,0 +1,9 @@
+systemctl list-unit-files --type=service | grep %%TARGET%%	#UnitがServiceとして認識されたか確認する
+systemctl enable %%TARGET%%	#自動起動on
+systemctl start %%TARGET%%	#起動
+systemctl status %%TARGET%%	#ステータス確認
+systemctl --failed	#失敗したユニットを一覧表示
+journalctl -l --no-pager	#systemdのログを（pager無しで）閲覧
+journalctl -u %%TARGET%%.service	#systemdの特定サービスのログを閲覧
+journalctl -u %%TARGET%%.service -o json-pretty	#systemdの特定サービスのログをメタデータを含めて全部閲覧
+journalctl -f	#tail -fのような挙動でログを監視
