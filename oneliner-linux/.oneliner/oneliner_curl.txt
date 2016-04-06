@@ -1,0 +1,11 @@
+curl -L -o %%FILENAME %%URL	#[curl]curlによるファイルダウンロードの一般形、-L は30x系でリダイレクト先等にリクエストを再試行するオプション
+curl -L -o %%FILENAME -c %%COOKIEFILE %%URL	#[curl]curlによるファイルダウンロード、-c はSet-Cookieヘッダで返された内容をファイルに出力するオプション
+curl -L -o %%FILENAME -b %%COOKIEFILE %%URL	#[curl]curlによるファイルダウンロード、-b (-c 等で)保存したcookieファイルを使ってリクエストを送信するオプション
+curl -L -o %%FILENAME --resolve %%HOST:%%PORT:%%ADDRESS %%URL	#[curl]curlによるファイルダウンロード、-b (-c 等で)保存したcookieファイルを使ってリクエストを送信するオプション
+curl -L -o %%FILENAME -d %%NAME=%%VALUE %%URL	#[curl]curlによるファイルダウンロードの一般形、-dでパラメータ指定（URLエンコードなし)、 は30x系でリダイレクト先等にリクエストを再試行するオプション
+curl -L -o %%FILENAME -A %%USERAGENT %%URL	#[curl]curlによるファイルダウンロードの一般形、-Aでuser-agent指定
+curl -L -o %%FILENAME --data-urlencode %%NAME=%%VALUE %%URL	#[curl]curlによるファイルダウンロードの一般形、--data-urlencodeでパラメータ値をURLエンコードする
+curl -L -o %%FILENAME -e %%REFERER %%URL	#[curl]curlによるファイルダウンロードの一般形、-eでリファラを指定する
+curl -XPOST -d @%%DATFILE %%URL	#[curl]指定したデータファイル(jsonとか)をPOSTで送信する
+curl -XPOST -H 'Content-Type: application/json' --data-binary @%%JSONFILE %%URL	#[curl]指定したjsonファイルをPOSTでヘッダを付けて送信する
+curl -L --libcurl %%CFILE %%URL	#[curl]--libcurlオプションで、実行したcurlコマンドと同じことを行うcのソースファイルを出力する

@@ -26,7 +26,6 @@ cp /proc/%%PID/fd/%%FD %%TOFILE	#プロセスで使用中のファイルを削�
 dig -f %%DIGFILE	#digコマンドを羅列したファイルを指定してバッチモードでdigを実行する,バッチモード用ファイルの記法やオプションは通常のコマンド実行時と同じ
 for v in $(vagrant status | grep %%VMSTR | awk '{print $1}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,vagrantコマンド使用
 for v in $(VBoxManage list runningvms | grep %%VMSTR | awk -F"_" '{print $2}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,VBoxManage使用
-curl -L -o %%FILENAME %%URL	#[curl]curlによるファイルダウンロードの一般形
 time -f '%Uu %Ss %er %MkB %C' "$@"	#[prof]timeコマンドの出力結果を見やすくしてコマンドプロファイリングする(https://blog.golang.org/profiling-go-programs)
 [[ -x `which %%CMD` ]] && %%CMD %%ARGS	#[shell]CMDで指定したコマンドが存在していれば実行する
 ctags --langmap=Ruby:.rb --exclude="*.js"  --exclude=".git*" -R .	#[ctags][ruby]カレントディレクトリ下のrubyソース群に対して再帰的にctagを生成
