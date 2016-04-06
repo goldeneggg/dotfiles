@@ -9,3 +9,5 @@ curl -L -o %%FILENAME -e %%REFERER %%URL	#[curl]curlによるファイルダウ�
 curl -XPOST -d @%%DATFILE %%URL	#[curl]指定したデータファイル(jsonとか)をPOSTで送信する
 curl -XPOST -H 'Content-Type: application/json' --data-binary @%%JSONFILE %%URL	#[curl]指定したjsonファイルをPOSTでヘッダを付けて送信する
 curl -L --libcurl %%CFILE %%URL	#[curl]--libcurlオプションで、実行したcurlコマンドと同じことを行うcのソースファイルを出力する
+curl -XPOST -d grant_type=authorization_code -d client_id=%%CLIENT_ID -d client_secret=%%CLIENT_SECRET -d code=%%AUTHORIZATION_CODE -d redirect_uri=%%REDIRECT_URL "http://%%APIHOST/oauth/token"	#[curl]oauthのaccess_tokenを取得する、authorization code grantフローでの場合
+
