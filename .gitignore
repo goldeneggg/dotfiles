@@ -3,3 +3,5 @@
 .netrwhist
 .zshrc.tests
 *.swo
+*~
+dump.rdb
