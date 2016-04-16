@@ -64,6 +64,7 @@
   ranking = shortlog -s -n --no-merges
   log-graph = log --graph --date=short --pretty=format:'%h %cd %C(cyan)%cn %Creset%s'
   log-all = log --graph --all --color --pretty='%x09%h %C(cyan)%cn%Creset%x09%s %Cred%d%Creset'
+  hashes = log --pretty=format:%h --follow
   # list
   ls = ls-files -oc --exclude-standard
   # remote
@@ -84,8 +85,15 @@
   grr = grep -I --full-name -n --color
   ## target is indexed files
   grc = grep --cached -I --full-name -F -n --color
+  ## merge commit
+  ### 該当commit hashとターゲットブランチを指定
+  find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
+  ### find-mergeの結果をgit logする
+  show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git log --pretty=\"format:%h %s\" $merge | head -n 1'"
   ## pull request
-  showpr = !"f() { git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1; }; f"
+  showpr = !"f() { git log --merges --oneline --reverse --ancestry-path $1...${2:-master} | grep 'Merge pull request #' | head -n 1; }; f"
+  pr-list = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git showpr ${hash} ${1:-master}; done | sort | uniq'"
+  pr-list2 = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-merge ${hash} ${1:-master} | grep \"Merge pull request\"; done | sort | uniq'"
   ## using hub
   open = browse
   pullreq = pull-request

@@ -2,3 +2,12 @@ hub pull-request -m '%%COMMENT' -b %%OWNER:%%DST_BRANCH -h %%OWNER:%%SRC_BRANCN	
 hub pull-request -i %%ISSUE -b %%OWNER:%%DST_BRANCH -h %%OWNER:%%SRC_BRANCN	#issueと連動したpull requestを作成する
 hub create -d '%%COMMENT'	#github上にpublic repositoryを作成する
 git log -p -S '%%STR'	#変更箇所にSTRを含むlogを表示する
+git cat-file -p %%COMMIT	#該当COMMITのcommit情報（tree, parent, author)を表示する
+git cat-file -p %%BRANCH_OR_COMMIT:%%FILE	#該当BRANCH or COMMITのFILEの内容を表示する。
+git merge-base %%PARENT %%COMMIT	#コミットの共通の祖先のsha1を出力、rebase -i で何処を起点に綺麗にしていけばよいか分からない時に有用
+git rev-list %%COMMIT..%%BRANCH_OR_COMMIT --ancestry-path	#[rev-list]指定COMMIT「を祖先とした」場合のリビジョンリストを出力。first-parentと違って派生COMMITも含めたリストが表示される
+git rev-list %%COMMIT..%%BRANCH_OR_COMMIT --first-parent	#[rev-list]指定COMMIT「をファーストペアレントとした」場合のリビジョンリストを出力。COMMIT^ はCOMMITのファーストペアレントを指す書き方
+git log --graph --date=short --pretty=format:'%h %cd %C(cyan)%cn %Creset%s'	#logにグラフも表示する
+git log --graph --date=short --pretty=format:'%h %cd %C(cyan)%cn %Creset%s' --ancestry-path %%COMMIT..%%BRANCH_OR_COMMIT	#logにグラフも表示する、指定COMMITを祖先としたもの
+git log --graph --date=short --pretty=format:'%h %cd %C(cyan)%cn %Creset%s' --first-parent %%COMMIT..%%BRANCH_OR_COMMIT	#logにグラフも表示する、指定COMMITをファーストペアレントとしたもの
+

@@ -202,3 +202,18 @@ function virc {
       eval "vi ${F}"
     fi
 }
+
+# 指定ファイルが過去に更新されたpull reqをpecoで一覧表示し、選択したpull reqをブラウザで開く
+function openpr-by-file() {
+  declare file
+  [ $# -ne 0 ] && { file=${1}; } || { echo "need to assign target file"; return; }
+#  declare from
+#  declare to
+#  [ $# -ge 2 ] && from="--since=${2}"
+#  [ $# -ge 3 ] && to="--until=${3}"
+#  declare target=${4:-"develop"}
+  declare target=${2:-"master"}
+
+  PRS=$(git pr-list ${file} ${target} | cut -f 5 -d' ' | sed -e 's%#%pull/%g' | peco)
+  eval "hub browse -- ${PRS}"
+}

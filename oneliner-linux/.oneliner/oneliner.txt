@@ -35,3 +35,12 @@ sed '/^$/d' %%FILE	#[sed]改行のみの行を削除する
 sed '/^ *$/d' %%FILE	#[sed]改行とスペースのみの行を削除する
 ps -efL	#[ps]スレッド関連情報も表示(LWP, NLWP)
 vmstat -S M 1	#[vmstat]1秒間隔で統計情報を表示する、単位はメガバイトで
+%%CMD | tee %%FILE	#[tee]コマンドの標準出力を表示しつつファイルにも出力
+%%CMD 2>&1 | tee %%FILE	#[tee]コマンドの標準出力とエラー出力を表示しつつファイルにも出力
+diff <(%%CMD1) <(%%CMD2)	#[プロセス置換][process substition]2つのコマンドの実行結果を一時ファイルを作成せずにdiff取る
+accton %%FILENAME	#[システムアカウント]システムアカウント情報を指定ファイルに保存し、saコマンドでの統計情報出力を有効にする
+sa -a	#[システムアカウント]システムアカウント統計情報を表示する
+sa -m	#[システムアカウント]ユーザーの統計情報を表示する
+sh -c 'echo $1' one two	#[sh -c]sh -cでコマンドを実行する。このとき引数indexは0ベース($0が第1引数)になる
+uniq -d %%FILE	#[uniq]重複がある行（の内容）だけを表示する
+uniq -f %%SKIP_FIELD_NUM %%FILE	#[uniq]指定項目数をskipして重複削除する
