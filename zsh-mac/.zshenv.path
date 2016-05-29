@@ -26,6 +26,8 @@ path=(
     $HOME/Library/Python/${python_version}/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
     $HOME/bin(N-/)
+    # Omnisharp by NeoBundle of vim
+    $HOME/.bundle/Omnisharp/server/OmniSharp/bin/Debug(N-/)
     /usr/local/mysql/bin(N-/)
     /usr/local/redis-${redis_version}/bin(N-/)
     /usr/local/redis/bin(N-/)

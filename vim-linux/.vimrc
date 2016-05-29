@@ -37,6 +37,7 @@ if v:version > 701
   source $HOME/.vimrc.indentguides
   source $HOME/.vimrc.lightline
   source $HOME/.vimrc.dash
+  "source $HOME/.vimrc.omnisharp
 endif
 
 if has("autocmd")
