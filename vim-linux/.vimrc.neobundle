@@ -53,6 +53,15 @@ NeoBundle 'mattn/libcallex-vim' "http://mattn.kaoriya.net/software/lang/go/20150
 NeoBundle 'tmux-plugins/vim-tmux'
 NeoBundle 'rizzatti/dash.vim'
 
+NeoBundleLazy 'nosami/Omnisharp', {
+\   'autoload': {'filetypes': ['cs']},
+\   'build': {
+\     'windows': 'MSBuild.exe server/OmniSharp.sln /p:Platform="Any CPU"',
+\     'mac': 'xbuild server/OmniSharp.sln',
+\     'unix': 'xbuild server/OmniSharp.sln',
+\   }
+\ }
+
 " color schemes
 NeoBundle 'flazz/vim-colorschemes'
 NeoBundle 'cocopon/colorswatch.vim'  "for 256 color check, using ':ColorSwatchGenerate'
