@@ -8,14 +8,16 @@
 --ignore-dir=.git
 --ignore-dir=log
 --ignore-dir=logs
---ignore-dir=public/assets
+--ignore-dir=assets
 --ignore-dir=vendor
 --ignore-dir=node_modules
 --ignore-dir=coverage
 --ignore-dir=doc
 --ignore-file=match:tags
 --ignore-file=match:/[._].*\.swp$/
+--ignore-file=match:/.*~$/
 --ignore-dir=tmp
+--ignore-dir=.tmp
 
 # types
 --type-add=css=scss
