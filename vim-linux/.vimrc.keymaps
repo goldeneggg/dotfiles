@@ -10,3 +10,4 @@
 "nnoremap <Space>e :edit .<CR>
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 nnoremap <C-j>n :bn<CR>
+nnoremap <C-j>p :bp<CR>

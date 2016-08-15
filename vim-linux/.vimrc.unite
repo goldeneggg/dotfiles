@@ -28,12 +28,13 @@ let s:unite_ignore_patterns=
 "========== keymap
 " カレントディレクトリ下一覧
 nnoremap <silent> [unite]c :<C-u>UniteWithCurrentDir -buffer-name=curdir-buffer buffer bookmark file<CR>
+" バッファ + 最近開いたファイル
+nnoremap <silent> [unite]u :<C-u>Unite buffer file_mru<CR>
+
 " バッファ一覧
 nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
 " 最近開いたファイル
 nnoremap <silent> [unite]m :<C-u>Unite file_mru<CR>
-" バッファ + 最近開いたファイル
-nnoremap <silent> [unite]u :<C-u>Unite buffer file_mru<CR>
 " 現在開いているファイルのディレクトリ下一覧
 nnoremap <silent> [unite]a :<C-u>UniteWithBufferDir -buffer-name=bufdir-buffer buffer bookmark file<CR>
 

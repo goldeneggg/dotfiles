@@ -1,5 +1,3 @@
-"source $HOME/.vimrc.common
-
 " basic settings
 source $HOME/.vimrc.settings
 source $HOME/.vimrc.keymaps
@@ -23,7 +21,7 @@ if v:version > 701
   source $HOME/.vimrc.colorscheme
 
   source $HOME/.vimrc.unite
-  source $HOME/.vimrc.vimfiler
+  "source $HOME/.vimrc.vimfiler
   source $HOME/.vimrc.neocomplcache
   source $HOME/.vimrc.neosnippet
 
