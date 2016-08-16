@@ -14,6 +14,7 @@ set -g @prefix_highlight_bg 'red'
 set -g @plugin 'tmux-plugins/tmux-cpu'
 
 # urlview
+# prefix + u でtmuxバッファ内のURLを抽出=>選択してブラウザで開く
 set -g @plugin 'tmux-plugins/tmux-urlview'
 #set -g @urlview-key 'x'
 
@@ -29,23 +30,23 @@ set -g @plugin 'tmux-plugins/tmux-open'
 set -g @plugin 'tmux-plugins/tmux-pain-control'
 #set-option -g @pane_resize "10"
 
-# tmux-resurrect
-# See: https://github.com/tmux-plugins/tmux-continuum
-# See: https://github.com/tmux-plugins/tmux-resurrect
-# See: http://kiririmode.hatenablog.jp/entry/20150206/1423148400
-set -g @plugin 'tmux-plugins/tmux-resurrect'
-
-# save and restore
-set -g @resurrect-save 'S'
-set -g @resurrect-restore 'R'
-
-# tmux-continuum *tmux -resurrect is required*
-set -g @plugin 'tmux-plugins/tmux-continuum'
-# restore setting
-set -g @continuum-restore 'on'
-# autostart setting
-set -g @continuum-boot 'on'
-set -g @continuum-boot-options 'iterm'
+## tmux-resurrect
+## See: https://github.com/tmux-plugins/tmux-continuum
+## See: https://github.com/tmux-plugins/tmux-resurrect
+## See: http://kiririmode.hatenablog.jp/entry/20150206/1423148400
+#set -g @plugin 'tmux-plugins/tmux-resurrect'
+#
+## save and restore
+#set -g @resurrect-save 'S'
+#set -g @resurrect-restore 'R'
+#
+## tmux-continuum *tmux -resurrect is required*
+#set -g @plugin 'tmux-plugins/tmux-continuum'
+## restore setting
+#set -g @continuum-restore 'on'
+## autostart setting
+#set -g @continuum-boot 'on'
+#set -g @continuum-boot-options 'iterm'
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run '~/.tmux/plugins/tpm/tpm'
