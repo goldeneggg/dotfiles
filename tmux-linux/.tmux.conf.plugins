@@ -10,8 +10,8 @@ set -g @tpm-clean 'C-u'
 set -g @plugin 'tmux-plugins/tmux-prefix-highlight'
 set -g @prefix_highlight_bg 'red'
 
-# cpu
-set -g @plugin 'tmux-plugins/tmux-cpu'
+## cpu
+#set -g @plugin 'tmux-plugins/tmux-cpu'
 
 # urlview
 # prefix + u でtmuxバッファ内のURLを抽出=>選択してブラウザで開く
