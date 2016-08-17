@@ -1,0 +1,3 @@
+aws s3 ls s3://%%BUCKET	#指定バケットのファイル一覧を表示する
+aws s3 cp s3://%%BUCKET/%%S3FILE %%LOCALFILE	#指定バケットのファイルをローカルにダウンロードする
+aws s3 cp s3://%%BUCKET %%LOCALDIR --recursive	#指定バケットのファイル群をローカルに再帰的ダウンロードする
