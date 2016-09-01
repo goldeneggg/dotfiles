@@ -404,7 +404,7 @@ Help Options:
 EOP
 }
 
-#-- output main.go for Go project using codegangsta/cli1
+#-- output main.go for Go project using urfave/cli1
 function _gh_gomaingang() {
   account=$1
   name=$2
@@ -418,7 +418,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 const (
@@ -541,10 +541,10 @@ function gh_goinit() {
   _gh_goinit $1 $2
   _gh_gomain $2 > main.go  # flag parser is go original library
   #_gh_gomainflags $2 > main.go  # flag parser is jessevdk/go-flags
-  #_gh_gomaingang $2 > main.go  # flag parser is codegangsta/cli
+  #_gh_gomaingang $2 > main.go  # flag parser is urfave/cli
 }
 
-#-- ghinit for Go project using codegangsta/cli with godep
+#-- ghinit for Go project using urfave/cli with godep
 function gh_goinitgang() {
   _gh_goinit $1 $2
   _gh_gomaingang $1 $2 > main.go
