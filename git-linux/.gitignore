@@ -1,5 +1,7 @@
-*.swp
+# vim swap files
+[._]*.sw[a-z]
+[._]sw[a-z]
+
 *.bak
-*.swo
 *~
 dump.rdb
