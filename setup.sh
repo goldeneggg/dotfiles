@@ -150,11 +150,15 @@ fi
 /usr/bin/vim -e -S vim-linux/init.ex
 
 # replace token of .gitconfig
-cp ${HOME}/.gitconfig ${HOME}/.gitconfig.org
-rm ${HOME}/.gitconfig
-cp ${HOME}/.gitconfig.org ${HOME}/.gitconfig
-sed -i -e "s/%GITHUB_USER%/${GH_U}/g" ${HOME}/.gitconfig
-sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ${HOME}/.gitconfig
+GITFILE_SUFFIXS=("config" "ignore")
+for gitfile_suffix in ${GITFILE_SUFFIXS[@]}
+do
+  cp ${HOME}/.git${gitfile_suffix} ${HOME}/.git${gitfile_suffix}.org
+  rm ${HOME}/.git${gitfile_suffix}
+  cp ${HOME}/.git${gitfile_suffix}.org ${HOME}/.git${gitfile_suffix}
+  sed -i -e "s/%GITHUB_USER%/${GH_U}/g" ${HOME}/.git${gitfile_suffix}
+  sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ${HOME}/.git${gitfile_suffix}
+done
 
 # $HOME/bin
 if [ ! -d ${HOME}/bin ]
