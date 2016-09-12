@@ -15,6 +15,7 @@ declare -ar APPS=("git" \
   "wget" \
   "lv" \
   "ack" \
+  "jq" \
   "the_silver_searcher" \
   "stow" \
   "diff-so-fancy" \

@@ -2,7 +2,7 @@
 # ステータスバー
 #####
 ## utf8を有効に
-set -g status-utf8 on
+#set -g status-utf8 on
 ## 描画間隔
 set -g status off
 set -g status-interval 0
