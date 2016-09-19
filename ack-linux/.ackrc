@@ -18,6 +18,7 @@
 --ignore-file=match:/.*~$/
 --ignore-dir=tmp
 --ignore-dir=.tmp
+--ignore-dir=Godeps
 
 # types
 --type-add=css=scss
