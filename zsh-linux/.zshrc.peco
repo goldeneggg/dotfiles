@@ -212,3 +212,13 @@ function openpr-by-file() {
   PRS=$(git pr-list ${file} ${target} | awk 'BEGIN {OFS="\t"} {print NR,$8,$1,$2,$10}' | sed -e 's%#%pull/%g' | peco)
   eval "hub browse -- $(echo ${PRS} | cut -f 2)"
 }
+
+# ssh using private ip of lsec2's result
+function lssh {
+    IP=$(lsec2 show $@ | peco | awk -F "\t" '{print $2}')
+    if [ $? -eq 0 -a "${IP}" != "" ]
+    then
+      eval "ssh ${IP}"
+    fi
+}
+
