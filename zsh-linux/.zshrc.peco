@@ -215,10 +215,11 @@ function openpr-by-file() {
 
 # ssh using private ip of lsec2's result
 function lssh {
-    IP=$(lsec2 show $@ | peco | awk -F "\t" '{print $2}')
+    IP=$(lsec2 $@ | peco | awk -F "\t" '{print $2}')
     if [ $? -eq 0 -a "${IP}" != "" ]
     then
-      eval "ssh ${IP}"
+      echo ">>> SSH to ${IP}"
+      ssh ${IP}
     fi
 }
 
