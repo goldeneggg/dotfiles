@@ -164,9 +164,6 @@ if v:version > 701
 
 endif
 
-"==================== colorscheme
-colorscheme hybrid
-
 "==================== additional runtime
 "========== golang runtime
 " *install: go get -u github.com/golang/lint/golint
