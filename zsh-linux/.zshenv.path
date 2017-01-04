@@ -7,6 +7,7 @@ export GOPATH=$HOME/gopath
 export GOBIN=$GOPATH/bin
 export ERLANG_HOME=/usr/local/erlang
 export ELIXIR_HOME=/usr/local/elixir
+export ANACONDA3=$HOME/anaconda3
 export PYTHON_HOME=/usr
 export PIP_HOME=$HOME/.local
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
@@ -17,6 +18,7 @@ path=(
     $GOROOT/bin(N-/)
     $GOBIN(N-/)
     $HOME/.nodebrew/current/bin(N-/)
+    $ANACONDA3/bin(N-/)
     $JAVA_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
     $PLAY_HOME(N-/)
