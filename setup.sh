@@ -127,7 +127,7 @@ fi
 
 if [ ! -z "${GOPATH}" ]
 then
-  export GOPATH=${HOME}/gopath
+  export GOPATH=${HOME}/go
   if [ ! -d ${GOPATH} ]
   then
     mkdir -p ${GOPATH}
