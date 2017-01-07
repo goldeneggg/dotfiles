@@ -1,2 +1,3 @@
 NeoBundleInstall
+GoInstallBinaries
 q!
