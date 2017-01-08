@@ -1,3 +1,4 @@
-# use $HOME/.aws/config file for awscli (ex: AWS_ACCESS_KEY_ID, etc)
-#export AWS_CONFIG_FILE=${HOME}/.aws.config
-export AWS_DEFAULT_REGION=ap-northeast-1
+# use $HOME/.aws/config file for awscli (ex: region, etc)
+# use $HOME/.aws/credentials file for awscli (ex: aws_access_key_id, etc)
+export AWS_SDK_LOAD_CONFIG=1
+#export AWS_DEFAULT_REGION=ap-northeast-1
