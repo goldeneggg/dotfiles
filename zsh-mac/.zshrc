@@ -7,3 +7,4 @@ source ~/.zshrc.vagrant-coreos
 source ~/.zshrc.virtualbox
 source ~/.zshrc.ssh
 source ~/.zshrc.prompt
+source ~/.zshrc.symlink
