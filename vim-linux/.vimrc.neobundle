@@ -14,7 +14,13 @@ NeoBundle 'tpope/vim-surround'  "囲む奴の操作をより良くする
 NeoBundle 'tpope/vim-fugitive'  "gitのコマンドを実行
 NeoBundle 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルにヤンク・ペースト
 " NeoBundle 'vim-scripts/Smooth-Scroll'
-NeoBundle 'Shougo/neocomplcache'  "補完
+if has('nvim')
+  NeoBundle 'Shougo/deoplete.nvim', {
+      \ "autoload": {"insert": 1}
+    \ }
+else
+  NeoBundle 'Shougo/neocomplcache'  "補完
+endif
 NeoBundle 'Shougo/neosnippet'  "スニペット
 NeoBundle 'Shougo/neosnippet-snippets'
 NeoBundle 'vim-scripts/taglist.vim'  "メソッド宣言、変数宣言の一覧を別ウィンドウで表示する
