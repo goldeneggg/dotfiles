@@ -19,6 +19,7 @@ path=(
     $HOME/.rbenv/bin(N-/)
     $GOROOT/bin(N-/)
     $GOBIN(N-/)
+    $HOME/.ndenv/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
     $ANACONDA3/bin(N-/)
     $JAVA_HOME/bin(N-/)
