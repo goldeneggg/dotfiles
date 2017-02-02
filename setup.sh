@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ### 
 ### setup dotfiles using GNU Stow
