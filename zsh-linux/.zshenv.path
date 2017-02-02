@@ -53,3 +53,6 @@ cdpath=(
 
 #- rbenv
 [[ -s "$HOME/.rbenv/bin/rbenv" ]] && eval "$(rbenv init -)"
+
+#- ndenv
+[[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
