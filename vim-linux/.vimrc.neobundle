@@ -58,6 +58,7 @@ NeoBundle 'ctrlpvim/ctrlp.vim' "http://koturn.hatenablog.com/entry/2015/11/19/20
 NeoBundle 'mattn/libcallex-vim' "http://mattn.kaoriya.net/software/lang/go/20150609021917.htm
 NeoBundle 'tmux-plugins/vim-tmux'
 NeoBundle 'rizzatti/dash.vim'
+NeoBundle 'othree/yajs.vim'
 
 "NeoBundleLazy 'nosami/Omnisharp', {
 "\   'autoload': {'filetypes': ['cs']},
