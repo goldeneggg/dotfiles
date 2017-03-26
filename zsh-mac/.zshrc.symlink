@@ -1,1 +1,4 @@
-ln -s /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resources/jsc /usr/local/bin/jsc
+if [ ! -L /usr/local/bin/jsc ]
+then
+  ln -s /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resources/jsc /usr/local/bin/jsc
+fi
