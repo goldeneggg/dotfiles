@@ -18,6 +18,7 @@ declare -ar APPS=("git" \
   "ack" \
   "jq" \
   "the_silver_searcher" \
+  "tkengo/highway/highway" \
   "stow" \
   "diff-so-fancy" \
   "cmake" \
