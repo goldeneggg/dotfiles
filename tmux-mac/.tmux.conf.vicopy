@@ -9,15 +9,13 @@
 #   Enter = 選択終了(コピー)  *カスタマイズする*
 #   prefix + ] = ペースト
 
-#bind -t vi-copy v begin-selection
-#bind v copy-mode \; display "Copy mode!"
 bind [ copy-mode \; display "Start copy mode"
 
 # 選択中に C-v で矩形選択切り替え
-bind -t vi-copy C-v rectangle-toggle
+bind -T copy-mode-vi C-v send -X rectangle-toggle
 
 # 選択中に Enter (or y) でコピー
-bind -t vi-copy Enter copy-pipe "reattach-to-user-namespace pbcopy"
-bind -t vi-copy y copy-pipe "reattach-to-user-namespace pbcopy"
+bind -T copy-mode-vi Enter send -X copy-pipe-and-cancel "reattach-to-user-namespace pbcopy"
+bind -T copy-mode-vi y send -X copy-pipe-and-cancel "reattach-to-user-namespace pbcopy"
 
 bind ] paste-buffer \; display "Pasted"
