@@ -32,7 +32,7 @@ path=(
     $HOME/.nodebrew/current/bin(N-/)
     $ANACONDA3/bin(N-/)
     $HOME/Library/Python/${python_version}/bin(N-/)
-    $GDP_SDK_HOME/bin(N-/)
+    $GCP_SDK_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
     $ANDROID_SDK/platform-tools(N-/)
     $PLAY_HOME(N-/)
