@@ -17,6 +17,7 @@ path=(
     $HOME/local/bin(N-/)
     /usr/local/mysql/bin(N-/)
     $HOME/.rbenv/bin(N-/)
+    $HOME/.goenv/bin(N-/)
     $GOROOT/bin(N-/)
     $GOBIN(N-/)
     $HOME/.ndenv/bin(N-/)
@@ -56,3 +57,6 @@ cdpath=(
 
 #- ndenv
 [[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
+
+#- goenv
+[[ -s "$HOME/.goenv/bin/goenv" ]] && eval "$(goenv init -)"
