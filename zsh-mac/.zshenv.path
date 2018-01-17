@@ -28,6 +28,7 @@ path=(
     $HOME/.rbenv/bin(N-/)
     $GOROOT/bin(N-/)
     $GOBIN(N-/)
+    $HOME/.anyenv/bin(N-/)
     $HOME/.ndenv/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
     $ANACONDA3/bin(N-/)
@@ -64,3 +65,6 @@ cdpath=(
 
 #- ndenv
 [[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
+
+#- anyenv
+[[ -s "$HOME/.anyenv/bin/anyenv" ]] && eval "$(anyenv init -)"
