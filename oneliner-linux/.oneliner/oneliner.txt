@@ -17,13 +17,6 @@ find / -xdev -type f	#xdevオプションで、 / ファイル・システムの
 sudo echo %%NUM > /proc/sys/vm/drop_caches	#ファイルシステムのキャッシュをクリアする(1=ページキャッシュ,2=ディレクトリエントリ(dentry)とinode,3=1と2の両方)
 grep Dirty /proc/meminfo	#ダーティオブジェクトのサイズを表示する
 sync	#バッファ(メモリ上のデータ)の内容を強制的にディスクに書き込みバッファをフラッシュし)、ダーティオブジェクトをクリアする
-lsof | grep deleted	#プロセスが"使用していて途中で削除した"ファイル一覧を表示する
-lsof -c %%PNAME	#指定したプロセス名のプロセスで使用しているファイル一覧を表示する
-lsof -p %%PID	#指定したPIDのプロセスで使用しているファイル一覧を表示する
-lsof -i:%%PORT	#指定したポートをlistenしているプロセス・ファイル一覧を表示する
-lsof -a %%COND1 %%COND2	#複数条件をAND条件で指定してプロセス・ファイル一覧を表示する,-a無しで複数条件を記述した場合はOR条件になる
-pgrep -fl %%STR	#プロセスをSTRで検索し、PIDとコマンドラインを一覧表示する
-cp /proc/%%PID/fd/%%FD %%TOFILE	#プロセスで使用中のファイルを削除したが復元したい場合、TOFILEで指定したファイルパスに復元する
 dig -f %%DIGFILE	#digコマンドを羅列したファイルを指定してバッチモードでdigを実行する,バッチモード用ファイルの記法やオプションは通常のコマンド実行時と同じ
 for v in $(vagrant status | grep %%VMSTR | awk '{print $1}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,vagrantコマンド使用
 for v in $(VBoxManage list runningvms | grep %%VMSTR | awk -F"_" '{print $2}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,VBoxManage使用
@@ -34,14 +27,9 @@ type %%CMD >/dev/null 2>&1	#[sh]コマンドの存在チェックを行う
 find . -type f -name "*.go" | xargs sed -i "" 's|%%BEFORE|%%AFTER|g'	#[sed]カレントディレクトリ下のgoファイルを再帰的に置換
 sed '/^$/d' %%FILE	#[sed]改行のみの行を削除する
 sed '/^ *$/d' %%FILE	#[sed]改行とスペースのみの行を削除する
-ps -efL	#[ps]スレッド関連情報も表示(LWP, NLWP)
-vmstat -S M 1	#[vmstat]1秒間隔で統計情報を表示する、単位はメガバイトで
 %%CMD | tee %%FILE	#[tee]コマンドの標準出力を表示しつつファイルにも出力
 %%CMD 2>&1 | tee %%FILE	#[tee]コマンドの標準出力とエラー出力を表示しつつファイルにも出力
 diff <(%%CMD1) <(%%CMD2)	#[プロセス置換][process substition]2つのコマンドの実行結果を一時ファイルを作成せずにdiff取る
-accton %%FILENAME	#[システムアカウント]システムアカウント情報を指定ファイルに保存し、saコマンドでの統計情報出力を有効にする
-sa -a	#[システムアカウント]システムアカウント統計情報を表示する
-sa -m	#[システムアカウント]ユーザーの統計情報を表示する
 sh -c 'echo $1' one two	#[sh -c]sh -cでコマンドを実行する。このとき引数indexは0ベース($0が第1引数)になる
 uniq -d %%FILE	#[uniq]重複がある行（の内容）だけを表示する
 uniq -f %%SKIP_FIELD_NUM %%FILE	#[uniq]指定項目数をskipして重複削除する

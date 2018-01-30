@@ -1,0 +1,2 @@
+docker rm $(docker ps -a | peco | awk '{print $1}')	#[docker] rm対象コンテナをpecoで選択してからrmする
+docker rmi $(docker images | peco | awk '{print $3}')	#[docker] rmi対象イメージをpecoで選択してからrmiする
