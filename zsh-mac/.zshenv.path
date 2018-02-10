@@ -8,6 +8,7 @@ export PLAY_HOME=/usr/local/play
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
+export PYENV_ROOT=$HOME/.pyenv
 export ANACONDA3=$HOME/anaconda3
 export GCP_SDK_HOME=$HOME/google-cloud-sdk
 python_version=2.7
@@ -31,7 +32,8 @@ path=(
     $HOME/.anyenv/bin(N-/)
     $HOME/.ndenv/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
-    $ANACONDA3/bin(N-/)
+    $PYENV_ROOT/bin(N-/)
+    #$ANACONDA3/bin(N-/)
     $HOME/Library/Python/${python_version}/bin(N-/)
     $GCP_SDK_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
@@ -68,3 +70,6 @@ cdpath=(
 
 #- anyenv
 [[ -s "$HOME/.anyenv/bin/anyenv" ]] && eval "$(anyenv init -)"
+
+# pyenv
+[[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)"

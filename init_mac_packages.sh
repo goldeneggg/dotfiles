@@ -10,7 +10,7 @@ brew update
 
 declare -ar APPS=("git" \
   "vim" \
-  "neovim/neovim/neovim" \
+  "neovim" \
   "zsh" \
   "tmux" \
   "wget" \
