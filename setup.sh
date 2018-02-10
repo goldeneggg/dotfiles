@@ -116,7 +116,8 @@ else
 fi
 
 # for neobundle.vim
-git submodule update --init
+# TODO: remove after neovim migration
+#git submodule update --init
 
 # install vim plugins
 ## dependency for golang
@@ -146,8 +147,14 @@ then
   go get github.com/peco/peco
   go get github.com/peco/peco/cmd/peco
 fi
+
 ## run ex commands
-/usr/bin/vim -e -S vim-linux/init.ex
+# TODO: change from vim to neovim
+#/usr/bin/vim -e -S vim-linux/init.ex
+if [ ! `which nvim` ]
+then
+  nvim -e -S nvim-linux/.config/nvim/init.ex
+fi
 
 # replace token of .gitconfig
 GITFILE_SUFFIXS=("config" "ignore")

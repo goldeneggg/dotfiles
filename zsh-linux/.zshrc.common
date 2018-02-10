@@ -147,11 +147,14 @@ alias rag='bundle exec rails g'
 alias mysql="mysql --pager='lv' --safe-updates"
 #-- global alias
 alias -g V="| vim -R -"
+alias -g NV="| nvim -R -"
 alias -g M="| more"
+alias -g L="| less"
 alias -g W="| wc -l"
 alias -g B="| col -bx"
-#-- vi
+#-- vim, nvim
 alias vi=vim
+alias nv=nvim
 #-- gat (https://github.com/goldeneggg/gat)
 alias gagi='gat gist'
 alias gasl='gat slack'
