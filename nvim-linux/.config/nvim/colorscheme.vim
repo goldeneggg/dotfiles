@@ -3,6 +3,10 @@ if (has("termguicolors"))
  set termguicolors
 endif
 
-" Theme
+"========== modify highlight
+" ファイル内検索
+autocmd ColorScheme * highlight Search ctermfg=234 ctermbg=221 guifg=#1d1f21 guibg=#f0c674
+
+"========== theme
 syntax enable
 colorscheme tender
