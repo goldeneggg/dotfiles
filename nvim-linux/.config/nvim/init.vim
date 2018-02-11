@@ -1,26 +1,27 @@
-"========== 基本設定
+" 基本設定
 source $HOME/.config/nvim/basic.vim
 source $HOME/.config/nvim/keymaps.vim
 
-"========== プラグイン
+" プラグイン
 source $HOME/.config/nvim/plug.vim
 
-"========== カラースキーム
+" カラースキーム
 source $HOME/.config/nvim/colorscheme.vim
 
-"========== ステータスバー
+" ステータスバー
 source $HOME/.config/nvim/lightline.vim
 
-"========== ファイル検索
+" ファイル検索
 source $HOME/.config/nvim/ctrlp.vim
 
-"========== 補完（闇）
+" 補完（闇）
 source $HOME/.config/nvim/deoplete.vim
 
-"========== スニペット
-
-"========== Dash連携
+" Dash連携
 source $HOME/.config/nvim/dash.vim
 
-"========== 言語別
+" 言語別
 source $HOME/.config/nvim/golang.vim  " Golang, deoplete-go
+
+" スニペット
+source $HOME/.config/nvim/neosnippet.vim

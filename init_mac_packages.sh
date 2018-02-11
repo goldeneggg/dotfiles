@@ -28,6 +28,7 @@ declare -ar APPS=("git" \
   "urlview" \
   "extract_url" \
   "libevent" \
+  "htop" \
   "pstree")
 for app in ${APPS[@]}
 do

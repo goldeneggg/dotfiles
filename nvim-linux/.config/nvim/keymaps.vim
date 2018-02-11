@@ -1,4 +1,4 @@
-"==================== key map
+" key map
 "See: http://vim-jp.org/vimdoc-ja/map.html
 "See: http://deris.hatenablog.jp/entry/2013/05/02/192415
 

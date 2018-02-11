@@ -1,4 +1,3 @@
-"==================== basic settings
 " indent settings
 set autoindent
 set expandtab
