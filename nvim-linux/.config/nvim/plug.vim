@@ -20,6 +20,7 @@ Plug 'rizzatti/dash.vim'
 " edit
 Plug 'kana/vim-smartinput' "対応カッコ自動閉じetc
 Plug 'tyru/caw.vim'  "複数行コメントアウト. 複数行選択して gci でコメントアウトできる. gccでtoggle
+Plug 'tpope/vim-surround'
 
 " support language specification
 Plug 'fatih/vim-go'
