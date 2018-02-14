@@ -15,5 +15,9 @@ set -g default-terminal "screen-256color"
 #        printf "\x1b[${fb};5;${i}mcolour${i}\n"
 #      done
 #    done
+
 # スクロールバック
 set -g history-limit 10000
+
+# ESCキーの待ち時間 neovim対策で短めに
+set -g escape-time 10
