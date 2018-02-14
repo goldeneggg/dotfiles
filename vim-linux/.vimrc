@@ -22,7 +22,7 @@ if v:version > 701
 
   source $HOME/.vimrc.unite
   "source $HOME/.vimrc.vimfiler
-  source $HOME/.vimrc.neocomplcache
+  "source $HOME/.vimrc.neocomplcache
   source $HOME/.vimrc.neosnippet
 
   source $HOME/.vimrc.ctrlp
@@ -35,15 +35,14 @@ if v:version > 701
   source $HOME/.vimrc.indentguides
   source $HOME/.vimrc.lightline
   source $HOME/.vimrc.dash
-  "source $HOME/.vimrc.omnisharp
 endif
 
 if has("autocmd")
   " See: http://blog.livedoor.jp/sasata299/archives/51179057.html
 
   source $HOME/.vimrc.autocmd-basic
-  source $HOME/.vimrc.autocmd-php
-  source $HOME/.vimrc.autocmd-java
+  "source $HOME/.vimrc.autocmd-php
+  "source $HOME/.vimrc.autocmd-java
   source $HOME/.vimrc.autocmd-golang
   source $HOME/.vimrc.autocmd-ruby
   source $HOME/.vimrc.autocmd-markdown

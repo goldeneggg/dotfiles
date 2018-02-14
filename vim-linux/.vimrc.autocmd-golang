@@ -1,18 +1,45 @@
 " using vim-go plugin
 
 let g:go_fmt_command = "goimports"
+"let g:go_auto_sameids = 1  "/による検索結果表示とハイライトが被るので一旦コメントアウト
 
-"========== 保存時にgolintを実行する
-autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
+"========== ハイライト
+"let g:go_highlight_build_constraints = 1
+"let g:go_highlight_extra_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+"let g:go_highlight_operators = 1
+"let g:go_highlight_structs = 1
+"let g:go_highlight_types = 1
+
+"========== ステータスバーに型定義を表示
+let g:go_auto_type_info = 1
 
 "========== スニペットpost時にブラウザを開かない
 let g:go_play_open_browser = 0
+
+"========== snippet
+let g:go_snippet_engine = "neosnippet"
+
+"========== :GoAddTags時のjson項目名をsnakecase
+let g:go_addtags_transform = "snakecase"
 
 "========== クイックフィックスリスト内のエラー間ジャンプ
 map <C-n> :cnext<CR>
 map <C-m> :cprevious<CR>
 " \a でクイックフィックスを閉じる
 nnoremap <leader>a :cclose<CR>
+
+"========== 保存時にgolintを実行する
+autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
+" lint with lightline TODO
+
+"========== maps
+" \ga : :GoAddTags - structにjson tag追加
+au FileType go nmap <leader>ga :GoAddTags<cr>
+" \gt : パッケージ内の関数や型の定義元一覧, ctrlpで表示
+au FileType go nmap <leader>gt :GoDeclsDir<cr>
 
 "========== チュートリアルに載ってた便利関数
 " run :GoBuild or :GoTestCompile based on the go file
@@ -26,6 +53,3 @@ function! s:build_go_files()
 endfunction
 autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
 
-"========== 関数とメソッドをハイライト
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1

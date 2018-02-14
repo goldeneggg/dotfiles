@@ -6,39 +6,60 @@ call neobundle#begin(expand('~/.bundle'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 call neobundle#end()
 
-" plugins
+" view and color schemes
+NeoBundle 'flazz/vim-colorschemes'
+NeoBundle 'cocopon/colorswatch.vim'  "for 256 color check, using ':ColorSwatchGenerate'
+NeoBundle 'jacoborus/tender.vim'  "for 256 color check, using ':ColorSwatchGenerate'
+NeoBundle 'itchyny/lightline.vim'  "しゃれおつステータスライン
+NeoBundle 'nathanaelkane/vim-indent-guides'  "インデントに色を付ける
+
+" file search
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'Shougo/neomru.vim'
+"NeoBundle 'Shougo/vimfiler'  "ファイラ
+NeoBundle 'ctrlpvim/ctrlp.vim' "http://koturn.hatenablog.com/entry/2015/11/19/200000, http://qiita.com/oahiroaki/items/d71337fb9d28303a54a8
+
+" code search
+"NeoBundle 'Lokaltog/vim-easymotion'  "移動,ジャンプ  をより良くする
+NeoBundle 'rizzatti/dash.vim'
+
+" edit
 NeoBundle 'tpope/vim-surround'  "囲む奴の操作をより良くする
-NeoBundle 'tpope/vim-fugitive'  "gitのコマンドを実行
-NeoBundle 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルにヤンク・ペースト
-" NeoBundle 'vim-scripts/Smooth-Scroll'
-if has('nvim')
-  NeoBundle 'Shougo/deoplete.nvim', {
-      \ "autoload": {"insert": 1}
-    \ }
-else
-  NeoBundle 'Shougo/neocomplcache'  "補完
-endif
-NeoBundle 'Shougo/neosnippet'  "スニペット
-NeoBundle 'Shougo/neosnippet-snippets'
-NeoBundle 'vim-scripts/taglist.vim'  "メソッド宣言、変数宣言の一覧を別ウィンドウで表示する
-NeoBundle 'thinca/vim-quickrun'  "<Leader>(=\)r で開いているファイルを実行
-NeoBundle 'tpope/vim-markdown'
-NeoBundle 'derekwyatt/vim-scala'
 NeoBundle 'AndrewRadev/switch.vim'
 NeoBundle 'scrooloose/syntastic'  "保存時にsyntax check
-"NeoBundle 'Lokaltog/vim-easymotion'  "移動,ジャンプ  をより良くする
-NeoBundle 'nathanaelkane/vim-indent-guides'  "インデントに色を付ける
-NeoBundle 'itchyny/lightline.vim'  "しゃれおつステータスライン
-NeoBundle 'honza/vim-snippets'
-NeoBundle 'Shougo/vimfiler'  "ファイラ
-NeoBundle 'rgarver/Kwbd.vim'  "ウインドウ分割時にバッファを閉じた際, ウインドウレイアウトはそのまま残す
-NeoBundle 'kchmck/vim-coffee-script'
-NeoBundle 'nsf/gocode', {'rtp': 'vim/'} "install: go get github.com/nsf/gocode
+NeoBundle 'tpope/vim-fugitive'  "gitのコマンドを実行
+NeoBundle 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルにヤンク・ペースト
+NeoBundle 'vim-scripts/taglist.vim'  "メソッド宣言、変数宣言の一覧を別ウィンドウで表示する
+NeoBundle 'thinca/vim-quickrun'  "<Leader>(=\)r で開いているファイルを実行
 NeoBundle 'kana/vim-smartinput'  " http://labs.timedia.co.jp/2012/09/vim-smartinput.html
+NeoBundle 'tpope/vim-endwise'  "自動でend入力
+
+" window control
+NeoBundle 'rgarver/Kwbd.vim'  "ウインドウ分割時にバッファを閉じた際, ウインドウレイアウトはそのまま残す
+NeoBundle 'tmux-plugins/vim-tmux'
+
+" language specification
+NeoBundle 'nsf/gocode', {'rtp': 'vim/'} "install: go get github.com/nsf/gocode
 NeoBundle 'fatih/vim-go'  " Go 1.4+ removed misc/vim directory
+NeoBundle 'mattn/libcallex-vim' "http://mattn.kaoriya.net/software/lang/go/20150609021917.htm
+NeoBundle 'vim-ruby/vim-ruby'
+NeoBundle 'tpope/vim-rails'
+"NeoBundle 'slim-template/vim-slim'
+NeoBundle 'ngmy/vim-rubocop'
+"NeoBundle 'derekwyatt/vim-scala'
+"NeoBundle 'othree/yajs.vim'
+NeoBundle 'kchmck/vim-coffee-script'
+NeoBundle 'tpope/vim-markdown'
+
+" completion
+NeoBundle 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C-Y ,」でそれを展開 http://motw.mods.jp/Vim/emmet-vim.html
+"NeoBundle 'Shougo/neocomplcache'  "補完
+NeoBundle 'Shougo/neosnippet'  "スニペット
+NeoBundle 'Shougo/neosnippet-snippets'
+NeoBundle 'honza/vim-snippets'
+
+
 " need to execute make (`cd ~/.bundle/vimproc; make -f make_{mac,unix}.mak`)
 NeoBundle 'Shougo/vimproc', {
   \ 'build' : {
@@ -48,27 +69,3 @@ NeoBundle 'Shougo/vimproc', {
     \ 'unix' : 'make -f make_unix.mak',
   \ },
 \ }
-NeoBundle 'tpope/vim-endwise'  "自動でend入力
-NeoBundle 'tpope/vim-rails'
-NeoBundle 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C-Y ,」でそれを展開 http://motw.mods.jp/Vim/emmet-vim.html
-NeoBundle 'slim-template/vim-slim'
-NeoBundle 'ngmy/vim-rubocop'
-NeoBundle 'vim-ruby/vim-ruby'
-NeoBundle 'ctrlpvim/ctrlp.vim' "http://koturn.hatenablog.com/entry/2015/11/19/200000, http://qiita.com/oahiroaki/items/d71337fb9d28303a54a8
-NeoBundle 'mattn/libcallex-vim' "http://mattn.kaoriya.net/software/lang/go/20150609021917.htm
-NeoBundle 'tmux-plugins/vim-tmux'
-NeoBundle 'rizzatti/dash.vim'
-NeoBundle 'othree/yajs.vim'
-
-"NeoBundleLazy 'nosami/Omnisharp', {
-"\   'autoload': {'filetypes': ['cs']},
-"\   'build': {
-"\     'windows': 'MSBuild.exe server/OmniSharp.sln /p:Platform="Any CPU"',
-"\     'mac': 'xbuild server/OmniSharp.sln',
-"\     'unix': 'xbuild server/OmniSharp.sln',
-"\   }
-"\ }
-
-" color schemes
-NeoBundle 'flazz/vim-colorschemes'
-NeoBundle 'cocopon/colorswatch.vim'  "for 256 color check, using ':ColorSwatchGenerate'
