@@ -14,8 +14,9 @@ Plug 'itchyny/lightline.vim'
 " file search
 Plug 'ctrlpvim/ctrlp.vim'
 
-" code search
+" code information
 Plug 'rizzatti/dash.vim'
+Plug 'tpope/vim-fugitive'  "git
 
 " edit
 Plug 'kana/vim-smartinput' "対応カッコ自動閉じetc
