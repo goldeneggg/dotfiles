@@ -1,5 +1,6 @@
-hub pull-request -m '%%COMMENT' -b %%OWNER:%%DST_BRANCH -h %%OWNER:%%SRC_BRANCN	#pull requestを作成する
-hub pull-request -i %%ISSUE -b %%OWNER:%%DST_BRANCH -h %%OWNER:%%SRC_BRANCN	#issueと連動したpull requestを作成する
+hub pull-request --browse -m '%%COMMENT' -b %%OWNER:%%DST_BRANCH -h %%OWNER:$(git symbolic-ref --short HEAD)	#pull requestを作成する
+hub pull-request --browse -F %%PULLREQ_TEMPLATE -b %%OWNER:%%DST_BRANCH -h %%OWNER:$(git symbolic-ref --short HEAD)	#pullreqのタイトル＆説明用テンプレートファイルを指定してpull requestを作成する
+hub pull-request --browse -i %%ISSUE -b %%OWNER:%%DST_BRANCH -h %%OWNER:$(git symbolic-ref --short HEAD)	#issueと連動したpull requestを作成する
 hub create -d '%%COMMENT'	#github上にpublic repositoryを作成する
 git log -p -S '%%STR'	#変更箇所にSTRを含むlogを表示する
 git cat-file -p %%COMMIT	#該当COMMITのcommit情報（tree, parent, author)を表示する
