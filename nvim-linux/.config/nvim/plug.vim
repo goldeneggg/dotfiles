@@ -25,6 +25,8 @@ Plug 'tpope/vim-fugitive'  "git
 Plug 'kana/vim-smartinput' "対応カッコ自動閉じetc
 Plug 'tyru/caw.vim'  "複数行コメントアウト. 複数行選択して gci でコメントアウトできる. gccでtoggle
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-endwise'  "自動でend入力
+Plug 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルにヤンク・ペースト
 
 " support language specification
 Plug 'fatih/vim-go'

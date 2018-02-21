@@ -18,6 +18,9 @@ source $HOME/.config/nvim/colorscheme.vim
 " ステータスバー
 source $HOME/.config/nvim/lightline.vim
 
+" yanktmp
+source $HOME/.config/nvim/yanktmp.vim
+
 " ファイル検索
 source $HOME/.config/nvim/ctrlp.vim
 
