@@ -20,6 +20,7 @@ declare -ar APPS=("git" \
   "the_silver_searcher" \
   "tkengo/highway/highway" \
   "stow" \
+  "grep" \
   "diff-so-fancy" \
   "cmake" \
   "readline" \
@@ -33,14 +34,6 @@ declare -ar APPS=("git" \
 for app in ${APPS[@]}
 do
   brew install ${app}
-done
-
-# dupes
-brew tap homebrew/dupes
-declare -ar DUPES_APPS=("grep")
-for app in ${DUPES_APPS[@]}
-do
-  brew install homebrew/dupes/${app}
 done
 
 # highway
