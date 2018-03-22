@@ -97,7 +97,7 @@ function _vigextcomex {
     REGEXP="$3"
 
     # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
-    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$3" "$2}')
+    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
       eval "vi ${F}"
@@ -184,7 +184,7 @@ function _nvgextcomex {
     REGEXP="$3"
 
     # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
-    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$3" "$2}')
+    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
       eval "nvim ${F}"
