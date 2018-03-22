@@ -1,23 +1,15 @@
-#- [linux]GNU grep is high priority
-if type ggrep > /dev/null 2>&1
-then
-  echo "using grep=ggrep"
-  alias grep=ggrep
-fi
-
 GREP_OPTIONS="--binary-files=without-match"
 GREP_OPTIONS="--directories=recurse $GREP_OPTIONS"
 GREP_OPTIONS="--exclude=\*.tmp $GREP_OPTIONS"
 
-if grep --help | grep -q -- --exclude-dir
+# [linux]GNU grep is high priority
+if type ggrep > /dev/null 2>&1
 then
+  alias grep=ggrep
+
   GREP_OPTIONS="--exclude-dir=.svn $GREP_OPTIONS"
   GREP_OPTIONS="--exclude-dir=.git $GREP_OPTIONS"
   GREP_OPTIONS="--exclude-dir=vendor $GREP_OPTIONS"
-fi
-
-if grep --help | grep -q -- --color
-then
   GREP_OPTIONS="--color=auto $GREP_OPTIONS"
 fi
 
