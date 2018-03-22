@@ -105,11 +105,11 @@ if [ "${NAME}" = "" ]
 then
   if [ "${SIGN}" = "${SIGN_MAC}" ]
   then
-    install `ls -1F | grep "/" | grep -v -- ${SIGN}`
-    install `ls -1F | grep "/" | grep -- ${SIGN}`
+    install `ls -1F | \grep "/" | \grep -v -- ${SIGN}`
+    install `ls -1F | \grep "/" | \grep -- ${SIGN}`
   elif [ "${SIGN}" = "${SIGN_LINUX}" ]
   then
-    install `ls -1F | grep "/" | grep -- ${SIGN}`
+    install `ls -1F | \grep "/" | \grep -- ${SIGN}`
   fi
 else
   install ${NAME}${SIGN}${VERSION}

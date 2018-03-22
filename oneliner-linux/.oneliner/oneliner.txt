@@ -1,16 +1,16 @@
-while true ;do ls /proc/`ps -ef | grep %%PROC_NAME | grep -v grep | awk '{print $2}'`/fd | wc -l ;sleep 1 ;done	特定のプロセスが使用しているファイルディスクリプタを1秒ごとに表示
-watch --interval=1 'netstat -ent | grep %%WORD'	#TCPの通信発生を1秒毎に確認
+while true ;do ls /proc/`ps -ef | \grep %%PROC_NAME | \grep -v grep | awk '{print $2}'`/fd | wc -l ;sleep 1 ;done	特定のプロセスが使用しているファイルディスクリプタを1秒ごとに表示
+watch --interval=1 'netstat -ent | \grep %%WORD'	#TCPの通信発生を1秒毎に確認
 wget --user=%%USER --password=%%PASS %%URL	#wget BASIC認証有り
 wget -q -O - %%URL	#転送情報を出力せず、wgetの結果だけを"標準出力に"出力する
 du /home --max-depth=1 | sort -nr	#/home直下の使用容量を降順表示
 du -h | egrep '^[0-9\.]+M' | sort -nr	#MB以上のサイズのファイル・ディレクトリを降順表示
 find . -type f -daystart -ctime -1 | xargs ls -lrt	#カレントディレクトリ下の当日更新されたファイルを再帰的に検索して日時昇順で表示
 vi $(grep -n -i %%STR %%TARGET | peco | awk -F ":" '{print "-c "$2" "$1}')	#pecoを使用して、vimでgrep結果を行番号指定付きで開く
-vi $(grep -n -i %%STR %%TARGET | grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	##pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須
-vi $(grep -n -i %%STR **/*.go | grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須
+vi $(grep -n -i %%STR %%TARGET | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	##pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須
+vi $(grep -n -i %%STR **/*.go | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須
 sudo strace -s 1024 -f -p %%PID	#指定したPIDのプロセスのUNIXドメインソケット通信内容を確認する
-vi $(grep -n "\sgo .*(" **/*.go | grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]ゴルーチンを起動しているgoのソースを検索して、行番号指定でviで開く
-grep -n "\sgo .*(" **/*.go | grep -v "[0-9]:\s*//" | awk -F ":" '{print $1}' | sort | uniq -c | sort -r	#[golang] Go本体のソースでゴルーチンを起動している箇所数,GOROOT/src/pkgディレクトリ下で実行する
+vi $(grep -n "\sgo .*(" **/*.go | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]ゴルーチンを起動しているgoのソースを検索して、行番号指定でviで開く
+grep -n "\sgo .*(" **/*.go | \grep -v "[0-9]:\s*//" | awk -F ":" '{print $1}' | sort | uniq -c | sort -r	#[golang] Go本体のソースでゴルーチンを起動している箇所数,GOROOT/src/pkgディレクトリ下で実行する
 df -i	#割り当て可能な(Inodes),使用中の(IUsed),未割り当ての(IFree)inode数を表示する
 stat %%FILE	#ファイルの詳細な統計情報を表示する。inode番号とか
 find / -xdev -type f	#xdevオプションで、 / ファイル・システムのみに限定して検索する,xdevが無い場合/usrとか/varとかNFS等の他のファイルシステムも検索対象になる
@@ -18,8 +18,8 @@ sudo echo %%NUM > /proc/sys/vm/drop_caches	#ファイルシステムのキャッ
 grep Dirty /proc/meminfo	#ダーティオブジェクトのサイズを表示する
 sync	#バッファ(メモリ上のデータ)の内容を強制的にディスクに書き込みバッファをフラッシュし)、ダーティオブジェクトをクリアする
 dig -f %%DIGFILE	#digコマンドを羅列したファイルを指定してバッチモードでdigを実行する,バッチモード用ファイルの記法やオプションは通常のコマンド実行時と同じ
-for v in $(vagrant status | grep %%VMSTR | awk '{print $1}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,vagrantコマンド使用
-for v in $(VBoxManage list runningvms | grep %%VMSTR | awk -F"_" '{print $2}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,VBoxManage使用
+for v in $(vagrant status | \grep %%VMSTR | awk '{print $1}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,vagrantコマンド使用
+for v in $(VBoxManage list runningvms | \grep %%VMSTR | awk -F"_" '{print $2}'); do echo "=== $v" && vagrant ssh -c '%%CMD' $v; done	#[vagrant]VMSTRにmatchする全てのvmでCMDを実行する,VBoxManage使用
 time -f '%Uu %Ss %er %MkB %C' "$@"	#[prof]timeコマンドの出力結果を見やすくしてコマンドプロファイリングする(https://blog.golang.org/profiling-go-programs)
 [[ -x `which %%CMD` ]] && %%CMD %%ARGS	#[shell]CMDで指定したコマンドが存在していれば実行する
 ctags --langmap=Ruby:.rb --exclude="*.js"  --exclude=".git*" -R .	#[ctags][ruby]カレントディレクトリ下のrubyソース群に対して再帰的にctagを生成

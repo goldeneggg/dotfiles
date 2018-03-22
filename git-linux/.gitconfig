@@ -91,10 +91,10 @@
   ### find-mergeの結果をgit logする
   show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git log --pretty=\"format:%ad %h %s\" --date=iso $merge | head -n 1'"
   ## pull request
-  show-pr = !"f() { git log --merges --pretty=\"format:%ad %h %s\" --date=iso --reverse --ancestry-path $1...${2:-master} | grep 'Merge pull request #' | head -n 1; }; f"
+  show-pr = !"f() { git log --merges --pretty=\"format:%ad %h %s\" --date=iso --reverse --ancestry-path $1...${2:-master} | \grep 'Merge pull request #' | head -n 1; }; f"
   pr-list = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-pr ${hash} ${1:-master}; done | sort | uniq'"
-  pr-list2 = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-merge ${hash} ${1:-master} | grep \"pull request #\"; done | sort | uniq'"
+  pr-list2 = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-merge ${hash} ${1:-master} | \grep \"pull request #\"; done | sort | uniq'"
   ## using hub
   open = browse
   pullreq = pull-request
-  openpr = "!f() { hub browse -- `git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1 | cut -f5 -d' ' | sed -e 's%#%pull/%'`; }; f"
+  openpr = "!f() { hub browse -- `git log --merges --oneline --reverse --ancestry-path $1...master | \grep 'Merge pull request #' | head -n 1 | cut -f5 -d' ' | sed -e 's%#%pull/%'`; }; f"

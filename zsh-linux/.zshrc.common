@@ -116,53 +116,10 @@ case "${TERM}" in
     ;;
 esac
 
-
-#- 共通エイリアス
-alias rmi='rm -i'
-alias cpi='cp -i'
-alias mvi='mv -i'
-alias df='df -h'
-alias du='du -h'
-alias diff='diff -uw'
-alias patch='patch -u'
-alias fcl='fc -l'
-alias pd='popd'
-alias w3m='w3m -reqlog'
-alias od='od -tx1c'
-alias so='source ~/.zshenv ~/.zshrc'
-alias tokyo='curl wttr.in/Tokyo'
-#-- highway
-alias hw='hw -a --no-group'
-#-- golang
-alias gb='go build'
-alias gt='go test'
-alias gr='go run'
-alias gg='go get'
-#-- rails
-alias ras='bundle exec rails s'
-alias rac='bundle exec rails c'
-alias rag='bundle exec rails g'
-#-- mysql
-#alias mysql="mysql --pager='less -S' --safe-updates"  #lessだと化ける
-alias mysql="mysql --pager='lv' --safe-updates"
-#-- global alias
-alias -g V="| vim -R -"
-alias -g NV="| nvim -R -"
-alias -g M="| more"
-alias -g L="| less"
-alias -g W="| wc -l"
-alias -g B="| col -bx"
-#-- vim, nvim
-alias vi=vim
-alias nv=nvim
-#-- gat (https://github.com/goldeneggg/gat)
-alias gagi='gat gist'
-alias gasl='gat slack'
-alias gapl='gat play'
 #-- grep for ruby
 function grep_ruby_method() {
   method=${1}
-  grep -n -E "def (self\.)?${method}" **/*.rb
+  \grep -n -E "def (self\.)?${method}" **/*.rb
 }
 
 #- manをvimで読む

@@ -53,7 +53,7 @@ fi
 # grep => open vim by filename and line number
 function vig {
     STR="$1"
-    F=$(grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(\grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
       echo "${F}"
@@ -85,7 +85,7 @@ function _vigext {
     STR="$1"
     EXT=$2
 
-    F=$(grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(\grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
       eval "vi ${F}"
@@ -97,8 +97,7 @@ function _vigextcomex {
     REGEXP="$3"
 
     # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
-    #F=$(grep -H -n -E ${STR} **/*.${EXT} | grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    F=$(grep -H -n -E ${STR} **/*.${EXT} | grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$3" "$2}')
+    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$3" "$2}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
       eval "vi ${F}"
@@ -151,7 +150,7 @@ function vigcf {
 # grep => open neovim by filename and line number
 function nvg {
     STR="$1"
-    F=$(grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(\grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
       echo "${F}"
@@ -173,7 +172,7 @@ function _nvgext {
     STR="$1"
     EXT=$2
 
-    F=$(grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(\grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
       eval "nvim ${F}"
@@ -185,7 +184,7 @@ function _nvgextcomex {
     REGEXP="$3"
 
     # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
-    F=$(grep -H -n -E ${STR} **/*.${EXT} | grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$3" "$2}')
+    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$3" "$2}')
     if [ $? -eq 0 -a "${F}" != "" ]
     then
       eval "nvim ${F}"
