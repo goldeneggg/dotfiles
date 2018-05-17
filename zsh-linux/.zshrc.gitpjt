@@ -549,3 +549,25 @@ function gh_goinitgang() {
   _gh_goinit $1 $2
   _gh_gomaingang $1 $2 > main.go
 }
+
+#-- git push origin CURRENT_BRANCH
+function pushme() {
+  git push origin $(git symbolic-ref --short HEAD)
+}
+
+#-- git push --force-with-lease origin CURRENT_BRANCH
+function pushforceme() {
+  git push --force-with-lease origin $(git symbolic-ref --short HEAD)
+}
+
+#-- git branch prXXX pull/XXX/head
+function new_pr_branch() {
+  if [ $# -ne 1 ]
+  then
+    echo "Need to assign a argument of pull request number"
+    exit 1
+  fi
+
+  num=$1
+  git branch pr${num} pull/${num}/head
+}
