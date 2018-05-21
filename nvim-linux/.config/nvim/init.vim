@@ -1,3 +1,10 @@
+"==========
+" Neovim Setup flow
+"   1. curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+"   2. nvim
+"   3. :PlugInstall
+"==========
+
 " 基本設定
 source $HOME/.config/nvim/basic.vim
 source $HOME/.config/nvim/keymaps.vim
@@ -25,3 +32,6 @@ source $HOME/.config/nvim/golang.vim  " Golang, deoplete-go
 
 " スニペット
 source $HOME/.config/nvim/neosnippet.vim
+
+" denite
+source $HOME/.config/nvim/denite.vim
