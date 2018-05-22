@@ -7,8 +7,9 @@ export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
 export ERLANG_HOME=/usr/local/erlang
 export ELIXIR_HOME=/usr/local/elixir
-export PYENV_ROOT=$HOME/.pyenv
 export ANACONDA3=$HOME/anaconda3
+export PYENV_ROOT=$HOME/.pyenv
+export ANYENV_ROOT=$HOME/.anyenv
 #export PIP_HOME=$HOME/.local
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
@@ -60,8 +61,11 @@ cdpath=(
 # ndenv
 [[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
 
-#- anyenv
-[[ -s "$HOME/.anyenv/bin/anyenv" ]] && eval "$(anyenv init -)"
-
 # pyenv
-[[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)"
+[[ -s "$PYENV_ROOT/bin/pyenv" ]] && eval "$(pyenv init -)"
+[[ -s "$PYENV_ROOT/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+
+# anyenv
+[[ -s "$ANYENV_ROOT/bin/anyenv" ]] && eval "$(anyenv init -)"
+# pyenv-virtualenv on anyenv
+[[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"

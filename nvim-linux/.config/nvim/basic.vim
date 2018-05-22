@@ -43,3 +43,14 @@ highlight SpecialKey ctermfg=darkgray
 if exists('&ambiwidth')
     set ambiwidth=double
 endif
+
+" pyenv
+" pyenv-virtualenv でpython2用（neovim2）, python3（neovim3） 両方のvirtualenvが構築済であること
+if exists($ANYENV_ROOT)
+  let g:python_host_prog=$ANYENV_ROOT.'/envs/pyenv/versions/neovim2/bin/python'
+  let g:python3_host_prog=$ANYENV_ROOT.'envs/pyenv/versions/neovim3/bin/python'
+else
+  " TODO pyenv + virtualenv の際の正しいパスコレで良いか確認必要
+  let g:python_host_prog=$PYENV_ROOT.'/versions/neovim2/bin/python'
+  let g:python3_host_prog=$PYENV_ROOT.'/versions/neovim3/bin/python'
+endif
