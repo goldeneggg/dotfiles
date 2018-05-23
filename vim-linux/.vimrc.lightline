@@ -1,6 +1,6 @@
 "==================== lightline
 let g:lightline = {
-    \ 'colorscheme': 'Tomorrow_Night',
+    \ 'colorscheme': 'tender',
     \ 'mode_map': {'c': 'NORMAL'},
     \ 'active': {
     \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],

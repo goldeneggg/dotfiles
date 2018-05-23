@@ -1,0 +1,2 @@
+SELECT table_id, name, space from INFORMATION_SCHEMA.INNODB_SYS_TABLES WHERE name LIKE '%%DB_NAME/%' ORDER BY space	#[mysql][sql]インデックステーブルの一覧
+SELECT index_id, name, table_id, space from INFORMATION_SCHEMA.INNODB_SYS_INDEXES WHERE index_id=%%INDEX_ID	#[mysql][sql]インデックステーブルの詳細
