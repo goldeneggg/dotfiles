@@ -11,6 +11,7 @@ export GOBIN=$GOPATH/bin
 export PYENV_ROOT=$HOME/.pyenv
 export ANACONDA3=$HOME/anaconda3
 export GCP_SDK_HOME=$HOME/google-cloud-sdk
+export ANYENV_ROOT=$HOME/.anyenv
 python_version=2.7
 redis_version=2.8
 
@@ -68,8 +69,11 @@ cdpath=(
 #- ndenv
 [[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
 
-#- anyenv
-[[ -s "$HOME/.anyenv/bin/anyenv" ]] && eval "$(anyenv init -)"
-
 # pyenv
-[[ -s "$HOME/.pyenv/bin/pyenv" ]] && eval "$(pyenv init -)"
+[[ -s "$PYENV_ROOT/bin/pyenv" ]] && eval "$(pyenv init -)"
+[[ -s "$PYENV_ROOT/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+
+# anyenv
+[[ -s "$ANYENV_ROOT/bin/anyenv" ]] && eval "$(anyenv init -)"
+# pyenv-virtualenv on anyenv
+[[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
