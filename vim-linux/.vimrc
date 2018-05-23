@@ -22,7 +22,7 @@ if v:version > 701
 
   source $HOME/.vimrc.unite
   "source $HOME/.vimrc.vimfiler
-  "source $HOME/.vimrc.neocomplcache
+  source $HOME/.vimrc.neocomplcache
   source $HOME/.vimrc.neosnippet
 
   source $HOME/.vimrc.ctrlp

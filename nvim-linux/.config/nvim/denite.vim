@@ -39,6 +39,23 @@ nnoremap <silent> [denite]c :<C-u>DeniteProjectDir -buffer-name=pjtdir-buffer bu
 " 現在開いているファイルのディレクトリ下一覧
 nnoremap <silent> [denite]a :<C-u>DeniteBufferDir -buffer-name=bufdir-buffer buffer file<CR>
 
+"========== line
+" nnoremap <silent> ,l :<C-u>Unite line:all -no-quit -buffer-name=line-buffer<CR>
+nnoremap <silent> ,l :Denite line:all:noempty -no-quit -buffer-name=line-buffer<CR>
+
+"========== like CtrlP
+" gitプロジェクトのdirの場合は file_rec/git を定義/利用する
+function! DeniteFileRecAsyncOrGit()
+  if isdirectory(getcwd()."/.git")
+    call denite#custom#alias('source', 'file_rec/git', 'file_rec')
+    call denite#custom#var('file_rec/git', 'command', ['git', 'ls-files', '-co', '--exclude-standard'])
+    Denite file_rec/git
+  else
+    Denite file_rec
+  endif
+endfunction
+nnoremap ,p :<C-u>call DeniteFileRecAsyncOrGit()<CR>
+
 "========== grep
 " let g:unite_source_grep_max_candidates = 200
 " let g:unite_source_grep_recursive_opt = ''
@@ -67,24 +84,3 @@ nnoremap <silent> ,/ :Denite grep:. -buffer-name=search-buffer<CR>
 nnoremap <silent> ,g :DeniteCursorWord grep:. -buffer-name=search-buffer<CR>
 " " 検索結果を再度呼び出し
 " nnoremap <silent> ,r  :<C-u>UniteResume search-buffer<CR>
-
-"========== line
-" nnoremap <silent> ,l :<C-u>Unite line:all -no-quit -buffer-name=line-buffer<CR>
-nnoremap <silent> ,l :Denite line:all:noempty -no-quit -buffer-name=line-buffer<CR>
-
-
-"========== like CtrlP
-" call unite#custom#source('file_rec/async', 'ignore_pattern', s:unite_ignore_patterns)
-" call unite#custom#source('file_rec/git', 'ignore_pattern', s:unite_ignore_patterns)
-
-" gitプロジェクトのdirの場合は file_rec/git を定義/利用する
-function! DeniteFileRecAsyncOrGit()
-  if isdirectory(getcwd()."/.git")
-    call denite#custom#alias('source', 'file_rec/git', 'file_rec')
-    call denite#custom#var('file_rec/git', 'command', ['git', 'ls-files', '-co', '--exclude-standard'])
-    Denite file_rec/git
-  else
-    Denite file_rec
-  endif
-endfunction
-nnoremap ,p :<C-u>call DeniteFileRecAsyncOrGit()<CR>

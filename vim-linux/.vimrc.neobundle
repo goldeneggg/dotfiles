@@ -54,7 +54,7 @@ NeoBundle 'tpope/vim-markdown'
 
 " completion
 NeoBundle 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C-Y ,」でそれを展開 http://motw.mods.jp/Vim/emmet-vim.html
-"NeoBundle 'Shougo/neocomplcache'  "補完
+NeoBundle 'Shougo/neocomplcache'  "補完
 NeoBundle 'Shougo/neosnippet'  "スニペット
 NeoBundle 'Shougo/neosnippet-snippets'
 NeoBundle 'honza/vim-snippets'

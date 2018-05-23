@@ -11,8 +11,11 @@ call plug#begin()
 Plug 'jacoborus/tender.vim'
 Plug 'itchyny/lightline.vim'
 
-" file search
+" file finder
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'tacahiroy/ctrlp-funky'
+
+Plug 'Shougo/denite.nvim'
 
 " code information
 Plug 'rizzatti/dash.vim'
@@ -33,7 +36,6 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'zchee/deoplete-go', { 'do': 'make'}  "require: go get -u github.com/nsf/gocode
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
-Plug 'Shougo/denite.nvim'
 Plug 'Shougo/neomru.vim'
 
 call plug#end()
