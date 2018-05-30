@@ -8,6 +8,7 @@
 " 基本設定
 source $HOME/.config/nvim/basic.vim
 source $HOME/.config/nvim/keymaps.vim
+source $HOME/.config/nvim/encoding.vim
 
 " プラグイン
 source $HOME/.config/nvim/plug.vim
