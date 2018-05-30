@@ -31,6 +31,7 @@ Plug 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルに�
 " support language specification
 Plug 'fatih/vim-go'
 Plug 'sebdah/vim-delve'  " delve debugger support
+Plug 'kchmck/vim-coffee-script'
 
 " completion
 Plug 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C-Y ,」でそれを展開 http://motw.mods.jp/Vim/emmet-vim.html
