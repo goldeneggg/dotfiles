@@ -1,3 +1,9 @@
+" for vim 8.1 later
+" See: https://github.com/Shougo/dein.vim/issues/9
+if v:version > 800
+  set nocompatible
+endif
+
 " basic settings
 source $HOME/.vimrc.settings
 source $HOME/.vimrc.keymaps
