@@ -139,13 +139,15 @@ fi
 if [ -x ${GOROOT}/bin/go ]
 then
   PATH=${GOROOT}/bin:${PATH}
-  go get github.com/nsf/gocode
-  go get github.com/golang/lint
-  go get -u github.com/golang/lint/golint
-  go get -u golang.org/x/tools/cmd/goimports
-  go get github.com/github/hub
-  go get github.com/peco/peco
-  go get github.com/peco/peco/cmd/peco
+  go get -v github.com/nsf/gocode
+  go get -v github.com/golang/lint
+  go get -v -u github.com/golang/lint/golint
+  go get -v -u golang.org/x/tools/cmd/goimports
+  go get -v github.com/github/hub
+  go get -v github.com/peco/peco
+  go get -v github.com/peco/peco/cmd/peco
+  go get -v -u github.com/mgechev/revive
+  go get -v -u gopkg.in/alecthomas/gometalinter.v2
 fi
 
 ## run ex commands
