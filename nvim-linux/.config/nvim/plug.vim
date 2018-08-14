@@ -30,6 +30,7 @@ Plug 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルに�
 
 " support language specification
 Plug 'fatih/vim-go'
+Plug 'jodosha/vim-godebug'
 Plug 'sebdah/vim-delve'  " delve debugger support
 Plug 'kchmck/vim-coffee-script'
 
