@@ -27,6 +27,7 @@ Plug 'tyru/caw.vim'  "複数行コメントアウト. 複数行選択して gci 
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-endwise'  "自動でend入力
 Plug 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルにヤンク・ペースト
+Plug 'AndrewRadev/splitjoin.vim'  "gJ で行結合 or gS で行分割
 
 " support language specification
 Plug 'fatih/vim-go'
