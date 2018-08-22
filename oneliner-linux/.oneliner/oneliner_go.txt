@@ -1,0 +1,4 @@
+go list -f '{{range .GoFiles}}{{.}}{{"\n"}}{{end}}'	#[golang] カレントDIR下に存在するGoFileを一覧表示する
+go list -f '{{range .GoFiles}}{{$.Dir}}/{{.}}{{"\n"}}{{end}}'	#[golang] カレントDIR下に存在するGoFileをフルパスで一覧表示する
+go tool fix -diff .	#[golang] カレントディレクトリ下でfixを実行し、古いAPIが使われていないかを探して変更候補をdiff表示する
+
