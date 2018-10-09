@@ -43,6 +43,9 @@ alias gapl='gat play'
 eval "$(hub alias -s)"
 alias h='hub'
 
+#-- docker
+alias dl='docker ps -l -q'
+
 #-- global alias
 alias -g V="| vim -R -"
 alias -g NV="| nvim -R -"
