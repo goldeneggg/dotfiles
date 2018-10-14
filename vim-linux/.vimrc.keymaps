@@ -11,3 +11,7 @@
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 nnoremap <C-j>n :bn<CR>
 nnoremap <C-j>p :bp<CR>
+
+" for US keyboard
+nnoremap ; :
+nnoremap : ;
