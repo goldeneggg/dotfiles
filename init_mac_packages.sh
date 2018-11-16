@@ -25,6 +25,7 @@ declare -ar APPS=("git" \
   "diff-so-fancy" \
   "cmake" \
   "readline" \
+  "zlib" \
   "ctags" \
   "reattach-to-user-namespace" \
   "urlview" \
@@ -49,6 +50,7 @@ git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 # pyenv
 git clone https://github.com/pyenv/pyenv.git ~/.pyenv
 git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+git clone https://github.com/pyenv/pyenv-doctor.git ~/.pyenv/plugins/pyenv-doctor
 
 # ndenv
 git clone https://github.com/riywo/ndenv.git ~/.ndenv
