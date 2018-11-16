@@ -26,6 +26,7 @@ path=(
     /usr/local/mysql/bin(N-/)
     /usr/local/redis-${redis_version}/bin(N-/)
     /usr/local/redis/bin(N-/)
+    /usr/local/opt/openssl/bin(N-/)
     $HOME/.cabal/bin(N-/)
     $HOME/.rbenv/bin(N-/)
     $GOROOT/bin(N-/)
