@@ -191,3 +191,11 @@ if [ -s ~/.zshrc.tests ]
 then
   source ~/.zshrc.tests
 fi
+
+if [ -d ~/.personal ]
+then
+  for f in `ls -d ~/.personal/*`
+  do
+    source ${f}
+  done
+fi
