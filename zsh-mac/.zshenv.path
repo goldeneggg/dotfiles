@@ -76,5 +76,16 @@ cdpath=(
 
 # anyenv
 [[ -s "$ANYENV_ROOT/bin/anyenv" ]] && eval "$(anyenv init -)"
+
 # pyenv-virtualenv on anyenv
 [[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+
+if [ -f ${GCP_SDK_HOME}/path.zsh.inc ]
+then
+  source ${GCP_SDK_HOME}/path.zsh.inc
+fi
+
+if [ -f ${GCP_SDK_HOME}/completion.zsh.inc ]
+then
+  source ${GCP_SDK_HOME}/completion.zsh.inc
+fi
