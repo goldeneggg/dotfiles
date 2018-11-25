@@ -29,6 +29,7 @@ declare -ar APPS=("git" \
   "ctags" \
   "reattach-to-user-namespace" \
   "urlview" \
+  "awscli" \
   "extract_url" \
   "libevent" \
   "htop" \
