@@ -33,6 +33,7 @@ declare -ar APPS=("git" \
   "extract_url" \
   "libevent" \
   "htop" \
+  "ipcalc" \
   "pstree")
 for app in ${APPS[@]}
 do
