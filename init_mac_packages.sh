@@ -26,6 +26,7 @@ declare -ar APPS=("git" \
   "diff-so-fancy" \
   "cmake" \
   "readline" \
+  "tree" \
   "zlib" \
   "ctags" \
   "reattach-to-user-namespace" \
