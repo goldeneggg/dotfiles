@@ -45,6 +45,10 @@ done
 brew tap tkengo/highway
 brew install highway
 
+# aws
+brew tap aws/tap
+brew install aws-sam-cli
+
 # rbenv
 git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 mkdir ~/.rbenv/plugins
