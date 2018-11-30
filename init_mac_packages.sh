@@ -22,6 +22,7 @@ declare -ar APPS=("git" \
   "tkengo/highway/highway" \
   "stow" \
   "grep" \
+  "yarn" \
   "diff-so-fancy" \
   "cmake" \
   "readline" \
