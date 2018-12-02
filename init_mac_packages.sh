@@ -28,6 +28,7 @@ declare -ar APPS=("git" \
   "readline" \
   "tree" \
   "zlib" \
+  "icu4c" \
   "ctags" \
   "reattach-to-user-namespace" \
   "urlview" \
