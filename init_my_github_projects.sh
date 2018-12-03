@@ -8,13 +8,13 @@
 if [ ! -d ${HOME}/github ]
 then
   mkdir -p ${HOME}/github/goldeneggg
-  git clone git@github.com:goldeneggg/pages.gi ~/github/goldeneggg/pages
-  git clone git@github.com:goldeneggg/goldeneggg.github.io.gi ~/github/goldeneggg/goldeneggg.github.io
-  git clone git@github.com:goldeneggg/vagrant-vms.gi ~/github/goldeneggg/vagrant-vms
-  git clone git@github.com:goldeneggg/provisioning-bash.gi ~/github/goldeneggg/provisioning-bash
+  git clone git@github.com:goldeneggg/pages ~/github/goldeneggg/pages
+  git clone git@github.com:goldeneggg/goldeneggg.github.io ~/github/goldeneggg/goldeneggg.github.io
+  git clone git@github.com:goldeneggg/vagrant-vms ~/github/goldeneggg/vagrant-vms
+  git clone git@github.com:goldeneggg/provisioning-bash ~/github/goldeneggg/provisioning-bash
 
   mkdir -p ${HOME}/github/practice-goldeneggg
-  git clone git@github.com:practice-goldeneggg/apex-lambdas.gi ~/github/practice-goldeneggg/apex-lambdas
+  git clone git@github.com:practice-goldeneggg/apex-lambdas ~/github/practice-goldeneggg/apex-lambdas
 fi
 
 echo ""
