@@ -5,7 +5,7 @@
 ### Note: setup ssh keys before execute this script
 ### 
 
-if [ ! -d ${HOME}/github ]
+if [ ! -d ${HOME}/github/goldeneggg ]
 then
   mkdir -p ${HOME}/github/goldeneggg
   git clone git@github.com:goldeneggg/pages ~/github/goldeneggg/pages
