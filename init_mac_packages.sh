@@ -23,6 +23,7 @@ declare -ar APPS=("git" \
   "stow" \
   "grep" \
   "yarn" \
+  "cookiecutter" \
   "diff-so-fancy" \
   "cmake" \
   "readline" \
