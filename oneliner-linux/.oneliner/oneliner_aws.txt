@@ -2,3 +2,4 @@ aws s3 ls s3://%%BUCKET	#指定バケットのファイル一覧を表示する
 aws s3 cp s3://%%BUCKET/%%S3FILE %%LOCALFILE	#指定バケットのファイルをローカルにダウンロードする
 aws s3 cp s3://%%BUCKET %%LOCALDIR --recursive	#指定バケットのファイル群をローカルに再帰的ダウンロードする
 aws kms encrypt --key-id alias/%%ALIAS --query CiphertextBlob --output text --plaintext fileb://<(echo '%%URL')	#URL文字列をKMSで暗号化する
+sam local start-api -p 3999 --parameter-overrides ParameterKey=%%KEY1,ParameterValue=%%VALUE1 --debug	#ローカルにport 3999でAPI Gatewayを起動する。その際にParametersをovedrrideする
