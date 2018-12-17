@@ -560,6 +560,16 @@ function pushforceme() {
   git push --force-with-lease origin $(git symbolic-ref --short HEAD)
 }
 
+#-- git pull --rebase REMOTE CURRENT_BRANCH
+function plrme() {
+  local remote=origin
+  if [ $# -eq 1 ]
+  then
+    remote=${1}
+  fi
+  git pull --rebase ${remote} $(git symbolic-ref --short HEAD)
+}
+
 #-- git branch prXXX pull/XXX/head
 function new_pr_branch() {
   if [ $# -ne 1 ]
