@@ -196,6 +196,22 @@ then
   mkdir -p ${HOME}/.tmux/resurrect
 fi
 
+# install or refresh mongo-hacker
+if [ -f ${HOME}/.mongorc.js ]
+then
+  rm -f ${HOME}/.mongorc.js
+fi
+
+if [ ! -d ${HOME}/mongo-hacker ]
+then
+  git clone https://github.com/goldeneggg/mongo-hacker.git ${HOME}/mongo-hacker
+fi
+pushd ${HOME}/mongo-hacker
+git pull --rebase origin master
+make
+make install
+popd
+
 echo ""
 echo "---------------------------------------------------------"
 echo "Success!"
