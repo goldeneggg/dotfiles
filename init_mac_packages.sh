@@ -26,6 +26,7 @@ declare -ar APPS=("git" \
   "cookiecutter" \
   "diff-so-fancy" \
   "cmake" \
+  "direnv" \
   "readline" \
   "tree" \
   "zlib" \

@@ -89,3 +89,6 @@ if [ -f ${GCP_SDK_HOME}/completion.zsh.inc ]
 then
   source ${GCP_SDK_HOME}/completion.zsh.inc
 fi
+
+# direnv
+[ `which direnv` ] && eval "$(direnv hook zsh)"
