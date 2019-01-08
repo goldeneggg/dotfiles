@@ -1,0 +1,6 @@
+sudo rbspy record --pid %%PID	#PIDで指定したプロセスのプロファイルを行う
+sudo rbspy record -s --pid %%PID	#PIDで指定したプロセスとそのサブプロセス全てのプロファイルを行う
+sudo rbspy record --format %%FORMAT --pid %%PID	#PIDで指定したプロセスのプロファイルをFORMATで指定した形式で出力する(FORMAT: flamegraph(default), callgrind, speedscope, summary, summary_by_line)
+sudo rbspy record --format %%FORMAT -f %%FILE --raw-file %%RAWFILE --pid %%PID	#PIDで指定したプロセスのプロファイルをFORMATで指定した形式でFILEとRAWFILEにそれぞれ出力する(FORMAT: flamegraph(default), callgrind, speedscope, summary, summary_by_line)
+rbspy report -i %%RECORDED -o %%OUTPUT	#RECORDEDで指定したプロファイル結果をtxt変換出力する
+rbspy report --format summary -i %%RAWFILE -o %%OUTPUT	#RAWFILEで指定したプロファイル結果をsummary形式のtxt変換出力する。FORMATは他にもrecordコマンドと同じ値を指定可能
