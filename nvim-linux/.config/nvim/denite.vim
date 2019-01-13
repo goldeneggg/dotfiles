@@ -2,12 +2,27 @@
 " https://qiita.com/okamos/items/4e1665ecd416ef77df7c
 "
 " insertモードのデフォルトマッピング
-" - <C-G> : 次の行へ移動
-" - <C-T> : 前の行へ移動
+" - <Down> : 次の行へ移動  *デフォルトはC-G
+" - <Up> : 前の行へ移動  *デフォルトはC-T
 " - <C-O> : ノーマルモードへ切り替え
 "
 " normalモードのデフォルトマッピング
 " - i : insertモードへ切り替え
+
+"========== customizek keys for insert mode
+" 候補表示のinsertモード時の前後候補選択はカーソルキーに変更する
+call denite#custom#map(
+      \ 'insert',
+      \ '<Down>',
+      \ '<denite:move_to_next_line>',
+      \ 'noremap'
+      \)
+call denite#custom#map(
+      \ 'insert',
+      \ '<Up>',
+      \ '<denite:move_to_previous_line>',
+      \ 'noremap'
+      \)
 
 "========== Denite prefix key
 nnoremap [denite] <Nop>
@@ -43,20 +58,20 @@ nnoremap ,p :<C-u>call DeniteFileRecAsyncOrGit()<CR>
 
 "========== grep
 " grep (and filerec) command
-if executable('hw')
-  " Use hw (highway)
-  " https://github.com/tkengo/highway
-  call denite#custom#var('grep', 'command', ['hw'])
-  call denite#custom#var('grep', 'default_opts', ['--no-group', '--no-color'])
-  call denite#custom#var('file_rec', 'command', ['hw', '--no-group', '--no-color'])
-elseif executable('ack')
+if executable('ack')
   " Use ack
   call denite#custom#var('grep', 'command', ['ack'])
-  call denite#custom#var('file_rec', 'command', ['ack'])
+  call denite#custom#var('grep', 'default_opts',
+                  \ ['--ackrc', $HOME.'/.ackrc', '-H', '-i',
+                  \ '--nopager', '--nocolor', '--nogroup', '--column'])
+  "call denite#custom#var('file_rec', 'command', ['ack'])
 elseif executable('ack-grep')
   " Use ack-grep (ack on linux)
   call denite#custom#var('grep', 'command', ['ack-grep'])
-  call denite#custom#var('file_rec', 'command', ['ack-grep'])
+  call denite#custom#var('grep', 'default_opts',
+                  \ ['--ackrc', $HOME.'/.ackrc', '-H', '-i',
+                  \ '--nopager', '--nocolor', '--nogroup', '--column'])
+  "call denite#custom#var('file_rec', 'command', ['ack-grep'])
 endif
 
 call denite#custom#var('grep', 'recursive_opts', [])
