@@ -1,6 +1,13 @@
+aws s3 mb s3://%%BUCKET --region %%REGION	#regionを指定してバケットを作成する
 aws s3 ls s3://%%BUCKET	#指定バケットのファイル一覧を表示する
+aws s3 cp %%LOCALFILE s3://%%BUCKET/%%S3DIR/	#指定バケットディレクトリ下にローカルファイルをアップロードする
+aws s3 cp %%LOCALFILE s3://%%BUCKET/%%S3FILE	#指定バケットパスにローカルファイルをアップロードする
 aws s3 cp s3://%%BUCKET/%%S3FILE %%LOCALFILE	#指定バケットのファイルをローカルにダウンロードする
 aws s3 cp s3://%%BUCKET %%LOCALDIR --recursive	#指定バケットのファイル群をローカルに再帰的ダウンロードする
+aws s3 cp s3://%%BUCKET/%%S3FROMFILE s3://%%BUCKET/%%S3TOFILE	#バケット間でファイルをコピーする
+aws s3 rm s3://%%BUCKET/%%S3FILE	#指定S3ファイルを削除する
+aws s3 rm s3://%%BUCKET/%%S3DIR --recursive	#指定S3ディレクトリを再帰的に削除する
+aws s3 sync %%DIR s3://workbt/%%DIR/ --delete	#指定ローカルディレクトリとS3ディレクトリをローカルのファイル削除内容も考慮して同期する
 aws kms encrypt --key-id alias/%%ALIAS --query CiphertextBlob --output text --plaintext fileb://<(echo '%%URL')	#URL文字列をKMSで暗号化する
 aws sts get-caller-identity --output text --query 'Account'	#AccountIDを調べる
 aws cloudformation describe-stacks  --stack-name %%STACK_NAME	#STACK_NAMEで指定したstackの詳細情報を表示する
