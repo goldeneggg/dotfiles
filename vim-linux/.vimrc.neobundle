@@ -34,6 +34,9 @@ NeoBundle 'vim-scripts/taglist.vim'  "メソッド宣言、変数宣言の一覧
 NeoBundle 'thinca/vim-quickrun'  "<Leader>(=\)r で開いているファイルを実行
 NeoBundle 'kana/vim-smartinput'  " http://labs.timedia.co.jp/2012/09/vim-smartinput.html
 NeoBundle 'tpope/vim-endwise'  "自動でend入力
+NeoBundle 'tyru/caw.vim'  "複数行コメントアウト. 複数行選択して gci でコメントアウトできる. gccでtoggle
+NeoBundle 'Shougo/context_filetype.vim'
+NeoBundle 'AndrewRadev/splitjoin.vim'  "gJ で行結合 or gS で行分割
 
 " window control
 NeoBundle 'rgarver/Kwbd.vim'  "ウインドウ分割時にバッファを閉じた際, ウインドウレイアウトはそのまま残す
@@ -42,6 +45,8 @@ NeoBundle 'tmux-plugins/vim-tmux'
 " language specification
 NeoBundle 'nsf/gocode', {'rtp': 'vim/'} "install: go get github.com/nsf/gocode
 NeoBundle 'fatih/vim-go'  " Go 1.4+ removed misc/vim directory
+"NeoBundle 'jodosha/vim-godebug'
+NeoBundle 'sebdah/vim-delve'  "delve debugger support
 NeoBundle 'mattn/libcallex-vim' "http://mattn.kaoriya.net/software/lang/go/20150609021917.htm
 NeoBundle 'vim-ruby/vim-ruby'
 NeoBundle 'tpope/vim-rails'
@@ -51,14 +56,23 @@ NeoBundle 'ngmy/vim-rubocop'
 "NeoBundle 'othree/yajs.vim'
 NeoBundle 'kchmck/vim-coffee-script'
 NeoBundle 'tpope/vim-markdown'
+NeoBundle 'othree/javascript-libraries-syntax.vim'  "https://vimawesome.com/plugin/javascript-libraries-syntax
+NeoBundle 'posva/vim-vue'  "https://vimawesome.com/plugin/vim-vue-fearless
 
 " completion
 NeoBundle 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C-Y ,」でそれを展開 http://motw.mods.jp/Vim/emmet-vim.html
-NeoBundle 'Shougo/neocomplcache'  "補完
+"NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'Shougo/neosnippet'  "スニペット
 NeoBundle 'Shougo/neosnippet-snippets'
 NeoBundle 'honza/vim-snippets'
+NeoBundle 'Shougo/neomru.vim'
+" deoplete
+NeoBundle 'Shougo/deoplete.nvim'
+NeoBundle 'roxma/nvim-yarp'
+NeoBundle 'roxma/vim-hug-neovim-rpc'
+"NeoBundle 'zchee/deoplete-go', { 'build': { 'unix': 'make' } }  "require: go get -u github.com/nsf/gocode
 
+NeoBundle 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' }
 
 " need to execute make (`cd ~/.bundle/vimproc; make -f make_{mac,unix}.mak`)
 NeoBundle 'Shougo/vimproc', {
