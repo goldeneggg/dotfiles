@@ -8,7 +8,8 @@ aws s3 cp s3://%%BUCKET/%%S3FROMFILE s3://%%BUCKET/%%S3TOFILE	#バケット間�
 aws s3 rm s3://%%BUCKET/%%S3FILE	#指定S3ファイルを削除する
 aws s3 rm s3://%%BUCKET/%%S3DIR --recursive	#指定S3ディレクトリを再帰的に削除する
 aws s3 sync %%DIR s3://workbt/%%DIR/ --delete	#指定ローカルディレクトリとS3ディレクトリをローカルのファイル削除内容も考慮して同期する
-aws kms encrypt --key-id alias/%%ALIAS --query CiphertextBlob --output text --plaintext fileb://<(echo '%%URL')	#URL文字列をKMSで暗号化する
+aws kms encrypt --key-id %%KEYID --query CiphertextBlob --output text --plaintext fileb://<(echo '%%URL')	#URL文字列をKMSで暗号化する
+aws kms describe-key --key-id %%KEYID	#指定KMSキーの詳細を表示する
 aws sts get-caller-identity --output text --query 'Account'	#AccountIDを調べる
 aws cloudformation describe-stacks  --stack-name %%STACK_NAME	#STACK_NAMEで指定したstackの詳細情報を表示する
 sam local start-api -p 3999 --parameter-overrides ParameterKey=%%KEY1,ParameterValue=%%VALUE1 --debug	#ローカルにport 3999でAPI Gatewayを起動する。その際にParametersをovedrrideする
