@@ -25,7 +25,7 @@ set smartcase
 set showcmd
 set hidden
 set wildmenu
-set number
+"set number
 set backspace=indent,eol,start  "backspaceキーを有効化
 set nofoldenable  "折り畳みはいらない人なんです
 set fileformats=unix,dos,mac
@@ -41,7 +41,7 @@ highlight SpecialKey ctermfg=darkgray
 
 " cursor set for zenkaku char
 if exists('&ambiwidth')
-    set ambiwidth=double
+  set ambiwidth=double
 endif
 
 " pyenv
