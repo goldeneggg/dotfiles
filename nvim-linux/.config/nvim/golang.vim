@@ -28,7 +28,8 @@ let g:go_snippet_engine = "neosnippet"
 " lint with lightline TODO
 
 " maps
+" FIXME: 下記mapが機能しなくなっている（何らかの設定とバッティングしている？）
 " \ga : :GoAddTags - structにjson tag追加
-au FileType go nmap <leader>ga :GoAddTags<cr>
+au FileType go nmap <Leader>ga :GoAddTags<cr>
 " \gt : パッケージ内の関数や型の定義元一覧, ctrlpで表示
-au FileType go nmap <leader>gt :GoDeclsDir<cr>
+au FileType go nmap <Leader>gt :GoDeclsDir<cr>

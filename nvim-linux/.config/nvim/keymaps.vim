@@ -7,6 +7,9 @@
 " - マップや短縮入力を定義するときに "<unique>" 引数を指定すると、同じ名前のものがすでに定義されていた場合に、コマンドは失敗
 " - マップや短縮入力を定義するときに "<expr>" 引数を指定すると、引数が式 (スクリプト) として扱われ、マップが実行されたときに式が評価され、その値が {rhs}として使われる
 
+"my Leader key is <Space>
+let mapleader = "\<Space>"
+
 "nnoremap <Space>e :edit .<CR>
 nnoremap <ESC><ESC> :nohlsearch<CR><ESC>
 nnoremap <C-j>n :bn<CR>
