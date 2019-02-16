@@ -1,0 +1,5 @@
+docker-compose run web rails new . --force --no-deps --database=mysql	#webという名前のrailsコンテナで使用DBがmysqlのrails appをrails newする
+docker-compose run web rake db:create	#webという名前のrailsコンテナでdb:createコマンドを実行する
+docker-compose run %%NAME env	#NAMEという名前のコンテナでenvコマンドを実行して環境変数を確認する
+docker-compose exec %%NAME env	#NAMEという名前の実行中のコンテナでenvコマンドを実行して環境変数を確認する
+docker-compose down --volumes	#docker-compose down時にデータボリュームも削除する

@@ -2,6 +2,7 @@ docker rm $(docker ps -a | peco | awk '{print $1}')	#[docker] rm対象コンテ�
 docker rmi $(docker images -a | peco | awk '{print $3}')	#[docker] rmi対象イメージをpecoで選択してからrmiする
 docker run --rm -i -t %%IMAGE_ID /bin/sh	#[docker] イメージを指定してshellログインする
 docker exec -i -t %%CONTAINER_ID /bin/sh	#[docker] 実行中のコンテナを指定してshellログインする
+docker attach %%CONTAINER_ID	#[docker] 実行中のコンテナを指定してPID=1の/bin/bashに対して標準入出力を接続(attach)する。exitしたらコンテナは停止される
 docker ps -a | grep 'weeks ago' | awk '{print $1}' | xargs docker rm	#[docker] 1週間以上前の古いコンテナを一括削除
 docker ps -l -q	#[docker] 最後に実行したコンテナのIDを取得
 docker inspect $(docker ps -l -q) | grep '"IPAddress.*[0-9]",$'	#[docker] 最後に実行したコンテナのIPアドレスを取得
