@@ -16,6 +16,7 @@ declare -ar APPS=("git" \
   "tmux" \
   "wget" \
   "lv" \
+  "gawk" \
   "ack" \
   "jq" \
   "the_silver_searcher" \
