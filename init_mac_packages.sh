@@ -30,6 +30,7 @@ declare -ar APPS=("git" \
   "direnv" \
   "readline" \
   "tree" \
+  "travis" \
   "zlib" \
   "icu4c" \
   "ctags" \
