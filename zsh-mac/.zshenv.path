@@ -92,3 +92,6 @@ fi
 
 # direnv
 [ `which direnv` ] && eval "$(direnv hook zsh)"
+
+# added by travis gem
+[ -f /Users/fskmt/.travis/travis.sh ] && source /Users/fskmt/.travis/travis.sh
