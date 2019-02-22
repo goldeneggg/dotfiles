@@ -37,6 +37,8 @@ Plug 'sebdah/vim-delve'  "delve debugger support
 Plug 'kchmck/vim-coffee-script'
 Plug 'othree/javascript-libraries-syntax.vim'  "https://vimawesome.com/plugin/javascript-libraries-syntax
 Plug 'posva/vim-vue'  "https://vimawesome.com/plugin/vim-vue-fearless
+Plug 'tpope/vim-rails'
+Plug 'thoughtbot/vim-rspec'
 
 " completion
 Plug 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C-Y ,」でそれを展開 http://motw.mods.jp/Vim/emmet-vim.html
