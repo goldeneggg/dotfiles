@@ -33,6 +33,7 @@ source $HOME/.config/nvim/dash.vim
 
 " 言語別
 source $HOME/.config/nvim/golang.vim  " Golang, deoplete-go
+source $HOME/.config/nvim/vue.vim  " Vue.js
 
 " スニペット
 source $HOME/.config/nvim/neosnippet.vim
