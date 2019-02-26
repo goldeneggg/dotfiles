@@ -29,6 +29,8 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-endwise'  "自動でend入力
 Plug 'vim-scripts/yanktmp.vim'  "別プロセスで開いてるファイルにヤンク・ペースト
 Plug 'AndrewRadev/splitjoin.vim'  "gJ で行結合 or gS で行分割
+Plug 'rhysd/conflict-marker.vim'  "conflict解消ヘルパー
+Plug 'tmhedberg/matchit'
 
 " support language specification
 Plug 'fatih/vim-go'

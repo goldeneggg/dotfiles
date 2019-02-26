@@ -33,6 +33,7 @@ alias mysql="mysql --pager='lv' --safe-updates"
 #-- vim, nvim
 alias vi=vim
 alias nv=nvim
+alias vimdiff='nvim -d'
 
 #-- gat (https://github.com/goldeneggg/gat)
 alias gagi='gat gist'
