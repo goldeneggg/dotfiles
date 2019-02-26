@@ -8,3 +8,6 @@ source ~/.zshrc.virtualbox
 source ~/.zshrc.ssh
 source ~/.zshrc.prompt
 source ~/.zshrc.symlink
+
+# added by travis gem
+[ -f /Users/fskmt/.travis/travis.sh ] && source /Users/fskmt/.travis/travis.sh
