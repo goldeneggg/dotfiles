@@ -18,3 +18,6 @@ nnoremap <C-j>p :bp<CR>
 " for US keyboard
 nnoremap ; :
 nnoremap : ;
+
+" paste from clipboard(register * is clipboard)
+nnoremap <Leader>pp "*p
