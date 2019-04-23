@@ -1,0 +1,23 @@
+function go-get {
+  local opts=" "
+  local pkg=""
+
+  while true
+  do
+    if (( $# > 1 ))
+    then
+      opts="${opts}${1} "
+      shift
+    elif (( $# == 1 ))
+    then
+      pkg=${1}
+      shift
+    else
+      break
+    fi
+  done
+
+  cmd="go get${opts}$(curl -Ls -o /dev/null -w %{url_effective} https://${pkg} | sed -e 's/https:\/\///g')"
+  echo ${cmd}
+  eval ${cmd}
+}

@@ -8,3 +8,4 @@ source ~/.zshrc.virtualbox
 source ~/.zshrc.ssh
 source ~/.zshrc.prompt
 source ~/.zshrc.symlink
+source ~/.zshrc.golang
