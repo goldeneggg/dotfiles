@@ -33,3 +33,19 @@ let g:go_snippet_engine = "neosnippet"
 au FileType go nmap <Leader>ga :GoAddTags<cr>
 " \gt : パッケージ内の関数や型の定義元一覧, ctrlpで表示
 au FileType go nmap <Leader>gt :GoDeclsDir<cr>
+
+" ----- lsp settings
+" Need to install golsp. using "go get -u golang.org/x/tools/cmd/gopls" command.
+
+" for vim-go and gopls. See: https://github.com/golang/go/wiki/gopls
+"let g:go_def_mode='gopls'
+
+" for coc.nvim and gopls. See: https://github.com/neoclide/coc.nvim/wiki/Language-servers#go
+" Run ":CocConfig" command and edit json as follows
+  " "languageserver": {
+  "   "golang": {
+  "     "command": "gopls",
+  "     "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+  "     "filetypes": ["go"]
+  "   }
+  " }
