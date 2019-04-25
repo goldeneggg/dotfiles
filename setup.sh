@@ -147,7 +147,6 @@ then
   go get -v github.com/peco/peco/cmd/peco
   go get -v -u github.com/mgechev/revive
   go get -v -u gopkg.in/alecthomas/gometalinter.v2
-  go get -v github.com/mdempsky/gocode # TODO: out of date, us gopls for go completion
   go get -v -u golang.org/x/tools/cmd/gopls
 fi
 

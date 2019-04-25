@@ -42,23 +42,15 @@ Plug 'posva/vim-vue'  "https://vimawesome.com/plugin/vim-vue-fearless
 Plug 'tpope/vim-rails'
 Plug 'thoughtbot/vim-rspec'
 
-" completion
-" coc.nvim with LSP
+" completion: coc.nvim with LSP
 "" - 1st, :Cocinstall coc-gocode  " for golang. See: https://www.npmjs.com/package/coc-gocode
 "" - 2nd, and edit coc config using :CocConfig command. See: https://github.com/neoclide/coc.nvim/wiki/Language-servers#go
 "" - 3rd, and install gopls using go get -u golang.org/x/tools/cmd/gopls
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
 
 Plug 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C-Y ,」でそれを展開 http://motw.mods.jp/Vim/emmet-vim.html
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-"Plug 'deoplete-plugins/deoplete-go', { 'do': 'make'}  "require: go get -u github.com/mdempsky/gocode
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'Shougo/neomru.vim'
-"Plug 'ternjs/tern_for_vim', { 'do': 'npm install && npm install -g tern' } "https://vimawesome.com/plugin/tern-for-vim-state-of-grace
-
-" for go with vim-lsp (and gopls)
-" Plug 'prabirshrestha/async.vim'
-" Plug 'prabirshrestha/vim-lsp'
 
 call plug#end()
