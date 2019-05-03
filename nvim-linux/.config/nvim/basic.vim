@@ -35,7 +35,7 @@ set laststatus=2
 "set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l/%L,%c%V%8P
 
 " listchar
-set list
+set nolist
 set listchars=tab:>-,trail:-,nbsp:%
 highlight SpecialKey ctermfg=darkgray
 
