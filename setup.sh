@@ -207,6 +207,7 @@ ORG_IGNORE_TARGETS=( \
   ".envrc" \  
   "Gemfile.local" \  
   "Gemfile.local.lock" \  
+  ".solargraph.yml" \  
 )
 
 echo "#----- original global .gitignores" >> ${GH_GLOBAL_IGNORE}
