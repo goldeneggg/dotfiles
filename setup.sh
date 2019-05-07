@@ -178,14 +178,27 @@ then
 fi
 
 GLOBAL_IGNORE_TARGETS=( \
-  "Archives" \
   "Backup" \
+  "Diff" \
+  "Dropbox" \
+  "Linux" \
+  "Mercurial" \
+  "Patch" \
+  "Redis" \
+  "SVN" \
+  "Tags" \
+  "Vagrant" \
+  "Vim" \
+  "VirtualEnv" \
+  "VisualStudioCode" \
+  "Xcode" \
+  "macOS" \
 )
 for t in ${GLOBAL_IGNORE_TARGETS[@]}
 do
   ignore_src=https://raw.githubusercontent.com/github/gitignore/master/Global/${t}.gitignore
   echo "#----- ${t}. See: ${ignore_src}" >> ${GH_GLOBAL_IGNORE}
-  curl ${ignore_src} >> ${GH_GLOBAL_IGNORE}
+  curl -s ${ignore_src} >> ${GH_GLOBAL_IGNORE}
   echo "" >> ${GH_GLOBAL_IGNORE}
 done
 
