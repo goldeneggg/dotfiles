@@ -16,6 +16,7 @@ Options:
   -v | --version VERSION          target version
   --github-user GITHUB_USER       user account on github (default: "GITHUB_USER" env value)
   --github-mail GITHUB_MAIL       user mail address on github (default: "GITHUB_MAIL" env value)
+  --skip-goget                    skip go get commands
   -h | --help                     print a summary of the options
 
 __EOT__
@@ -43,7 +44,7 @@ install() {
   done
 }
 
-unset NAME VERSION GH_U GH_M
+unset NAME VERSION GH_U GH_M SKIP_GOGET
 SIGN_LINUX="-linux"
 SIGN_MAC="-mac"
 SIGN="${SIGN_LINUX}"
@@ -58,6 +59,7 @@ do
     -v | --version ) VERSION="-"$2; shift 2 ;;
     --github-user ) GH_U=$2; shift 2 ;;
     --github-mail ) GH_M=$2; shift 2 ;;
+    --skip-goget ) SKIP_GOGET="true"; shift ;;
     * ) break ;;
   esac
 done
@@ -138,16 +140,19 @@ fi
 # install go tools
 if [ -x ${GOROOT}/bin/go ]
 then
-  PATH=${GOROOT}/bin:${PATH}
-  go get -v github.com/golang/lint
-  go get -v -u github.com/golang/lint/golint
-  go get -v -u golang.org/x/tools/cmd/goimports
-  go get -v github.com/github/hub
-  go get -v github.com/peco/peco
-  go get -v github.com/peco/peco/cmd/peco
-  go get -v -u github.com/mgechev/revive
-  go get -v -u gopkg.in/alecthomas/gometalinter.v2
-  go get -v -u golang.org/x/tools/cmd/gopls
+  if [ ${SKIP_GOGET} != "true" ]
+  then
+    PATH=${GOROOT}/bin:${PATH}
+    go get -v github.com/golang/lint
+    go get -v -u github.com/golang/lint/golint
+    go get -v -u golang.org/x/tools/cmd/goimports
+    go get -v github.com/github/hub
+    go get -v github.com/peco/peco
+    go get -v github.com/peco/peco/cmd/peco
+    go get -v -u github.com/mgechev/revive
+    go get -v -u gopkg.in/alecthomas/gometalinter.v2
+    go get -v -u golang.org/x/tools/cmd/gopls
+  fi
 fi
 
 ## run ex commands
@@ -159,14 +164,42 @@ then
 fi
 
 # replace token of .gitconfig
-GITFILE_SUFFIXS=("config" "ignore")
-for gitfile_suffix in ${GITFILE_SUFFIXS[@]}
+cp ${HOME}/.gitconfig ${HOME}/.gitconfig.org
+rm ${HOME}/.gitconfig
+cp ${HOME}/.gitconfig.org ${HOME}/.gitconfig
+sed -i -e "s/%GITHUB_USER%/${GH_U}/g" ${HOME}/.gitconfig
+sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ${HOME}/.gitconfig
+
+# setup .gitignore_global
+GH_GLOBAL_IGNORE=${HOME}/.gitignore_global
+if [ -f ${GH_GLOBAL_IGNORE} ]
+then
+  rm -f ${GH_GLOBAL_IGNORE}
+fi
+
+GLOBAL_IGNORE_TARGETS=( \
+  "Backup" \
+  "Diff" \
+  "Dropbox" \
+  "Linux" \
+  "Mercurial" \
+  "Patch" \
+  "Redis" \
+  "SVN" \
+  "Tags" \
+  "Vagrant" \
+  "Vim" \
+  "VirtualEnv" \
+  "VisualStudioCode" \
+  "Xcode" \
+  "macOS" \
+)
+for t in ${GLOBAL_IGNORE_TARGETS[@]}
 do
-  cp ${HOME}/.git${gitfile_suffix} ${HOME}/.git${gitfile_suffix}.org
-  rm ${HOME}/.git${gitfile_suffix}
-  cp ${HOME}/.git${gitfile_suffix}.org ${HOME}/.git${gitfile_suffix}
-  sed -i -e "s/%GITHUB_USER%/${GH_U}/g" ${HOME}/.git${gitfile_suffix}
-  sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ${HOME}/.git${gitfile_suffix}
+  ignore_src=https://raw.githubusercontent.com/github/gitignore/master/Global/${t}.gitignore
+  echo "#----- ${t}. See: ${ignore_src}" >> ${GH_GLOBAL_IGNORE}
+  curl -s ${ignore_src} >> ${GH_GLOBAL_IGNORE}
+  echo "" >> ${GH_GLOBAL_IGNORE}
 done
 
 # $HOME/bin
