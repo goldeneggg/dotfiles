@@ -202,6 +202,17 @@ do
   echo "" >> ${GH_GLOBAL_IGNORE}
 done
 
+# See: https://qiita.com/vzvu3k6k/items/12aff810ea93c7c6f307
+ORG_IGNORE_TARGETS=( \
+  "Gemfile.local" \  
+)
+
+echo "#----- original global .gitignores" >> ${GH_GLOBAL_IGNORE}
+for ot in ${ORG_IGNORE_TARGETS[@]}
+do
+  echo "${ot}" >> ${GH_GLOBAL_IGNORE}
+done
+
 # $HOME/bin
 if [ ! -d ${HOME}/bin ]
 then
