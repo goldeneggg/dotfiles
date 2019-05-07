@@ -1,7 +1,10 @@
-setup = ./setup.sh -$1 --github-user goldeneggg --github-mail jpshadowapps@gmail.com
+setup = ./setup.sh -$1 --github-user goldeneggg --github-mail jpshadowapps@gmail.com $2
 
 setup-mac: setup-submodule
-	@$(call setup,M)
+	@$(call setup,M,)
+
+setup-mac-skip-goget: setup-submodule
+	@$(call setup,M,--skip-goget)
 
 setup-linux: setup-submodule
 	@$(call setup,L)

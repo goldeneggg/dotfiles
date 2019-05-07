@@ -16,6 +16,7 @@ Options:
   -v | --version VERSION          target version
   --github-user GITHUB_USER       user account on github (default: "GITHUB_USER" env value)
   --github-mail GITHUB_MAIL       user mail address on github (default: "GITHUB_MAIL" env value)
+  --skip-goget                    skip go get commands
   -h | --help                     print a summary of the options
 
 __EOT__
@@ -43,7 +44,7 @@ install() {
   done
 }
 
-unset NAME VERSION GH_U GH_M
+unset NAME VERSION GH_U GH_M SKIP_GOGET
 SIGN_LINUX="-linux"
 SIGN_MAC="-mac"
 SIGN="${SIGN_LINUX}"
@@ -58,6 +59,7 @@ do
     -v | --version ) VERSION="-"$2; shift 2 ;;
     --github-user ) GH_U=$2; shift 2 ;;
     --github-mail ) GH_M=$2; shift 2 ;;
+    --skip-goget ) SKIP_GOGET="true"; shift ;;
     * ) break ;;
   esac
 done
@@ -138,16 +140,19 @@ fi
 # install go tools
 if [ -x ${GOROOT}/bin/go ]
 then
-  PATH=${GOROOT}/bin:${PATH}
-  go get -v github.com/golang/lint
-  go get -v -u github.com/golang/lint/golint
-  go get -v -u golang.org/x/tools/cmd/goimports
-  go get -v github.com/github/hub
-  go get -v github.com/peco/peco
-  go get -v github.com/peco/peco/cmd/peco
-  go get -v -u github.com/mgechev/revive
-  go get -v -u gopkg.in/alecthomas/gometalinter.v2
-  go get -v -u golang.org/x/tools/cmd/gopls
+  if [ ${SKIP_GOGET} != "true" ]
+  then
+    PATH=${GOROOT}/bin:${PATH}
+    go get -v github.com/golang/lint
+    go get -v -u github.com/golang/lint/golint
+    go get -v -u golang.org/x/tools/cmd/goimports
+    go get -v github.com/github/hub
+    go get -v github.com/peco/peco
+    go get -v github.com/peco/peco/cmd/peco
+    go get -v -u github.com/mgechev/revive
+    go get -v -u gopkg.in/alecthomas/gometalinter.v2
+    go get -v -u golang.org/x/tools/cmd/gopls
+  fi
 fi
 
 ## run ex commands
