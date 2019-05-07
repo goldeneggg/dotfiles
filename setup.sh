@@ -204,7 +204,9 @@ done
 
 # See: https://qiita.com/vzvu3k6k/items/12aff810ea93c7c6f307
 ORG_IGNORE_TARGETS=( \
+  ".envrc" \  
   "Gemfile.local" \  
+  "Gemfile.local.lock" \  
 )
 
 echo "#----- original global .gitignores" >> ${GH_GLOBAL_IGNORE}
