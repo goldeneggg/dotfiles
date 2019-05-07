@@ -140,7 +140,7 @@ fi
 # install go tools
 if [ -x ${GOROOT}/bin/go ]
 then
-  if [ ${SKIP_GOGET} != "true" ]
+  if [ "${SKIP_GOGET}" != "true" ]
   then
     PATH=${GOROOT}/bin:${PATH}
     go get -v github.com/golang/lint
