@@ -3,6 +3,7 @@
   email = %GITHUB_MAIL%
 [core]
   autocrlf = input
+  excludesfile = ~/.gitignore_global
 [color]
   ui = auto
 #[url "git@github.com:"]
