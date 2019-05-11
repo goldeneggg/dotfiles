@@ -33,12 +33,26 @@ let g:go_code_completion_enabled = 0
 
 " maps
 au FileType go nnoremap <Leader>gr <Plug>(go-rename)
-au FileType go nnoremap <Leader>gd <Plug>(go-doc)
 au FileType go nnoremap <Leader>gi <Plug>(go-info)
+au FileType go nnoremap <Leader>gdoc <Plug>(go-doc)
 " 下記コロンコマンド群はnnoremapで定義すること（nmapだと機能しない）
 au FileType go nnoremap <Leader>gat :GoAddTags<cr>
 au FileType go nnoremap <Leader>gt :GoDeclsDir<cr>
 au FileType go nnoremap <Leader>gec :<C-u>GoErrCheck<cr>
+
+au FileType go nnoremap <Leader>dt :GoDebugStart<cr>
+au FileType go nnoremap <Leader>db :GoDebugBreakpoint<cr>
+au FileType go nnoremap <Leader>dc :GoDebugContinue<cr>
+au FileType go nnoremap <Leader>dn :GoDebugNext<cr>
+au FileType go nnoremap <Leader>ds :GoDebugStep<cr>
+
+" vim-delve
+au FileType go nnoremap <Leader>vd :DlvDebug<cr>
+au FileType go nnoremap <Leader>vab :DlvAddBreakpoint<cr>
+au FileType go nnoremap <Leader>vrb :DlvRemoveBreakpoint<cr>
+au FileType go nnoremap <Leader>vat :DlvAddTracepoint<cr>
+au FileType go nnoremap <Leader>vrt :DlvRemoveTracepoint<cr>
+au FileType go nnoremap <Leader>vcl :DlvClearAll<cr>
 
 " ----- lsp settings
 " Need to install golsp. using "go get -u golang.org/x/tools/cmd/gopls" command.
