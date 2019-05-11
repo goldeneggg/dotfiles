@@ -21,6 +21,7 @@ Plug 'Shougo/denite.nvim'
 " code information
 Plug 'rizzatti/dash.vim'
 Plug 'tpope/vim-fugitive'  "git
+Plug 'airblade/vim-gitgutter'
 
 " edit
 Plug 'kana/vim-smartinput' "対応カッコ自動閉じetc

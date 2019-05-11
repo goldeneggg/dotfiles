@@ -19,6 +19,7 @@ set wildignore+=.DS_Store
 set incsearch
 set hlsearch
 set wrapscan  "検索がファイル末尾に到達したら先頭から再検索
+set inccommand=nosplit  "incremental置換でウインドウ分割しない
 
 set ignorecase
 set smartcase
@@ -29,6 +30,8 @@ set number
 set backspace=indent,eol,start  "backspaceキーを有効化
 set nofoldenable  "折り畳みはいらない人なんです
 set fileformats=unix,dos,mac
+set lazyredraw
+set signcolumn=yes
 
 " status line
 set laststatus=2

@@ -34,6 +34,9 @@ au FileType go nmap <Leader>ga :GoAddTags<cr>
 " \gt : パッケージ内の関数や型の定義元一覧, ctrlpで表示
 au FileType go nmap <Leader>gt :GoDeclsDir<cr>
 
+" 補完はcoc.nvimに任せる
+let g:go_code_completion_enabled = 0
+
 " ----- lsp settings
 " Need to install golsp. using "go get -u golang.org/x/tools/cmd/gopls" command.
 

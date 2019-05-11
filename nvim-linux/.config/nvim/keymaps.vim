@@ -21,3 +21,6 @@ nnoremap : ;
 
 " paste from clipboard(register * is clipboard)
 nnoremap <Leader>pp "*p
+
+" jj でノーマルモードに戻る
+inoremap <silent> jj <ESC>
