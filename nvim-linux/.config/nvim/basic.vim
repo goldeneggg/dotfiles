@@ -21,6 +21,11 @@ set hlsearch
 set wrapscan  "検索がファイル末尾に到達したら先頭から再検索
 set inccommand=nosplit  "incremental置換でウインドウ分割しない
 
+" backup setting
+set nobackup
+set nowritebackup
+set noswapfile
+
 set ignorecase
 set smartcase
 set showcmd
