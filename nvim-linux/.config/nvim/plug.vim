@@ -32,12 +32,6 @@ Plug 'AndrewRadev/splitjoin.vim'  "gJ で行結合 or gS で行分割
 Plug 'rhysd/conflict-marker.vim'  "conflict解消ヘルパー
 Plug 'tmhedberg/matchit'
 
-" completion: coc.nvim with LSP
-"" - 1st, :Cocinstall coc-gocode  " for golang. See: https://www.npmjs.com/package/coc-gocode
-"" - 2nd, and edit coc config using :CocConfig command. See: https://github.com/neoclide/coc.nvim/wiki/Language-servers#go
-"" - 3rd, and install gopls using go get -u golang.org/x/tools/cmd/gopls
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
-
 " support language specification
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'jodosha/vim-godebug'
@@ -53,5 +47,11 @@ Plug 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'Shougo/neomru.vim'
+
+" completion: coc.nvim with LSP
+"" - 1st, :Cocinstall coc-gocode  " for golang. See: https://www.npmjs.com/package/coc-gocode
+"" - 2nd, and edit coc config using :CocConfig command. See: https://github.com/neoclide/coc.nvim/wiki/Language-servers#go
+"" - 3rd, and install gopls using go get -u golang.org/x/tools/cmd/gopls
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
 
 call plug#end()
