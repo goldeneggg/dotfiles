@@ -25,9 +25,6 @@ source $HOME/.config/nvim/yanktmp.vim
 " ファイル検索
 source $HOME/.config/nvim/ctrlp.vim
 
-" 補完（闇）
-source $HOME/.config/nvim/deoplete.vim
-
 " Dash連携
 source $HOME/.config/nvim/dash.vim
 
