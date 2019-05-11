@@ -25,7 +25,7 @@ set smartcase
 set showcmd
 set hidden
 set wildmenu
-"set number
+set number
 set backspace=indent,eol,start  "backspaceキーを有効化
 set nofoldenable  "折り畳みはいらない人なんです
 set fileformats=unix,dos,mac
