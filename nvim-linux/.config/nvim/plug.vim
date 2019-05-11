@@ -10,6 +10,7 @@ call plug#begin()
 " view
 Plug 'jacoborus/tender.vim'
 Plug 'itchyny/lightline.vim'
+Plug 'chriskempson/base16-vim'
 
 " file finder
 Plug 'ctrlpvim/ctrlp.vim'

@@ -15,6 +15,7 @@ source $HOME/.config/nvim/plug.vim
 
 " カラースキーム
 source $HOME/.config/nvim/colorscheme.vim
+source $HOME/.config/nvim/base16.vim
 
 " ステータスバー
 source $HOME/.config/nvim/lightline.vim

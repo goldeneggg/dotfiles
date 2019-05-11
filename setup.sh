@@ -243,6 +243,9 @@ then
   # for tmux-resurrect
   mkdir -p ${HOME}/.tmux/resurrect
 fi
+pushd ${HOME}/.tmux/plugins
+git pull --rebase origin master
+popd
 
 # install or refresh mongo-hacker
 if [ -f ${HOME}/.mongorc.js ]
@@ -258,6 +261,16 @@ pushd ${HOME}/mongo-hacker
 git pull --rebase origin master
 make
 make install
+popd
+
+# install base16
+if [ ! -d ${HOME}/.config/base16-shell ]
+then
+  mkdir -p ${HOME}/.config
+  git clone https://github.com/chriskempson/base16-shell.git ${HOME}/.config/base16-shell
+fi
+pushd ${HOME}/.config/base16-shell
+git pull --rebase origin master
 popd
 
 echo ""

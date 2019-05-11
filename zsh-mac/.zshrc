@@ -9,3 +9,4 @@ source ~/.zshrc.ssh
 source ~/.zshrc.prompt
 source ~/.zshrc.symlink
 source ~/.zshrc.golang
+source ~/.zshrc.base16

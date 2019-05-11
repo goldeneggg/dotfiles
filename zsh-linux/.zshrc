@@ -4,3 +4,4 @@ source ~/.zshrc.aliases
 source ~/.zshrc.ssh
 source ~/.zshrc.prompt
 source ~/.zshrc.golang
+source ~/.zshrc.base16
