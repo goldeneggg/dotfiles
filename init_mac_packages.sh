@@ -55,6 +55,11 @@ brew install highway
 brew tap aws/tap
 brew install aws-sam-cli
 
+# base16-manager
+# Note: shellとvimでしか使わないのでmanagerは使わず個別にインストールする
+# brew tap chrokh/tap
+# brew install base16-manager
+
 # rbenv
 git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 mkdir ~/.rbenv/plugins
