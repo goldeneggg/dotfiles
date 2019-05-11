@@ -54,7 +54,9 @@ Plug 'Shougo/neomru.vim'
 "" - 1st, :Cocinstall coc-gocode  " for golang. See: https://www.npmjs.com/package/coc-gocode
 "" - 2nd, and edit coc config using :CocConfig command. See: https://github.com/neoclide/coc.nvim/wiki/Language-servers#go
 "" - 3rd, and install gopls using go get -u golang.org/x/tools/cmd/gopls
+"
 " 各LanguageServerは個別にインストールする必要あり
+" https://github.com/rcjsuen/dockerfile-language-server-nodejs
 " https://github.com/mads-hartmann/bash-language-server
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
 
