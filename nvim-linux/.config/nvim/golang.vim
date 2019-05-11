@@ -4,17 +4,18 @@ let g:go_fmt_command = "goimports"
 " 保存時にgolintを実行する
 "autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
 
+" quickfixのサイズ（高さ）
+let g:go_list_height = 5
+
 " ハイライト
-" let g:go_highlight_build_constraints = 1
-" let g:go_highlight_extra_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
-" let g:go_highlight_operators = 1
-" let g:go_highlight_structs = 1
-" let g:go_highlight_types = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_structs = 1
 
-"let g:go_auto_sameids = 1
+" カーソル下と同一識別子の自動ハイライト
+let g:go_auto_sameids = 0
 
 " ステータスバーに型定義を表示
 let g:go_auto_type_info = 1
@@ -25,17 +26,19 @@ let g:go_addtags_transform = "snakecase"
 " snippet
 let g:go_snippet_engine = "neosnippet"
 
+" 補完はcoc.nvimに任せる
+let g:go_code_completion_enabled = 0
+
 " lint with lightline TODO
 
 " maps
-" FIXME: 下記mapが機能しなくなっている（何らかの設定とバッティングしている？）
-" \ga : :GoAddTags - structにjson tag追加
-au FileType go nmap <Leader>ga :GoAddTags<cr>
-" \gt : パッケージ内の関数や型の定義元一覧, ctrlpで表示
-au FileType go nmap <Leader>gt :GoDeclsDir<cr>
-
-" 補完はcoc.nvimに任せる
-let g:go_code_completion_enabled = 0
+au FileType go nnoremap <Leader>gr <Plug>(go-rename)
+au FileType go nnoremap <Leader>gd <Plug>(go-doc)
+au FileType go nnoremap <Leader>gi <Plug>(go-info)
+" 下記コロンコマンド群はnnoremapで定義すること（nmapだと機能しない）
+au FileType go nnoremap <Leader>gat :GoAddTags<cr>
+au FileType go nnoremap <Leader>gt :GoDeclsDir<cr>
+au FileType go nnoremap <Leader>gec :<C-u>GoErrCheck<cr>
 
 " ----- lsp settings
 " Need to install golsp. using "go get -u golang.org/x/tools/cmd/gopls" command.
