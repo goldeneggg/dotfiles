@@ -32,9 +32,10 @@ let g:go_code_completion_enabled = 0
 " lint with lightline TODO
 
 " maps
-au FileType go nnoremap <Leader>gr <Plug>(go-rename)
-au FileType go nnoremap <Leader>gi <Plug>(go-info)
-au FileType go nnoremap <Leader>gdoc <Plug>(go-doc)
+au FileType go nmap <Leader>gr <Plug>(go-rename)
+au FileType go nmap <Leader>gi <Plug>(go-info)
+au FileType go nmap <Leader>go <Plug>(go-doc)
+au FileType go nmap <Leader>gob <Plug>(go-doc-browser)
 " 下記コロンコマンド群はnnoremapで定義すること（nmapだと機能しない）
 au FileType go nnoremap <Leader>gat :GoAddTags<cr>
 au FileType go nnoremap <Leader>gt :GoDeclsDir<cr>
