@@ -18,7 +18,7 @@ let g:go_highlight_structs = 1
 let g:go_auto_sameids = 0
 
 " ステータスバーに型定義を表示
-let g:go_auto_type_info = 1
+let g:go_auto_type_info = 0
 
 " :GoAddTags時のjson項目名をsnakecase
 let g:go_addtags_transform = "snakecase"
