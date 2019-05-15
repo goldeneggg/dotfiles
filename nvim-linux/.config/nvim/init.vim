@@ -38,3 +38,6 @@ source $HOME/.config/nvim/neosnippet.vim
 
 " denite
 source $HOME/.config/nvim/denite.vim
+
+" coc
+source $HOME/.config/nvim/coc.vim
