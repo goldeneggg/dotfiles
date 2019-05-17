@@ -1,3 +1,5 @@
+source ~/.zshrc.vcs
+
 #- プロンプト
 #-- PROMPT変数に変数展開やコマンド置換を施す
 setopt prompt_subst
@@ -5,6 +7,6 @@ setopt prompt_subst
 #-- プロンプトフォーマット
 #--- 標準組込のプロンプト設定を使用したい場合, `autoload -U promptinit` `promptinit` することで`prompt`コマンドが利用できるようになる
 #--- (`prompt [option] [theme]`)
-PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}%n@%m'"%{${reset_color}%}:%~ %(!.#.%%) "
-PROMPT2=$'%{\e[$[32+$RANDOM % 5]m%}%n@%m'"%{${reset_color}%}:%~ %_ %(!.#.%%) "
+PROMPT="%1(v|%F{red}%1v%f|) "$'%{\e[$[32+$RANDOM % 5]m%}%~ %(!.#.%%) '"%{${reset_color}%}"
+PROMPT2="%1(v|%F{red}%1v%f|) "$'%{\e[$[32+$RANDOM % 5]m%}%~ %_ %(!.#.%%) '"%{${reset_color}%}%~ %(!.#.%%)"
 #SPROMPT="%{${fg[red]}%}%r is correct?%{${reset_color}%}[n,y,a,e]: "
