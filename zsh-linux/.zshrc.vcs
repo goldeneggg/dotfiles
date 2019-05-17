@@ -17,7 +17,7 @@ zstyle ':vcs_info:git:*' actionformats '(%b|%a)%c%u'
 function _update_vcs_info_msg() {
   psvar=()
   LANG=en_US.UTF-8 vcs_info
-  [[ -n "${vcs_info_msg_0_}" ]] && psvar[1]="${vcs_info_msg_0_}"
+  [[ -n "${vcs_info_msg_0_}" ]] && psvar[1]="${vcs_info_msg_0_} "
 }
 
 add-zsh-hook precmd _update_vcs_info_msg
