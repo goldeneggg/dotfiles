@@ -1,19 +1,25 @@
 [user]
   name = %GITHUB_USER%
   email = %GITHUB_MAIL%
+
 [core]
   autocrlf = input
   excludesfile = ~/.gitignore_global
+
 [color]
   ui = auto
+
 #[url "git@github.com:"]
     #insteadOf = https://github.com/
+    #
 [credential "https://github.com"]
   username = %GITHUB_USER%
+
 [pager]
   diff = diff-so-fancy | less --tabs=1,5 -RFX
   show = diff-so-fancy | less --tabs=1,5 -RFX
   log = diff-so-fancy | less --tabs=1,5 -RFX
+
 [alias]
   # fetch,pull,checkout
   ft = fetch
@@ -22,13 +28,16 @@
   pl = pull
   plr = pull --rebase
   co = checkout
+
   # push
   pushforce = push --force-with-lease
+
   # branch
   br = branch
   brv = branch -v
   bra = branch -a
   brva = branch -v -a
+
   # status,diff
   st = status
   sst = status -s
@@ -42,6 +51,7 @@
   di4 = diff --ignore-space-change HEAD~~~~
   di5 = diff --ignore-space-change HEAD~~~~~
   di10 = diff --ignore-space-change HEAD~~~~~~~~~~
+
   # add,commit,merge
   ci = commit -v
   ciam = commit -v --amend
@@ -50,6 +60,7 @@
   mg = merge
   mgnf = merge --no-ff
   cherry = cherry-pick
+
   # log
   bl = blame
   sh = show
@@ -64,28 +75,57 @@
   log-graph = log --graph --date=short --pretty=format:'%h %cd %C(cyan)%cn %Creset%s'
   log-all = log --graph --all --color --pretty='%x09%h %C(cyan)%cn%Creset%x09%s %Cred%d%Creset'
   hashes = log --pretty=format:%h --follow
+
   # list
   ls = ls-files -oc --exclude-standard
+
   # remote
   rev = remote -v
   rea = remote add
   rel = ls-remote
   rel-tags = ls-remote --tags
+
   # submodule
   sub = submodule
   subup = submodule update
   subupi = submodule update --init
+
   # rebase
   reb = rebase
-  # grep
-  ## fixed string
-  gr = grep -I --full-name -F -n --color
-  ## ignore matching
-  gri = grep -I --full-name -F -n --color -i
-  ## regex
-  grr = grep -I --full-name -n --color
-  ## target is indexed files
-  grc = grep --cached -I --full-name -F -n --color
+
+  # grep or
+  grepbase = grep -I --full-name -n --color
+  gr = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt; }; f"
+  gr-ignorecase = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt; }; f"
+  gr-cached = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt; }; f"
+  gr-nopager = "!f() { git --no-pager gr $@; }; f"
+
+  gr-go = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt -- '**/*.go'; }; f"
+  gr-go-ignoracase = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt -- '**/*.go'; }; f"
+  gr-go-cached = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt -- '**/*.go'; }; f"
+  gr-go-nopager = "!f() { git --no-pager gr-go $@; }; f"
+  gr-go-exc-comment = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt --and --not -e '^//' -- '**/*.go'; }; f"
+  gr-go-exc-comment-nopager = "!f() { git --no-pager gr-go-exc-comment $@; }; f"
+
+  # grep and
+  gr-and = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt; }; f"
+  gr-and-ignoracase = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt; }; f"
+  gr-and-cached = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt; }; f"
+  gr-and-nopager = "!f() { git --no-pager gr-and $@; }; f"
+
+  gr-and-go = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt -- '**/*.go'; }; f"
+  gr-and-go-ignorecase = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt -- '**/*.go'; }; f"
+  gr-and-go-cached = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt -- '**/*.go'; }; f"
+  gr-and-go-nopager = "!f() { git --no-pager gr-and-go $@; }; f"
+  gr-and-go-exc-comment = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt --and --not -e '^//' -- '**/*.go'; }; f"
+  gr-and-go-exc-comment-nopager = "!f() { git --no-pager gr-and-go-exc-comment $@; }; f"
+
+  ## using hub
+  open = browse
+  pullreq = pull-request
+  openpr = "!f() { hub browse -- `git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1 | cut -f5 -d' ' | sed -e 's%#%pull/%'`; }; f"
+  hoge = "!f() { echo arg=$@; }; f"
+
   ## merge commit
   ### 該当commit hashとターゲットブランチを指定
   find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
@@ -95,9 +135,5 @@
   show-pr = !"f() { git log --merges --pretty=\"format:%ad %h %s\" --date=iso --reverse --ancestry-path $1...${2:-master} | grep 'Merge pull request #' | head -n 1; }; f"
   pr-list = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-pr ${hash} ${1:-master}; done | sort | uniq'"
   pr-list2 = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-merge ${hash} ${1:-master} | grep \"pull request #\"; done | sort | uniq'"
-  ## using hub
-  open = browse
-  pullreq = pull-request
-  openpr = "!f() { hub browse -- `git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1 | cut -f5 -d' ' | sed -e 's%#%pull/%'`; }; f"
 [include]
 	path = ~/.gitconfig.local

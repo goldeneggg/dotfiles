@@ -110,16 +110,6 @@ function vigg {
     _vigextcomex "${STR}" "go" "[0-9]:\s*//"
 }
 
-function vigp {
-    STR="$1"
-    _vigextcomex "${STR}" "php" "[0-9]:\s*//"
-}
-
-function vigs {
-    STR="$1"
-    _vigextcomex "${STR}" "scala" "[0-9]:\s*//"
-}
-
 # rbファイルをgrep => vimで開く
 function vigr {
     STR="$1"
@@ -138,6 +128,19 @@ function vigr_class_module {
     _vigextcomex "(class|module) ${STR}" "rb" "[0-9]:\s*#"
 }
 
+# phpファイルをgrep => viで開く
+function vigp {
+    STR="$1"
+    _vigextcomex "${STR}" "php" "[0-9]:\s*//"
+}
+
+# scalaファイルをgrep => viで開く
+function vigs {
+    STR="$1"
+    _vigextcomex "${STR}" "scala" "[0-9]:\s*//"
+}
+
+# coffeeファイルをgrep => viで開く
 function vigcf {
     STR="$1"
     _vigextcomex "${STR}" "coffee" "[0-9]:\s*#"
