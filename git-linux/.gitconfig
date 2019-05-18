@@ -8,8 +8,6 @@
   ui = auto
 #[url "git@github.com:"]
     #insteadOf = https://github.com/
-[credential]
-  helper = cache --timeout 86400
 [credential "https://github.com"]
   username = %GITHUB_USER%
 [pager]
@@ -71,6 +69,8 @@
   # remote
   rev = remote -v
   rea = remote add
+  rel = ls-remote
+  rel-tags = ls-remote --tags
   # submodule
   sub = submodule
   subup = submodule update
@@ -99,3 +99,5 @@
   open = browse
   pullreq = pull-request
   openpr = "!f() { hub browse -- `git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1 | cut -f5 -d' ' | sed -e 's%#%pull/%'`; }; f"
+[include]
+	path = ~/.gitconfig.local
