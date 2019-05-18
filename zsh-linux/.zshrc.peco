@@ -150,6 +150,26 @@ function vigcf {
 # grep & neovim
 ##########
 
+# my git grep (or) => open neovim by filename and line number
+function nv-gitgr {
+    F=$(git gr $@ | peco | awk -F ":" '{print "+"$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      echo "${F}"
+      eval "nvim ${F}"
+    fi
+}
+
+# my git grep (and) => open neovim by filename and line number
+function nv-gitgr-and {
+    F=$(git gr-and $@ | peco | awk -F ":" '{print "+"$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      echo "${F}"
+      eval "nvim ${F}"
+    fi
+}
+
 # grep => open neovim by filename and line number
 function nvg {
     STR="$1"

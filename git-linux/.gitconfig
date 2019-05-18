@@ -94,7 +94,8 @@
   reb = rebase
 
   # grep or
-  grepbase = grep -I --full-name -n --color
+  #grepbase = grep -I --full-name -n --color
+  grepbase = grep -I --full-name -n
   gr = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt; }; f"
   gr-ignorecase = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt; }; f"
   gr-cached = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt; }; f"
