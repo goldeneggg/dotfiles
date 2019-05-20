@@ -96,30 +96,34 @@
   # grep or
   #grepbase = grep -I --full-name -n --color
   grepbase = grep -I --full-name -n
-  gr = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt; }; f"
-  gr-ignorecase = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt; }; f"
-  gr-cached = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt; }; f"
-  gr-nopager = "!f() { git --no-pager gr $@; }; f"
+  gr-pager = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt; }; f"
+  gr-pager-ignorecase = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt; }; f"
+  gr-pager-cached = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt; }; f"
+  gr = "!f() { git --no-pager gr-pager $@; }; f"
+  gr-ignorecase = "!f() { git --no-pager gr-pager-ignorecase $@; }; f"
+  gr-cached = "!f() { git --no-pager gr-pager-cached $@; }; f"
 
-  gr-go = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt -- '**/*.go'; }; f"
-  gr-go-ignoracase = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt -- '**/*.go'; }; f"
-  gr-go-cached = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt -- '**/*.go'; }; f"
-  gr-go-nopager = "!f() { git --no-pager gr-go $@; }; f"
-  gr-go-exc-comment = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt --and --not -e '^//' -- '**/*.go'; }; f"
-  gr-go-exc-comment-nopager = "!f() { git --no-pager gr-go-exc-comment $@; }; f"
+  gr-go-pager = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt -- '**/*.go'; }; f"
+  gr-go-pager-ignoracase = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt -- '**/*.go'; }; f"
+  gr-go-pager-cached = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt -- '**/*.go'; }; f"
+  gr-go-pager-exc-comment = "!f() { ptnopt=''; for ptn in $@; do ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt --and --not -e '^//' -- '**/*.go'; }; f"
+  gr-go = "!f() { git --no-pager gr-go-pager $@; }; f"
+  gr-go-exc-comment-nopager = "!f() { git --no-pager gr-go-pager-exc-comment $@; }; f"
 
   # grep and
-  gr-and = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt; }; f"
-  gr-and-ignoracase = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt; }; f"
-  gr-and-cached = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt; }; f"
-  gr-and-nopager = "!f() { git --no-pager gr-and $@; }; f"
+  gr-and-pager = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt; }; f"
+  gr-and-pager-ignoracase = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt; }; f"
+  gr-and-pager-cached = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt; }; f"
+  gr-and = "!f() { git --no-pager gr-and-pager $@; }; f"
 
-  gr-and-go = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt -- '**/*.go'; }; f"
-  gr-and-go-ignorecase = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt -- '**/*.go'; }; f"
-  gr-and-go-cached = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt -- '**/*.go'; }; f"
-  gr-and-go-nopager = "!f() { git --no-pager gr-and-go $@; }; f"
-  gr-and-go-exc-comment = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt --and --not -e '^//' -- '**/*.go'; }; f"
-  gr-and-go-exc-comment-nopager = "!f() { git --no-pager gr-and-go-exc-comment $@; }; f"
+  gr-and-go-pager = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt -- '**/*.go'; }; f"
+  gr-and-go-pager-ignorecase = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase -i $ptnopt -- '**/*.go'; }; f"
+  gr-and-go-pager-cached = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase --cached $ptnopt -- '**/*.go'; }; f"
+  gr-and-go-pager-exc-comment = "!f() { ptnopt=''; for ptn in $@; do [ -n \"$ptnopt\" ] && ptnopt=$ptnopt' --and'; ptnopt=$ptnopt' -e '$ptn; done; git grepbase $ptnopt --and --not -e '^//' -- '**/*.go'; }; f"
+  gr-and-go = "!f() { git --no-pager gr-and-go-pager $@; }; f"
+  gr-and-go-ignorecase = "!f() { git --no-pager gr-and-go-pager-ignorecase $@; }; f"
+  gr-and-go-cached = "!f() { git --no-pager gr-and-go-pager-cached $@; }; f"
+  gr-and-go-exc-comment = "!f() { git --no-pager gr-and-go-pager-exc-comment $@; }; f"
 
   ## using hub
   open = browse
