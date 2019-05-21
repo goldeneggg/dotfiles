@@ -189,7 +189,6 @@ GLOBAL_IGNORE_TARGETS=( \
   "Tags" \
   "Vagrant" \
   "Vim" \
-  "VirtualEnv" \
   "VisualStudioCode" \
   "Xcode" \
   "macOS" \
