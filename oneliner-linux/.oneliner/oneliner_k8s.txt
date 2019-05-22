@@ -1,0 +1,3 @@
+kubectl get nods	#[kubernetes] nodeの一覧
+kubectl get pods	#[kubernetes] podの一覧
+kubectl get namespace	#[kubernetes] namespaceの一覧
