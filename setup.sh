@@ -152,6 +152,7 @@ then
     go get -v -u github.com/mgechev/revive
     go get -v -u gopkg.in/alecthomas/gometalinter.v2
     go get -v -u golang.org/x/tools/cmd/gopls
+    go get -v -u github.com/cweill/gotests
   fi
 fi
 

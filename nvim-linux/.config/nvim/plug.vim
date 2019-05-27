@@ -38,6 +38,7 @@ Plug 'tmhedberg/matchit'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'jodosha/vim-godebug'
 Plug 'sebdah/vim-delve'  "delve debugger support
+Plug 'buoto/gotests-vim'
 Plug 'kchmck/vim-coffee-script'
 Plug 'othree/javascript-libraries-syntax.vim'  "https://vimawesome.com/plugin/javascript-libraries-syntax
 Plug 'posva/vim-vue'  "https://vimawesome.com/plugin/vim-vue-fearless
