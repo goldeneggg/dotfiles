@@ -12,6 +12,7 @@ export PYENV_ROOT=$HOME/.pyenv
 export ANACONDA3=$HOME/anaconda3
 export GCP_SDK_HOME=$HOME/google-cloud-sdk
 export ANYENV_ROOT=$HOME/.anyenv
+export FLUTTER_ROOT=$HOME/flutter
 python_version=2.7
 redis_version=2.8
 
@@ -40,6 +41,7 @@ path=(
     $GCP_SDK_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
     $ANDROID_SDK/platform-tools(N-/)
+    $FLUTTER_ROOT/bin(N-/)
     $PLAY_HOME(N-/)
     {/usr/local,/usr,}/bin(N-/)
     {/usr/local,/usr,}/sbin(N-/)
