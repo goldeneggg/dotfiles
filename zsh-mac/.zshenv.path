@@ -35,6 +35,7 @@ path=(
     $HOME/.anyenv/bin(N-/)
     $HOME/.ndenv/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
+    $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
     $PYENV_ROOT/bin(N-/)
     #$ANACONDA3/bin(N-/)
     $HOME/Library/Python/${python_version}/bin(N-/)
