@@ -35,6 +35,7 @@ path=(
     $HOME/.anyenv/bin(N-/)
     $HOME/.ndenv/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
+    $HOME/.phpenv/bin(N-/)
     $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
     $PYENV_ROOT/bin(N-/)
     #$ANACONDA3/bin(N-/)
@@ -67,10 +68,10 @@ cdpath=(
     $GOPATH/src/code.google.com/p(N-/)
     )
 
-#- rbenv
+# rbenv
 [[ -s "$HOME/.rbenv/bin/rbenv" ]] && eval "$(rbenv init -)"
 
-#- ndenv
+# ndenv
 [[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
 
 # pyenv
@@ -82,6 +83,9 @@ cdpath=(
 
 # pyenv-virtualenv on anyenv
 [[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+
+# phpenv
+[[ -s "$HOME/.phpenv/bin/phpenv" ]] && eval "$(phpenv init -)"
 
 if [ -f ${GCP_SDK_HOME}/path.zsh.inc ]
 then

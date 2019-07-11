@@ -40,6 +40,7 @@ declare -ar APPS=("git" \
   "awscli" \
   "extract_url" \
   "libevent" \
+  "libmcrypt" \
   "htop" \
   "ipcalc" \
   "pstree")
@@ -75,6 +76,11 @@ git clone https://github.com/pyenv/pyenv-doctor.git ~/.pyenv/plugins/pyenv-docto
 git clone https://github.com/riywo/ndenv.git ~/.ndenv
 mkdir ~/.ndenv/plugins
 git clone https://github.com/riywo/node-build.git ~/.ndenv/plugins/node-build
+
+# phpenv
+git clone https://github.com/phpenv/phpenv.git ~/.phpenv
+mkdir ~/.phpenv/plugins
+git clone https://github.com/php-build/php-build ~/.phpenv/plugins/php-build
 
 # apex
 curl https://raw.githubusercontent.com/apex/apex/master/install.sh | sh
