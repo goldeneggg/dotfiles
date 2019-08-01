@@ -62,6 +62,12 @@ brew install aws-sam-cli
 # brew tap chrokh/tap
 # brew install base16-manager
 
+declare -ar CASKS=("aws-vault")
+for caskapp in ${CASKS[@]}
+do
+  brew cask install ${caskapp}
+done
+
 # rbenv
 git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 mkdir ~/.rbenv/plugins
