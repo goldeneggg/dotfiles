@@ -34,3 +34,4 @@ diff <(%%CMD1) <(%%CMD2)	#[プロセス置換][process substition]2つのコマ�
 sh -c 'echo $1' one two	#[sh -c]sh -cでコマンドを実行する。このとき引数indexは0ベース($0が第1引数)になる
 uniq -d %%FILE	#[uniq]重複がある行（の内容）だけを表示する
 uniq -f %%SKIP_FIELD_NUM %%FILE	#[uniq]指定項目数をskipして重複削除する
+grep device-mapper /proc/devices	#[ubuntu]device-mapperが利用されているか確認する
