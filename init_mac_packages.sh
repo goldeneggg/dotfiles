@@ -22,6 +22,11 @@ declare -ar APPS=("git" \
   "jq" \
   "the_silver_searcher" \
   "tkengo/highway/highway" \
+  "rga" \
+  "pandoc" \
+  "poppler" \
+  "tesseract" \
+  "ffmpeg" \
   "stow" \
   "grep" \
   "yarn" \
