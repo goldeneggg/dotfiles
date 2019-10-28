@@ -24,6 +24,7 @@
   # fetch,pull,checkout
   ft = fetch
   fa = fetch --all
+  fp = fetch --prune
   ftpr = fetch origin +refs/pull/*:refs/remotes/pullreq/*
   pl = pull
   plr = pull --rebase
