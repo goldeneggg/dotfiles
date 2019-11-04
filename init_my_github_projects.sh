@@ -5,16 +5,21 @@
 ### Note: setup ssh keys before execute this script
 ### 
 
-if [ ! -d ${HOME}/github/goldeneggg ]
-then
-  mkdir -p ${HOME}/github/goldeneggg
-  git clone git@github.com:goldeneggg/pages ~/github/goldeneggg/pages
-  git clone git@github.com:goldeneggg/goldeneggg.github.io ~/github/goldeneggg/goldeneggg.github.io
-  git clone git@github.com:goldeneggg/vagrant-vms ~/github/goldeneggg/vagrant-vms
-  git clone git@github.com:goldeneggg/provisioning-bash ~/github/goldeneggg/provisioning-bash
+GITHUB_HOME=${HOME}/github/goldeneggg
+GITHUB_PRAC_HOME=${HOME}/github/practice-goldeneggg
 
-  mkdir -p ${HOME}/github/practice-goldeneggg
-  git clone git@github.com:practice-goldeneggg/apex-lambdas ~/github/practice-goldeneggg/apex-lambdas
+if [ ! -d ${GITHUB_HOME} ]
+then
+  mkdir -p ${GITHUB_HOME}
+  cd ${GITHUB_HOME} 
+  git clone git@github.com:goldeneggg/pages
+  git clone git@github.com:goldeneggg/goldeneggg.github.io
+  git clone git@github.com:goldeneggg/vagrant-vms
+  git clone git@github.com:goldeneggg/provisioning-bash
+
+  cd ${HOME}
+  git clone git@github.com:goldeneggg/mysnippets
+  git clone git@github.com:goldeneggg/myautomator
 fi
 
 echo ""
