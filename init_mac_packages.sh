@@ -27,6 +27,7 @@ declare -ar APPS=("git" \
   "poppler" \
   "tesseract" \
   "ffmpeg" \
+  "hugo" \
   "stow" \
   "grep" \
   "yarn" \
