@@ -1,0 +1,15 @@
+vi $(grep -n -i %%STR %%TARGET | peco | awk -F ":" '{print "-c "$2" "$1}')	#pecoを使用して、vimでgrep結果を行番号指定付きで開く
+vi $(grep -n -i %%STR %%TARGET | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	##pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須
+vi $(grep -n -i %%STR **/*.go | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須
+vi $(grep -n "\sgo .*(" **/*.go | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]ゴルーチンを起動しているgoのソースを検索して、行番号指定でviで開く
+grep -n "\sgo .*(" **/*.go | \grep -v "[0-9]:\s*//" | awk -F ":" '{print $1}' | sort | uniq -c | sort -r	#[golang] Go本体のソースでゴルーチンを起動している箇所数,GOROOT/src/pkgディレクトリ下で実行する
+sed '/^$/d' %%FILE	#[sed]改行のみの行を削除する
+sed '/^ *$/d' %%FILE	#[sed]改行とスペースのみの行を削除する
+uniq -d %%FILE	#[uniq]重複がある行（の内容）だけを表示する
+uniq -f %%SKIP_FIELD_NUM %%FILE	#[uniq]指定項目数をskipして重複削除する
+rga -n --no-heading '%%WORD'	#[rga]カレント・ディレクトリ下を再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
+rga -n -t %%TYPE --no-heading '%%WORD'	#[rga]カレント・ディレクトリ下をファイルタイプ指定で再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
+rga -n --no-heading -e '%%REGEXP'	#[rga]カレント・ディレクトリ下を正規表現指定で（"-"始まりのパターンを検索したい時等に使用）再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
+rga -n --no-heading -P '%%REGEXP'	#[rga]カレント・ディレクトリ下をPCRE2準拠の正規表現指定で再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
+rga -c '%%WORD'	#[rga]カレント・ディレクトリ下を再帰的に検索し、ファイル名とWORDの出現回数を出力 (-c)
+rga -c '%%WORD' | sort -n -r -t":" -k 2	#[rga]カレント・ディレクトリ下を再帰的に検索し、WORDの出現回数の降順でソートして出力

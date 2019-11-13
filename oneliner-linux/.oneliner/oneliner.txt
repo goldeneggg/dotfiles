@@ -6,12 +6,8 @@ wget https://www.ugtop.com/spill.shtml -O - 2>/dev/null | \grep 'font size=+2 co
 du /home --max-depth=1 | sort -nr	#/home直下の使用容量を降順表示
 du -h | egrep '^[0-9\.]+M' | sort -nr	#MB以上のサイズのファイル・ディレクトリを降順表示
 find . -type f -daystart -ctime -1 | xargs ls -lrt	#カレントディレクトリ下の当日更新されたファイルを再帰的に検索して日時昇順で表示
-vi $(grep -n -i %%STR %%TARGET | peco | awk -F ":" '{print "-c "$2" "$1}')	#pecoを使用して、vimでgrep結果を行番号指定付きで開く
-vi $(grep -n -i %%STR %%TARGET | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	##pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須
-vi $(grep -n -i %%STR **/*.go | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]pecoを使用して、vimでgrep結果(コメント行は除去する)を行番号指定付きで開く grep ver2.5以降必須
 sudo strace -s 1024 -f -p %%PID	#指定したPIDのプロセスのUNIXドメインソケット通信内容を確認する
 vi $(grep -n "\sgo .*(" **/*.go | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]ゴルーチンを起動しているgoのソースを検索して、行番号指定でviで開く
-grep -n "\sgo .*(" **/*.go | \grep -v "[0-9]:\s*//" | awk -F ":" '{print $1}' | sort | uniq -c | sort -r	#[golang] Go本体のソースでゴルーチンを起動している箇所数,GOROOT/src/pkgディレクトリ下で実行する
 df -i	#割り当て可能な(Inodes),使用中の(IUsed),未割り当ての(IFree)inode数を表示する
 stat %%FILE	#ファイルの詳細な統計情報を表示する。inode番号とか
 find / -xdev -type f	#xdevオプションで、 / ファイル・システムのみに限定して検索する,xdevが無い場合/usrとか/varとかNFS等の他のファイルシステムも検索対象になる
@@ -26,16 +22,8 @@ time -f '%Uu %Ss %er %MkB %C' "$@"	#[prof]timeコマンドの出力結果を見�
 ctags --langmap=Ruby:.rb --exclude="*.js"  --exclude=".git*" -R .	#[ctags][ruby]カレントディレクトリ下のrubyソース群に対して再帰的にctagを生成
 type %%CMD >/dev/null 2>&1	#[sh]コマンドの存在チェックを行う
 find . -type f -name "*.go" | xargs sed -i "" 's|%%BEFORE|%%AFTER|g'	#[sed]カレントディレクトリ下のgoファイルを再帰的に置換
-sed '/^$/d' %%FILE	#[sed]改行のみの行を削除する
-sed '/^ *$/d' %%FILE	#[sed]改行とスペースのみの行を削除する
 %%CMD | tee %%FILE	#[tee]コマンドの標準出力を表示しつつファイルにも出力
 %%CMD 2>&1 | tee %%FILE	#[tee]コマンドの標準出力とエラー出力を表示しつつファイルにも出力
 diff <(%%CMD1) <(%%CMD2)	#[プロセス置換][process substition]2つのコマンドの実行結果を一時ファイルを作成せずにdiff取る
 sh -c 'echo $1' one two	#[sh -c]sh -cでコマンドを実行する。このとき引数indexは0ベース($0が第1引数)になる
-uniq -d %%FILE	#[uniq]重複がある行（の内容）だけを表示する
-uniq -f %%SKIP_FIELD_NUM %%FILE	#[uniq]指定項目数をskipして重複削除する
 grep device-mapper /proc/devices	#[ubuntu]device-mapperが利用されているか確認する
-rga -n --no-heading '%%WORD'	#[rga]カレント・ディレクトリ下を再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
-rga -n -t %%TYPE --no-heading '%%WORD'	#[rga]カレント・ディレクトリ下をファイルタイプ指定で再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
-rga -n --no-heading -e '%%REGEXP'	#[rga]カレント・ディレクトリ下を正規表現指定で（"-"始まりのパターンを検索したい時等に使用）再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
-rga -n --no-heading -P '%%REGEXP'	#[rga]カレント・ディレクトリ下をPCRE2準拠の正規表現指定で再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
