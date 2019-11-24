@@ -1,0 +1,5 @@
+export MY_NPM_GLOBAL_PKGS=( \
+  "@google/clasp" \
+  "aws-cdk" \
+  "bash-language-server" \
+)

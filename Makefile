@@ -1,4 +1,4 @@
-setup = ./setup.sh -$1 --github-user goldeneggg --github-mail jpshadowapps@gmail.com $2
+setup = ./setup.bash -$1 --github-user goldeneggg --github-mail jpshadowapps@gmail.com $2
 
 setup-mac: setup-submodule
 	@$(call setup,M,)
@@ -11,3 +11,6 @@ setup-linux: setup-submodule
 
 setup-submodule:
 	@git submodule update --init --recursive
+
+update-xxenvs:
+	@./xxenv.bash update

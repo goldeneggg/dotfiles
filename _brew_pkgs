@@ -1,0 +1,50 @@
+export MY_BREW_TAPS=( \
+  "tkengo/highway" \
+  "aws/tap" \
+)
+
+export MY_BREW_PKGS=( \
+  "git" \
+  "vim" \
+  "neovim" \
+  "bash" \
+  "zsh" \
+  "tmux" \
+  "wget" \
+  "lv" \
+  "gawk" \
+  "ack" \
+  "jq" \
+  "the_silver_searcher" \
+  "tkengo/highway/highway" \
+  "rga" \
+  "pandoc" \
+  "poppler" \
+  "tesseract" \
+  "ffmpeg" \
+  "hugo" \
+  "stow" \
+  "grep" \
+  "yarn" \
+  "cookiecutter" \
+  "diff-so-fancy" \
+  "cmake" \
+  "direnv" \
+  "readline" \
+  "tree" \
+  "travis" \
+  "zlib" \
+  "icu4c" \
+  "ctags" \
+  "reattach-to-user-namespace" \
+  "urlview" \
+  "awscli" \
+  "extract_url" \
+  "libevent" \
+  "libmcrypt" \
+  "htop" \
+  "ipcalc" \
+  "pstree" \
+  "highway" \      # tap tkengo/highway
+  "aws-sam-cli" \  # tap aws/tap
+)
