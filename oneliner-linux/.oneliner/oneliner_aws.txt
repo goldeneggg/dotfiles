@@ -1,19 +1,20 @@
-aws s3 mb s3://%%BUCKET --region %%REGION	#regionを指定してバケットを作成する
-aws s3 ls s3://%%BUCKET	#指定バケットのファイル一覧を表示する
-aws s3 cp %%LOCALFILE s3://%%BUCKET/%%S3DIR/	#指定バケットディレクトリ下にローカルファイルをアップロードする
-aws s3 cp %%LOCALFILE s3://%%BUCKET/%%S3FILE	#指定バケットパスにローカルファイルをアップロードする
-aws s3 cp s3://%%BUCKET/%%S3FILE %%LOCALFILE	#指定バケットのファイルをローカルにダウンロードする
-aws s3 cp s3://%%BUCKET %%LOCALDIR --recursive	#指定バケットのファイル群をローカルに再帰的ダウンロードする
-aws s3 cp s3://%%BUCKET/%%S3FROMFILE s3://%%BUCKET/%%S3TOFILE	#バケット間でファイルをコピーする
-aws s3 rm s3://%%BUCKET/%%S3FILE	#指定S3ファイルを削除する
-aws s3 rm s3://%%BUCKET/%%S3DIR --recursive	#指定S3ディレクトリを再帰的に削除する
-aws s3 sync %%DIR s3://workbt/%%DIR/ --delete	#指定ローカルディレクトリとS3ディレクトリをローカルのファイル削除内容も考慮して同期する
-aws kms encrypt --key-id %%KEYID --query CiphertextBlob --output text --plaintext fileb://<(echo '%%URL')	#URL文字列をKMSで暗号化する
-aws kms describe-key --key-id %%KEYID	#指定KMSキーの詳細を表示する
-aws sts get-caller-identity --output text --query 'Account'	#AccountIDを調べる
-aws cloudformation describe-stacks  --stack-name %%STACK_NAME	#STACK_NAMEで指定したstackの詳細情報を表示する
-aws apigateway create-rest-api --name %%APIGW_NAME	#指定した名称のAPIを作成する
-aws apigateway create-resource --rest-api-id %%APIGW_ID --parent-id %%APIGW_ROOT_RESOURCE_ID --path-part %%PATH 	#指定したpathのリソースを作成する
-aws apigateway put-method --rest-api-id %%APIGW_ID --resource-id %%RESOURCE_ID --http-method %%METHOD --authorization-type "NONE" 	#指定したリソースに認証なしのメソッドを作成する
-sam local start-api -p 3999 --parameter-overrides ParameterKey=%%KEY1,ParameterValue=%%VALUE1 --debug	#ローカルにport 3999でAPI Gatewayを起動する。その際にParametersをovedrrideする
-aws sts assume-role --role-arn arn:aws:iam::%%ROLE_USER_ID:role/%%ROLE --role-session-name %%SESSION_NAME --serial-number arn:aws:iam::%%IAM_USER_ID:mfa/%%IAM_USER_NAME --token-code %%MFA_TOKEN --output text --profile %%PROFILE	#awscli実行時に2段階認証とロールの切替が必要な場合に使える一時認証情報を生成する
+aws s3 mb s3://%%BUCKET --region %%REGION	#[aws]regionを指定してバケットを作成する
+aws s3 ls s3://%%BUCKET	#[aws]指定バケットのファイル一覧を表示する
+aws s3 cp %%LOCALFILE s3://%%BUCKET/%%S3DIR/	#[aws]指定バケットディレクトリ下にローカルファイルをアップロードする
+aws s3 cp %%LOCALFILE s3://%%BUCKET/%%S3FILE	#[aws]指定バケットパスにローカルファイルをアップロードする
+aws s3 cp s3://%%BUCKET/%%S3FILE %%LOCALFILE	#[aws]指定バケットのファイルをローカルにダウンロードする
+aws s3 cp s3://%%BUCKET %%LOCALDIR --recursive	#[aws]指定バケットのファイル群をローカルに再帰的ダウンロードする
+aws s3 cp s3://%%BUCKET/%%S3FROMFILE s3://%%BUCKET/%%S3TOFILE	#[aws]バケット間でファイルをコピーする
+aws s3 rm s3://%%BUCKET/%%S3FILE	#[aws]指定S3ファイルを削除する
+aws s3 rm s3://%%BUCKET/%%S3DIR --recursive	#[aws]指定S3ディレクトリを再帰的に削除する
+aws s3 sync %%DIR s3://workbt/%%DIR/ --delete	#[aws]指定ローカルディレクトリとS3ディレクトリをローカルのファイル削除内容も考慮して同期する
+aws s3 rm s3://%%BUCKET/ --exclude '*' --include '*%%INCWILD*' --recursive --dryrun	#[aws]INCWILD で指定したワイルドカードにマッチするオブジェクトだけを再帰的に一括削除（安全の為に--dry-runを付けているので削除時は外す）
+aws kms encrypt --key-id %%KEYID --query CiphertextBlob --output text --plaintext fileb://<(echo '%%URL')	#[aws]URL文字列をKMSで暗号化する
+aws kms describe-key --key-id %%KEYID	#[aws]指定KMSキーの詳細を表示する
+aws sts get-caller-identity --output text --query 'Account'	#[aws]AccountIDを調べる
+aws cloudformation describe-stacks  --stack-name %%STACK_NAME	#[aws]STACK_NAMEで指定したstackの詳細情報を表示する
+aws apigateway create-rest-api --name %%APIGW_NAME	#[aws]指定した名称のAPIを作成する
+aws apigateway create-resource --rest-api-id %%APIGW_ID --parent-id %%APIGW_ROOT_RESOURCE_ID --path-part %%PATH 	#[aws]指定したpathのリソースを作成する
+aws apigateway put-method --rest-api-id %%APIGW_ID --resource-id %%RESOURCE_ID --http-method %%METHOD --authorization-type "NONE" 	#[aws]指定したリソースに認証なしのメソッドを作成する
+sam local start-api -p 3999 --parameter-overrides ParameterKey=%%KEY1,ParameterValue=%%VALUE1 --debug	#[aws]ローカルにport 3999でAPI Gatewayを起動する。その際にParametersをovedrrideする
+aws sts assume-role --role-arn arn:aws:iam::%%ROLE_USER_ID:role/%%ROLE --role-session-name %%SESSION_NAME --serial-number arn:aws:iam::%%IAM_USER_ID:mfa/%%IAM_USER_NAME --token-code %%MFA_TOKEN --output text --profile %%PROFILE	#[aws]awscli実行時に2段階認証とロールの切替が必要な場合に使える一時認証情報を生成する
