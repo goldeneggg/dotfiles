@@ -13,6 +13,7 @@ export MY_BREW_PKGS=( \
   "wget" \
   "lv" \
   "gawk" \
+  "remake" \
   "ack" \
   "jq" \
   "the_silver_searcher" \
