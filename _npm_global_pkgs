@@ -3,4 +3,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "aws-cdk" \
   "bash-language-server" \
   "npm-check-updates" \
+  "json-schema-generator" \
 )
