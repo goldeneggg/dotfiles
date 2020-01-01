@@ -1,29 +1,47 @@
-# For Mac
-
-## Initial Setup
+## Setup
 
 ```sh
-% brew install stow
+git clone [this project] ~/dotfiles
+cd ~/dotfiles
 
-% git clone [this project] ~/dotfiles
-% cd ~/dotfiles
+# for Mac only
+# *require to install Homebrew. See: https://brew.sh/index_ja
+make install-brew-pkgs
 
-# stow and symlink
-% make setup-mac
+make setup
 ```
 
-## Setup packages
+## Install "xxenvs" (rbenv, ndenv, etc)
 
 ```sh
-$ ./init_mac_packages.bash
-
-# Note: require installed node.js using ndenv
-$ ./init_npm_global_packages.bash
+make init-xxenvs
 ```
 
-## Update "xxenv" projects
+## Install npm global packages
 
 ```sh
-$ make update-xxenvs
+make init-npms
 ```
 
+## Setup my projects
+
+```sh
+make init-projects
+```
+
+## Update
+
+### dotfiles
+
+```sh
+make reset
+
+# skip "go get" as follows
+make reset-skip-goget
+```
+
+### xxenvs
+
+```sh
+make update-xxenvs
+```

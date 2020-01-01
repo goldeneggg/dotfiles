@@ -1,16 +1,55 @@
-setup = ./setup.bash -$1 --github-user goldeneggg --github-mail jpshadowapps@gmail.com $2
+# required command detection
+assert-command = $(if $(shell which $1),,$(error '$1' command is missing. $2))
+$(call assert-command,curl,)
+$(call assert-command,git,)
 
-setup-mac: setup-submodule
-	@$(call setup,M,)
+# OS confirmation
+OSFLG := L
 
-setup-mac-skip-goget: setup-submodule
-	@$(call setup,M,--skip-goget)
+ifeq ($(shell uname),Darwin)
+OSFLG := M
 
-setup-linux: setup-submodule
-	@$(call setup,L)
+install-brew-pkgs:
+	@export _checkbrew=$(call assert-command,brew,See https://brew.sh/index_ja)
+	@./init_mac_packages.bash
+endif
 
-setup-submodule:
-	@git submodule update --init --recursive
+# bashes
+setup-bash = ./setup.bash -$1 --github-user goldeneggg --github-mail jpshadowapps@gmail.com $2
+xxenv-bash = ./xxenv.bash $1
+
+###
+# targets
+###
+
+make-version:
+	@echo $(MAKE_VERSION)
+
+check-osflg:
+	@echo $(OSFLG)
+
+setup: init-gitsubmodule reset
+
+reset: update-gitsubmodule
+	@$(call setup-bash,$(OSFLG),)
+
+reset-skip-goget: update-gitsubmodule
+	@$(call setup-bash,$(OSFLG),--skip-goget)
+
+init-gitsubmodule:
+	@git submodule update --init --remote --recursive
+
+update-gitsubmodule:
+	@git submodule update --remote --recursive
+
+init-xxenvs:
+	@$(call xxenv-bash,)
 
 update-xxenvs:
-	@./xxenv.bash update
+	@$(call xxenv-bash,update)
+
+init-npms:
+	@./init_npm_global_packages.bash
+
+init-projects:
+	@./init_my_github_projects.bash

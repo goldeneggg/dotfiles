@@ -5,22 +5,38 @@
 ### Note: setup ssh keys before execute this script
 ### 
 
-GITHUB_HOME=${HOME}/github/goldeneggg
-GITHUB_PRAC_HOME=${HOME}/github/practice-goldeneggg
 
+
+GITHUB_HOME=${HOME}/github/goldeneggg
 if [ ! -d ${GITHUB_HOME} ]
 then
   mkdir -p ${GITHUB_HOME}
-  cd ${GITHUB_HOME} 
-  git clone git@github.com:goldeneggg/pages
-  git clone git@github.com:goldeneggg/goldeneggg.github.io
-  git clone git@github.com:goldeneggg/vagrant-vms
-  git clone git@github.com:goldeneggg/provisioning-bash
-
-  cd ${HOME}
-  git clone git@github.com:goldeneggg/mysnippets
-  git clone git@github.com:goldeneggg/myautomator
 fi
+
+cd ${GITHUB_HOME} 
+
+PJTS=( \
+  "pages" \
+  "goldeneggg.github.io" \
+  "provisioning-bash" \
+  "misc-functions-nodejs" \
+  "misc-gas" \
+)
+for pjt in ${PJTS[@]}
+do
+  git clone git@github.com:goldeneggg/${pjt}
+done
+
+cd ${HOME}
+
+HOMEPJTS=( \
+  "mysnippets" \
+  "myautomator" \
+)
+for pjt in ${HOMEPJTS[@]}
+do
+  git clone git@github.com:goldeneggg/${pjt}
+done
 
 echo ""
 echo "---------------------------------------------------------"

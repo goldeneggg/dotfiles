@@ -31,10 +31,3 @@ for caskapp in ${CASKS[@]}
 do
   brew cask install ${caskapp}
 done
-
-# setup xxenv
-xxenv.sh
-
-# apex
-curl https://raw.githubusercontent.com/apex/apex/master/install.sh | sh
-
