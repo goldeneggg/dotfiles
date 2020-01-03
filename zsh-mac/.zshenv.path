@@ -15,9 +15,6 @@ export ANYENV_ROOT=$HOME/.anyenv
 export FLUTTER_ROOT=$HOME/flutter
 export CALIBRE_APP=/Applications/calibre.app
 
-python_version=2.7
-redis_version=2.8
-
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
 #-- (N-/) を付けた場合、該当パスが存在しなければ無視してくれる
@@ -27,7 +24,6 @@ path=(
     # Omnisharp by NeoBundle of vim
     $HOME/.bundle/Omnisharp/server/OmniSharp/bin/Debug(N-/)
     /usr/local/mysql/bin(N-/)
-    /usr/local/redis-${redis_version}/bin(N-/)
     /usr/local/redis/bin(N-/)
     /usr/local/opt/openssl/bin(N-/)
     $HOME/.cabal/bin(N-/)
@@ -41,7 +37,6 @@ path=(
     $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
     $PYENV_ROOT/bin(N-/)
     #$ANACONDA3/bin(N-/)
-    $HOME/Library/Python/${python_version}/bin(N-/)
     $GCP_SDK_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
     $ANDROID_SDK/platform-tools(N-/)
@@ -77,12 +72,14 @@ cdpath=(
 # ndenv
 [[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
 
-# pyenv
+# # pyenv
 [[ -s "$PYENV_ROOT/bin/pyenv" ]] && eval "$(pyenv init -)"
 [[ -s "$PYENV_ROOT/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
-# prepare for "ModuleNotFoundError: No module named 'pyexpat'"
+#
+# This alias prepare for "ModuleNotFoundError: No module named 'pyexpat'" on "pyenv install"
 # See: https://github.com/pyenv/pyenv/issues/1066
-alias pyenv="SDKROOT=$(xcrun --show-sdk-path) pyenv"
+# See: https://ja.stackoverflow.com/questions/61604/zshrc-%e3%81%ae%e8%aa%ad%e3%81%bf%e8%be%bc%e3%81%bf%e6%99%82%e3%81%ae%e3%82%a8%e3%83%a9%e3%83%bc%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6
+alias pyenv-install="SDKROOT=$(xcrun --show-sdk-path) pyenv install"
 
 # anyenv
 [[ -s "$ANYENV_ROOT/bin/anyenv" ]] && eval "$(anyenv init -)"
