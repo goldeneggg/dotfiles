@@ -80,6 +80,9 @@ cdpath=(
 # pyenv
 [[ -s "$PYENV_ROOT/bin/pyenv" ]] && eval "$(pyenv init -)"
 [[ -s "$PYENV_ROOT/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+# prepare for "ModuleNotFoundError: No module named 'pyexpat'"
+# See: https://github.com/pyenv/pyenv/issues/1066
+alias pyenv="SDKROOT=$(xcrun --show-sdk-path) pyenv"
 
 # anyenv
 [[ -s "$ANYENV_ROOT/bin/anyenv" ]] && eval "$(anyenv init -)"
