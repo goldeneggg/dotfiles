@@ -53,3 +53,23 @@ init-npms:
 
 init-projects:
 	@./init_my_github_projects.bash
+
+# --- upgrade python3
+# pyenv global $$ver && \
+# pyenv rehash && \
+# pip3 install --user neovim && \
+# pyenv virtualenv -f $$ver neovim3 && \
+
+# --- re-activate neovim3
+# pyenv activate neovim3 && \
+# pip install neovim && \
+# pyenv which python && \
+# pip install flake8
+upgrade-global-python3:
+	@export _checkpyenv=$(call assert-command,pyenv,)
+	@read -p 'Input python3 version?: ' ver; \
+		pyenv global $$ver && \
+		pyenv rehash && \
+		pip3 install --user neovim && \
+		pyenv virtualenv -f $$ver neovim3
+
