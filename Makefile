@@ -28,13 +28,13 @@ make-version:
 check-osflg:
 	@echo $(OSFLG)
 
-setup: init-gitsubmodule reset
+setup: init-gitsubmodule reset-with-goget
 
 reset: update-gitsubmodule
-	@$(call setup-bash,$(OSFLG),)
-
-reset-skip-goget: update-gitsubmodule
 	@$(call setup-bash,$(OSFLG),--skip-goget)
+
+reset-with-goget: update-gitsubmodule
+	@$(call setup-bash,$(OSFLG),)
 
 init-gitsubmodule:
 	@git submodule update --init --remote --recursive
