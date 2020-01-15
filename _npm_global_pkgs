@@ -4,4 +4,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "bash-language-server" \
   "npm-check-updates" \
   "json-schema-generator" \
+  "quicktype" \
 )
