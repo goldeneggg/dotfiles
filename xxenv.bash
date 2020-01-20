@@ -1,5 +1,14 @@
 #!/bin/bash
 
+###
+#
+# Initialize:
+#   ./xxenv.bash
+# Update:
+#   ./xxenv.bash update
+#
+###
+
 function xxenv() {
   local e=${1}
   local m=${2}
