@@ -16,7 +16,6 @@ fi
 #- vim
 export EDITOR=vim
 #export GIT_EDITOR=vim
-export GIT_EDITOR=nvim
 #-- fcコマンド実行時の起動エディタ
 export FCEDIT=vim
 
