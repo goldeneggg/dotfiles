@@ -10,3 +10,4 @@ source ~/.zshrc.symlink
 source ~/.zshrc.vagrant
 source ~/.zshrc.vagrant-coreos
 source ~/.zshrc.virtualbox
+source ~/.zshrc.vscode

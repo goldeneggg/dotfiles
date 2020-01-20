@@ -1,0 +1,32 @@
+WORKSPACE_DIR=${HOME}/workspace
+
+# required to assign workspace name
+ws-open() {
+  code ${WORKSPACE_DIR}/${1}.code-workspace
+}
+
+# required to assign workspace name
+ws-opennew() {
+  code -n ${WORKSPACE_DIR}/${1}.code-workspace
+}
+
+# required to assign existed file name
+ws-add() {
+  _exists_for_ws ${1}
+  if [ $? -ne 0 ]
+  then
+    echo "ERROR: ${1} not found"
+    return 1
+  fi
+
+  code -a ${1}
+}
+
+_exists_for_ws() {
+  if [ ! -f ${1} -a ! -d ${1} ]
+  then
+    return 1
+  fi
+
+  return 0
+}
