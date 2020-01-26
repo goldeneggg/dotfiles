@@ -5,7 +5,7 @@
 ### 
 
 usage() {
-    cat << __EOT__
+  cat << EOT
 Usage: $0 <-LM> <--github-user GITHUB_USER> <--github-mail GITHUB_MAIL>  [-n <NAME>] [-v <VERSION>]
 Configuration setup script
 
@@ -19,7 +19,7 @@ Options:
   --skip-goget                    skip go get commands
   -h | --help                     print a summary of the options
 
-__EOT__
+EOT
 }
 
 install() {
