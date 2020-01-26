@@ -2,9 +2,10 @@
 if has('vim_starting')
     set runtimepath+=~/.vim/neobundle.vim
 endif
+
 call neobundle#begin(expand('~/.bundle'))
+
 NeoBundleFetch 'Shougo/neobundle.vim'
-call neobundle#end()
 
 " view and color schemes
 NeoBundle 'flazz/vim-colorschemes'
@@ -83,3 +84,5 @@ NeoBundle 'Shougo/vimproc', {
     \ 'unix' : 'make -f make_unix.mak',
   \ },
 \ }
+
+call neobundle#end()
