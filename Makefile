@@ -67,9 +67,10 @@ init-projects:
 # pip install flake8
 upgrade-global-python3:
 	@export _checkpyenv=$(call assert-command,pyenv,)
+	@echo '>>>>>>>>>> Start python3 upgrade'
 	@read -p 'Input python3 version?: ' ver; \
 		pyenv global $$ver && \
 		pyenv rehash && \
 		pip3 install --user neovim && \
-		pyenv virtualenv -f $$ver neovim3
-
+		pyenv virtualenv -f $$ver neovim3 && \
+		pyenv rehash

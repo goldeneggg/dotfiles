@@ -65,9 +65,7 @@ endif
 "   6. pip install neovim
 "   7. nvim => :UpdateRemotePlugin
 if exists($ANYENV_ROOT)
-  let g:python_host_prog=$ANYENV_ROOT.'/envs/pyenv/versions/neovim2/bin/python'
   let g:python3_host_prog=$ANYENV_ROOT.'envs/pyenv/versions/neovim3/bin/python'
 else
-  let g:python_host_prog=$PYENV_ROOT.'/versions/neovim2/bin/python'
   let g:python3_host_prog=$PYENV_ROOT.'/versions/neovim3/bin/python'
 endif
