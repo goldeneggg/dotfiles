@@ -1,5 +1,5 @@
 # required command detection
-assert-command = $(if $(shell which $1),,$(error '$1' command is missing. $2))
+assert-command = $(if $(shell hash $1 2>&1),$(error '$1' command is missing. $2),)
 $(call assert-command,curl,)
 $(call assert-command,git,)
 
