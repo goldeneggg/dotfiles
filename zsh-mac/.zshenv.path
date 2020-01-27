@@ -72,14 +72,21 @@ cdpath=(
 # ndenv
 [[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
 
-# # pyenv
+# pyenv
+#
+# Note:
+# alias pyenv=... している事例をよく見るが、zshenvを読み込む際にこのaliasが存在している状態で再度 source .zshrc すると、
+# pyenv init - が再実行された際に "(eval):5: parse error near `()'" というエラーが発生する
+# 回避策としては、pyenv init - の前にunalias するとか、aliasの名前を変えておくとかする必要がある
+unalias pyenv 2>/dev/null
 [[ -s "$PYENV_ROOT/bin/pyenv" ]] && eval "$(pyenv init -)"
 [[ -s "$PYENV_ROOT/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
-#
+
 # This alias prepare for "ModuleNotFoundError: No module named 'pyexpat'" on "pyenv install"
 # See: https://github.com/pyenv/pyenv/issues/1066
 # See: https://ja.stackoverflow.com/questions/61604/zshrc-%e3%81%ae%e8%aa%ad%e3%81%bf%e8%be%bc%e3%81%bf%e6%99%82%e3%81%ae%e3%82%a8%e3%83%a9%e3%83%bc%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6
-alias pyenv-install="SDKROOT=$(xcrun --show-sdk-path) pyenv install"
+#alias pyenv-install="SDKROOT=$(xcrun --show-sdk-path) pyenv install"
+alias pyenv="SDKROOT=$(xcrun --show-sdk-path) pyenv"
 
 # anyenv
 [[ -s "$ANYENV_ROOT/bin/anyenv" ]] && eval "$(anyenv init -)"
