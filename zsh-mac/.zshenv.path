@@ -4,12 +4,10 @@
 #export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk${jdk_version}.jdk/Contents/Home"
 export SCALA_HOME=/usr/local/scala
 export ANDROID_SDK="/Applications/Android Studio.app/sdk"
-export PLAY_HOME=/usr/local/play
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
 export PYENV_ROOT=$HOME/.pyenv
-export ANACONDA3=$HOME/anaconda3
 export GCP_SDK_HOME=$HOME/google-cloud-sdk
 export ANYENV_ROOT=$HOME/.anyenv
 export FLUTTER_ROOT=$HOME/flutter
@@ -23,26 +21,25 @@ path=(
     $HOME/bin(N-/)
     # Omnisharp by NeoBundle of vim
     $HOME/.bundle/Omnisharp/server/OmniSharp/bin/Debug(N-/)
-    /usr/local/mysql/bin(N-/)
-    /usr/local/redis/bin(N-/)
-    /usr/local/opt/openssl/bin(N-/)
     $HOME/.cabal/bin(N-/)
     $HOME/.rbenv/bin(N-/)
-    $GOROOT/bin(N-/)
-    $GOBIN(N-/)
     $HOME/.anyenv/bin(N-/)
     $HOME/.ndenv/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
     $HOME/.phpenv/bin(N-/)
-    $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
     $PYENV_ROOT/bin(N-/)
-    #$ANACONDA3/bin(N-/)
+    $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
     $GCP_SDK_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
     $ANDROID_SDK/platform-tools(N-/)
     $FLUTTER_ROOT/bin(N-/)
-    $PLAY_HOME(N-/)
     $CALIBRE_APP/Contents/MacOS(N-/)
+    $GOROOT/bin(N-/)
+    $GOBIN(N-/)
+    $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
+    /usr/local/opt/openssl/bin(N-/)
+    /usr/local/mysql/bin(N-/)
+    /usr/local/redis/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
     {/usr/local,/usr,}/sbin(N-/)
     )
@@ -86,7 +83,12 @@ unalias pyenv 2>/dev/null
 # See: https://github.com/pyenv/pyenv/issues/1066
 # See: https://ja.stackoverflow.com/questions/61604/zshrc-%e3%81%ae%e8%aa%ad%e3%81%bf%e8%be%bc%e3%81%bf%e6%99%82%e3%81%ae%e3%82%a8%e3%83%a9%e3%83%bc%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6
 #alias pyenv-install="SDKROOT=$(xcrun --show-sdk-path) pyenv install"
-alias pyenv="SDKROOT=$(xcrun --show-sdk-path) pyenv"
+if [ -x "${OPENSSL11_BREW_ROOT}" ]
+then
+  alias pyenv="LDFLAGS=\"-L${OPENSSL11_BREW_ROOT}/lib\" CPPFLAGS=\"-I${OPENSSL11_BREW_ROOT}/include\" SDKROOT=$(xcrun --show-sdk-path) pyenv"
+else
+  alias pyenv="SDKROOT=$(xcrun --show-sdk-path) pyenv"
+fi
 
 # anyenv
 [[ -s "$ANYENV_ROOT/bin/anyenv" ]] && eval "$(anyenv init -)"
