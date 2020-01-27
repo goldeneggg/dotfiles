@@ -143,16 +143,17 @@ then
   if [ "${SKIP_GOGET}" != "true" ]
   then
     PATH=${GOROOT}/bin:${PATH}
-    go get -v github.com/golang/lint
-    go get -v -u github.com/golang/lint/golint
-    go get -v -u golang.org/x/tools/cmd/goimports
-    go get -v github.com/github/hub
-    go get -v github.com/peco/peco
-    go get -v github.com/peco/peco/cmd/peco
+    # go get -v github.com/github/hub
+    # go get -v github.com/peco/peco
+    # go get -v github.com/peco/peco/cmd/peco
+
+    # go get -v -u github.com/cweill/gotests
+    # go get -v -u golang.org/x/tools/cmd/goimports
+    # go get -v -u github.com/golang/lint/golint
+    # go get -v github.com/golang/lint
+    # go get -v -u golang.org/x/tools/cmd/gopls
     go get -v -u github.com/mgechev/revive
     go get -v -u gopkg.in/alecthomas/gometalinter.v2
-    go get -v -u golang.org/x/tools/cmd/gopls
-    go get -v -u github.com/cweill/gotests
   fi
 fi
 

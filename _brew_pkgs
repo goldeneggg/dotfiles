@@ -48,4 +48,6 @@ export MY_BREW_PKGS=( \
   "pstree" \
   "highway" \      # tap tkengo/highway
   "aws-sam-cli" \  # tap aws/tap
+  "hub" \
+  "peco" \
 )
