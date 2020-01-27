@@ -170,19 +170,19 @@ zle -N _kill-oneliner-param-forward
 bindkey "^[j" _kill-oneliner-param-forward
 
 #- using git
-if which git &> /dev/null
+if [ -x "$(command -v git)" ]
 then
   source ~/.zshrc.gitpjt
 fi
 
 #- using tmux
-if which tmux &> /dev/null
+if [ -x "$(command -v tmux)" ]
 then
   source ~/.zshrc.tmux
 fi
 
 #- using peco
-if which peco &> /dev/null
+if [ -x "$(command -v peco)" ]
 then
   source ~/.zshrc.peco
 fi
