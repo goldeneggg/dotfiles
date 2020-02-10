@@ -58,6 +58,12 @@ init-projects:
 # 1. Run this make target
 # 2. Run `pip install flake8`
 # 3. Run `nvim` -> `:UpdateRemotePlugin`
+#
+# Note: Vim8の場合だと "Vim(pythonx):ModuleNotFoundError: No module named 'neovim'" というエラーになる
+# pipで導入したpythonが無視されシステム？のpython3を使っている為、そのpython3でpynvimとneovimをpip installしないとダメ
+# - Vim8を開いて :pyx print(sys.version); print(sys.path) を実行して、Vim8が使ってるpython3のバージョンとパスを確認
+# - 確認したパスと関連しているフォルダの bin/python3.x を利用して "python3.x -m pip install {pynvim,neovim}" する
+# - Vim8を開き直してエラーが解消されたか確認
 upgrade-python:
 	@export _checkpyenv=$(call assert-command,pyenv,)
 	@echo '>>>>>>>>>> Start python upgrade for neovim'
