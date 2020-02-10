@@ -54,23 +54,27 @@ init-npms:
 init-projects:
 	@./init_my_github_projects.bash
 
-# --- upgrade python3
-# pyenv global $$ver && \
-# pyenv rehash && \
-# pip3 install --user neovim && \
-# pyenv virtualenv -f $$ver neovim3 && \
-
-# --- re-activate neovim3
-# pyenv activate neovim3 && \
-# pip install neovim && \
-# pyenv which python && \
-# pip install flake8
-upgrade-global-python3:
+# --- re-activate for neovim
+# 1. Run this make target
+# 2. Run `pip install flake8`
+# 3. Run `nvim` -> `:UpdateRemotePlugin`
+upgrade-python:
 	@export _checkpyenv=$(call assert-command,pyenv,)
-	@echo '>>>>>>>>>> Start python3 upgrade'
-	@read -p 'Input python3 version?: ' ver; \
-		pyenv global $$ver && \
+	@echo '>>>>>>>>>> Start python upgrade for neovim'
+	@read -p 'Input python3 version?: ' ver3; read -p 'Input python2 version?: ' ver2; \
+		pyenv global $$ver3 && \
 		pyenv rehash && \
-		pip3 install --user neovim && \
-		pyenv virtualenv -f $$ver neovim3 && \
-		pyenv rehash
+		pip3 install --user pynvim && \
+		pyenv virtualenv -f $$ver3 neovim3 && \
+		pyenv activate neovim3 && \
+		pip install pynvim && \
+		pip install neovim && \
+		pyenv deactivate neovim3 && \
+		pyenv global $$ver2 && \
+		pyenv rehash && \
+		pip2 install --user pynvim && \
+		pyenv virtualenv -f $$ver2 neovim2 && \
+		pyenv activate neovim2 && \
+		pip install pynvim && \
+		pip install neovim && \
+		pyenv deactivate neovim2 && \
