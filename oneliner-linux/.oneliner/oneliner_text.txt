@@ -12,4 +12,6 @@ rga -n -t %%TYPE --no-heading '%%WORD'	#[rga]カレント・ディレクトリ�
 rga -n --no-heading -e '%%REGEXP'	#[rga]カレント・ディレクトリ下を正規表現指定で（"-"始まりのパターンを検索したい時等に使用）再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
 rga -n --no-heading -P '%%REGEXP'	#[rga]カレント・ディレクトリ下をPCRE2準拠の正規表現指定で再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
 rga -c '%%WORD'	#[rga]カレント・ディレクトリ下を再帰的に検索し、ファイル名とWORDの出現回数を出力 (-c)
+rga -c '%%WORD' | sort -n -t":" -k 2	#[rga]カレント・ディレクトリ下を再帰的に検索し、WORDの出現回数の昇順でソートして出力
 rga -c '%%WORD' | sort -n -r -t":" -k 2	#[rga]カレント・ディレクトリ下を再帰的に検索し、WORDの出現回数の降順でソートして出力
+rga -c -e '%%REGEXP' | sort -n -t":" -k 2	#[rga]カレント・ディレクトリ下を正規表現で再帰的に検索し、WORDの出現回数の昇順でソートして出力
