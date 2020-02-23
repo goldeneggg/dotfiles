@@ -1,0 +1,4 @@
+mkdir %%DIR && cd $_ && npx cdk init %%APPNAME --language=typescript	#[node]npxでAWS-CDKプロジェクト（TypeScript）の初期化（npxでレジストリを自動探索するのでcdkパッケージのグローバルインストール不要）
+npx -p @angular/cli ng new %%APPNAME	#[node]npxでAngularプロジェクトの初期化（npxでレジストリを自動探索するのでangularパッケージのグローバルインストール不要）
+npx create-react-app %%APPNAME	#[node]npxでReactプロジェクトの初期化（npxでレジストリを自動探索するのでreactパッケージのグローバルインストール不要）
+npx -p @vue/cli vue create %%APPNAME && cd $_ && npm install -D @vue/cli	#[node]npxでVueプロジェクトの初期化してvue-cliのローカルインストール（npxでレジストリを自動探索するのでvueパッケージのグローバルインストール不要）
