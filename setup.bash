@@ -248,21 +248,21 @@ pushd ${HOME}/.tmux/plugins
 git pull --rebase origin master
 popd
 
-# install or refresh mongo-hacker
-if [ -f ${HOME}/.mongorc.js ]
-then
-  rm -f ${HOME}/.mongorc.js
-fi
-
-if [ ! -d ${HOME}/mongo-hacker ]
-then
-  git clone https://github.com/goldeneggg/mongo-hacker.git ${HOME}/mongo-hacker
-fi
-pushd ${HOME}/mongo-hacker
-git pull --rebase origin master
-make
-make install
-popd
+# # install or refresh mongo-hacker
+# if [ -f ${HOME}/.mongorc.js ]
+# then
+#   rm -f ${HOME}/.mongorc.js
+# fi
+#
+# if [ ! -d ${HOME}/mongo-hacker ]
+# then
+#   git clone https://github.com/goldeneggg/mongo-hacker.git ${HOME}/mongo-hacker
+# fi
+# pushd ${HOME}/mongo-hacker
+# git pull --rebase origin master
+# make
+# make install
+# popd
 
 # install base16
 if [ ! -d ${HOME}/.config/base16-shell ]
