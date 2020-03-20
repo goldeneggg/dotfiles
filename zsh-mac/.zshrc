@@ -11,3 +11,6 @@ source ~/.zshrc.vagrant
 source ~/.zshrc.vagrant-coreos
 source ~/.zshrc.virtualbox
 source ~/.zshrc.vscode
+
+source ~/.iterm2_shell_integration.zsh
+

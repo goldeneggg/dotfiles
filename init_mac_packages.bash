@@ -31,3 +31,9 @@ for caskapp in ${CASKS[@]}
 do
   brew cask install ${caskapp}
 done
+
+# iterm2 shell integration
+# See: https://www.iterm2.com/documentation-shell-integration.html
+curl -L https://iterm2.com/shell_integration/zsh -o ~/.iterm2_shell_integration.zsh
+echo 'Installed iterm2_shell_integration. Check your .zsrhc "source ~/.iterm2_shell_integration.zsh" setting.'
+
