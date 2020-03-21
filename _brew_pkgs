@@ -29,6 +29,7 @@ export MY_BREW_PKGS=( \
   "yarn" \
   "cookiecutter" \
   "diff-so-fancy" \
+  "hadolint" \
   "cmake" \
   "direnv" \
   "readline" \
