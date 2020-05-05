@@ -1,37 +1,22 @@
 # prompt
-Pry.config.prompt = proc do |obj, nest_level, _pry_|
-  version = ''
-  version << "[Ruby#{RUBY_VERSION}]"
-  version << "[Rails#{Rails.version}]" if defined? Rails
-
-  current = ''
-  current << "\001\e[0;36m\002"
-  current << "#{File.split(File.absolute_path("."))[1]}"
-  current << "\001\e[0m\002"
-
-  branch = ''
-  branch << `git rev-parse --abbrev-ref HEAD`.chomp!
-
-  #"#{version}#{current}\n#{Pry.config.prompt_name}(#{Pry.view_clip(obj)})> "
-  "#{version}(#{current}|#{branch})> "
-end
-
-# editor
-Pry.config.editor = "vim"
-
-# hirb
-# FIXME - (pry) output error: #<NoMethodError: undefined method `pager' for nil:NilClass>
-## See: https://github.com/cldwalker/hirb/issues/81
-begin
-  require 'hirb'
-  Hirb.enable
-  old_print = Pry.config.print
-  Pry.config.print = proc do |*args|
-    Hirb::View.view_or_page_output(args[1]) || old_print.call(*args)
-  end
-rescue LoadError
-  # Missing goodies, bummer
-end
+Pry.config.prompt = Pry::Prompt.new(
+  "custom",
+  "custom prompt",
+  [
+    proc do |obj, nest_level, _pry_|
+      version = ''
+      version << "[Ruby#{RUBY_VERSION}]"
+      version << "[Rails#{Rails.version}]" if defined? Rails
+        
+      branch = ''
+      branch << "\001\e[0;36m\002"
+      branch << `git rev-parse --abbrev-ref HEAD`.chomp!
+      branch << "\001\e[0m\002"
+    
+      "#{version}[#{branch}](#{obj}:#{nest_level})> "
+    end
+  ]
+)
 
 # theme
 begin
@@ -47,4 +32,12 @@ if defined?(PryByebug)
   Pry.commands.alias_command 's', 'step'
   Pry.commands.alias_command 'n', 'next'
   Pry.commands.alias_command 'f', 'finish'
+end
+
+# awesome_print
+begin
+  require 'awesome_print'
+  AwesomePrint.pry!
+rescue LoadError
+  # Missing goodies, bummer
 end
