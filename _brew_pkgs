@@ -1,6 +1,7 @@
 export MY_BREW_TAPS=( \
   "tkengo/highway" \
   "aws/tap" \
+  "nektos/tap/act" \
 )
 
 export MY_BREW_PKGS=( \
