@@ -55,15 +55,6 @@ endif
 " pyenv
 " pyenv-virtualenv でpython2用（neovim2）, python3（neovim3） 両方のvirtualenvが構築済であること
 "
-" Note: python upgrade手順 with pyenv(3系の場合)
-"   1. pyenv install VER
-"     zipimport云々というエラーでコケたら https://qiita.com/zreactor/items/c3fd04417e0d61af0afe を参照
-"   2. pyenv global VER; pyenv rehash
-"   3. pyenv deactivate neovim3
-"   4. pyenv virtualenv -f VER neovim3
-"   5. pyenv activate neovim3
-"   6. pip install neovim
-"   7. nvim => :UpdateRemotePlugin
 if exists($ANYENV_ROOT)
   let g:python3_host_prog=$ANYENV_ROOT.'envs/pyenv/versions/neovim3/bin/python'
 else
