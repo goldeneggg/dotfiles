@@ -59,7 +59,8 @@ init-projects:
 # 2. Run `pip install flake8`
 # 3. Run `nvim` -> `:UpdateRemotePlugin`
 #
-# "pyenv virtualenv -f VER neovimN" した後の "pyenv shell neovimN" が重要。これを実施することでpyenv versionsした時に仮想環境もリストアップされるようになる
+# "pyenv virtualenv -f VER neovimN" した後の "pyenv shell neovimN" が重要
+# これを実施することでpyenv versionsした時に仮想環境もリストアップされるようになる
 # => これにより、PYENV_ROOT/versions/neovimN というシムリンクが作成される（はず）
 # neovimのconfigではこのシムリンクを参照してpythonの具体的なバージョン番号を指定しなくても良い形にしたい
 #
