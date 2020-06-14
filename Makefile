@@ -83,4 +83,4 @@ upgrade-python:
 		pyenv activate neovim2 && \
 		pip install pynvim && \
 		pip install neovim && \
-		pyenv deactivate neovim2 && \
+		pyenv deactivate neovim2
