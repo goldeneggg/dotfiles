@@ -5,7 +5,6 @@
 export SCALA_HOME=/usr/local/scala
 export ANDROID_SDK="/Applications/Android Studio.app/sdk"
 export GOROOT=/usr/local/go
-#export GOPATH=$HOME/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
 export PYENV_ROOT=$HOME/.pyenv
@@ -35,8 +34,6 @@ path=(
     $ANDROID_SDK/platform-tools(N-/)
     $FLUTTER_ROOT/bin(N-/)
     $CALIBRE_APP/Contents/MacOS(N-/)
-    # GOPATH by manually built from go source
-    $HOME/goroot/bin(N-/)
     $GOBIN(N-/)
     $GOROOT/bin(N-/)
     $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
