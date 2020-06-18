@@ -7,6 +7,7 @@ sed '/^$/d' %%FILE	#[sed]改行のみの行を削除する
 sed '/^ *$/d' %%FILE	#[sed]改行とスペースのみの行を削除する
 uniq -d %%FILE	#[uniq]重複がある行（の内容）だけを表示する
 uniq -f %%SKIP_FIELD_NUM %%FILE	#[uniq]指定項目数をskipして重複削除する
+cat .env | awk '!/^#/' | awk '/./{print $0}'	#[awk].envからコメント行と空行を削除する
 rg -n --no-heading '%%WORD'	#[rg]カレント・ディレクトリ下を再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
 rg -n -t %%TYPE --no-heading '%%WORD'	#[rg]カレント・ディレクトリ下をファイルタイプ指定で再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
 rg -n --no-heading -e '%%REGEXP'	#[rg]カレント・ディレクトリ下を正規表現指定で（"-"始まりのパターンを検索したい時等に使用）再帰的に検索。ファイル名はマッチ行表示部の各行の先頭表示（--no-heading）
