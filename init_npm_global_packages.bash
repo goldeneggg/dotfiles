@@ -8,8 +8,8 @@ npm -v
 
 source ./_npm_global_pkgs
 
-for app in ${MY_NPM_GLOBAL_PKGS[@]}
+for pkg in ${MY_NPM_GLOBAL_PKGS[@]}
 do
-  npm install -g ${app}
+  npm install -g ${pkg}
 done
 
