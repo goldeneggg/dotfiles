@@ -59,6 +59,6 @@ Plug 'Shougo/neomru.vim'
 " 各LanguageServerは個別にインストールする必要あり
 " https://github.com/rcjsuen/dockerfile-language-server-nodejs
 " https://github.com/mads-hartmann/bash-language-server
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
