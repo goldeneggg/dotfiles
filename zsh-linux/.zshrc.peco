@@ -390,3 +390,23 @@ function nvrg-py {
     _nvrgextcomex "${STR}" "py" "[0-9]:\s*#"
 }
 
+##########1
+# xxenv
+##########
+
+# xxenv install -l => select install version with peco => install
+function xxenv-install {
+    TYPE="$1"
+    OPT="-l"
+    if [ "${TYPE}" = "rb" ]
+    then
+      OPT="--list-all"
+    fi
+    F=$(${TYPE}env install ${OPT} | peco)
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      # FIXME:
+      eval "echo ${F}"
+    fi
+}
+
