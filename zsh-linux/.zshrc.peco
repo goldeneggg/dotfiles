@@ -46,198 +46,6 @@ then
   bindkey "^po" peco-search-oneliner
 fi
 
-##########1
-# grep & vim
-##########
-
-# grep => open vim by filename and line number
-function vig {
-    STR="$1"
-    F=$(\grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      echo "${F}"
-      eval "vi ${F}"
-    fi
-}
-
-# ack => open vim by filename and line number
-function viack {
-    STR="$1"
-    F=$(ack --nocolor ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      eval "vi ${F}"
-    fi
-}
-
-# hw => open vim by filename and line number
-function vihw {
-    STR="$1"
-    F=$(hw --nocolor ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      eval "vi ${F}"
-    fi
-}
-
-function _vigext {
-    STR="$1"
-    EXT=$2
-
-    F=$(\grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      eval "vi ${F}"
-    fi
-}
-function _vigextcomex {
-    STR="$1"
-    EXT=$2
-    REGEXP="$3"
-
-    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
-    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      eval "vi ${F}"
-    fi
-}
-
-# goファイルをgrep => viで開く
-function vigg {
-    STR="$1"
-    _vigextcomex "${STR}" "go" "[0-9]:\s*//"
-}
-
-# rbファイルをgrep => vimで開く
-function vigr {
-    STR="$1"
-    _vigextcomex "${STR}" "rb" "[0-9]:\s*#"
-}
-
-# rbファイルをメソッド名でgrep => vimで開く
-function vigr_method {
-    STR="$1"
-    _vigextcomex "def (self\.)?${STR}" "rb" "[0-9]:\s*#"
-}
-
-# rbファイルをクラス名/モジュール名でgrep => vimで開く
-function vigr_class_module {
-    STR="$1"
-    _vigextcomex "(class|module) ${STR}" "rb" "[0-9]:\s*#"
-}
-
-# phpファイルをgrep => viで開く
-function vigp {
-    STR="$1"
-    _vigextcomex "${STR}" "php" "[0-9]:\s*//"
-}
-
-# scalaファイルをgrep => viで開く
-function vigs {
-    STR="$1"
-    _vigextcomex "${STR}" "scala" "[0-9]:\s*//"
-}
-
-# coffeeファイルをgrep => viで開く
-function vigcf {
-    STR="$1"
-    _vigextcomex "${STR}" "coffee" "[0-9]:\s*#"
-}
-
-##########1
-# grep & neovim
-##########
-
-# my git grep (or) => open neovim by filename and line number
-function nv-gitgr {
-    F=$(git gr $@ | peco | awk -F ":" '{print "+"$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      echo "${F}"
-      eval "nvim ${F}"
-    fi
-}
-
-# my git grep (and) => open neovim by filename and line number
-function nv-gitgr-and {
-    F=$(git gr-and $@ | peco | awk -F ":" '{print "+"$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      echo "${F}"
-      eval "nvim ${F}"
-    fi
-}
-
-# grep => open neovim by filename and line number
-function nvg {
-    STR="$1"
-    F=$(\grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      echo "${F}"
-      eval "nvim ${F}"
-    fi
-}
-
-# hw => open neovim by filename and line number
-function nvhw {
-    STR="$1"
-    F=$(hw --nocolor ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      eval "nvim ${F}"
-    fi
-}
-
-function _nvgext {
-    STR="$1"
-    EXT=$2
-
-    F=$(\grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      eval "nvim ${F}"
-    fi
-}
-function _nvgextcomex {
-    STR="$1"
-    EXT=$2
-    REGEXP="$3"
-
-    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
-    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      eval "nvim ${F}"
-    fi
-}
-
-# goファイルをgrep => neovimで開く
-function nvgg {
-    STR="$1"
-    _nvgextcomex "${STR}" "go" "[0-9]:\s*//"
-}
-
-# rbファイルをgrep => neovimで開く
-function nvgr {
-    STR="$1"
-    _nvgextcomex "${STR}" "rb" "[0-9]:\s*#"
-}
-
-# rbファイルをメソッド名でgrep => neovimで開く
-function nvgr_method {
-    STR="$1"
-    _nvgextcomex "def (self\.)?${STR}" "rb" "[0-9]:\s*#"
-}
-
-# rbファイルをクラス名/モジュール名でgrep => vimで開く
-function nvgr_class_module {
-    STR="$1"
-    _nvgextcomex "(class|module) ${STR}" "rb" "[0-9]:\s*#"
-}
-
 #- process control
 #-- process kill
 function peco-proc-kill() {
@@ -309,17 +117,6 @@ function git-pdi() {
   fi
 }
 
-# rubocopの結果をvimで開く
-function virc {
-    DIR="$1"
-
-    F=$(rubocop ${DIR} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      eval "vi ${F}"
-    fi
-}
-
 # 指定ファイルが過去に更新されたpull reqをpecoで一覧表示し、選択したpull reqをブラウザで開く
 function openpr-by-file() {
   declare file
@@ -338,5 +135,258 @@ function lssh {
       echo ">>> SSH to ${IP}"
       ssh ${IP}
     fi
+}
+
+##########1
+# grep & vim
+##########
+
+# grep => open vim by filename and line number
+function vig {
+    STR="$1"
+    F=$(\grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      echo "${F}"
+      eval "vi ${F}"
+    fi
+}
+
+# ack => open vim by filename and line number
+function viack {
+    STR="$1"
+    F=$(ack --nocolor ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "vi ${F}"
+    fi
+}
+
+# hw => open vim by filename and line number
+function vihw {
+    STR="$1"
+    F=$(hw --nocolor ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "vi ${F}"
+    fi
+}
+
+# rg(ripgrep) => open vim by filename and line number
+function virg {
+    STR="$1"
+    F=$(rg -n --no-heading ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "vi ${F}"
+    fi
+}
+
+function _vigext {
+    STR="$1"
+    EXT=$2
+
+    F=$(\grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "vi ${F}"
+    fi
+}
+function _vigextcomex {
+    STR="$1"
+    EXT=$2
+    REGEXP="$3"
+
+    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
+    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "vi ${F}"
+    fi
+}
+
+# goファイルをgrep => viで開く
+function vig-go {
+    STR="$1"
+    _vigextcomex "${STR}" "go" "[0-9]:\s*//"
+}
+
+# rbファイルをgrep => vimで開く
+function vig-rb {
+    STR="$1"
+    _vigextcomex "${STR}" "rb" "[0-9]:\s*#"
+}
+
+# rbファイルをメソッド名でgrep => vimで開く
+function vig-rb-method {
+    STR="$1"
+    _vigextcomex "def (self\.)?${STR}" "rb" "[0-9]:\s*#"
+}
+
+# rbファイルをクラス名/モジュール名でgrep => vimで開く
+function vig-rb-class {
+    STR="$1"
+    _vigextcomex "(class|module) ${STR}" "rb" "[0-9]:\s*#"
+}
+
+# pyファイルをgrep => vimで開く
+function vig-py {
+    STR="$1"
+    _vigextcomex "${STR}" "py" "[0-9]:\s*#"
+}
+
+# phpファイルをgrep => viで開く
+function vig-php {
+    STR="$1"
+    _vigextcomex "${STR}" "php" "[0-9]:\s*//"
+}
+
+# rubocopの結果をvimで開く
+function virc {
+    DIR="$1"
+
+    F=$(rubocop ${DIR} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "vi ${F}"
+    fi
+}
+
+##########1
+# grep & neovim
+##########
+
+# grep => open neovim by filename and line number
+function nvg {
+    STR="$1"
+    F=$(\grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      echo "${F}"
+      eval "nvim ${F}"
+    fi
+}
+
+function _nvgext {
+    STR="$1"
+    EXT=$2
+
+    F=$(\grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "nvim ${F}"
+    fi
+}
+
+function _nvgextcomex {
+    STR="$1"
+    EXT=$2
+    REGEXP="$3"
+
+    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
+    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "nvim ${F}"
+    fi
+}
+
+# goファイルをgrep => neovimで開く
+function nvg-go {
+    STR="$1"
+    _nvgextcomex "${STR}" "go" "[0-9]:\s*//"
+}
+
+# rbファイルをgrep => neovimで開く
+function nvg-rb {
+    STR="$1"
+    _nvgextcomex "${STR}" "rb" "[0-9]:\s*#"
+}
+
+# rbファイルをメソッド名でgrep => neovimで開く
+function nvg-rb-method {
+    STR="$1"
+    _nvgextcomex "def (self\.)?${STR}" "rb" "[0-9]:\s*#"
+}
+
+# rbファイルをクラス名/モジュール名でgrep => vimで開く
+function nvg-rb-class {
+    STR="$1"
+    _nvgextcomex "(class|module) ${STR}" "rb" "[0-9]:\s*#"
+}
+
+# pyファイルをgrep => neovimで開く
+function nvg-py {
+    STR="$1"
+    _nvgextcomex "${STR}" "py" "[0-9]:\s*#"
+}
+
+##########1
+# git grep & neovim
+##########
+
+# my git grep (or) => open neovim by filename and line number
+function nv-gitgr {
+    F=$(git gr $@ | peco | awk -F ":" '{print "+"$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      echo "${F}"
+      eval "nvim ${F}"
+    fi
+}
+
+# my git grep (and) => open neovim by filename and line number
+function nv-gitgr-and {
+    F=$(git gr-and $@ | peco | awk -F ":" '{print "+"$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      echo "${F}"
+      eval "nvim ${F}"
+    fi
+}
+
+##########1
+# ripgrep & neovim
+##########
+
+# rg(ripgrep) => open neovim by filename and line number
+function nvrg {
+    STR="$1"
+    F=$(rg -n --no-heading ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "nvim ${F}"
+    fi
+}
+
+function _nvrgextcomex {
+    STR="$1"
+    EXT=$2
+    REGEXP="$3"
+
+    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
+    F=$(rg -n --no-heading ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
+    if [ $? -eq 0 -a "${F}" != "" ]
+    then
+      eval "nvim ${F}"
+    fi
+}
+
+# goファイルをgrep => neovimで開く
+function nvrg-go {
+    STR="$1"
+    _nvrgextcomex "${STR}" "go" "[0-9]:\s*//"
+}
+
+# rbファイルをgrep => neovimで開く
+function nvrg-rb {
+    STR="$1"
+    _nvrgextcomex "${STR}" "rb" "[0-9]:\s*#"
+}
+
+# pyファイルをgrep => neovimで開く
+function nvrg-py {
+    STR="$1"
+    _nvrgextcomex "${STR}" "py" "[0-9]:\s*#"
 }
 
