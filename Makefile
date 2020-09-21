@@ -11,7 +11,11 @@ OSFLG := M
 
 install-brew-pkgs:
 	@export _checkbrew=$(call assert-command,brew,See https://brew.sh/index_ja)
-	@./init_mac_packages.bash
+	@./brew_packages.bash install
+
+upgrade-brew-pkgs:
+	@export _checkbrew=$(call assert-command,brew,See https://brew.sh/index_ja)
+	@./brew_packages.bash
 endif
 
 # bashes

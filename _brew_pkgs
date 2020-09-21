@@ -1,56 +1,51 @@
 export MY_BREW_TAPS=( \
-  "tkengo/highway" \
   "aws/tap" \
   "nektos/tap/act" \
 )
 
+# except library pkgs
+#  "zlib" \
+#  "icu4c" \
+#  "libevent" \
+#  "libmcrypt" \
+#  "readline" \
+
 export MY_BREW_PKGS=( \
   "git" \
+  "hub" \  # FIXME: deprecated?
+  "gh" \
+  "zsh" \
   "vim" \
   "neovim" \
-  "bash" \
-  "zsh" \
   "tmux" \
-  "wget" \
-  "lv" \
-  "gawk" \
-  "remake" \
-  "ack" \
-  "jq" \
-  "the_silver_searcher" \
-  "tkengo/highway/highway" \
+  "grep" \
   "rga" \
+  "lv" \
+  "diff-so-fancy" \
+  "gawk" \
+  "tree" \
+  "stow" \
+  "jq" \
+  "pstree" \
+  "ctags" \
+  "cmake" \
+  "direnv" \
+  "peco" \
+  "translate-shell" \
+  "wget" \
+  "htop" \
+  "ipcalc" \
+  "urlview" \
+  "extract_url" \
+  "remake" \
   "pandoc" \
   "poppler" \
   "tesseract" \
   "ffmpeg" \
   "hugo" \
-  "stow" \
-  "grep" \
-  "yarn" \
-  "cookiecutter" \
-  "diff-so-fancy" \
-  "hadolint" \
-  "cmake" \
-  "direnv" \
-  "readline" \
-  "tree" \
-  "travis" \
-  "zlib" \
-  "icu4c" \
-  "ctags" \
   "reattach-to-user-namespace" \
-  "urlview" \
+  "hadolint" \
+  "datawire/blackbird/telepresence" \  # tap datawire/blackbird
   "awscli" \
-  "extract_url" \
-  "libevent" \
-  "libmcrypt" \
-  "htop" \
-  "ipcalc" \
-  "pstree" \
-  "highway" \      # tap tkengo/highway
   "aws-sam-cli" \  # tap aws/tap
-  "hub" \
-  "peco" \
-  "translate-shell" \
 )
