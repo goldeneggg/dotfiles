@@ -223,17 +223,17 @@ then
   mkdir -p ${HOME}/bin
 fi
 
-# keychain
-if [ ! `which keychain` ]
-then
-  KEYCHAIN_VER="2.8.5"
-  KEYCHAIN_ZIP=keychain-${KEYCHAIN_VER}.zip
-  curl -s -L -o ${KEYCHAIN_TAR} https://github.com/funtoo/keychain/archive/${KEYCHAIN_ZIP}
-  unzip ${KEYCHAIN_ZIP}
-  mv keychain-${KEYCHAIN_VER}/keychain ${HOME}/bin/
-  mv keychain-${KEYCHAIN_VER}/keychain.pod ${HOME}/bin/
-  rm -fr keychain-${KEYCHAIN_VER}/
-fi
+# # keychain
+# if [ ! `which keychain` ]
+# then
+#   KEYCHAIN_VER="2.8.5"
+#   KEYCHAIN_ZIP=keychain-${KEYCHAIN_VER}.zip
+#   curl -s -L -o ${KEYCHAIN_ZIP} https://github.com/funtoo/keychain/archive/${KEYCHAIN_ZIP}
+#   unzip ${KEYCHAIN_ZIP}
+#   mv keychain-${KEYCHAIN_VER}/keychain ${HOME}/bin/
+#   mv keychain-${KEYCHAIN_VER}/keychain.pod ${HOME}/bin/
+#   rm -fr keychain-${KEYCHAIN_VER}/
+# fi
 
 # tmux plugin manager
 if [ ! -d ${HOME}/.tmux/plugins ]

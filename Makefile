@@ -46,17 +46,19 @@ init-gitsubmodule:
 update-gitsubmodule:
 	@git submodule update --remote --recursive
 
-init-xxenvs:
-	@$(call xxenv-bash,)
-
-update-xxenvs:
-	@$(call xxenv-bash,update)
-
 init-npms:
 	@./init_npm_global_packages.bash
 
 init-projects:
 	@./init_my_github_projects.bash
+
+# DEPRECATED: because of anyenv
+init-xxenvs:
+	@$(call xxenv-bash,)
+
+# DEPRECATED: because of anyenv
+update-xxenvs:
+	@$(call xxenv-bash,update)
 
 # --- re-activate for neovim
 # 1. Run this make target  ※このMakeをそのままmake実行しても途中でコケるので、手動実施する必要あり

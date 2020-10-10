@@ -8,9 +8,10 @@ export GOBIN=$GOPATH/bin
 export ERLANG_HOME=/usr/local/erlang
 export ELIXIR_HOME=/usr/local/elixir
 export ANACONDA3=$HOME/anaconda3
-export PYENV_ROOT=$HOME/.pyenv
 export ANYENV_ROOT=$HOME/.anyenv
+# export PYENV_ROOT=$HOME/.pyenv
 #export PIP_HOME=$HOME/.local
+
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
 #-- (N-/) を付けた場合、該当パスが存在しなければ無視してくれる
@@ -18,13 +19,13 @@ path=(
     $HOME/bin(N-/)
     $HOME/local/bin(N-/)
     /usr/local/mysql/bin(N-/)
-    $HOME/.rbenv/bin(N-/)
+    $ANYENV_ROOT/bin(N-/)
+    # $HOME/.rbenv/bin(N-/)
+    # $HOME/.ndenv/bin(N-/)
+    # $PYENV_ROOT/bin(N-/)
     $GOROOT/bin(N-/)
     $GOBIN(N-/)
-    $HOME/.anyenv/bin(N-/)
-    $HOME/.ndenv/bin(N-/)
     $HOME/.nodebrew/current/bin(N-/)
-    $PYENV_ROOT/bin(N-/)
     #$ANACONDA3/bin(N-/)
     $JAVA_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
@@ -55,17 +56,18 @@ cdpath=(
     $GOPATH/src/code.google.com/p(N-/)
     )
 
-# rbenv
-[[ -s "$HOME/.rbenv/bin/rbenv" ]] && eval "$(rbenv init -)"
-
-# ndenv
-[[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
-
-# pyenv
-[[ -s "$PYENV_ROOT/bin/pyenv" ]] && eval "$(pyenv init -)"
-[[ -s "$PYENV_ROOT/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
-
 # anyenv
 [[ -s "$ANYENV_ROOT/bin/anyenv" ]] && eval "$(anyenv init -)"
-# pyenv-virtualenv on anyenv
-[[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+
+# # rbenv
+# [[ -s "$HOME/.rbenv/bin/rbenv" ]] && eval "$(rbenv init -)"
+# 
+# # ndenv
+# [[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
+# 
+# # pyenv
+# [[ -s "$PYENV_ROOT/bin/pyenv" ]] && eval "$(pyenv init -)"
+# [[ -s "$PYENV_ROOT/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+# 
+# # pyenv-virtualenv on anyenv
+# [[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"

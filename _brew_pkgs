@@ -29,6 +29,7 @@ export MY_BREW_PKGS=( \
   "pstree" \
   "ctags" \
   "cmake" \
+  "anyenv" \
   "direnv" \
   "peco" \
   "translate-shell" \
