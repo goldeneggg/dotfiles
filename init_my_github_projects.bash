@@ -12,15 +12,17 @@ if [ ! -d ${GITHUB_HOME} ]
 then
   mkdir -p ${GITHUB_HOME}
 fi
-
 cd ${GITHUB_HOME} 
-
 PJTS=( \
   "pages" \
   "goldeneggg.github.io" \
-  "provisioning-bash" \
-  "misc-functions-nodejs" \
+  "hugo-coder" \
+  "goldeneggg" \
+  "misc-aws" \
+  "misc-puppets" \
+  "misc-alfred-workflow" \
   "misc-gas" \
+  "provisioning-bash" \
 )
 for pjt in ${PJTS[@]}
 do
@@ -28,7 +30,6 @@ do
 done
 
 cd ${HOME}
-
 HOMEPJTS=( \
   "mysnippets" \
   "myautomator" \
