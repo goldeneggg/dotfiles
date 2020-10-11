@@ -575,9 +575,27 @@ function new_pr_branch() {
   if [ $# -ne 1 ]
   then
     echo "Need to assign a argument of pull request number"
-    exit 1
+    return 1
   fi
 
   num=$1
   git branch pr${num} pull/${num}/head
+}
+
+#-- git clone git@gist.github.com:HASH.git NAME
+function gistclone() {
+  if [ $# -lt 1 ]
+  then
+    echo "Need to assign gist hash"
+    return 1
+  fi
+  local h=${1}
+
+  local n=${hash}
+  if [ $# -ge 2 ]
+  then
+    n=${2}
+  fi
+
+  git clone git@gist.github.com:${h}.git ${n}
 }
