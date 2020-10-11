@@ -52,6 +52,22 @@ init-npms:
 init-projects:
 	@./init_my_github_projects.bash
 
+init-anyenv:
+	@anyenv install --init && \
+		exec $$SHELL -l && \
+		mkdir -p $$(anyenv root)/plugin && \
+		git clone https://github.com/znz/anyenv-update.git $$(anyenv root)/plugins/anyenv-update && \
+		anyenv install nodenv && \
+		exec $$SHELL -l && \
+		anyenv install pyenv && \
+		exec $$SHELL -l && \
+		git clone https://github.com/pyenv/pyenv-virtualenv.git $$(pyenv root)/plugins/pyenv-virtualenv && \
+		anyenv install rbenv && \
+		exec $$SHELL -l && \
+
+update-anyenv:
+	@anyenv update
+
 # DEPRECATED: because of anyenv
 init-xxenvs:
 	@$(call xxenv-bash,)
