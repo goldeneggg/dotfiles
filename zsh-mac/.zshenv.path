@@ -84,16 +84,16 @@ cdpath=(
 # pyenv-virtualenv on anyenv
 [[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
  
-# # This alias prepare for "ModuleNotFoundError: No module named 'pyexpat'" on "pyenv install"
-# # See: https://github.com/pyenv/pyenv/issues/1066
-# # See: https://ja.stackoverflow.com/questions/61604/zshrc-%e3%81%ae%e8%aa%ad%e3%81%bf%e8%be%bc%e3%81%bf%e6%99%82%e3%81%ae%e3%82%a8%e3%83%a9%e3%83%bc%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6
-# #alias pyenv-install="SDKROOT=$(xcrun --show-sdk-path) pyenv install"
-# if [ -x "${OPENSSL11_BREW_ROOT}" ]
-# then
-#   alias pyenv="LDFLAGS=\"-L${OPENSSL11_BREW_ROOT}/lib\" CPPFLAGS=\"-I${OPENSSL11_BREW_ROOT}/include\" SDKROOT=$(xcrun --show-sdk-path) pyenv"
-# else
-#   alias pyenv="SDKROOT=$(xcrun --show-sdk-path) pyenv"
-# fi
+# This alias prepare for "ModuleNotFoundError: No module named 'pyexpat'" on "pyenv install"
+# See: https://github.com/pyenv/pyenv/issues/1066
+# See: https://ja.stackoverflow.com/questions/61604/zshrc-%e3%81%ae%e8%aa%ad%e3%81%bf%e8%be%bc%e3%81%bf%e6%99%82%e3%81%ae%e3%82%a8%e3%83%a9%e3%83%bc%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6
+#alias pyenv-install="SDKROOT=$(xcrun --show-sdk-path) pyenv install"
+if [ -x "${OPENSSL11_BREW_ROOT}" ]
+then
+  alias pyenv="LDFLAGS=\"-L${OPENSSL11_BREW_ROOT}/lib\" CPPFLAGS=\"-I${OPENSSL11_BREW_ROOT}/include\" SDKROOT=$(xcrun --show-sdk-path) pyenv"
+else
+  alias pyenv="SDKROOT=$(xcrun --show-sdk-path) pyenv"
+fi
  
 # # phpenv
 # [[ -s "$HOME/.phpenv/bin/phpenv" ]] && eval "$(phpenv init -)"

@@ -52,19 +52,6 @@ init-npms:
 init-projects:
 	@./init_my_github_projects.bash
 
-init-anyenv:
-	@anyenv install --init && \
-		exec $$SHELL -l && \
-		mkdir -p $$(anyenv root)/plugin && \
-		git clone https://github.com/znz/anyenv-update.git $$(anyenv root)/plugins/anyenv-update && \
-		anyenv install nodenv && \
-		exec $$SHELL -l && \
-		anyenv install pyenv && \
-		exec $$SHELL -l && \
-		git clone https://github.com/pyenv/pyenv-virtualenv.git $$(pyenv root)/plugins/pyenv-virtualenv && \
-		anyenv install rbenv && \
-		exec $$SHELL -l && \
-
 update-anyenv:
 	@anyenv update
 
@@ -97,14 +84,12 @@ update-xxenvs:
 upgrade-python:
 	@export _checkpyenv=$(call assert-command,pyenv,)
 	@echo '>>>>>>>>>> Start python upgrade for neovim'
-	@read -p 'Input python3 version?: ' ver3; read -p 'Input python2 version?: ' ver2; \
-		pyenv global $$ver3 $$ver2 && \
-		pyenv rehash && \
-		pyenv virtualenv -f $$ver3 neovim3 && \
-		pyenv shell neovim3 && \
-		pip install pynvim && \
-		pip install neovim && \
-		pyenv virtualenv -f $$ver2 neovim2 && \
-		pyenv shell neovim2 && \
-		pip install pynvim && \
-		pip install neovim 
+	@pyenv global $(ver3) $(ver2) && pyenv rehash
+	@pyenv virtualenv -f $(ver3) neovim3
+	@pyenv shell neovim3
+	@pip install pynvim
+	@pip install neovim
+	@pyenv virtualenv -f $(ver2) neovim2
+	@pyenv shell neovim2
+	@pip install pynvim
+	@pip install neovim 
