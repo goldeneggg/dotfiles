@@ -52,16 +52,13 @@ init-npms:
 init-projects:
 	@./init_my_github_projects.bash
 
-update-anyenv:
-	@anyenv update
-
-# DEPRECATED: because of anyenv
-init-xxenvs:
-	@$(call xxenv-bash,)
-
-# DEPRECATED: because of anyenv
-update-xxenvs:
-	@$(call xxenv-bash,update)
+# # DEPRECATED: because of anyenv
+# init-xxenvs:
+# 	@$(call xxenv-bash,)
+# 
+# # DEPRECATED: because of anyenv
+# update-xxenvs:
+# 	@$(call xxenv-bash,update)
 
 # --- re-activate for neovim
 # 1. Run this make target  ※このMakeをそのままmake実行しても途中でコケるので、手動実施する必要あり
