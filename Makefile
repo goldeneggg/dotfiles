@@ -49,6 +49,10 @@ update-gitsubmodule:
 init-npms:
 	@./init_npm_global_packages.bash
 
+init-pips:
+	@./init_pip_global_packages.bash
+
+
 init-projects:
 	@./init_my_github_projects.bash
 
