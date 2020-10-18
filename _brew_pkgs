@@ -18,28 +18,37 @@ export MY_BREW_PKGS=( \
   "vim" \
   "neovim" \
   "tmux" \
-  "grep" \
-  "rga" \
+  "coreutils" \
+  "diffutils" \
+  "findutils" \
   "lv" \
-  "diff-so-fancy" \
-  "gawk" \
+  "ed" \
+  "nano" \
   "tree" \
+  "grep" \
+  "gawk" \
+  "gnu-sed" \
+  "gnu-tar" \
+  "gzip" \
   "stow" \
+  "rga" \
   "jq" \
+  "pandoc" \
+  "diff-so-fancy" \
+  "unzip" \
   "pstree" \
   "ctags" \
   "cmake" \
-  "anyenv" \
-  "direnv" \
-  "peco" \
-  "translate-shell" \
   "wget" \
   "htop" \
   "ipcalc" \
   "urlview" \
   "extract_url" \
+  "anyenv" \
+  "direnv" \
+  "peco" \
+  "translate-shell" \
   "remake" \
-  "pandoc" \
   "poppler" \
   "tesseract" \
   "ffmpeg" \
