@@ -1,3 +1,7 @@
+##########1
+# history
+##########
+
 #- pecoで履歴表示用コマンド
 CMD_HIST_PECO="fc -l -n 1 | tail -r | peco"
 
@@ -9,6 +13,7 @@ function _peco-history() {
 zle -N _peco-history
 
 #-- pecoで選択した履歴コマンドを表示
+# Ctrl + p -> s
 function peco-search-history() {
   zle _peco-history "clear-screen"
 }
@@ -16,6 +21,7 @@ zle -N peco-search-history
 bindkey "^ps" peco-search-history
 
 #-- pecoで選択した履歴コマンドを実行
+# Ctrl + p -> e
 function peco-execute-history() {
   zle _peco-history "accept-line"
 }
@@ -23,6 +29,7 @@ zle -N peco-execute-history
 bindkey "^pe" peco-execute-history
 
 #-- pecoで選択した履歴コマンドを現在表示中のコマンド末尾にパイプで繋ぐ
+# Ctrl + p -> p
 function peco-pipe-history() {
   RBUFFER=" | "`eval ${CMD_HIST_PECO}`
   zle end-of-line
@@ -32,22 +39,29 @@ zle -N peco-pipe-history
 bindkey "^pp" peco-pipe-history
 
 
-#- for oneliner
-if [[ -d $ONELINER_DIR ]]
-then
-  #-- pecoで選択したonelinerコマンドを表示
-  function peco-search-oneliner() {
-    BUFFER=$(cat ${ONELINER_DIR}/*.txt | sort | peco | awk -F"\t" '{print $1}')
-    zle clear-screen
-    #zle -M "type [ESC-j], kill parameter word and replace into real word"
-    zle beginning-of-line
-  }
-  zle -N peco-search-oneliner
-  bindkey "^po" peco-search-oneliner
-fi
+##########1
+# directory
+##########
 
-#- process control
+#-- pecoでディレクトリスタック間をcd(pushd)
+#--- recommend setting: "setopt autp_pushd"
+#--- recommend setting: "setopt pushd_ignore_dups"
+function peco-dirstack-cd() {
+  BUFFER="cd "`dirs -l -p | tail -n +2 | peco`
+  zle end-of-line
+  #zle accept-line
+  zle clear-screen
+}
+zle -N peco-dirstack-cd
+bindkey "^pc" peco-dirstack-cd
+
+
+##########1
+# process control
+##########
+
 #-- process kill
+# Ctrl + p -> k
 function peco-proc-kill() {
   P=$(ps aux | peco | awk '{print $2}')
   if [ $? -eq 0 -a ${P} != "" ]
@@ -59,7 +73,12 @@ function peco-proc-kill() {
 zle -N peco-proc-kill
 bindkey "^pk" peco-proc-kill
 
-#- for git
+##########1
+# gitrocess control
+##########
+
+#-- git add
+# Ctrl + p -> g -> a
 function peco-git-add() {
   BUFFER="git add "$(git status -s | peco | awk '{print $2}' | tr '\n' ' ')
   #zle clear-screen
@@ -68,6 +87,8 @@ function peco-git-add() {
 zle -N peco-git-add
 bindkey "^pga" peco-git-add
 
+#-- git rm
+# Ctrl + p -> g -> r
 function peco-git-rm() {
   BUFFER="git rm "$(git status -s | peco | awk '{print $2}' | tr '\n' ' ')
   #zle clear-screen
@@ -76,6 +97,8 @@ function peco-git-rm() {
 zle -N peco-git-rm
 bindkey "^pgr" peco-git-rm
 
+#-- git branch -D
+# Ctrl + p -> g -> d
 function peco-git-brd() {
   BUFFER="git branch -D "$(git branch | peco | awk '{print $1}' | tr '\n' ' ')
   #zle clear-screen
@@ -84,6 +107,8 @@ function peco-git-brd() {
 zle -N peco-git-brd
 bindkey "^pgd" peco-git-brd
 
+#-- git checkout
+# Ctrl + p -> g -> o
 function peco-git-co() {
   BUFFER="git checkout "$(git branch | peco | awk '{print $1}' | tr '\n' ' ')
   #zle clear-screen
@@ -92,18 +117,15 @@ function peco-git-co() {
 zle -N peco-git-co
 bindkey "^pgo" peco-git-co
 
-#-- pecoでディレクトリスタック間をcd(pushd)
-#--- recommend setting: "setopt autp_pushd"
-#--- recommend setting: "setopt pushd_ignore_dups"
-function peco-dirstack-cd() {
-  BUFFER="cd "`dirs -l -p | tail -n +2 | peco`
-  zle end-of-line
-  #zle accept-line
-  zle clear-screen
+#-- git checkout regs/tags/TAG
+# Ctrl + p -> g -> t
+function peco-git-tagco() {
+  BUFFER="git checkout refs/tags/"$(git tag -l | peco | awk '{print $1}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
 }
-
-zle -N peco-dirstack-cd
-bindkey "^pc" peco-dirstack-cd
+zle -N peco-git-tagco
+bindkey "^pgt" peco-git-tagco
 
 #-- pecoでコミットハッシュを2つ選択してdiff
 function git-pdi() {
@@ -125,16 +147,6 @@ function openpr-by-file() {
 
   PRS=$(git pr-list ${file} ${target} | awk 'BEGIN {OFS="\t"} {print NR,$8,$1,$2,$10}' | sed -e 's%#%pull/%g' | peco)
   eval "hub browse -- $(echo ${PRS} | cut -f 2)"
-}
-
-# ssh using private ip of lsec2's result
-function lssh {
-    IP=$(lsec2 $@ | peco | awk -F "\t" '{print $2}')
-    if [ $? -eq 0 -a "${IP}" != "" ]
-    then
-      echo ">>> SSH to ${IP}"
-      ssh ${IP}
-    fi
 }
 
 ##########1
@@ -391,22 +403,54 @@ function nvrg-py {
 }
 
 ##########1
+# oneliner
+##########
+
+#- for oneliner
+# Ctrl + p -> o
+if [[ -d $ONELINER_DIR ]]
+then
+  #-- pecoで選択したonelinerコマンドを表示
+  function peco-search-oneliner() {
+    BUFFER=$(cat ${ONELINER_DIR}/*.txt | sort | peco | awk -F"\t" '{print $1}')
+    zle clear-screen
+    #zle -M "type [ESC-j], kill parameter word and replace into real word"
+    zle beginning-of-line
+  }
+  zle -N peco-search-oneliner
+  bindkey "^po" peco-search-oneliner
+fi
+
+##########
+# SSH to EC2 with https://github.com/goldeneggg/lsec2
+##########
+
+function lssh {
+    IP=$(lsec2 $@ | peco | awk -F "\t" '{print $2}')
+    if [ $? -eq 0 -a "${IP}" != "" ]
+    then
+      echo ">>> SSH to ${IP}"
+      ssh ${IP}
+    fi
+}
+
+##########1
 # xxenv
 ##########
 
 # xxenv install -l => select install version with peco => install
-function xxenv-install {
-    TYPE="$1"
-    OPT="-l"
-    if [ "${TYPE}" = "rb" ]
-    then
-      OPT="--list-all"
-    fi
-    F=$(${TYPE}env install ${OPT} | peco)
-    if [ $? -eq 0 -a "${F}" != "" ]
-    then
-      # FIXME:
-      eval "echo ${F}"
-    fi
-}
-
+# function xxenv-install {
+#     TYPE="$1"
+#     OPT="-l"
+#     if [ "${TYPE}" = "rb" ]
+#     then
+#       OPT="--list-all"
+#     fi
+#     F=$(${TYPE}env install ${OPT} | peco)
+#     if [ $? -eq 0 -a "${F}" != "" ]
+#     then
+#       # FIXME:
+#       eval "echo ${F}"
+#     fi
+# }
+# 
