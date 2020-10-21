@@ -1,17 +1,4 @@
 DEFAULT_SESS_NAME=main
-MY_BASE_INDEX=1
-
-DIR_DOTFILES=~/dotfiles
-
-GH_ACCOUNT=goldeneggg
-GH_DIR=~/github/${GH_ACCOUNT}
-DIR_NOTE=${GH_DIR}/notes
-DIR_WATCH=~/github/_watch
-DIR_BOT=${GH_DIR}/myhubot
-DIR_RUBY=${GH_DIR}/ruby
-DIR_RAILS=${GH_DIR}/rails
-DIR_GOROOT=${GOROOT}
-
 
 #- aliases for tmux
 alias tmls='tmux lsp -a'
@@ -29,13 +16,38 @@ function tmkl() {
   tmux kill-session -t ${SESS}
 }
 
+MY_BASE_INDEX=1
+
+DIR_DOTFILES=~/dotfiles
+
+GH_ACCOUNT=goldeneggg
+GH_DIR=~/github/${GH_ACCOUNT}
+DIR_WK=${DIR_DOTFILES}
+DIR_BLOG=${GH_DIR}/pages
+DIR_BLOGSITE=${GH_DIR}/goldeneggg.github.io
+DIR_WATCH=~/github/_watch
+
 #- tmux session initialize function
 #-- 1st arg = session name
 function tminit() {
   SESS=${1:-${DEFAULT_SESS_NAME}}
 
-  WINDOWS=("watch" "dot" "bot" "go" "gosrc" "r" "ra" "ra2")
-  START_DIRS=(${DIR_WATCH} ${DIR_DOTFILES} ${DIR_BOT} ${GOPATH}/src/github.com/${GH_ACCOUNT} ${DIR_GOROOT} ${DIR_RUBY} ${DIR_RAILS} ${DIR_RAILS})
+  WINDOWS=(
+    "wk"
+    "blog"
+    "go"
+    "misc-py"
+    "misc"
+    "eb"
+  )
+  START_DIRS=(
+    ${DIR_WK}
+    ${DIR_BLOG}
+    ${GOPATH}/src/github.com/${GH_ACCOUNT}
+    ${GH_DIR}
+    ${GH_DIR}
+    ${HOME}
+  )
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
   tmux new -d -s ${SESS}
@@ -48,18 +60,62 @@ function tminit() {
     tmux neww -k -t ${SESS}:${IND} -n ${window} -c ${START_DIRS[${IND}]}
     # ペインに分割
     case ${window} in
-      note)
+      wk)
+        # 水平=50%
+        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
+        # 左ペイン
+        tmux select-pane -L
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
-      bot)
-        # 垂直 下部=20%
-        tmux splitw -v -p 20 -c ${START_DIRS[${IND}]}
+      blog)
+        # 水平=50%
+        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
+        # 左ペイン
+        tmux select-pane -L
+        # 垂直 下部=50%
+        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
+        # 垂直 下部=50% 2
+        tmux splitw -v -p 50 -c ${DIR_BLOGSITE}
         ;;
-      ra_wk)
-        # 垂直 下部=25%
-        tmux splitw -v -p 25 -c ${START_DIRS[${IND}]}
+      go)
+        # 水平=50%
+        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
+        # 左ペイン
+        tmux select-pane -L
+        # 垂直 下部=50%
+        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
+      misc-py)
+        # 水平=50%
+        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
+        # 垂直 下部=50%
+        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
+        # 左ペイン
+        tmux select-pane -L
+        # 垂直=50% dirはDIR_WATCH
+        tmux splitw -v -p 50 -c ${DIR_WATCH}/python
+        ;;
+      misc)
+        # 水平=50%
+        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
+        # 垂直 下部=50%
+        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
+        # 左ペイン
+        tmux select-pane -L
+        # 垂直=50% dirはDIR_WATCH
+        tmux splitw -v -p 50 -c ${DIR_WATCH}
+        ;;
+      # eb)
+      #   # 垂直 下部=50%
+      #   tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
+      #   # 垂直 下部=50% 2
+      #   tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
+      #   # 最上部ペイン
+      #   tmux select-pane -D
+      #   # 垂直 下部=50%
+      #   tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
+      #   ;;
       *)
         ;;
     esac
@@ -70,33 +126,3 @@ function tminit() {
   tmux a -t ${SESS}
 }
 
-DIR_VM=${GH_DIR}/vagrant
-DIR_MYMG=${DIR_VM}/vagrant-mysql-ubuntu14
-DIR_COREOS=${DIR_VM}/coreos-vagrant
-DIR_PROVI=${GH_DIR}/provisioning-bash
-DIR_DOCKER=${GH_DIR}/docker
-
-#- tmux session for vm
-function tmvminit() {
-  SESS=vmmain
-
-  WINDOWS=("vmubu15app" "vmubu14mas" "vmubu14sla" "vmubu15my57" "provi")
-  START_DIRS=("${DIR_VM}/vagrant-ubuntu15-x86-app" "${DIR_MYMG}/replication/mas1" "${DIR_MYMG}/replication/sla1" "${DIR_VM}/vagrant-mysql57-ubuntu15/replication/mas1" "${DIR_PROVI}")
-  # 新規セッション作成
-  ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
-  tmux new -d -s ${SESS}
-  IND=${MY_BASE_INDEX}
-  # ウインドウ
-  for window in ${WINDOWS[@]}
-  do
-    # -k : 指定ウインドウが既に存在している場合のエラーをスルー
-    # -c : 開始ディレクトリ指定
-    tmux neww -k -t ${SESS}:${IND} -n ${window} -c ${START_DIRS[${IND}]}
-    # 垂直 下部=40%
-    tmux splitw -v -p 40 -c ${START_DIRS[${IND}]}
-
-    IND=$((IND+1))
-  done
-
-  tmux a -t ${SESS}
-}
