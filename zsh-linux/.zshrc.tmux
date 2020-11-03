@@ -27,7 +27,6 @@ GH_WATCH=${GH_DIR}/_watch
 DIR_WK=${DIR_DOTFILES}
 DIR_BLOG=${GH_MY}/pages
 DIR_BLOGSITE=${GH_MY}/goldeneggg.github.io
-DIR_WATCH=~/github/_watch
 
 #- tmux session initialize function
 #-- 1st arg = session name
@@ -95,8 +94,8 @@ function tminit() {
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         # 左ペイン
         tmux select-pane -L
-        # 垂直=50% dirはDIR_WATCH
-        tmux splitw -v -p 50 -c ${DIR_WATCH}/python
+        # 垂直=50% dirはGH_WATCH
+        tmux splitw -v -p 50 -c ${GH_WATCH}/python
         ;;
       misc)
         # 水平=50%
@@ -105,8 +104,8 @@ function tminit() {
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         # 左ペイン
         tmux select-pane -L
-        # 垂直=50% dirはDIR_WATCH
-        tmux splitw -v -p 50 -c ${DIR_WATCH}
+        # 垂直=50% dirはGH_WATCH
+        tmux splitw -v -p 50 -c ${GH_WATCH}
         ;;
       # eb)
       #   # 垂直 下部=50%
