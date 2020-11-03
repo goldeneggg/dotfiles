@@ -21,10 +21,12 @@ MY_BASE_INDEX=1
 DIR_DOTFILES=~/dotfiles
 
 GH_ACCOUNT=goldeneggg
-GH_DIR=~/github/${GH_ACCOUNT}
+GH_DIR=~/github
+GH_MY=${GH_DIR}/${GH_ACCOUNT}
+GH_WATCH=${GH_DIR}/_watch
 DIR_WK=${DIR_DOTFILES}
-DIR_BLOG=${GH_DIR}/pages
-DIR_BLOGSITE=${GH_DIR}/goldeneggg.github.io
+DIR_BLOG=${GH_MY}/pages
+DIR_BLOGSITE=${GH_MY}/goldeneggg.github.io
 DIR_WATCH=~/github/_watch
 
 #- tmux session initialize function
@@ -44,8 +46,8 @@ function tminit() {
     ${DIR_WK}
     ${DIR_BLOG}
     ${GOPATH}/src/github.com/${GH_ACCOUNT}
-    ${GH_DIR}
-    ${GH_DIR}
+    ${GH_WATCH}/python
+    ${GH_MY}
     ${HOME}
   )
   # 新規セッション作成
