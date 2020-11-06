@@ -13,3 +13,5 @@ git log --graph --date=short --pretty=format:'%h %cd %C(cyan)%cn %Creset%s' --an
 git log --graph --date=short --pretty=format:'%h %cd %C(cyan)%cn %Creset%s' --first-parent %%COMMIT..%%BRANCH_OR_COMMIT	#logにグラフも表示する、指定COMMITをファーストペアレントとしたもの
 git push origin $(git symbolic-ref --short HEAD)	#現在のブランチをoriginにpushする
 git checkout -b %%TAG refs/tags/%%TAG	#タグをチェックアウト
+curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/%%OWNER/%%REPOS" | jq .stargazers_count	#指定reposのスター数を取得
+
