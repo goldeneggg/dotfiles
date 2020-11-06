@@ -11,12 +11,6 @@ make install-brew-pkgs
 make setup
 ```
 
-## Install "xxenvs" (rbenv, ndenv, etc)
-
-```sh
-make init-xxenvs
-```
-
 ## Install npm global packages
 
 ```sh
@@ -38,10 +32,4 @@ make reset
 
 # skip "go get" as follows
 make reset-skip-goget
-```
-
-### xxenvs
-
-```sh
-make update-xxenvs
 ```
