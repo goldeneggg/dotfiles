@@ -23,7 +23,6 @@ DIR_DOTFILES=~/dotfiles
 GH_ACCOUNT=goldeneggg
 GH_DIR=~/github
 GH_MY=${GH_DIR}/${GH_ACCOUNT}
-GH_WATCH=${GH_DIR}/_watch
 DIR_WK=${DIR_DOTFILES}
 DIR_BLOG=${GH_MY}/pages
 DIR_BLOGSITE=${GH_MY}/goldeneggg.github.io
@@ -45,7 +44,7 @@ function tminit() {
     ${DIR_WK}
     ${DIR_BLOG}
     ${GOPATH}/src/github.com/${GH_ACCOUNT}
-    ${GH_WATCH}/python
+    ${GH_MY}
     ${GH_MY}
     ${HOME}
   )
@@ -94,8 +93,8 @@ function tminit() {
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         # 左ペイン
         tmux select-pane -L
-        # 垂直=50% dirはGH_WATCH
-        tmux splitw -v -p 50 -c ${GH_WATCH}/python
+        # 垂直=50%
+        tmux splitw -v -p 50
         ;;
       misc)
         # 水平=50%
@@ -104,8 +103,8 @@ function tminit() {
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         # 左ペイン
         tmux select-pane -L
-        # 垂直=50% dirはGH_WATCH
-        tmux splitw -v -p 50 -c ${GH_WATCH}
+        # 垂直=50%
+        tmux splitw -v -p 50
         ;;
       # eb)
       #   # 垂直 下部=50%
