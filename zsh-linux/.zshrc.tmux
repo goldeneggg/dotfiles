@@ -21,8 +21,10 @@ MY_BASE_INDEX=1
 DIR_DOTFILES=~/dotfiles
 
 GH_ACCOUNT=goldeneggg
+GH_ACCOUNT_PRA=practice-goldeneggg
 GH_DIR=~/github
 GH_MY=${GH_DIR}/${GH_ACCOUNT}
+GH_PRA=${GH_DIR}/${GH_ACCOUNT_PRA}
 DIR_WK=${DIR_DOTFILES}
 DIR_BLOG=${GH_MY}/pages
 DIR_BLOGSITE=${GH_MY}/goldeneggg.github.io
@@ -94,7 +96,7 @@ function tminit() {
         # 左ペイン
         tmux select-pane -L
         # 垂直=50%
-        tmux splitw -v -p 50
+        tmux splitw -v -p 50 -c ${GH_PRA}
         ;;
       misc)
         # 水平=50%
@@ -104,7 +106,7 @@ function tminit() {
         # 左ペイン
         tmux select-pane -L
         # 垂直=50%
-        tmux splitw -v -p 50
+        tmux splitw -v -p 50 -c ${GH_PRA}
         ;;
       # eb)
       #   # 垂直 下部=50%
