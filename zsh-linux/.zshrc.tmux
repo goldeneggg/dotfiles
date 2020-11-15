@@ -22,9 +22,11 @@ DIR_DOTFILES=~/dotfiles
 
 GH_ACCOUNT=goldeneggg
 GH_ACCOUNT_PRA=practice-goldeneggg
+GH_ACCOUNT_HRZN=horizoon
 GH_DIR=~/github
 GH_MY=${GH_DIR}/${GH_ACCOUNT}
 GH_PRA=${GH_DIR}/${GH_ACCOUNT_PRA}
+GH_HRZN=${GH_DIR}/${GH_ACCOUNT_HRZN}
 DIR_WK=${DIR_DOTFILES}
 DIR_BLOG=${GH_MY}/pages
 DIR_BLOGSITE=${GH_MY}/goldeneggg.github.io
@@ -67,14 +69,16 @@ function tminit() {
         tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
         # 左ペイン
         tmux select-pane -L
+        tmux send-keys "cd ${HOME}" C-m
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
       blog)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
+        tmux splitw -h -p 50 -c ${GH_HRZN}
         # 左ペイン
         tmux select-pane -L
+        tmux send-keys "cd ${START_DIRS[${IND}]}" C-m
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         # 垂直 下部=50% 2
@@ -90,23 +94,25 @@ function tminit() {
         ;;
       misc-py)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
+        tmux splitw -h -p 50 -c ${GH_PRA}/watch-python
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         # 左ペイン
         tmux select-pane -L
+        tmux send-keys "cd ${GH_PRA}" C-m
         # 垂直=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}
+        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
       misc)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
+        tmux splitw -h -p 50 -c ${GH_PRA}
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         # 左ペイン
         tmux select-pane -L
+        tmux send-keys "cd ${GH_PRA}" C-m
         # 垂直=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}
+        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
       # eb)
       #   # 垂直 下部=50%
