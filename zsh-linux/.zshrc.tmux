@@ -30,6 +30,7 @@ GH_HRZN=${GH_DIR}/${GH_ACCOUNT_HRZN}
 DIR_WK=${DIR_DOTFILES}
 DIR_BLOG=${GH_MY}/pages
 DIR_BLOGSITE=${GH_MY}/goldeneggg.github.io
+DIR_FOUNDING=${GH_HRZN}/founding
 
 #- tmux session initialize function
 #-- 1st arg = session name
@@ -40,7 +41,7 @@ function tminit() {
     "wk"
     "blog"
     "go"
-    "misc-py"
+    "misc-rb"
     "misc"
     "eb"
   )
@@ -92,25 +93,26 @@ function tminit() {
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
-      misc-py)
+      misc-rb)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${GH_PRA}/watch-python
+        tmux splitw -h -p 50 -c ${GH_PRA}/watch-ruby
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         # 左ペイン
         tmux select-pane -L
-        tmux send-keys "cd ${GH_PRA}" C-m
+        tmux send-keys "cd ${GH_PRA}/rails6api" C-m
         # 垂直=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
       misc)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${GH_PRA}
+        tmux splitw -h -p 50 -c ${GH_PRA}/watch-aws
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
+        tmux send-keys "cd ${GH_MY}/misc-aws" C-m
         # 左ペイン
         tmux select-pane -L
-        tmux send-keys "cd ${GH_PRA}" C-m
+        tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
         # 垂直=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
