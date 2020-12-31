@@ -22,15 +22,12 @@ DIR_DOTFILES=~/dotfiles
 
 GH_ACCOUNT=goldeneggg
 GH_ACCOUNT_PRA=practice-goldeneggg
-GH_ACCOUNT_HRZN=horizoon
 GH_DIR=~/github
 GH_MY=${GH_DIR}/${GH_ACCOUNT}
 GH_PRA=${GH_DIR}/${GH_ACCOUNT_PRA}
-GH_HRZN=${GH_DIR}/${GH_ACCOUNT_HRZN}
 DIR_WK=${DIR_DOTFILES}
 DIR_BLOG=${GH_MY}/pages
 DIR_BLOGSITE=${GH_MY}/goldeneggg.github.io
-DIR_FOUNDING=${GH_HRZN}/founding
 
 #- tmux session initialize function
 #-- 1st arg = session name
@@ -76,7 +73,7 @@ function tminit() {
         ;;
       blog)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${GH_HRZN}
+        tmux splitw -h -p 50 -c ${GH_MY}
         # 左ペイン
         tmux select-pane -L
         tmux send-keys "cd ${START_DIRS[${IND}]}" C-m
