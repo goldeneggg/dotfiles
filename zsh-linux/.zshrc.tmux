@@ -22,9 +22,11 @@ DIR_DOTFILES=~/dotfiles
 
 GH_ACCOUNT=goldeneggg
 GH_ACCOUNT_PRA=practice-goldeneggg
+GH_ACCOUNT_PRACTA=practa-inc
 GH_DIR=~/github
 GH_MY=${GH_DIR}/${GH_ACCOUNT}
 GH_PRA=${GH_DIR}/${GH_ACCOUNT_PRA}
+GH_PRACTA=${GH_DIR}/${GH_ACCOUNT_PRACTA}
 DIR_WK=${DIR_DOTFILES}
 DIR_BLOG=${GH_MY}/pages
 DIR_BLOGSITE=${GH_MY}/goldeneggg.github.io
@@ -73,7 +75,7 @@ function tminit() {
         ;;
       blog)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${GH_MY}
+        tmux splitw -h -p 50 -c ${GH_PRACTA}
         # 左ペイン
         tmux select-pane -L
         tmux send-keys "cd ${START_DIRS[${IND}]}" C-m
