@@ -75,7 +75,7 @@ function tminit() {
         ;;
       blog)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${GH_PRACTA}
+        tmux splitw -h -p 50 -c ${GH_PRACTA}/corporate
         # 左ペイン
         tmux select-pane -L
         tmux send-keys "cd ${START_DIRS[${IND}]}" C-m
@@ -94,24 +94,24 @@ function tminit() {
         ;;
       misc-rb)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${GH_PRACTICE}/watch-ruby
+        tmux splitw -h -p 50 -c ${GH_PRA}/watch-ruby
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         # 左ペイン
         tmux select-pane -L
-        tmux send-keys "cd ${GH_PRACTICE}/rails6api" C-m
+        tmux send-keys "cd ${GH_PRA}/rails6api" C-m
         # 垂直=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
       misc)
         # 水平=50%
-        tmux splitw -h -p 50 -c ${GH_PRACTICE}/watch-aws
+        tmux splitw -h -p 50 -c ${GH_PRA}/watch-aws
         # 垂直 下部=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         tmux send-keys "cd ${GH_MY}/misc-aws" C-m
         # 左ペイン
         tmux select-pane -L
-        tmux send-keys "cd ${GH_PRACTICE}/watch-wasm" C-m
+        tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
         # 垂直=50%
         tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
