@@ -1,0 +1,3 @@
+strace -ttT -p %%PID	#[strace]-tt オプションで左側に相対タイムスタンプ、-T オプションで右側にシステムコールにかかった時間を出力
+strace -o %%OUTFILE %%CMD	#[strace]-oオプションでCMDで指定したコマンド実行のトレース結果をファイル出力
+strace -e %%TARGET %%CMD	#[strace]-eオプションで特定のトレース項目に絞って結果を出力("trace=stat" とか "%network" のような指定が可能)
