@@ -14,10 +14,10 @@ else
 fi
 
 #- vim
-export EDITOR=vim
+export EDITOR=nvim
 #export GIT_EDITOR=vim
 #-- fcコマンド実行時の起動エディタ
-export FCEDIT=vim
+export FCEDIT=nvim
 
 #- remove "/" from default WORDCHARS 
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
