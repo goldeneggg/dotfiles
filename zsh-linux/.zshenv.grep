@@ -8,3 +8,32 @@ GREP_OPTIONS="--color=auto $GREP_OPTIONS"
 
 alias grep="grep $GREP_OPTIONS 2>/dev/null"
 unset GREP_OPTIONS
+
+# for ripgrep
+function rglist() {
+  local str=$1
+  shift
+
+  rg -n --no-heading $@ ${str}
+}
+
+function rgcnt() {
+  local str=$1
+  shift
+
+  rg -c $@ ${str} | sort -n -t":" -k 2
+}
+
+function rgalist() {
+  local str=$1
+  shift
+
+  rga -n --no-heading $@ ${str}
+}
+
+function rgacnt() {
+  local str=$1
+  shift
+
+  rga -c $@ ${str} | sort -n -t":" -k 2
+}
