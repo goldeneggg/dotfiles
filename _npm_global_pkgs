@@ -7,4 +7,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "json-schema-generator" \
   "alfred-emoj" \
   "@google/clasp" \
+  "@mhlabs/cfn-diagram" \
 )
