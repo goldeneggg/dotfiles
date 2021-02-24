@@ -39,18 +39,10 @@ function tminit() {
   WINDOWS=(
     "wk"
     "blog"
+    "ops"
     "go"
-    "misc-dev"
-    "misc-infra"
+    "misc"
     "eb"
-  )
-  START_DIRS=(
-    ${DIR_WK}
-    ${DIR_BLOG}
-    ${GOPATH}/src/github.com/${GH_ACCOUNT}
-    ${GH_MY}
-    ${GH_MY}
-    ${HOME}
   )
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
@@ -61,61 +53,70 @@ function tminit() {
   do
     # -k : 指定ウインドウが既に存在している場合のエラーをスルー
     # -c : 開始ディレクトリ指定
-    tmux neww -k -t ${SESS}:${IND} -n ${window} -c ${START_DIRS[${IND}]}
+    tmux neww -k -t ${SESS}:${IND} -n ${window} -c ${DIR_WK}
     # ペインに分割
     case ${window} in
       wk)
-        # 水平=50%
-        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
-        # 左ペイン
+        # 縦分割=50%
+        tmux splitw -h -p 50 -c ${DIR_WK}
+        # 横分割 下部=25%
+        tmux splitw -v -p 25 -c ${DIR_WK}
+        # 左ペインへ
         tmux select-pane -L
         tmux send-keys "cd ${HOME}" C-m
-        # 垂直 下部=50%
-        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
+        # 横分割 下部=50%
+        tmux splitw -v -p 50 -c ${DIR_WK}
         ;;
       blog)
-        # 水平=50%
+        # 縦分割=50%
         tmux splitw -h -p 50 -c ${GH_PRACTA}/corporate
-        # 垂直 下部=50%
-        tmux splitw -v -p 50 -c ${GH_PRACTA}/corporate
-        # 左ペイン
+        # 横分割 下部=50%
+        tmux splitw -v -p 50 -c ${GH_PRACTA}/practa-inc.github.io
+        # 左ペインへ
         tmux select-pane -L
-        tmux send-keys "cd ${START_DIRS[${IND}]}" C-m
-        # 垂直 下部=50%
-        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
-        # 垂直 下部=50% 2
+        tmux send-keys "cd ${DIR_BLOG}" C-m
+        # 横分割 下部=50%
+        tmux splitw -v -p 50 -c ${DIR_BLOG}
+        # 横分割 下部=50% 2
         tmux splitw -v -p 50 -c ${DIR_BLOGSITE}
         ;;
-      go)
-        # 水平=50%
-        tmux splitw -h -p 50 -c ${START_DIRS[${IND}]}
-        # 左ペイン
+      # TODO:
+      ops)
+        # 縦分割=50%
+        tmux splitw -h -p 50 -c ${HOME}
+        # 横分割 下部=50%
+        tmux splitw -v -p 50 -c ${HOME}
+        # 左ペインへ
         tmux select-pane -L
-        # 垂直 下部=50%
-        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
+        tmux send-keys "cd ${HOME}" C-m
+        # 横分割=50%
+        tmux splitw -v -p 50 -c ${HOME}
         ;;
-      misc-dev)
-        # 水平=50%
-        tmux splitw -h -p 50 -c ${GH_PRA}
-        # 垂直 下部=50%
-        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
-        # 左ペイン
+      go)
+        # 縦分割=50%
+        tmux splitw -h -p 50 -c ${GOPATH}/src/github.com/${GH_ACCOUNT}
+        # 横分割 下部=25%
+        tmux splitw -v -p 25 -c ${GOPATH}/src/github.com/${GH_ACCOUNT}
+        # 左ペインへ
+        tmux select-pane -L
+        # cd watch-go
+        tmux send-keys "cd ${GH_PRA}/watch-go" C-m
+        # 横分割 下部=50%
+        tmux splitw -v -p 50 -c ${GOROOT}/src
+        # 横分割 下部=50%
+        tmux splitw -v -p 50 -c ${HOME}/goroot
+        ;;
+      misc)
+        # 縦分割=50%
+        tmux splitw -h -p 50 -c ${GH_PRA}/watch-aws
+        # 横分割 下部=50%
+        tmux splitw -v -p 50 -c ${GH_MY}/misc-aws
+        #tmux send-keys "cd ${GH_MY}/misc-aws" C-m
+        # 左ペインへ
         tmux select-pane -L
         tmux send-keys "cd ${GH_PRA}/watch-ruby" C-m
-        # 垂直=50%
+        # 横分割=50%
         tmux splitw -v -p 50 -c ${GH_PRA}/rails6api
-        ;;
-      misc-infra)
-        # 水平=50%
-        tmux splitw -h -p 50 -c ${GH_PRA}/watch-aws
-        # 垂直 下部=50%
-        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
-        tmux send-keys "cd ${GH_MY}/misc-aws" C-m
-        # 左ペイン
-        tmux select-pane -L
-        tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
-        # 垂直=50%
-        tmux splitw -v -p 50 -c ${START_DIRS[${IND}]}
         ;;
       *)
         ;;
