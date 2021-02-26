@@ -37,6 +37,7 @@ path=(
     $GOROOT/bin(N-/)
     $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
     /usr/local/opt/openssl/bin(N-/)
+    /usr/local/opt/mysql@5.7/bin(N-/)
     /usr/local/mysql/bin(N-/)
     /usr/local/redis/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
