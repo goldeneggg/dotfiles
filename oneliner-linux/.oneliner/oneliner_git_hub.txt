@@ -3,6 +3,7 @@ hub pull-request --browse -F %%PULLREQ_TEMPLATE -b %%OWNER:%%DST_BRANCH -h %%OWN
 hub pull-request --browse -i %%ISSUE -b %%OWNER:%%DST_BRANCH -h %%OWNER:$(git symbolic-ref --short HEAD)	#issueと連動したpull requestを作成する
 hub create -d '%%COMMENT'	#github上にpublic repositoryを作成する
 git log -p -S '%%STR'	#変更箇所にSTRを含むlogを表示する
+git ls-remote --tags	#リモートにあるtag一覧を確認する
 git cat-file -p %%COMMIT	#該当COMMITのcommit情報（tree, parent, author)を表示する
 git cat-file -p %%BRANCH_OR_COMMIT:%%FILE	#該当BRANCH or COMMITのFILEの内容を表示する。
 git merge-base %%PARENT %%COMMIT	#コミットの共通の祖先のsha1を出力、rebase -i で何処を起点に綺麗にしていけばよいか分からない時に有用
