@@ -14,4 +14,5 @@ git log --graph --date=short --pretty=format:'%h %cd %C(cyan)%cn %Creset%s' --fi
 git push origin $(git symbolic-ref --short HEAD)	#現在のブランチをoriginにpushする
 git checkout -b %%TAG refs/tags/%%TAG	#タグをチェックアウト
 curl -s -H "Authorization: token ${GITHUB_TOKEN}" "https://api.github.com/repos/%%OWNER/%%REPOS" | jq .stargazers_count	#指定reposのスター数を取得
+gh pr checkout %%NUM	#[gh]ghコマンドで指定numberのpullreqをチェックアウト
 
