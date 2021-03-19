@@ -102,9 +102,9 @@ function tminit() {
         # cd watch-go
         tmux send-keys "cd ${GH_PRA}/watch-go" C-m
         # 横分割 下部=50%
-        tmux splitw -v -p 50 -c ${GOROOT}/src
-        # 横分割 下部=50%
         tmux splitw -v -p 50 -c ${HOME}/goroot
+        # 横分割 下部=50%
+        tmux splitw -v -p 50 -c ${GOROOT}/src
         ;;
       misc)
         # 縦分割=50%
