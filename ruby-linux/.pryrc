@@ -1,3 +1,5 @@
+Pry.config.pager = false
+
 # prompt
 Pry.config.prompt = Pry::Prompt.new(
   "custom",
@@ -7,12 +9,12 @@ Pry.config.prompt = Pry::Prompt.new(
       version = ''
       version << "[Ruby#{RUBY_VERSION}]"
       version << "[Rails#{Rails.version}]" if defined? Rails
-        
+
       branch = ''
       branch << "\001\e[0;36m\002"
       branch << `git rev-parse --abbrev-ref HEAD`.chomp!
       branch << "\001\e[0m\002"
-    
+
       "#{version}[#{branch}](#{obj}:#{nest_level})> "
     end
   ]
@@ -35,9 +37,14 @@ if defined?(PryByebug)
 end
 
 # awesome_print
-begin
-  require 'awesome_print'
+if defined?(AwesomePrint)
   AwesomePrint.pry!
-rescue LoadError
-  # Missing goodies, bummer
 end
+
+# SQL log to stdout
+if ENV['LOG_SQL']
+  if defined?(ActiveRecord::Base)
+    ActiveRecord::Base.logger = Logger.new(STDOUT)
+  end
+end
+
