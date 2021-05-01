@@ -154,6 +154,7 @@ then
     # go get -v -u golang.org/x/tools/cmd/gopls
     go get -v -u github.com/mgechev/revive
     go get -v -u gopkg.in/alecthomas/gometalinter.v2
+    go get -v -u github.com/awslabs/aws-cloudformation-template-formatter/cmd/cfn-format
   fi
 fi
 
