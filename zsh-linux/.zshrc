@@ -1,4 +1,5 @@
 source ~/.zshrc.common
+source ~/.zshrc.path
 source ~/.zshrc.aliases
 source ~/.zshrc.base16
 source ~/.zshrc.ssh
