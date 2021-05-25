@@ -13,8 +13,8 @@ alias so='source ~/.zshenv ~/.zshrc'
 alias tokyo='curl wttr.in/Tokyo'
 
 #-- ripgrep
-alias rg='rg -n --no-heading'
-alias rga='rga -n --no-heading'
+alias rg='rg -n --no-heading --hidden --glob "!.git"'
+alias rga='rga -n --no-heading --hidden --glob "!.git"'
 
 #-- mysql
 #alias mysql="mysql --pager='less -S' --safe-updates"  #lessだと化ける
