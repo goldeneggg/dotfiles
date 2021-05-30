@@ -81,8 +81,10 @@ function tminit() {
         # 左ペインへ
         tmux select-pane -L
         tmux send-keys "cd ${DIR_BLOGEGGGSITE}" C-m
+        # 水平分割 下部=80%
+        tmux splitw -v -p 80 -c ${GH_PRACTA}/practa-inc.github.io
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GH_PRACTA}/practa-inc.github.io
+        tmux splitw -v -p 50 -c ${GH_PRA}/readlogs
         ;;
       go)
         # 垂直分割=50%
@@ -109,7 +111,7 @@ function tminit() {
         tmux select-pane -L
         tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
         # 水平分割=80%
-        tmux splitw -v -p 80 -c ${GH_PRA}/watch-ruby
+        tmux splitw -v -p 80 -c ${GH_PRA}/watch-software-design
         # 水平分割=50%
         tmux splitw -v -p 50 -c ${GH_PRA}/watch-aws
         ;;
