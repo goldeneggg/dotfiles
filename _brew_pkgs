@@ -62,4 +62,5 @@ export MY_BREW_PKGS=( \
   "aws-sam-cli" \  # tap aws/tap
   "tfenv" \
   "gdrive" \
+  "redis" \
 )
