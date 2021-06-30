@@ -1,0 +1,10 @@
+Host hogehost
+ Hostname setsuzoku.server 
+ User hugauser
+ LocalForward 16667 irc.na.server:6667 # tunnel for irc
+ LocalForward 13389 windows.na.server:3389 # tunnel for windows. RDCで localhost:13389 とかして接続
+ LocalForward 15900 mac.na.machine:5900 # mac 画面共有
+ LocalForward 10022 localhost:22
+ ProxyCommand ssh hugauser@fumidai.na.server nc -w 1 %h %p # 多段ssh時の経由サーバ 
+ DynamicForward localhost:10080 # socks proxy
+ IdentityFile ~/.ssh/nemui_rsa
