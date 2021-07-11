@@ -61,6 +61,7 @@ export MY_BREW_PKGS=( \
   "datawire/blackbird/telepresence" \  # tap datawire/blackbird
   "awscli" \
   "aws-sam-cli" \  # tap aws/tap
+  "cloudformation-guard" \
   "tfenv" \
   "gdrive" \
   "redis" \
