@@ -14,3 +14,4 @@ configstore/
 keychain*
 
 .vscode
+tmp
