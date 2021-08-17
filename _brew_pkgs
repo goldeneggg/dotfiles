@@ -38,6 +38,7 @@ export MY_BREW_PKGS=( \
   "yj" \
   "pandoc" \
   "diff-so-fancy" \
+  "shfmt" \
   "unzip" \
   "pstree" \
   "ctags" \
