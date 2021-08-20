@@ -8,4 +8,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "alfred-emoj" \
   "@google/clasp" \
   "@mhlabs/cfn-diagram" \
+  "capture-website" \
 )
