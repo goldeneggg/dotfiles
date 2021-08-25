@@ -15,3 +15,4 @@ curl -L -o %%FILENAME -k %%URL	#[curl]-kオプションでSSL証明書エラー�
 curl -L -o %%FILENAME -e %%REFERER %%URL	#[curl]-eオプションでRefererを指定してダウンロードを行う
 curl -L -o %%FILENAME --limit-rate 1024k %%URL	#[curl]--limit-rateオプションで帯域制限を掛ける。1024kは 1MB/sec
 curl -L -o %%FILENAME -m %%MAXSEC %%URL	#[curl]-mオプションで最大転送時間の制限を掛ける
+curl -LI %%URL -o /dev/null -w '%{http_code}\n' -s	#[curl]http_codeだけを取得する
