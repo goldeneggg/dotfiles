@@ -2,3 +2,7 @@
 # use $HOME/.aws/credentials file for awscli (ex: aws_access_key_id, etc)
 export AWS_SDK_LOAD_CONFIG=1
 #export AWS_DEFAULT_REGION=ap-northeast-1
+
+# See: AWS SAM CLI でのテレメトリ - AWS Serverless Application Model https://docs.aws.amazon.com/ja_jp/serverless-application-model/latest/developerguide/serverless-sam-telemetry.html
+# offにしておく
+export SAM_CLI_TELEMETRY=0
