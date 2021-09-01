@@ -59,7 +59,6 @@ export MY_BREW_PKGS=( \
   "hugo" \
   "reattach-to-user-namespace" \
   "hadolint" \
-  "datawire/blackbird/telepresence" \  # tap datawire/blackbird
   "awscli" \
   "aws-sam-cli" \  # tap aws/tap
   "cloudformation-guard" \
