@@ -43,6 +43,7 @@ export MY_BREW_PKGS=( \
   "pstree" \
   "ctags" \
   "cmake" \
+  "curl" \
   "wget" \
   "htop" \
   "ipcalc" \
@@ -62,6 +63,7 @@ export MY_BREW_PKGS=( \
   "awscli" \
   "aws-sam-cli" \  # tap aws/tap
   "cloudformation-guard" \
+  "awscurl" \
   "tfenv" \
   "gdrive" \
   "redis" \
