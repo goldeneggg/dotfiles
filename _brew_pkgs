@@ -35,6 +35,7 @@ export MY_BREW_PKGS=( \
   "rga" \
   "nkf" \
   "jq" \
+  "yq" \
   "yj" \
   "pandoc" \
   "diff-so-fancy" \
