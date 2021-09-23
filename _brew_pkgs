@@ -17,6 +17,7 @@ export MY_BREW_PKGS=( \
   "zsh" \
   "vim" \
   "neovim" \
+  "neofetch" \
   "tmux" \
   "coreutils" \
   "diffutils" \
