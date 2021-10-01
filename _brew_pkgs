@@ -61,6 +61,7 @@ export MY_BREW_PKGS=( \
   "ffmpeg" \
   "hugo" \
   "reattach-to-user-namespace" \
+  "shellcheck" \
   "hadolint" \
   "awscli" \
   "aws-sam-cli" \  # tap aws/tap
