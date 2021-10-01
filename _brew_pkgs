@@ -60,6 +60,7 @@ export MY_BREW_PKGS=( \
   "tesseract" \
   "ffmpeg" \
   "hugo" \
+  "redis" \
   "reattach-to-user-namespace" \
   "shellcheck" \
   "hadolint" \
@@ -68,6 +69,6 @@ export MY_BREW_PKGS=( \
   "cloudformation-guard" \
   "awscurl" \
   "tfenv" \
+  "gitleaks" \
   "gdrive" \
-  "redis" \
 )
