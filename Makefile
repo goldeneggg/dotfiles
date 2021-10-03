@@ -51,6 +51,8 @@ init-npms:
 init-pips:
 	@./init_pip_global_packages.bash
 
+init-gems:
+	@./init_gem_global_packages.bash
 
 init-projects:
 	@./init_my_github_projects.bash
