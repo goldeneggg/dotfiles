@@ -23,8 +23,8 @@ EOT
 }
 
 install() {
-  SETTINGS=$@
-  for setting in `echo ${SETTINGS}`
+  SETTINGS=("${@}")
+  for setting in "${SETTINGS[@]}"
   do
     pushd ${setting}
     for f in `ls -a`
