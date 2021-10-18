@@ -9,11 +9,12 @@
 [color]
   ui = auto
 
-#[url "git@github.com:"]
-    #insteadOf = https://github.com/
-    #
 [credential "https://github.com"]
   username = %GITHUB_USER%
+
+# for replacing https to SSH github accessing for specific organization
+# [url "git@github.com:ORG"]
+    # insteadOf = https://github.com/ORG
 
 [pager]
   diff = diff-so-fancy | less --tabs=1,5 -RFX
@@ -141,5 +142,11 @@
   show-pr = !"f() { git log --merges --pretty=\"format:%ad %h %s\" --date=iso --reverse --ancestry-path $1...${2:-master} | grep 'Merge pull request #' | head -n 1; }; f"
   pr-list = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-pr ${hash} ${1:-master}; done | sort | uniq'"
   pr-list2 = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-merge ${hash} ${1:-master} | grep \"pull request #\"; done | sort | uniq'"
+
+# include local settings
 [include]
 	path = ~/.gitconfig.local
+
+# EXAMPLE: include directory specific settings
+# [includeIf "gitdir:~/SPECIFIC_TARGET_DIR/"]
+# 	path = ~/.gitconfig.specific
