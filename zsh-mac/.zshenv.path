@@ -1,4 +1,12 @@
 #- [mac]PATH environment settings
+
+# m1 mac or not
+IS_M1_MAC=""
+if [ "$(uname -m)" = "arm64" ]
+then
+  IS_M1_MAC="yes"
+fi
+
 #-- dmg経由でjavaをインストールした場合はJAVA_HOME関連の設定は不要
 #jdk_version="1.8.0_25"
 #export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk${jdk_version}.jdk/Contents/Home"
@@ -12,6 +20,15 @@ export GCP_SDK_HOME=$HOME/google-cloud-sdk
 export FLUTTER_ROOT=$HOME/flutter
 export CALIBRE_APP=/Applications/calibre.app
 export ANYENV_ROOT=$HOME/.anyenv
+
+# for openssl 1.1 (required: homebrew)
+if [[ "${IS_M1_MAC}" ]]
+then
+  export OPENSSL11_BREW_ROOT=/usr/local/opt/openssl@1.1
+else
+  export OPENSSL11_BREW_ROOT=/opt/homebrew/opt/openssl@1.1
+fi
+
 
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
@@ -36,6 +53,7 @@ path=(
     $GOBIN(N-/)
     $GOROOT/bin(N-/)
     $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
+    /opt/homebrew/bin(N-/)
     /usr/local/opt/openssl/bin(N-/)
     /usr/local/opt/mysql@5.7/bin(N-/)
     /usr/local/mysql/bin(N-/)
@@ -63,8 +81,13 @@ cdpath=(
     $GOPATH/src/code.google.com/p(N-/)
     )
 
-# anyenv brew install前提で（= /usr/local/bin/anyuenv）
-[[ -s "/usr/local/bin/anyenv" ]] && eval "$(anyenv init -)"
+# anyenv brew install前提で
+if [[ "${IS_M1_MAC}" ]]
+then
+  [[ -s "/opt/homebrew/bin/anyenv" ]] && eval "$(anyenv init -)"
+else
+  [[ -s "/usr/local/bin/anyenv" ]] && eval "$(anyenv init -)"
+fi
 
 # # rbenv
 # [[ -s "$HOME/.rbenv/bin/rbenv" ]] && eval "$(rbenv init -)"
@@ -119,3 +142,4 @@ fi
 
 # added by travis gem
 [ -f /Users/fskmt/.travis/travis.sh ] && source /Users/fskmt/.travis/travis.sh
+
