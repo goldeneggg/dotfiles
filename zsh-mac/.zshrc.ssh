@@ -1,1 +1,13 @@
-ssh-add --apple-use-keychain
+# m1 mac or not
+IS_M1_MAC=""
+if [ "$(uname -m)" = "arm64" ]
+then
+  IS_M1_MAC="yes"
+fi
+
+if [[ "${IS_M1_MAC}" ]]
+then
+  ssh-add --apple-use-keychain
+else
+  ssh-add -K
+fi
