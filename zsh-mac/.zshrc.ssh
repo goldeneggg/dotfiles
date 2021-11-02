@@ -1,1 +1,1 @@
-../zsh-linux/.zshrc.ssh
+ssh-add --apple-use-keychain
