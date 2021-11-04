@@ -8,3 +8,8 @@ Host hogehost
  ProxyCommand ssh hugauser@fumidai.na.server nc -w 1 %h %p # 多段ssh時の経由サーバ 
  DynamicForward localhost:10080 # socks proxy
  IdentityFile ~/.ssh/nemui_rsa
+
+# with AWS Session Manager
+#  See: https://newbedev.com/connect-to-ec2-instance-ssh-code-example
+Host i-* mi-*
+    ProxyCommand sh -c "aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'"
