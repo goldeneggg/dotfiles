@@ -7,6 +7,17 @@ then
   IS_M1_MAC="yes"
 fi
 
+# for openssl 1.1 (required: homebrew)
+if [[ "${IS_M1_MAC}" ]]
+then
+  export HOMEBREW_BASE_DIR=/opt/homebrew
+else
+  export HOMEBREW_BASE_DIR=/usr/local
+fi
+export HOMEBREW_OPT_DIR=$HOMEBREW_BASE_DIR/opt
+export OPENSSL11_BREW_ROOT=$HOMEBREW_OPT_DIR/openssl@1.1
+export MYSQL57_BREW_ROOT=$HOMEBREW_OPT_DIR/mysql@5.7
+
 #-- dmg経由でjavaをインストールした場合はJAVA_HOME関連の設定は不要
 #jdk_version="1.8.0_25"
 #export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk${jdk_version}.jdk/Contents/Home"
@@ -20,15 +31,6 @@ export GCP_SDK_HOME=$HOME/google-cloud-sdk
 export FLUTTER_ROOT=$HOME/flutter
 export CALIBRE_APP=/Applications/calibre.app
 export ANYENV_ROOT=$HOME/.anyenv
-
-# for openssl 1.1 (required: homebrew)
-if [[ "${IS_M1_MAC}" ]]
-then
-  export OPENSSL11_BREW_ROOT=/usr/local/opt/openssl@1.1
-else
-  export OPENSSL11_BREW_ROOT=/opt/homebrew/opt/openssl@1.1
-fi
-
 
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
@@ -53,9 +55,8 @@ path=(
     $GOBIN(N-/)
     $GOROOT/bin(N-/)
     $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
-    /opt/homebrew/bin(N-/)
-    /usr/local/opt/openssl/bin(N-/)
-    /usr/local/opt/mysql@5.7/bin(N-/)
+    $MYSQL57_BREW_ROOT/bin(N-/)
+    $HOMEBREW_BASE_DIR/bin(N-/)
     /usr/local/mysql/bin(N-/)
     /usr/local/redis/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
