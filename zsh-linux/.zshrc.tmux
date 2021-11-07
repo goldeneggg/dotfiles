@@ -102,16 +102,14 @@ function tminit() {
         ;;
       misc)
         # 垂直分割=50%
-        tmux splitw -h -p 50 -c ${GH_PRA}/vite2vue3ts4
-        # 水平分割 下部=80%
-        tmux splitw -v -p 80 -c ${GH_PRA}/rails6vue2
+        tmux splitw -h -p 50 -c ${GH_MY}/misc-aws
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GH_MY}/misc-aws
+        tmux splitw -v -p 50
         # 左ペインへ
         tmux select-pane -L
         tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
         # 水平分割=80%
-        tmux splitw -v -p 80 -c ${GH_PRA}/watch-software-design
+        tmux splitw -v -p 80 -c ${GH_PRA}/watch-docker
         # 水平分割=50%
         tmux splitw -v -p 50 -c ${GH_PRA}/watch-aws
         ;;
