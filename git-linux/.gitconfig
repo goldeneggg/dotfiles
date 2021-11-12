@@ -71,6 +71,7 @@
   histc = log --pretty=\"format:%cd %C(yellow)%h %C(cyan)(%cn)%Creset: %s\" --date=iso
   logs = log --stat --date=iso
   logp = log -p --date=iso
+  logsub = log -p --submodule --date=iso
   logr = log origin --date=iso
   oneline = log --pretty=oneline
   ranking = shortlog -s -n --no-merges
