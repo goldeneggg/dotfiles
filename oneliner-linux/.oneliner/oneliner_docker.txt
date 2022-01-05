@@ -9,4 +9,5 @@ docker inspect $(docker ps -l -q) | grep '"IPAddress.*[0-9]",$'	#[docker] 最後
 docker images -f "dangling=true" -q	#[docker] dangling imageのIMAGE_ID一覧を取得
 docker image pull %%IMAGE	#[docker] imageのpull
 docker image build -t %%IMAGE_AND_TAG %%DOCKERFILE_PATH	#[docker] imageのpull
-docker system prune	#[docker] 未使用リソースを全て解放する
+docker system prune	#[docker] 未使用リソースを全て削除する
+docker buildx prune	#[docker] buildxのbuild cacheを削除する
