@@ -27,10 +27,11 @@ export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
 # export PYENV_ROOT=$HOME/.pyenv
+export ANYENV_ROOT=$HOME/.anyenv
 export GCP_SDK_HOME=$HOME/google-cloud-sdk
 export FLUTTER_ROOT=$HOME/flutter
 export CALIBRE_APP=/Applications/calibre.app
-export ANYENV_ROOT=$HOME/.anyenv
+export TAILSCALE_APP=/Applications/Tailscale.app
 
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
@@ -52,6 +53,7 @@ path=(
     $ANDROID_SDK/platform-tools(N-/)
     $FLUTTER_ROOT/bin(N-/)
     $CALIBRE_APP/Contents/MacOS(N-/)
+    $TAILSCALE_APP/Contents/MacOS(N-/)
     $GOBIN(N-/)
     $GOROOT/bin(N-/)
     $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
