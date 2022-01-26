@@ -68,9 +68,9 @@ bindkey "^l" backward-word
 
 #-- 'Ctrl-^' key is cdup
 function cdup() {
-    echo
-    cd ..
-    zle reset-prompt
+  echo
+  cd ..
+  zle reset-prompt
 }
 zle -N cdup
 bindkey "^^" cdup
@@ -109,11 +109,11 @@ setopt magic_equal_subst
 
 #- terminal title
 case "${TERM}" in
-    kterm*|xterm*)
-        precmd() {
-            echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
-        }
-    ;;
+  kterm*|xterm*)
+    precmd() {
+      echo -ne "\033]0;${USER}@${HOST%%.*}:${PWD}\007"
+    }
+  ;;
 esac
 
 #-- grep for ruby

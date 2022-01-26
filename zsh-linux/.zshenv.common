@@ -1,16 +1,16 @@
 #- pager
 if type lv > /dev/null 2>&1
 then
-    export PAGER="lv"
+  export PAGER="lv"
 else
-    export PAGER="less"
+  export PAGER="less"
 fi
 
 if [ "$PAGER" = "lv" ]
 then
-    export LV="-c -l"
+  export LV="-c -l"
 else
-    alias lv="$PAGER"
+  alias lv="$PAGER"
 fi
 
 #- vim
