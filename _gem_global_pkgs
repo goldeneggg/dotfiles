@@ -9,4 +9,6 @@ export MY_GEM_GLOBAL_PKGS=( \
   "solargraph" \
   "reek" \
   "rufo" \
+  "benchmark-ips" \
+  "benchmark-memory" \
 )
