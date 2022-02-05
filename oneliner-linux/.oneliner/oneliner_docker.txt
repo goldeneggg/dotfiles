@@ -11,3 +11,4 @@ docker image pull %%IMAGE	#[docker] imageのpull
 docker image build -t %%IMAGE_AND_TAG %%DOCKERFILE_PATH	#[docker] imageのpull
 docker system prune	#[docker] 未使用リソースを全て削除する
 docker buildx prune	#[docker] buildxのbuild cacheを削除する
+docker volume rm $(docker volume ls | peco | awk '{print $2}')	#[docker] rm対象ボリュームをpecoで選択してからrmする
