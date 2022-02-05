@@ -17,6 +17,7 @@ fi
 export HOMEBREW_OPT_DIR=$HOMEBREW_BASE_DIR/opt
 export OPENSSL11_BREW_ROOT=$HOMEBREW_OPT_DIR/openssl@1.1
 export MYSQL57_BREW_ROOT=$HOMEBREW_OPT_DIR/mysql@5.7
+export POSTGRES_BREW_ROOT=$HOMEBREW_OPT_DIR/libpq
 
 #-- dmg経由でjavaをインストールした場合はJAVA_HOME関連の設定は不要
 #jdk_version="1.8.0_25"
@@ -58,6 +59,7 @@ path=(
     $GOROOT/bin(N-/)
     $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
     $MYSQL57_BREW_ROOT/bin(N-/)
+    $POSTGRES_BREW_ROOT/bin(N-/)
     $HOMEBREW_BASE_DIR/bin(N-/)
     /usr/local/mysql/bin(N-/)
     /usr/local/redis/bin(N-/)

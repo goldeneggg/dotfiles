@@ -71,4 +71,5 @@ export MY_BREW_PKGS=( \
   "tfenv" \
   "gitleaks" \
   "gdrive" \
+  "libpq" \
 )
