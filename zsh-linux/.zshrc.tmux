@@ -104,20 +104,18 @@ function tminit() {
         # 垂直分割=50%
         tmux splitw -h -p 50 -c ${GH_MY}/misc-aws
         # 水平分割 下部=50%
-        tmux splitw -v -p 50
+        tmux splitw -v -p 50 -c ${GH_PRA}/watch-aws
         # 左ペインへ
         tmux select-pane -L
-        tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
+        tmux send-keys "cd ${GH_PRA}/watch-docker" C-m
         # 水平分割=80%
-        tmux splitw -v -p 80 -c ${GH_PRA}/watch-docker
+        tmux splitw -v -p 80 -c ${GH_PRA}/watch-rust
         # 水平分割=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}/watch-aws
+        tmux splitw -v -p 50 -c ${GH_PRA}/watch-wasm
         ;;
       eb)
-        # 水平分割 下部=80%
-        tmux splitw -v -p 80 -c ${HOME}
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${HOME}
+        tmux splitw -v -p 50 -c "${HOME}/Documents/#bookmark"
         ;;
       *)
         ;;
