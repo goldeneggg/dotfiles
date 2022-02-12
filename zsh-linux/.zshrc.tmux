@@ -107,11 +107,11 @@ function tminit() {
         tmux splitw -v -p 50 -c ${GH_PRA}/watch-aws
         # 左ペインへ
         tmux select-pane -L
-        tmux send-keys "cd ${GH_PRA}/watch-docker" C-m
+        tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
         # 水平分割=80%
         tmux splitw -v -p 80 -c ${GH_PRA}/watch-rust
         # 水平分割=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}/watch-wasm
+        tmux splitw -v -p 50 -c ${GH_PRA}/watch-docker
         ;;
       eb)
         # 水平分割 下部=50%
