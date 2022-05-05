@@ -116,7 +116,10 @@ then
   eval "$(pyenv init --path)"
 fi
 # pyenv-virtualenv on anyenv
-[[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+# See: https://github.com/pyenv/pyenv/issues/1959#issuecomment-1021132430
+#   globalを3.10.4に変更後、`pyenv shell neovim3` を実行すると shell integration not enabled エラーが出始めて、上記issueの通り修正したら解消
+# [[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
+[[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv init -)"
  
 # This alias prepare for "ModuleNotFoundError: No module named 'pyexpat'" on "pyenv install"
 # See: https://github.com/pyenv/pyenv/issues/1066
