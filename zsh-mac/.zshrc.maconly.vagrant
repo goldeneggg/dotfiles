@@ -15,7 +15,7 @@ function vag-ex-host-sshconf(){
 
 #-- hostname in VAG_SSH_CONFIG
 function vag-host-sshconf() {
-  if [ $(vag-ex-host-sshconf) -eq 0 ]
+  if [[ $(vag-ex-host-sshconf) -eq 0 ]]
   then
     echo $(grep "$(vag-host)" ${VAG_SSH_CONFIG} | awk '{print $2}')
   else
@@ -32,7 +32,7 @@ function vag-ssh() {
 function vag-u-first() {
   vagrant up --provision $@
   vagrant reload
-  if [ $(vag-ex-host-sshconf) -ne 0 ]
+  if [[ $(vag-ex-host-sshconf) -ne 0 ]]
   then
     vagrant ssh-config >> ${VAG_SSH_CONFIG}
   fi
@@ -40,7 +40,7 @@ function vag-u-first() {
 
 function vag-u-first-aws() {
   VAGRANT_LOG=debug vagrant up --provider=aws $@
-  if [ $(vag-ex-host-sshconf) -ne 0 ]
+  if [[ $(vag-ex-host-sshconf) -ne 0 ]]
   then
     vagrant ssh-config >> ${VAG_SSH_CONFIG}
   fi
@@ -68,7 +68,7 @@ function vag-r() {
 
 #-- (test)
 function vag-t(){
-  if [ $(vag-ex-host-sshconf) -eq 0 ]
+  if [[ $(vag-ex-host-sshconf) -eq 0 ]]
   then
     echo "OK"
   else

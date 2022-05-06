@@ -64,7 +64,7 @@ bindkey "^pc" peco-dirstack-cd
 # Ctrl + p -> k
 function peco-proc-kill() {
   P=$(ps aux | peco | awk '{print $2}')
-  if [ $? -eq 0 -a ${P} != "" ]
+  if [[ $? -eq 0 && ${P} != "" ]]
   then
     BUFFER="kill -9 "${P}
   fi
@@ -131,7 +131,7 @@ bindkey "^pgt" peco-git-tagco
 function git-pdi() {
   setopt ksharrays  # 0 base array index for zsh
   HASHES=($(git log --pretty="format:%ad %h (%an): %s" --date=iso | peco | awk '{print $4}'))
-  if [ ${#HASHES[@]} -eq 2 ]
+  if [[ ${#HASHES[@]} -eq 2 ]]
   then
     git diff ${HASHES[1]}..${HASHES[0]}
   else
@@ -142,7 +142,7 @@ function git-pdi() {
 # 指定ファイルが過去に更新されたpull reqをpecoで一覧表示し、選択したpull reqをブラウザで開く
 function openpr-by-file() {
   declare file
-  [ $# -ne 0 ] && { file=${1}; } || { echo "need to assign target file"; return; }
+  [[ $# -ne 0 ]] && { file=${1}; } || { echo "need to assign target file"; return; }
   declare target=${2:-"develop"}
 
   PRS=$(git pr-list ${file} ${target} | awk 'BEGIN {OFS="\t"} {print NR,$8,$1,$2,$10}' | sed -e 's%#%pull/%g' | peco)
@@ -157,7 +157,7 @@ function openpr-by-file() {
 function vig {
     STR="$1"
     F=$(\grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       echo "${F}"
       eval "vi ${F}"
@@ -168,7 +168,7 @@ function vig {
 function viack {
     STR="$1"
     F=$(ack --nocolor ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vi ${F}"
     fi
@@ -178,7 +178,7 @@ function viack {
 function vihw {
     STR="$1"
     F=$(hw --nocolor ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vi ${F}"
     fi
@@ -188,7 +188,7 @@ function vihw {
 function virg {
     STR="$1"
     F=$(rg -n --no-heading ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vi ${F}"
     fi
@@ -199,7 +199,7 @@ function _vigext {
     EXT=$2
 
     F=$(\grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vi ${F}"
     fi
@@ -211,7 +211,7 @@ function _vigextcomex {
 
     # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
     F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vi ${F}"
     fi
@@ -258,7 +258,7 @@ function virc {
     DIR="$1"
 
     F=$(rubocop ${DIR} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vi ${F}"
     fi
@@ -272,7 +272,7 @@ function virc {
 function nvg {
     STR="$1"
     F=$(\grep -H -n ${STR} **/* | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       echo "${F}"
       eval "nvim ${F}"
@@ -284,7 +284,7 @@ function _nvgext {
     EXT=$2
 
     F=$(\grep -H -n ${STR} **/*.${EXT} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "nvim ${F}"
     fi
@@ -297,7 +297,7 @@ function _nvgextcomex {
 
     # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
     F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "nvim ${F}"
     fi
@@ -340,7 +340,7 @@ function nvg-py {
 # my git grep (or) => open neovim by filename and line number
 function nv-gitgr {
     F=$(git gr $@ | peco | awk -F ":" '{print "+"$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       echo "${F}"
       eval "nvim ${F}"
@@ -350,7 +350,7 @@ function nv-gitgr {
 # my git grep (and) => open neovim by filename and line number
 function nv-gitgr-and {
     F=$(git gr-and $@ | peco | awk -F ":" '{print "+"$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       echo "${F}"
       eval "nvim ${F}"
@@ -365,7 +365,7 @@ function nv-gitgr-and {
 function nvrg {
     STR="$1"
     F=$(rg -n --no-heading ${STR} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "nvim ${F}"
     fi
@@ -378,7 +378,7 @@ function _nvrgextcomex {
 
     # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
     F=$(rg -n --no-heading ${STR} **/*.${EXT} | \grep -v ${REGEXP} | peco | awk -F ":" '{print "-c "$2" "$1}')
-    if [ $? -eq 0 -a "${F}" != "" ]
+    if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "nvim ${F}"
     fi
@@ -427,7 +427,7 @@ fi
 
 function lssh {
     IP=$(lsec2 $@ | peco | awk -F "\t" '{print $2}')
-    if [ $? -eq 0 -a "${IP}" != "" ]
+    if [[ $? -eq 0 && "${IP}" != "" ]]
     then
       echo ">>> SSH to ${IP}"
       ssh ${IP}
@@ -442,12 +442,12 @@ function lssh {
 # function xxenv-install {
 #     TYPE="$1"
 #     OPT="-l"
-#     if [ "${TYPE}" = "rb" ]
+#     if [[ "${TYPE}" = "rb" ]]
 #     then
 #       OPT="--list-all"
 #     fi
 #     F=$(${TYPE}env install ${OPT} | peco)
-#     if [ $? -eq 0 -a "${F}" != "" ]
+#     if [[ $? -eq 0 && "${F}" != "" ]]
 #     then
 #       # FIXME:
 #       eval "echo ${F}"

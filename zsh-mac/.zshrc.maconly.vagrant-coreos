@@ -17,7 +17,7 @@ function vagc-ex-host-sshconf(){
 
 #-- $1 hostname in VAGC_SSH_CONFIG
 function vagc-host-sshconf() {
-  if [ $(vagc-ex-host-sshconf ${1}) -eq 0 ]
+  if [[ $(vagc-ex-host-sshconf ${1}) -eq 0 ]]
   then
     echo $(grep ${1} ${VAGC_SSH_CONFIG} | awk '{print $2}')
   else
@@ -37,7 +37,7 @@ function vagc-first() {
   for h in $(vagc-hosts)
   do
     echo "coreos host: ${h}"
-    if [ $(vagc-ex-host-sshconf ${h}) -ne 0 ]
+    if [[ $(vagc-ex-host-sshconf ${h}) -ne 0 ]]
     then
       vagrant ssh-config ${h} >> ${VAGC_SSH_CONFIG}
     fi

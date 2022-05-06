@@ -1,6 +1,10 @@
+# ログインシェルとして使うときだけでなく, リモートシェル起動のときなどすべての局面で有効とすべき設定を記述する。
+# 以下のようなものが該当する。
+#  1.コマンド検索パス($PATH)の定義
+#  2.リモートホストから直接起動する可能性があるコマンドに関する設定やエイリアス・シェル関数の定義
+#  3.2が参照する環境変数等の設定(cvsやrsyncのための変数な
+
 setopt no_global_rcs
 
-source ~/.zshenv.common
-source ~/.zshenv.grep
 source ~/.zshenv.path
 source ~/.zshenv.aws
