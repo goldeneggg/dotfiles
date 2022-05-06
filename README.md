@@ -45,3 +45,9 @@ neobundleのgit submodule URLが `git://` になっているので、`https://` 
 2. `git submodule sync`
 3. `git submodule update --remote --recursive` が正常動作するか確認
     - 上手くいかない場合、 `The unauthenticated git protocol on port 9418 is no longer supported.` エラーが出る
+
+### anyenv -> asdf切り替え
+
+See: [GitHub \- asdf\-vm/asdf: Extendable version manager with support for Ruby, Node\.js, Elixir, Erlang & more](https://github.com/asdf-vm/asdf)
+
+1. `brew update && brew install asdf`
