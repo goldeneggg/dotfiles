@@ -103,7 +103,7 @@ function ghaddbadge() {
   name=$2
   t=$3
 
-  if [ ! -f README.md ]
+  if [[ ! -f README.md ]]
   then
     echo "Not exist README.md"
     return 1
@@ -197,7 +197,7 @@ EOL
 function _gh_gomakefilefoot() {
   cat <<'EOL'
 proftest:
-	[ ! -d $(PROFDIR) ] && mkdir $(PROFDIR); $(GO) test -bench . -benchmem -blockprofile $(PROFDIR)/block.out -cover -coverprofile $(PROFDIR)/cover.out -cpuprofile $(PROFDIR)/cpu.out -memprofile $(PROFDIR)/mem.out $(PROFTARGET)
+	[[ ! -d $(PROFDIR) ]] && mkdir $(PROFDIR); $(GO) test -bench . -benchmem -blockprofile $(PROFDIR)/block.out -cover -coverprofile $(PROFDIR)/cover.out -cpuprofile $(PROFDIR)/cpu.out -memprofile $(PROFDIR)/mem.out $(PROFTARGET)
 
 lint:
 	$(GOLINT) $(LINTTARGET)
@@ -563,7 +563,7 @@ function pushforceme() {
 #-- git pull --rebase REMOTE CURRENT_BRANCH
 function plrme() {
   local remote=origin
-  if [ $# -eq 1 ]
+  if [[ $# -eq 1 ]]
   then
     remote=${1}
   fi
@@ -572,7 +572,7 @@ function plrme() {
 
 #-- git branch prXXX pull/XXX/head
 function new_pr_branch() {
-  if [ $# -ne 1 ]
+  if [[ $# -ne 1 ]]
   then
     echo "Need to assign a argument of pull request number"
     return 1
@@ -584,7 +584,7 @@ function new_pr_branch() {
 
 #-- git clone git@gist.github.com:HASH.git NAME
 function gistclone() {
-  if [ $# -lt 1 ]
+  if [[ $# -lt 1 ]]
   then
     echo "Need to assign gist hash"
     return 1
@@ -592,7 +592,7 @@ function gistclone() {
   local h=${1}
 
   local n=${hash}
-  if [ $# -ge 2 ]
+  if [[ $# -ge 2 ]]
   then
     n=${2}
   fi

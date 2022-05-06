@@ -29,9 +29,9 @@ install() {
     pushd ${setting}
     for f in `ls -a`
     do
-      if [ "${f}" != "." -a "${f}" != ".."  ]
+      if [[ "${f}" != "." && "${f}" != ".."  ]]
       then
-        if [ -f ${HOME}/${f} ]
+        if [[ -f ${HOME}/${f} ]]
         then
           echo "already exist ${f} in HOME"
           rm ${HOME}/${f}
@@ -64,16 +64,16 @@ do
   esac
 done
 
-if [ "${SIGN}" != "${SIGN_LINUX}" -a "${SIGN}" != "${SIGN_MAC}" ]
+if [[ "${SIGN}" != "${SIGN_LINUX}" && "${SIGN}" != "${SIGN_MAC}" ]]
 then
   echo "$0: SIGN is not assigned"
   exit 1
 fi
 
-if [ ! ${GH_U} ]
+if [[ ! ${GH_U} ]]
 then
   # if --github-user option is not specified, check GITHUB_USER env value
-  if [ ${GITHUB_USER} ]
+  if [[ ${GITHUB_USER} ]]
   then
     GH_U=${GITHUB_USER}
   else
@@ -82,10 +82,10 @@ then
   fi
 fi
 
-if [ ! ${GH_M} ]
+if [[ ! ${GH_M} ]]
 then
   # if --github-mail option is not specified, check GITHUB_MAIL env value
-  if [ ${GITHUB_MAIL} ]
+  if [[ ${GITHUB_MAIL} ]]
   then
     GH_M=${GITHUB_MAIL}
   else
@@ -94,7 +94,7 @@ then
   fi
 fi
 
-if [ `which stow` ]
+if [[ `which stow` ]]
 then
   echo "stow is OK"
 else
@@ -103,13 +103,13 @@ else
 fi
 
 
-if [ "${NAME}" = "" ]
+if [[ "${NAME}" = "" ]]
 then
-  if [ "${SIGN}" = "${SIGN_MAC}" ]
+  if [[ "${SIGN}" = "${SIGN_MAC}" ]]
   then
     install `ls -1F | \grep "/" | \grep -v -- ${SIGN}`
     install `ls -1F | \grep "/" | \grep -- ${SIGN}`
-  elif [ "${SIGN}" = "${SIGN_LINUX}" ]
+  elif [[ "${SIGN}" = "${SIGN_LINUX}" ]]
   then
     install `ls -1F | \grep "/" | \grep -- ${SIGN}`
   fi
@@ -123,24 +123,24 @@ fi
 
 # install vim plugins
 ## dependency for golang
-if [ ! -z "${GOROOT}" ]
+if [[ ! -z "${GOROOT}" ]]
 then
   export GOROOT=/usr/local/go
 fi
 
-if [ ! -z "${GOPATH}" ]
+if [[ ! -z "${GOPATH}" ]]
 then
   export GOPATH=${HOME}/go
-  if [ ! -d ${GOPATH} ]
+  if [[ ! -d ${GOPATH} ]]
   then
     mkdir -p ${GOPATH}
   fi
 fi
 
 # install go tools
-if [ -x ${GOROOT}/bin/go ]
+if [[ -x ${GOROOT}/bin/go ]]
 then
-  if [ "${SKIP_GOGET}" != "true" ]
+  if [[ "${SKIP_GOGET}" != "true" ]]
   then
     PATH=${GOROOT}/bin:${PATH}
     # go get -v github.com/github/hub
@@ -161,7 +161,7 @@ fi
 ## run ex commands
 # TODO: change from vim to neovim
 #/usr/bin/vim -e -S vim-linux/init.ex
-if [ ! `which nvim` ]
+if [[ ! `which nvim` ]]
 then
   nvim -e -S nvim-linux/.config/nvim/init.ex
 fi
@@ -175,7 +175,7 @@ sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ${HOME}/.gitconfig
 
 # setup .gitignore_global
 GH_GLOBAL_IGNORE=${HOME}/.gitignore_global
-if [ -f ${GH_GLOBAL_IGNORE} ]
+if [[ -f ${GH_GLOBAL_IGNORE} ]]
 then
   rm -f ${GH_GLOBAL_IGNORE}
 fi
@@ -219,13 +219,13 @@ do
 done
 
 # $HOME/bin
-if [ ! -d ${HOME}/bin ]
+if [[ ! -d ${HOME}/bin ]]
 then
   mkdir -p ${HOME}/bin
 fi
 
 # # keychain
-# if [ ! `which keychain` ]
+# if [[ ! `which keychain` ]]
 # then
 #   KEYCHAIN_VER="2.8.5"
 #   KEYCHAIN_ZIP=keychain-${KEYCHAIN_VER}.zip
@@ -237,7 +237,7 @@ fi
 # fi
 
 # tmux plugin manager
-if [ ! -d ${HOME}/.tmux/plugins ]
+if [[ ! -d ${HOME}/.tmux/plugins ]]
 then
   mkdir -p ${HOME}/.tmux/plugins
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -250,12 +250,12 @@ git pull --rebase origin master
 popd
 
 # # install or refresh mongo-hacker
-# if [ -f ${HOME}/.mongorc.js ]
+# if [[ -f ${HOME}/.mongorc.js ]]
 # then
 #   rm -f ${HOME}/.mongorc.js
 # fi
 #
-# if [ ! -d ${HOME}/mongo-hacker ]
+# if [[ ! -d ${HOME}/mongo-hacker ]]
 # then
 #   git clone https://github.com/goldeneggg/mongo-hacker.git ${HOME}/mongo-hacker
 # fi
@@ -266,7 +266,7 @@ popd
 # popd
 
 # install base16
-if [ ! -d ${HOME}/.config/base16-shell ]
+if [[ ! -d ${HOME}/.config/base16-shell ]]
 then
   mkdir -p ${HOME}/.config
   git clone https://github.com/chriskempson/base16-shell.git ${HOME}/.config/base16-shell

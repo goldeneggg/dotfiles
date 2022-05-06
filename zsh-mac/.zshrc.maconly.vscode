@@ -13,7 +13,7 @@ ws-opennew() {
 # required to assign existed file name
 ws-add() {
   _exists_for_ws ${1}
-  if [ $? -ne 0 ]
+  if [[ $? -ne 0 ]]
   then
     echo "ERROR: ${1} not found"
     return 1
@@ -23,7 +23,7 @@ ws-add() {
 }
 
 _exists_for_ws() {
-  if [ ! -f ${1} -a ! -d ${1} ]
+  if [[ ! -f ${1} && ! -d ${1} ]]
   then
     return 1
   fi

@@ -1,6 +1,6 @@
 #- manage ssh-agent using keychain
 # XXX: comment out because keychain-2.8.5.zip is failed unzip
-# if [ "type keychain >/dev/null 2>&1" ]
+# if [[ "type keychain >/dev/null 2>&1" ]]
 # then
 #   echo "start keychain manage"
 #   keychain --nogui --quiet ~/.ssh/id_rsa

@@ -48,12 +48,9 @@ brew update
 
 MODE="${1}"
 
-if [ "${MODE}" = "install" ]
+if [[ "${MODE}" = "install" ]]
 then
   ins
 else
   upd
 fi
-
-
-

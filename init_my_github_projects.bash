@@ -8,7 +8,7 @@
 
 
 GITHUB_HOME=${HOME}/github/goldeneggg
-if [ ! -d ${GITHUB_HOME} ]
+if [[ ! -d ${GITHUB_HOME} ]]
 then
   mkdir -p ${GITHUB_HOME}
 fi

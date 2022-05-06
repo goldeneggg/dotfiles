@@ -1,14 +1,7 @@
 #- [mac]PATH environment settings
 
-# m1 mac or not
-IS_M1_MAC=""
-if [ "$(uname -m)" = "arm64" ]
-then
-  IS_M1_MAC="yes"
-fi
-
 # for openssl 1.1 (required: homebrew)
-if [[ "${IS_M1_MAC}" ]]
+if [[ "${IS_M1_MAC}" = "true" ]]
 then
   export HOMEBREW_BASE_DIR=/opt/homebrew
 else
@@ -27,8 +20,10 @@ export ANDROID_SDK="/Applications/Android Studio.app/sdk"
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
+# >>>>> DEPRECATED:
 # export PYENV_ROOT=$HOME/.pyenv
 export ANYENV_ROOT=$HOME/.anyenv
+# <<<<< DEPRECATED:
 export GCP_SDK_HOME=$HOME/google-cloud-sdk
 export FLUTTER_ROOT=$HOME/flutter
 export CALIBRE_APP=/Applications/calibre.app
@@ -43,11 +38,13 @@ path=(
     # Omnisharp by NeoBundle of vim
     $HOME/.bundle/Omnisharp/server/OmniSharp/bin/Debug(N-/)
     $HOME/.cabal/bin(N-/)
+    # >>>>> DEPRECATED:
     # $HOME/.rbenv/bin(N-/)
     # $HOME/.ndenv/bin(N-/)
     # $HOME/.nodebrew/current/bin(N-/)
     # $PYENV_ROOT/bin(N-/)
     # $HOME/.phpenv/bin(N-/)
+    # <<<<< DEPRECATED:
     $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
     $GCP_SDK_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
@@ -87,13 +84,14 @@ cdpath=(
     )
 
 # anyenv brew install前提で
-if [[ "${IS_M1_MAC}" ]]
+if [[ "${IS_M1_MAC}" = "true" ]]
 then
   [[ -s "/opt/homebrew/bin/anyenv" ]] && eval "$(anyenv init -)"
 else
   [[ -s "/usr/local/bin/anyenv" ]] && eval "$(anyenv init -)"
 fi
 
+# >>>>> DEPRECATED:
 # # rbenv
 # [[ -s "$HOME/.rbenv/bin/rbenv" ]] && eval "$(rbenv init -)"
 # 
@@ -125,7 +123,7 @@ fi
 # See: https://github.com/pyenv/pyenv/issues/1066
 # See: https://ja.stackoverflow.com/questions/61604/zshrc-%e3%81%ae%e8%aa%ad%e3%81%bf%e8%be%bc%e3%81%bf%e6%99%82%e3%81%ae%e3%82%a8%e3%83%a9%e3%83%bc%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6
 #alias pyenv-install="SDKROOT=$(xcrun --show-sdk-path) pyenv install"
-if [ -x "${OPENSSL11_BREW_ROOT}" ]
+if [[ -x "${OPENSSL11_BREW_ROOT}" ]]
 then
   alias pyenv="LDFLAGS=\"-L${OPENSSL11_BREW_ROOT}/lib\" CPPFLAGS=\"-I${OPENSSL11_BREW_ROOT}/include\" SDKROOT=$(xcrun --show-sdk-path) pyenv"
 else
@@ -134,20 +132,17 @@ fi
  
 # # phpenv
 # [[ -s "$HOME/.phpenv/bin/phpenv" ]] && eval "$(phpenv init -)"
+# >>>>> DEPRECATED:
 
-if [ -f ${GCP_SDK_HOME}/path.zsh.inc ]
+if [[ -f ${GCP_SDK_HOME}/path.zsh.inc ]]
 then
   source ${GCP_SDK_HOME}/path.zsh.inc
 fi
 
-if [ -f ${GCP_SDK_HOME}/completion.zsh.inc ]
+if [[ -f ${GCP_SDK_HOME}/completion.zsh.inc ]]
 then
   source ${GCP_SDK_HOME}/completion.zsh.inc
 fi
 
 # direnv
-[ `which direnv` ] && eval "$(direnv hook zsh)"
-
-# added by travis gem
-[ -f /Users/fskmt/.travis/travis.sh ] && source /Users/fskmt/.travis/travis.sh
-
+[[ `which direnv` ]] && eval "$(direnv hook zsh)"

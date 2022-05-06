@@ -1,6 +1,6 @@
 JSC_SYMLINK_PREFIX=${HOME}
 
-if [ ! -L ${JSC_SYMLINK_PREFIX}/bin/jsc ]
+if [[ ! -L ${JSC_SYMLINK_PREFIX}/bin/jsc ]]
 then
   ln -s /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resources/jsc ${JSC_SYMLINK_PREFIX}/bin/jsc
 fi
