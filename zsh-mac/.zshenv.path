@@ -21,7 +21,6 @@ export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
 # >>>>> DEPRECATED:
-# export PYENV_ROOT=$HOME/.pyenv
 export ANYENV_ROOT=$HOME/.anyenv
 # <<<<< DEPRECATED:
 export GCP_SDK_HOME=$HOME/google-cloud-sdk
@@ -38,13 +37,6 @@ path=(
     # Omnisharp by NeoBundle of vim
     $HOME/.bundle/Omnisharp/server/OmniSharp/bin/Debug(N-/)
     $HOME/.cabal/bin(N-/)
-    # >>>>> DEPRECATED:
-    # $HOME/.rbenv/bin(N-/)
-    # $HOME/.ndenv/bin(N-/)
-    # $HOME/.nodebrew/current/bin(N-/)
-    # $PYENV_ROOT/bin(N-/)
-    # $HOME/.phpenv/bin(N-/)
-    # <<<<< DEPRECATED:
     $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
     $GCP_SDK_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
@@ -92,27 +84,12 @@ else
 fi
 
 # >>>>> DEPRECATED:
-# # rbenv
-# [[ -s "$HOME/.rbenv/bin/rbenv" ]] && eval "$(rbenv init -)"
-# 
-# # ndenv
-# [[ -s "$HOME/.ndenv/bin/ndenv" ]] && eval "$(ndenv init -)"
-# 
-# # pyenv
-# #
-# # Note:
-# # alias pyenv=... している事例をよく見るが、zshenvを読み込む際にこのaliasが存在している状態で再度 source .zshrc すると、
-# # pyenv init - が再実行された際に "(eval):5: parse error near `()'" というエラーが発生する
-# # 回避策としては、pyenv init - の前にunalias するとか、aliasの名前を変えておくとかする必要がある
-# unalias pyenv 2>/dev/null
-# [[ -s "$PYENV_ROOT/bin/pyenv" ]] && eval "$(pyenv init -)"
-# [[ -s "$PYENV_ROOT/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
-# 
 # See: https://github.com/pyenv/pyenv/issues/1906 2021/05 に3.9.5にupgradeしたタイミングでこのissueと同内容のwarningが出るようになった
 if command -v pyenv 1>/dev/null 2>&1
 then
   eval "$(pyenv init --path)"
 fi
+
 # pyenv-virtualenv on anyenv
 # See: https://github.com/pyenv/pyenv/issues/1959#issuecomment-1021132430
 #   globalを3.10.4に変更後、`pyenv shell neovim3` を実行すると shell integration not enabled エラーが出始めて、上記issueの通り修正したら解消
@@ -123,6 +100,7 @@ fi
 # See: https://github.com/pyenv/pyenv/issues/1066
 # See: https://ja.stackoverflow.com/questions/61604/zshrc-%e3%81%ae%e8%aa%ad%e3%81%bf%e8%be%bc%e3%81%bf%e6%99%82%e3%81%ae%e3%82%a8%e3%83%a9%e3%83%bc%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6
 #alias pyenv-install="SDKROOT=$(xcrun --show-sdk-path) pyenv install"
+
 if [[ -x "${OPENSSL11_BREW_ROOT}" ]]
 then
   alias pyenv="LDFLAGS=\"-L${OPENSSL11_BREW_ROOT}/lib\" CPPFLAGS=\"-I${OPENSSL11_BREW_ROOT}/include\" SDKROOT=$(xcrun --show-sdk-path) pyenv"
@@ -130,8 +108,6 @@ else
   alias pyenv="SDKROOT=$(xcrun --show-sdk-path) pyenv"
 fi
  
-# # phpenv
-# [[ -s "$HOME/.phpenv/bin/phpenv" ]] && eval "$(phpenv init -)"
 # >>>>> DEPRECATED:
 
 if [[ -f ${GCP_SDK_HOME}/path.zsh.inc ]]

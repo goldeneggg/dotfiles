@@ -9,7 +9,6 @@ export ERLANG_HOME=/usr/local/erlang
 export ELIXIR_HOME=/usr/local/elixir
 export ANACONDA3=$HOME/anaconda3
 export ANYENV_ROOT=$HOME/.anyenv
-# export PYENV_ROOT=$HOME/.pyenv
 #export PIP_HOME=$HOME/.local
 
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
@@ -20,9 +19,6 @@ path=(
     $HOME/local/bin(N-/)
     /usr/local/mysql/bin(N-/)
     $ANYENV_ROOT/bin(N-/)
-    # $HOME/.rbenv/bin(N-/)
-    # $HOME/.ndenv/bin(N-/)
-    # $PYENV_ROOT/bin(N-/)
     $GOROOT/bin(N-/)
     $GOBIN(N-/)
     $HOME/.nodebrew/current/bin(N-/)
