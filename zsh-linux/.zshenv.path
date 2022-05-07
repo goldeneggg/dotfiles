@@ -5,10 +5,10 @@ export PLAY_HOME=$HOME/local/play
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
+export ASDF_ROOT=$HOME/.asdf
 export ERLANG_HOME=/usr/local/erlang
 export ELIXIR_HOME=/usr/local/elixir
 export ANACONDA3=$HOME/anaconda3
-export ANYENV_ROOT=$HOME/.anyenv
 #export PIP_HOME=$HOME/.local
 
 #-- zshではシェル変数として"path"を定義すると環境変数PATHと自動連動する
@@ -18,7 +18,6 @@ path=(
     $HOME/bin(N-/)
     $HOME/local/bin(N-/)
     /usr/local/mysql/bin(N-/)
-    $ANYENV_ROOT/bin(N-/)
     $GOROOT/bin(N-/)
     $GOBIN(N-/)
     $HOME/.nodebrew/current/bin(N-/)
@@ -51,6 +50,3 @@ cdpath=(
     $GOPATH/src/github.com(N-/)
     $GOPATH/src/code.google.com/p(N-/)
     )
-
-# anyenv
-[[ -s "$ANYENV_ROOT/bin/anyenv" ]] && eval "$(anyenv init -)"

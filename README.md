@@ -51,3 +51,26 @@ neobundleのgit submodule URLが `git://` になっているので、`https://` 
 See: [GitHub \- asdf\-vm/asdf: Extendable version manager with support for Ruby, Node\.js, Elixir, Erlang & more](https://github.com/asdf-vm/asdf)
 
 1. `brew update && brew install asdf`
+2. `echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >> ${ZDOTDIR:-~}/.zshrc`
+3. ターミナル再起動
+4. `asdf plugin add ruby`
+    - `asdf list all ruby` でインストール可能バージョン確認
+5. `asdf install ruby 3.0.4`
+6. `asdf install ruby 2.7.6`
+7. `asdf global ruby 3.0.4`
+8. `asdf reshim ruby`
+9. シェルやターミナルを再起動して `ruby -v` で動作確認
+10. 以降、pythonとnodejsも同様の流れでインストール
+11. 言語ごとにglobalに導入したいツールやライブラリをインストール
+    - nodejs `npm install -g ...` (`make init-npms`)
+    - python `pip install --upgrade ...` (`make init-pips`)
+        - ___pythonだけインストールしただけではツールのPATHが通っておらず `asdf reshim python` して解決___
+    - ruby `gem install ...` (`make init-gems`)
+12. ~/.asdfrc ファイル作成
+    - See: [Using Existing Tool Version Files](http://asdf-vm.com/guide/getting-started.html#using-existing-tool-version-files)
+13. 必要に応じて各プロジェクト配下に .tool-versions ファイルを用意
+
+※ anyenv
+
+1. `rm -fr ~/.anyenv`
+2. `brew uninstall anyenv`

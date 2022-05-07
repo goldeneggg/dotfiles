@@ -46,17 +46,18 @@ update-gitsubmodule:
 	@git submodule update --remote --recursive
 
 init-npms:
-	@./init_npm_global_packages.bash
+	@./init_npm_global_packages.bash && asdf reshim nodejs
 
 init-pips:
-	@./init_pip_global_packages.bash
+	@./init_pip_global_packages.bash && asdf reshim python
 
 init-gems:
-	@./init_gem_global_packages.bash
+	@./init_gem_global_packages.bash && asdf reshim ruby
 
 init-projects:
 	@./init_my_github_projects.bash
 
+# DEPRECATED:
 # --- re-activate for neovim
 # 1. Run this make target  ※このMakeをそのままmake実行しても途中でコケるので、手動実施する必要あり
 # 2. Run `pip install flake8`
@@ -75,15 +76,15 @@ init-projects:
 # - Vim8を開いて :pyx print(sys.version); print(sys.path) を実行して、Vim8が使ってるpython3のバージョンとパスを確認
 # - 確認したパスと関連しているフォルダの bin/python3.x を利用して "python3.x -m pip install {pynvim,neovim}" する
 # - Vim8を開き直してエラーが解消されたか確認
-upgrade-python:
-	@export _checkpyenv=$(call assert-command,pyenv,)
-	@echo '>>>>>>>>>> Start python upgrade for neovim'
-	@pyenv global $(ver3) $(ver2) && pyenv rehash
-	@pyenv virtualenv -f $(ver3) neovim3
-	@pyenv shell neovim3
-	@pip install pynvim
-	@pip install neovim
-	@pyenv virtualenv -f $(ver2) neovim2
-	@pyenv shell neovim2
-	@pip install pynvim
-	@pip install neovim 
+# upgrade-python:
+# 	@export _checkpyenv=$(call assert-command,pyenv,)
+# 	@echo '>>>>>>>>>> Start python upgrade for neovim'
+# 	@pyenv global $(ver3) $(ver2) && pyenv rehash
+# 	@pyenv virtualenv -f $(ver3) neovim3
+# 	@pyenv shell neovim3
+# 	@pip install pynvim
+# 	@pip install neovim
+# 	@pyenv virtualenv -f $(ver2) neovim2
+# 	@pyenv shell neovim2
+# 	@pip install pynvim
+# 	@pip install neovim 
