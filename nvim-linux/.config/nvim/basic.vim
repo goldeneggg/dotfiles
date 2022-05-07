@@ -52,11 +52,9 @@ if exists('&ambiwidth')
   set ambiwidth=double
 endif
 
-" pyenv
-" pyenv-virtualenv でpython2用（neovim2）, python3（neovim3） 両方のvirtualenvが構築済であること
-"
-if exists($ANYENV_ROOT)
-  let g:python3_host_prog=$ANYENV_ROOT.'envs/pyenv/versions/neovim3/bin/python'
+" python (asdf or system global)
+if !empty($ASDF_ROOT)
+  let g:python3_host_prog=$ASDF_ROOT.'/shims/python'
 else
-  let g:python3_host_prog=$PYENV_ROOT.'/versions/neovim3/bin/python'
+  let g:python3_host_prog='/usr/bin/python'
 endif

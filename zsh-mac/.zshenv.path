@@ -20,9 +20,7 @@ export ANDROID_SDK="/Applications/Android Studio.app/sdk"
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
-# >>>>> DEPRECATED:
-export ANYENV_ROOT=$HOME/.anyenv
-# <<<<< DEPRECATED:
+export ASDF_ROOT=$HOME/.asdf
 export GCP_SDK_HOME=$HOME/google-cloud-sdk
 export FLUTTER_ROOT=$HOME/flutter
 export CALIBRE_APP=/Applications/calibre.app
@@ -73,42 +71,7 @@ cdpath=(
     $GOPATH/src/github.com/goldeneggg(N-/)
     $GOPATH/src/github.com(N-/)
     $GOPATH/src/code.google.com/p(N-/)
-    )
-
-# anyenv brew install前提で
-if [[ "${IS_M1_MAC}" = "true" ]]
-then
-  [[ -s "/opt/homebrew/bin/anyenv" ]] && eval "$(anyenv init -)"
-else
-  [[ -s "/usr/local/bin/anyenv" ]] && eval "$(anyenv init -)"
-fi
-
-# >>>>> DEPRECATED:
-# See: https://github.com/pyenv/pyenv/issues/1906 2021/05 に3.9.5にupgradeしたタイミングでこのissueと同内容のwarningが出るようになった
-if command -v pyenv 1>/dev/null 2>&1
-then
-  eval "$(pyenv init --path)"
-fi
-
-# pyenv-virtualenv on anyenv
-# See: https://github.com/pyenv/pyenv/issues/1959#issuecomment-1021132430
-#   globalを3.10.4に変更後、`pyenv shell neovim3` を実行すると shell integration not enabled エラーが出始めて、上記issueの通り修正したら解消
-# [[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv virtualenv-init -)"
-[[ -s "$ANYENV_ROOT/envs/pyenv/plugins/pyenv-virtualenv" ]] && eval "$(pyenv init -)"
- 
-# This alias prepare for "ModuleNotFoundError: No module named 'pyexpat'" on "pyenv install"
-# See: https://github.com/pyenv/pyenv/issues/1066
-# See: https://ja.stackoverflow.com/questions/61604/zshrc-%e3%81%ae%e8%aa%ad%e3%81%bf%e8%be%bc%e3%81%bf%e6%99%82%e3%81%ae%e3%82%a8%e3%83%a9%e3%83%bc%e3%81%ab%e3%81%a4%e3%81%84%e3%81%a6
-#alias pyenv-install="SDKROOT=$(xcrun --show-sdk-path) pyenv install"
-
-if [[ -x "${OPENSSL11_BREW_ROOT}" ]]
-then
-  alias pyenv="LDFLAGS=\"-L${OPENSSL11_BREW_ROOT}/lib\" CPPFLAGS=\"-I${OPENSSL11_BREW_ROOT}/include\" SDKROOT=$(xcrun --show-sdk-path) pyenv"
-else
-  alias pyenv="SDKROOT=$(xcrun --show-sdk-path) pyenv"
-fi
- 
-# >>>>> DEPRECATED:
+)
 
 if [[ -f ${GCP_SDK_HOME}/path.zsh.inc ]]
 then

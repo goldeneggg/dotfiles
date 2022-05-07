@@ -37,3 +37,6 @@ source ~/.zshrc.maconly.vagrant
 source ~/.zshrc.maconly.vagrant-coreos
 
 source ~/.iterm2_shell_integration.zsh
+
+# asdf ( `echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >> ${ZDOTDIR:-~}/.zshrc` )
+. /usr/local/opt/asdf/libexec/asdf.sh

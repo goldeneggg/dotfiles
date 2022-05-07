@@ -51,7 +51,7 @@ export MY_BREW_PKGS=( \
   "ipcalc" \
   "urlview" \
   "extract_url" \
-  "anyenv" \
+  "asdf" \
   "direnv" \
   "peco" \
   "translate-shell" \
