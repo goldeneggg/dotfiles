@@ -2,6 +2,7 @@ export MY_NPM_GLOBAL_PKGS=( \
   "yarn" \
   "npm-check-updates" \
   "bash-language-server" \
+  "dockerfile-language-server-nodejs" \
   "quicktype" \
   "aws-cdk" \
   "json-schema-generator" \
