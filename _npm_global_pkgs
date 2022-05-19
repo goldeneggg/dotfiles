@@ -10,4 +10,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "@google/clasp" \
   "@mhlabs/cfn-diagram" \
   "capture-website-cli" \
+  "@devcontainers/cli" \
 )
