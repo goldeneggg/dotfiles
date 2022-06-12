@@ -57,7 +57,7 @@ init-gems:
 init-projects:
 	@./init_my_github_projects.bash
 
-# DEPRECATED:
+# DEPRECATED: これ以降のpyenv前提メモは全てDEPRECATED
 # --- re-activate for neovim
 # 1. Run this make target  ※このMakeをそのままmake実行しても途中でコケるので、手動実施する必要あり
 # 2. Run `pip install flake8`
