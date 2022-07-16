@@ -74,4 +74,5 @@ export MY_BREW_PKGS=( \
   "libpq" \
   "dive" \
   "zig" \
+  "xz" \
 )
