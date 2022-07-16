@@ -40,6 +40,7 @@ function tminit() {
     "ops"
     "blog"
     "go"
+    "zig"
     "misc"
     "eb"
   )
@@ -100,6 +101,13 @@ function tminit() {
         # 水平分割 下部=50%
         tmux splitw -v -p 50 -c ${GOROOT}/src
         ;;
+      zig)
+        # 水平分割 下部=50%
+        tmux splitw -v -p 50 -c ${GH_PRA}/ziglings
+        # 上ペインへ
+        tmux select-pane -U
+        tmux send-keys "cd ${GH_PRA}/watch-zig" C-m
+        ;;
       misc)
         # 垂直分割=50%
         tmux splitw -h -p 50 -c ${GH_MY}/misc-aws
@@ -109,7 +117,7 @@ function tminit() {
         tmux select-pane -L
         tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
         # 水平分割=78%
-        tmux splitw -v -p 80 -c ${GH_PRA}/watch-zig
+        tmux splitw -v -p 80 -c ${GH_PRA}/watch-rust
         # 水平分割=70%
         tmux splitw -v -p 80 -c ${GH_PRA}/watch-ruby
         # 水平分割=50%
