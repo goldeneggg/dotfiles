@@ -32,3 +32,4 @@ else
         PATH="$HOME/bin:$PATH"
     fi
 fi
+. "$HOME/.cargo/env"

@@ -16,3 +16,4 @@ setopt no_global_rcs
 
 source ~/.zshenv.path
 source ~/.zshenv.aws
+. "$HOME/.cargo/env"
