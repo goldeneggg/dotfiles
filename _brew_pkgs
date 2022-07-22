@@ -68,7 +68,6 @@ export MY_BREW_PKGS=( \
   "aws-sam-cli" \  # tap aws/tap
   "cloudformation-guard" \
   "awscurl" \
-  "tfenv" \
   "gitleaks" \
   "gdrive" \
   "libpq" \
