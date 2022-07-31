@@ -16,6 +16,7 @@ export MY_BREW_TAPS=( \
 export MY_BREW_PKGS=( \
   "git" \
   "hub" \  # FIXME: deprecated?
+  "git-secrets" \
   "gh" \
   "zsh" \
   "vim" \
