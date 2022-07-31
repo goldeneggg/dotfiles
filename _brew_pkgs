@@ -10,6 +10,9 @@ export MY_BREW_TAPS=( \
 #  "libmcrypt" \
 #  "readline" \
 
+# Note:
+# except "zig" because want to install HEAD version
+#   - brew install zig --HEAD
 export MY_BREW_PKGS=( \
   "git" \
   "hub" \  # FIXME: deprecated?
@@ -72,6 +75,5 @@ export MY_BREW_PKGS=( \
   "gdrive" \
   "libpq" \
   "dive" \
-  "zig" \
   "xz" \
 )
