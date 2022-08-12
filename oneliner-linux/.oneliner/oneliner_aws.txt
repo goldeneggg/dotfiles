@@ -4,6 +4,7 @@ aws s3 cp %%LOCALFILE s3://%%BUCKET/%%S3DIR/	#[aws]指定バケットディレ�
 aws s3 cp %%LOCALFILE s3://%%BUCKET/%%S3FILE	#[aws]指定バケットパスにローカルファイルをアップロードする
 aws s3 cp %%LOCALDIR s3://%%BUCKET/ --recursive	#[aws]指定バケット下にローカルディレクトリを再帰的にアップロードする
 aws s3 cp s3://%%BUCKET/%%S3FILE %%LOCALFILE	#[aws]指定バケットのファイルをローカルにダウンロードする
+aws s3 cp s3://%%BUCKET/%%S3FILE -	#[aws]指定バケットのファイルを標準出力に表示する
 aws s3 cp s3://%%BUCKET %%LOCALDIR --recursive	#[aws]指定バケットのファイル群をローカルに再帰的ダウンロードする
 aws s3 cp s3://%%BUCKET/%%S3FROMFILE s3://%%BUCKET/%%S3TOFILE	#[aws]バケット間でファイルをコピーする
 aws s3 rm s3://%%BUCKET/%%S3FILE	#[aws]指定S3ファイルを削除する
