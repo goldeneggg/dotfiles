@@ -88,3 +88,31 @@ init-projects:
 # 	@pyenv shell neovim2
 # 	@pip install pynvim
 # 	@pip install neovim 
+
+USEVER_NODEJS := 16
+USEVER_PYTHON := 3.10
+USEVER_RUBY := 3.1
+USEVER_TERRAFORM := 1.2
+
+asdf-latest = $(shell asdf latest $1 $2)
+
+work:
+	@asdf plugin update --all
+	@asdf install nodejs $(call asdf-latest,nodejs,$(USEVER_NODEJS).)
+	@asdf global nodejs $(call asdf-latest,nodejs,$(USEVER_NODEJS).)
+	@asdf reshim nodejs
+	@asdf install python $(call asdf-latest,python,$(USEVER_PYTHON).)
+	@asdf global python $(call asdf-latest,python,$(USEVER_PYTHON).)
+	@asdf reshim python
+	@asdf install ruby $(call asdf-latest,ruby,$(USEVER_RUBY).)
+	@asdf global ruby $(call asdf-latest,ruby,$(USEVER_RUBY).)
+	@asdf reshim ruby
+	@asdf install terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
+	@asdf global terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
+	@asdf reshim terraform
+	@$(MAKE) init-gems
+	@pip install --upgrade pip
+	@$(MAKE) init-pips
+	@npm install -g npm
+	@$(MAKE) init-npms
+	@brew update
