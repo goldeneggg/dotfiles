@@ -96,7 +96,7 @@ USEVER_TERRAFORM := 1.2
 
 asdf-latest = $(shell asdf latest $1 $2)
 
-work:
+asdf-latest:
 	@asdf plugin update --all
 	@asdf install nodejs $(call asdf-latest,nodejs,$(USEVER_NODEJS).)
 	@asdf global nodejs $(call asdf-latest,nodejs,$(USEVER_NODEJS).)
@@ -110,9 +110,6 @@ work:
 	@asdf install terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
 	@asdf global terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
 	@asdf reshim terraform
-	@$(MAKE) init-gems
-	@pip install --upgrade pip
-	@$(MAKE) init-pips
-	@npm install -g npm
-	@$(MAKE) init-npms
+
+work: asdf-latest init-gems init-pips init-npms
 	@brew update
