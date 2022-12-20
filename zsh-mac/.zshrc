@@ -40,3 +40,5 @@ source ~/.iterm2_shell_integration.zsh
 
 # asdf ( `echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >> ${ZDOTDIR:-~}/.zshrc` )
 . $(brew --prefix asdf)/libexec/asdf.sh
+
+source /Users/fskmt/.docker/init-zsh.sh || true # Added by Docker Desktop
