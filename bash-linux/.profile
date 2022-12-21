@@ -34,4 +34,4 @@ else
 fi
 . "$HOME/.cargo/env"
 
-source /Users/fskmt/.docker/init-bash.sh || true # Added by Docker Desktop
+#source /Users/fskmt/.docker/init-bash.sh || true # Added by Docker Desktop
