@@ -23,8 +23,7 @@ function ins() {
   # brew tap chrokh/tap
   # brew install base16-manager
 
-  declare -ar CASKS=("aws-vault")
-  for caskapp in ${CASKS[@]}
+  for caskapp in ${MY_BREW_CASKS[@]}
   do
     brew cask install ${caskapp}
   done

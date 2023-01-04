@@ -1,6 +1,6 @@
 export MY_BREW_TAPS=( \
   "aws/tap" \
-  "nektos/tap/act" \
+  "1password/tap" \
 )
 
 # except library pkgs
@@ -77,4 +77,9 @@ export MY_BREW_PKGS=( \
   "libpq" \
   "dive" \
   "xz" \
+  "1password-cli" \  # tap 
+)
+
+export MY_BREW_CASKS=( \
+  "aws-vault" \
 )
