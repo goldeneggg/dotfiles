@@ -90,9 +90,9 @@ init-projects:
 # 	@pip install neovim 
 
 USEVER_NODEJS := 18
-USEVER_PYTHON := 3.10
+USEVER_PYTHON := 3.11
 USEVER_RUBY := 3.1
-USEVER_TERRAFORM := 1.3
+USEVER_TERRAFORM := 1.4
 
 asdf-latest = $(shell asdf latest $1 $2)
 
