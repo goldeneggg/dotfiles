@@ -78,6 +78,7 @@ export MY_BREW_PKGS=( \
   "dive" \
   "xz" \
   "brotli" \
+  "openapi-generator" \
   # "1password-cli" \  # tap FIXME: upgrade中にmacの管理者パスワードを問われてエラーになる
 )
 
