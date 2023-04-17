@@ -81,6 +81,7 @@ function tminit() {
         tmux splitw -v -p 50 -c ${GH_PRACTA}/corporate
         # 左ペインへ
         tmux select-pane -L
+        # cd goldeneggg.github.io
         tmux send-keys "cd ${DIR_BLOGEGGGSITE}" C-m
         # 水平分割 下部=80%
         tmux splitw -v -p 80 -c ${GH_PRACTA}/practa-inc.github.io
@@ -89,9 +90,9 @@ function tminit() {
         ;;
       go)
         # 垂直分割=50%
-        tmux splitw -h -p 50 -c ${GOPATH}/src/github.com/${GH_ACCOUNT}/structil
-        # 水平分割 下部=5%
-        tmux splitw -v -p 5 -c ${GOPATH}/src/github.com/${GH_ACCOUNT}/structil
+        tmux splitw -h -p 50 -c ${GH_PRACTA}/biz
+        # 水平分割 下部=50%
+        tmux splitw -v -p 50 -c ${GH_MY}/structil
         # 左ペインへ
         tmux select-pane -L
         # cd watch-go
@@ -109,23 +110,28 @@ function tminit() {
         tmux send-keys "cd ${GH_PRA}/watch-zig" C-m
         ;;
       misc)
-        # 垂直分割=50%
-        tmux splitw -h -p 50 -c ${GH_MY}/misc-aws
+        # 垂直分割=80%
+        tmux splitw -h -p 80 -c ${GH_MY}/misc-aws
+        # 水平分割 下部=80%
+        tmux splitw -v -p 80 -c ${GH_PRA}/watch-aws
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}/watch-aws
+        tmux splitw -v -p 50 -c ${GH_PRA}/watch-docker
         # 左ペインへ
         tmux select-pane -L
         tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
-        # 水平分割=78%
+        # 水平分割=80%
         tmux splitw -v -p 80 -c ${GH_PRA}/watch-rust
-        # 水平分割=70%
-        tmux splitw -v -p 80 -c ${GH_PRA}/watch-ruby
+        # 水平分割=80%
+        tmux splitw -v -p 80 -c ${GH_PRA}/watch-browser
         # 水平分割=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}/watch-docker
+        tmux splitw -v -p 50 -c ${GH_PRA}/watch-ai
         ;;
       eb)
         # 水平分割 下部=50%
         tmux splitw -v -p 50 -c "${HOME}/Documents/#bookmark"
+        # 上ペインへ
+        tmux select-pane -U
+        tmux send-keys "cd /Volumes" C-m
         ;;
       *)
         ;;
