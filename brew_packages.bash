@@ -25,7 +25,7 @@ function ins() {
 
   for caskapp in ${MY_BREW_CASKS[@]}
   do
-    brew cask install ${caskapp}
+    brew install --cask ${caskapp}
   done
 
   # iterm2 shell integration
@@ -38,6 +38,11 @@ function upd() {
   for app in ${MY_BREW_PKGS[@]}
   do
     brew upgrade ${app}
+  done
+
+  for caskapp in ${MY_BREW_CASKS[@]}
+  do
+    brew upgrade --cask ${caskapp}
   done
 }
 
