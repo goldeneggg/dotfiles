@@ -1,5 +1,5 @@
-docker rm $(docker ps -a | peco | awk '{print $1}')	#[docker] rm対象コンテナをpecoで選択してからrmする
-docker rmi $(docker images -a | peco | awk '{print $3}')	#[docker] rmi対象イメージをpecoで選択してからrmiする
+docker rm $(docker ps -a | fzf | awk '{print $1}')	#[docker] rm対象コンテナをfzfで選択してからrmする
+docker rmi $(docker images -a | fzf | awk '{print $3}')	#[docker] rmi対象イメージをfzfで選択してからrmiする
 docker container run --rm -i -t %%IMAGE_ID /bin/sh	#[docker] イメージを指定してshellログインする
 docker container exec -i -t %%CONTAINER_ID /bin/sh	#[docker] 実行中のコンテナを指定してshellログインする
 docker attach %%CONTAINER_ID	#[docker] 実行中のコンテナを指定してPID=1の/bin/bashに対して標準入出力を接続(attach)する。exitしたらコンテナは停止される
@@ -11,4 +11,4 @@ docker image pull %%IMAGE	#[docker] imageのpull
 docker image build -t %%IMAGE_AND_TAG %%DOCKERFILE_PATH	#[docker] imageのpull
 docker system prune	#[docker] 未使用リソースを全て削除する
 docker buildx prune	#[docker] buildxのbuild cacheを削除する
-docker volume rm $(docker volume ls | peco | awk '{print $2}')	#[docker] rm対象ボリュームをpecoで選択してからrmする
+docker volume rm $(docker volume ls | fzf | awk '{print $2}')	#[docker] rm対象ボリュームをfzfで選択してからrmする

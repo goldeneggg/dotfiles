@@ -1,0 +1,436 @@
+##########1
+# history
+##########
+
+#- fzfで履歴表示用コマンド
+CMD_HIST_FZF="fc -l -n 1 | \tail -r | fzf"
+
+function _fzf-history() {
+  BUFFER=`eval ${CMD_HIST_FZF}`
+  zle end-of-line
+  zle ${1}
+}
+zle -N _fzf-history
+
+#-- fzfで選択した履歴コマンドを表示
+# Ctrl + p -> s
+function fzf-search-history() {
+  zle _fzf-history "clear-screen"
+}
+zle -N fzf-search-history
+bindkey "^ps" fzf-search-history
+
+#-- fzfで選択した履歴コマンドを実行
+# Ctrl + p -> e
+function fzf-execute-history() {
+  zle _fzf-history "accept-line"
+}
+zle -N fzf-execute-history
+bindkey "^pe" fzf-execute-history
+
+#-- fzfで選択した履歴コマンドを現在表示中のコマンド末尾にパイプで繋ぐ
+# Ctrl + p -> p
+function fzf-pipe-history() {
+  RBUFFER=" | "`eval ${CMD_HIST_FZF}`
+  zle end-of-line
+  zle clear-screen
+}
+zle -N fzf-pipe-history
+bindkey "^pp" fzf-pipe-history
+
+
+##########1
+# directory
+##########
+
+#-- fzfでディレクトリスタック間をcd(pushd)
+#--- recommend setting: "setopt autp_pushd"
+#--- recommend setting: "setopt pushd_ignore_dups"
+# Ctrl + p -> c
+function fzf-dirstack-cd() {
+  BUFFER="cd "`dirs -l -p | tail -n +2 | fzf`
+  zle end-of-line
+  #zle accept-line
+  zle clear-screen
+}
+zle -N fzf-dirstack-cd
+bindkey "^pc" fzf-dirstack-cd
+
+
+##########1
+# process control
+##########
+
+#-- process kill
+# Ctrl + p -> k
+function fzf-proc-kill() {
+  P=$(ps aux | fzf | awk '{print $2}')
+  if [[ $? -eq 0 && ${P} != "" ]]
+  then
+    BUFFER="kill -9 "${P}
+  fi
+  zle clear-screen
+}
+zle -N fzf-proc-kill
+bindkey "^pk" fzf-proc-kill
+
+##########1
+# gitrocess control
+##########
+
+#-- git add
+# Ctrl + p -> g -> a
+function fzf-git-add() {
+  BUFFER="git add "$(git status -s | fzf -m | awk '{print $2}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
+}
+zle -N fzf-git-add
+bindkey "^pga" fzf-git-add
+
+#-- git rm
+# Ctrl + p -> g -> r
+function fzf-git-rm() {
+  BUFFER="git rm "$(git status -s | fzf -m | awk '{print $2}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
+}
+zle -N fzf-git-rm
+bindkey "^pgr" fzf-git-rm
+
+#-- git branch -D
+# Ctrl + p -> g -> d
+function fzf-git-brd() {
+  BUFFER="git branch -D "$(git branch | fzf -m | awk '{print $1}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
+}
+zle -N fzf-git-brd
+bindkey "^pgd" fzf-git-brd
+
+#-- git checkout
+# Ctrl + p -> g -> o
+function fzf-git-co() {
+  BUFFER="git checkout "$(git branch | fzf | awk '{print $1}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
+}
+zle -N fzf-git-co
+bindkey "^pgo" fzf-git-co
+
+#-- git checkout regs/tags/TAG
+# Ctrl + p -> g -> t
+function fzf-git-tagco() {
+  BUFFER="git checkout refs/tags/"$(git tag -l | fzf | awk '{print $1}' | tr '\n' ' ')
+  #zle clear-screen
+  zle accept-line
+}
+zle -N fzf-git-tagco
+bindkey "^pgt" fzf-git-tagco
+
+#-- fzfでコミットハッシュを2つ選択してdiff
+function git-pdi() {
+  setopt ksharrays  # 0 base array index for zsh
+  HASHES=($(git log --pretty="format:%ad %h (%an): %s" --date=iso | fzf -m | awk '{print $4}'))
+  if [[ ${#HASHES[@]} -eq 2 ]]
+  then
+    git diff ${HASHES[1]}..${HASHES[0]}
+  else
+    echo "selected commit count must be 2, but ${#HASHES[@]}"
+  fi
+}
+
+# 指定ファイルが過去に更新されたpull reqをfzfで一覧表示し、選択したpull reqをブラウザで開く
+function openpr-by-file() {
+  declare file
+  [[ $# -ne 0 ]] && { file=${1}; } || { echo "need to assign target file"; return; }
+  declare target=${2:-"develop"}
+
+  PRS=$(git pr-list ${file} ${target} | awk 'BEGIN {OFS="\t"} {print NR,$8,$1,$2,$10}' | sed -e 's%#%pull/%g' | fzf)
+  eval "hub browse -- $(echo ${PRS} | cut -f 2)"
+}
+
+##########1
+# grep & vim
+##########
+
+# grep => open vim by filename and line number
+function vig {
+    STR="$1"
+    F=$(\grep -H -n ${STR} **/* | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      echo "${F}"
+      eval "vim ${F}"
+    fi
+}
+
+# ack => open vim by filename and line number
+function viack {
+    STR="$1"
+    F=$(ack --nocolor ${STR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "vim ${F}"
+    fi
+}
+
+# hw => open vim by filename and line number
+function vihw {
+    STR="$1"
+    F=$(hw --nocolor ${STR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "vim ${F}"
+    fi
+}
+
+# rg(ripgrep) => open vim by filename and line number
+function virg {
+    STR="$1"
+    F=$(rg -n --no-heading ${STR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "vim ${F}"
+    fi
+}
+
+function _vigext {
+    STR="$1"
+    EXT=$2
+
+    F=$(\grep -H -n ${STR} **/*.${EXT} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "vim ${F}"
+    fi
+}
+function _vigextcomex {
+    STR="$1"
+    EXT=$2
+    REGEXP="$3"
+
+    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
+    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "vim ${F}"
+    fi
+}
+
+# goファイルをgrep => viで開く
+function vig-go {
+    STR="$1"
+    _vigextcomex "${STR}" "go" "[0-9]:\s*//"
+}
+
+# rbファイルをgrep => vimで開く
+function vig-rb {
+    STR="$1"
+    _vigextcomex "${STR}" "rb" "[0-9]:\s*#"
+}
+
+# rbファイルをメソッド名でgrep => vimで開く
+function vig-rb-method {
+    STR="$1"
+    _vigextcomex "def (self\.)?${STR}" "rb" "[0-9]:\s*#"
+}
+
+# rbファイルをクラス名/モジュール名でgrep => vimで開く
+function vig-rb-class {
+    STR="$1"
+    _vigextcomex "(class|module) ${STR}" "rb" "[0-9]:\s*#"
+}
+
+# pyファイルをgrep => vimで開く
+function vig-py {
+    STR="$1"
+    _vigextcomex "${STR}" "py" "[0-9]:\s*#"
+}
+
+# phpファイルをgrep => viで開く
+function vig-php {
+    STR="$1"
+    _vigextcomex "${STR}" "php" "[0-9]:\s*//"
+}
+
+# rubocopの結果をvimで開く
+function virc {
+    DIR="$1"
+
+    F=$(rubocop ${DIR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "vim ${F}"
+    fi
+}
+
+##########1
+# grep & neovim
+##########
+
+# grep => open neovim by filename and line number
+function nvg {
+    STR="$1"
+    F=$(\grep -H -n ${STR} **/* | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      echo "${F}"
+      eval "nvim ${F}"
+    fi
+}
+
+function _nvgext {
+    STR="$1"
+    EXT=$2
+
+    F=$(\grep -H -n ${STR} **/*.${EXT} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "nvim ${F}"
+    fi
+}
+
+function _nvgextcomex {
+    STR="$1"
+    EXT=$2
+    REGEXP="$3"
+
+    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
+    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "nvim ${F}"
+    fi
+}
+
+# goファイルをgrep => neovimで開く
+function nvg-go {
+    STR="$1"
+    _nvgextcomex "${STR}" "go" "[0-9]:\s*//"
+}
+
+# rbファイルをgrep => neovimで開く
+function nvg-rb {
+    STR="$1"
+    _nvgextcomex "${STR}" "rb" "[0-9]:\s*#"
+}
+
+# rbファイルをメソッド名でgrep => neovimで開く
+function nvg-rb-method {
+    STR="$1"
+    _nvgextcomex "def (self\.)?${STR}" "rb" "[0-9]:\s*#"
+}
+
+# rbファイルをクラス名/モジュール名でgrep => vimで開く
+function nvg-rb-class {
+    STR="$1"
+    _nvgextcomex "(class|module) ${STR}" "rb" "[0-9]:\s*#"
+}
+
+# pyファイルをgrep => neovimで開く
+function nvg-py {
+    STR="$1"
+    _nvgextcomex "${STR}" "py" "[0-9]:\s*#"
+}
+
+##########1
+# git grep & neovim
+##########
+
+# my git grep (or) => open neovim by filename and line number
+function nv-gitgr {
+    F=$(git gr $@ | fzf | awk -F ":" '{print "+"$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      echo "${F}"
+      eval "nvim ${F}"
+    fi
+}
+
+# my git grep (and) => open neovim by filename and line number
+function nv-gitgr-and {
+    F=$(git gr-and $@ | fzf | awk -F ":" '{print "+"$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      echo "${F}"
+      eval "nvim ${F}"
+    fi
+}
+
+##########1
+# ripgrep & neovim
+##########
+
+# rg(ripgrep) => open neovim by filename and line number
+function nvrg {
+    STR="$1"
+    F=$(rg -n --no-heading ${STR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "nvim ${F}"
+    fi
+}
+
+function _nvrgextcomex {
+    STR="$1"
+    EXT=$2
+    REGEXP="$3"
+
+    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
+    F=$(rg -n --no-heading ${STR} **/*.${EXT} | \grep -v ${REGEXP} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    if [[ $? -eq 0 && "${F}" != "" ]]
+    then
+      eval "nvim ${F}"
+    fi
+}
+
+# goファイルをgrep => neovimで開く
+function nvrg-go {
+    STR="$1"
+    _nvrgextcomex "${STR}" "go" "[0-9]:\s*//"
+}
+
+# rbファイルをgrep => neovimで開く
+function nvrg-rb {
+    STR="$1"
+    _nvrgextcomex "${STR}" "rb" "[0-9]:\s*#"
+}
+
+# pyファイルをgrep => neovimで開く
+function nvrg-py {
+    STR="$1"
+    _nvrgextcomex "${STR}" "py" "[0-9]:\s*#"
+}
+
+##########1
+# oneliner
+##########
+
+#- for oneliner
+# Ctrl + p -> o
+if [[ -d $ONELINER_DIR ]]
+then
+  #-- fzfで選択したonelinerコマンドを表示
+  function fzf-search-oneliner() {
+    BUFFER=$(cat ${ONELINER_DIR}/*.txt | sort | fzf | awk -F"\t" '{print $1}')
+    zle clear-screen
+    #zle -M "type [ESC-j], kill parameter word and replace into real word"
+    zle beginning-of-line
+  }
+  zle -N fzf-search-oneliner
+  bindkey "^po" fzf-search-oneliner
+fi
+
+##########
+# SSH to EC2 with https://github.com/goldeneggg/lsec2
+##########
+
+function fzf-lssh {
+    IP=$(lsec2 $@ | fzf | awk -F "\t" '{print $2}')
+    if [[ $? -eq 0 && "${IP}" != "" ]]
+    then
+      echo ">>> SSH to ${IP}"
+      ssh ${IP}
+    fi
+}

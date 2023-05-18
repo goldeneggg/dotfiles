@@ -19,6 +19,12 @@ then
   source ~/.zshrc.peco
 fi
 
+#- using fzf if exists
+if [[ -x "$(command -v fzf)" ]]
+then
+  source ~/.zshrc.fzf
+fi
+
 #- 個人のその端末専用のローカルな設定を ~/.personal に配置
 if [[ -d ~/.personal ]]
 then

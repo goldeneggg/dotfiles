@@ -1,8 +1,8 @@
 #!/bin/bash
 
-### 
+###
 ### setup dotfiles using GNU Stow
-### 
+###
 
 usage() {
   cat << EOT
@@ -26,21 +26,21 @@ install() {
   SETTINGS=("${@}")
   for setting in "${SETTINGS[@]}"
   do
-    pushd ${setting}
-    for f in `ls -a`
+    pushd "${setting}" || exit 1
+    for f in * .*
     do
       if [[ "${f}" != "." && "${f}" != ".."  ]]
       then
         if [[ -f ${HOME}/${f} ]]
         then
           echo "already exist ${f} in HOME"
-          rm ${HOME}/${f}
+          rm "${HOME}/${f}"
         fi
       fi
     done
-    popd
-    s=`echo ${setting} | sed -e "s/\///g"`
-    stow -R --verbose=2 ${s}
+    popd || exit 1
+    s=$(echo "${setting}" | sed -e 's/\///g')
+    stow -R --verbose=2 "${s}"
   done
 }
 
@@ -94,7 +94,7 @@ then
   fi
 fi
 
-if [[ `which stow` ]]
+if [[ $(which stow) ]]
 then
   echo "stow is OK"
 else
@@ -107,14 +107,14 @@ if [[ "${NAME}" = "" ]]
 then
   if [[ "${SIGN}" = "${SIGN_MAC}" ]]
   then
-    install `ls -1F | \grep "/" | \grep -v -- ${SIGN}`
-    install `ls -1F | \grep "/" | \grep -- ${SIGN}`
+    install $(ls -1F | \grep "/" | \grep -v -- ${SIGN})
+    install $(ls -1F | \grep "/" | \grep -- ${SIGN})
   elif [[ "${SIGN}" = "${SIGN_LINUX}" ]]
   then
-    install `ls -1F | \grep "/" | \grep -- ${SIGN}`
+    install $(ls -1F | \grep "/" | \grep -- ${SIGN})
   fi
 else
-  install ${NAME}${SIGN}${VERSION}
+  install "${NAME}${SIGN}${VERSION}"
 fi
 
 # for neobundle.vim
@@ -123,17 +123,17 @@ fi
 
 # install vim plugins
 ## dependency for golang
-if [[ ! -z "${GOROOT}" ]]
+if [[ -n "${GOROOT}" ]]
 then
   export GOROOT=/usr/local/go
 fi
 
-if [[ ! -z "${GOPATH}" ]]
+if [[ -n "${GOPATH}" ]]
 then
   export GOPATH=${HOME}/go
   if [[ ! -d ${GOPATH} ]]
   then
-    mkdir -p ${GOPATH}
+    mkdir -p "${GOPATH}"
   fi
 fi
 
@@ -144,8 +144,6 @@ then
   then
     PATH=${GOROOT}/bin:${PATH}
     # go get -v github.com/github/hub
-    # go get -v github.com/peco/peco
-    # go get -v github.com/peco/peco/cmd/peco
 
     # go get -v -u github.com/cweill/gotests
     # go get -v -u golang.org/x/tools/cmd/goimports
@@ -161,23 +159,23 @@ fi
 ## run ex commands
 # TODO: change from vim to neovim
 #/usr/bin/vim -e -S vim-linux/init.ex
-if [[ ! `which nvim` ]]
+if [[ ! $(which nvim) ]]
 then
   nvim -e -S nvim-linux/.config/nvim/init.ex
 fi
 
 # replace token of .gitconfig
-cp ${HOME}/.gitconfig ${HOME}/.gitconfig.org
-rm ${HOME}/.gitconfig
-cp ${HOME}/.gitconfig.org ${HOME}/.gitconfig
-sed -i -e "s/%GITHUB_USER%/${GH_U}/g" ${HOME}/.gitconfig
-sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" ${HOME}/.gitconfig
+cp "${HOME}/.gitconfig" "${HOME}/.gitconfig.org"
+rm "${HOME}/.gitconfig"
+cp "${HOME}/.gitconfig.org" "${HOME}/.gitconfig"
+sed -i -e "s/%GITHUB_USER%/${GH_U}/g" "${HOME}/.gitconfig"
+sed -i -e "s/%GITHUB_MAIL%/${GH_M}/g" "${HOME}/.gitconfig"
 
 # setup .gitignore_global
 GH_GLOBAL_IGNORE=${HOME}/.gitignore_global
 if [[ -f ${GH_GLOBAL_IGNORE} ]]
 then
-  rm -f ${GH_GLOBAL_IGNORE}
+  rm -f "${GH_GLOBAL_IGNORE}"
 fi
 
 GLOBAL_IGNORE_TARGETS=( \
@@ -196,32 +194,32 @@ GLOBAL_IGNORE_TARGETS=( \
   "Xcode" \
   "macOS" \
 )
-for t in ${GLOBAL_IGNORE_TARGETS[@]}
+for t in "${GLOBAL_IGNORE_TARGETS[@]}"
 do
   ignore_src=https://raw.githubusercontent.com/github/gitignore/master/Global/${t}.gitignore
-  echo "#----- ${t}. See: ${ignore_src}" >> ${GH_GLOBAL_IGNORE}
-  curl -s ${ignore_src} >> ${GH_GLOBAL_IGNORE}
-  echo "" >> ${GH_GLOBAL_IGNORE}
+  echo "#----- ${t}. See: ${ignore_src}" >> "${GH_GLOBAL_IGNORE}"
+  curl -s "${ignore_src}" >> "${GH_GLOBAL_IGNORE}"
+  echo "" >> "${GH_GLOBAL_IGNORE}"
 done
 
 # See: https://qiita.com/vzvu3k6k/items/12aff810ea93c7c6f307
 ORG_IGNORE_TARGETS=( \
-  ".envrc" \  
-  "Gemfile.local" \  
-  "Gemfile.local.lock" \  
-  ".solargraph.yml" \  
+  ".envrc" \
+  "Gemfile.local" \
+  "Gemfile.local.lock" \
+  ".solargraph.yml" \
 )
 
-echo "#----- original global .gitignores" >> ${GH_GLOBAL_IGNORE}
-for ot in ${ORG_IGNORE_TARGETS[@]}
+echo "#----- original global .gitignores" >> "${GH_GLOBAL_IGNORE}"
+for ot in "${ORG_IGNORE_TARGETS[@]}"
 do
-  echo "${ot}" >> ${GH_GLOBAL_IGNORE}
+  echo "${ot}" >> "${GH_GLOBAL_IGNORE}"
 done
 
 # $HOME/bin
 if [[ ! -d ${HOME}/bin ]]
 then
-  mkdir -p ${HOME}/bin
+  mkdir -p "${HOME}/bin"
 fi
 
 # # keychain
@@ -239,15 +237,15 @@ fi
 # tmux plugin manager
 if [[ ! -d ${HOME}/.tmux/plugins ]]
 then
-  mkdir -p ${HOME}/.tmux/plugins
+  mkdir -p "${HOME}"/.tmux/plugins
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
   # for tmux-resurrect
-  mkdir -p ${HOME}/.tmux/resurrect
+  mkdir -p "${HOME}"/.tmux/resurrect
 fi
-pushd ${HOME}/.tmux/plugins
+pushd "${HOME}"/.tmux/plugins || exit 1
 git pull --rebase origin master
-popd
+popd || exit 1
 
 # # install or refresh mongo-hacker
 # if [[ -f ${HOME}/.mongorc.js ]]
@@ -268,12 +266,12 @@ popd
 # install base16
 if [[ ! -d ${HOME}/.config/base16-shell ]]
 then
-  mkdir -p ${HOME}/.config
-  git clone https://github.com/chriskempson/base16-shell.git ${HOME}/.config/base16-shell
+  mkdir -p "${HOME}"/.config
+  git clone https://github.com/chriskempson/base16-shell.git "${HOME}"/.config/base16-shell
 fi
-pushd ${HOME}/.config/base16-shell
+pushd "${HOME}"/.config/base16-shell || exit 1
 git pull --rebase origin master
-popd
+popd || exit 1
 
 echo ""
 echo "---------------------------------------------------------"

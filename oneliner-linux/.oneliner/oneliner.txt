@@ -7,7 +7,8 @@ du /home --max-depth=1 | sort -nr	#/home直下の使用容量を降順表示
 du -h | egrep '^[0-9\.]+M' | sort -nr	#MB以上のサイズのファイル・ディレクトリを降順表示
 find . -type f -daystart -ctime -1 | xargs ls -lrt	#カレントディレクトリ下の当日更新されたファイルを再帰的に検索して日時昇順で表示
 sudo strace -s 1024 -f -p %%PID	#指定したPIDのプロセスのUNIXドメインソケット通信内容を確認する
-vi $(grep -n "\sgo .*(" **/*.go | \grep -v "[0-9]:\s*//" | peco | awk -F ":" '{print "-c "$2" "$1}')	#[golang]ゴルーチンを起動しているgoのソースを検索して、行番号指定でviで開く
+vim $(grep -n "\sgo .*(" **/*.go | \grep -v "[0-9]:\s*//" | fzf | awk -F ":" '{print "-c "$2" "$1}')	#[golang]ゴルーチンを起動しているgoのソースを検索して、行番号指定でvimで開く
+nvim $(grep -n "\sgo .*(" **/*.go | \grep -v "[0-9]:\s*//" | fzf | awk -F ":" '{print "-c "$2" "$1}')	#[golang]ゴルーチンを起動しているgoのソースを検索して、行番号指定でnvimで開く
 df -i	#割り当て可能な(Inodes),使用中の(IUsed),未割り当ての(IFree)inode数を表示する
 stat %%FILE	#ファイルの詳細な統計情報を表示する。inode番号とか
 find / -xdev -type f	#xdevオプションで、 / ファイル・システムのみに限定して検索する,xdevが無い場合/usrとか/varとかNFS等の他のファイルシステムも検索対象になる
