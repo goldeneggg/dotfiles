@@ -83,6 +83,7 @@ export MY_BREW_PKGS=( \
   "iam-policy-json-to-terraform" \
   "fzf" \
   "fd" \
+  "bat" \
 )
 
 export MY_BREW_CASKS=( \

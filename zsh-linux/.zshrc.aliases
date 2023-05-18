@@ -53,7 +53,9 @@ alias -g NV="| nvim -R -"
 alias -g M="| more"
 alias -g L="| less"
 alias -g W="| wc -l"
-alias -g B="| col -bx"
+alias -g COL="| col -bx"
+## TB: ${some tail -f command} | bat
+alias -g TB="| bat --paging=never -l log"
 
 #- [linux]エイリアス
 alias ll='ls -lF --time-style="+%Y-%m-%d %H:%M:%S"'
