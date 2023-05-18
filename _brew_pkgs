@@ -82,6 +82,7 @@ export MY_BREW_PKGS=( \
   # "1password-cli" \  # tap FIXME: upgrade中にmacの管理者パスワードを問われてエラーになる
   "iam-policy-json-to-terraform" \
   "fzf" \
+  "fd" \
 )
 
 export MY_BREW_CASKS=( \
