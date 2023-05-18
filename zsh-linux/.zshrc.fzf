@@ -4,7 +4,12 @@
 ##########
 export FZF_DEFAULT_COMMAND='fd --hidden --exclude ".git" --type f --maxdepth 1'
 # - batでファイルの一部をpreviewする: --preview 'bat --color=always --style=numbers --line-range=:500 {}'
-export FZF_DEFAULT_OPTS="--layout=reverse --info=inline --height=50% --border"
+export FZF_DEFAULT_OPTS='--layout=reverse --info=inline --height=50% --border'
+
+# TODO: 以下設定が何処に効いてるのか把握する
+# `command | fzf` しても `command | fzf-tmux` しても、FZF_TMUX_OPTS が効いてない
+export FZF_TMUX=1
+export FZF_TMUX_OPTS='-p80%,60%'
 
 ##########
 # official key bindings
@@ -18,9 +23,6 @@ export FZF_DEFAULT_OPTS="--layout=reverse --info=inline --height=50% --border"
 # export FZF_ALT_C_COMMAND="TODO:"
 # export FZF_ALT_C_OPTS="TODO:"
 
-# tmux
-export FZF_TMUX_OPTS='-p80%,60%'
-
 ##########
 # official completion settings
 # See: https://github.com/junegunn/fzf#fuzzy-completion-for-bash-and-zsh
@@ -28,13 +30,13 @@ export FZF_TMUX_OPTS='-p80%,60%'
 # Note: 補完系は `$(brew --prefix)/opt/fzf/install` を実施してから検討する（現状未実施）
 ##########
 
-# See: https://github.com/junegunn/fzf#settings 
+# See: https://github.com/junegunn/fzf#settings
 # # Use ~~ as the trigger sequence instead of the default **
 # export FZF_COMPLETION_TRIGGER='~~'
-# 
+#
 # # Options to fzf command
 # export FZF_COMPLETION_OPTS='--border --info=inline'
-# 
+#
 # # Use fd (https://github.com/sharkdp/fd) instead of the default find
 # # command for listing path candidates.
 # # - The first argument to the function ($1) is the base path to start traversal
@@ -42,19 +44,19 @@ export FZF_TMUX_OPTS='-p80%,60%'
 # _fzf_compgen_path() {
 #   fd --hidden --follow --exclude ".git" . "$1"
 # }
-# 
+#
 # # Use fd to generate the list for directory completion
 # _fzf_compgen_dir() {
 #   fd --type d --hidden --follow --exclude ".git" . "$1"
 # }
-# 
+#
 # # Advanced customization of fzf options via _fzf_comprun function
 # # - The first argument to the function is the name of the command.
 # # - You should make sure to pass the rest of the arguments to fzf.
 # _fzf_comprun() {
 #   local command=$1
 #   shift
-# 
+#
 #   case "$command" in
 #     cd)           fzf --preview 'tree -C {} | head -200'   "$@" ;;
 #     export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
