@@ -15,8 +15,10 @@ Plug 'chriskempson/base16-vim'
 " file finder
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tacahiroy/ctrlp-funky'
-
 Plug 'Shougo/denite.nvim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+" FIXME: UpdateRemotePluginでエラーになるのでコメントアウト中
+" Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
 
 " code information
 Plug 'rizzatti/dash.vim'
