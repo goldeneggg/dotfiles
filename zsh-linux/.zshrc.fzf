@@ -1,4 +1,69 @@
-##########1
+##########
+# official environment variables
+# See: https://github.com/junegunn/fzf#environment-variables
+##########
+export FZF_DEFAULT_COMMAND='fd --hidden --exclude ".git" --type f --maxdepth 1'
+# - batでファイルの一部をpreviewする: --preview 'bat --color=always --style=numbers --line-range=:500 {}'
+export FZF_DEFAULT_OPTS="--layout=reverse --info=inline --height=50% --border"
+
+##########
+# official key bindings
+# See: https://github.com/junegunn/fzf#key-bindings-for-command-line
+#
+# Note: キーバインディング系は `$(brew --prefix)/opt/fzf/install` を実施してから検討する（現状未実施）
+##########
+# export FZF_CTRL_T_COMMAND="TODO:"
+# export FZF_CTRL_T_OPTS="TODO:"
+# export FZF_CTRL_R_OPTS="TODO:"
+# export FZF_ALT_C_COMMAND="TODO:"
+# export FZF_ALT_C_OPTS="TODO:"
+
+# tmux
+export FZF_TMUX_OPTS='-p80%,60%'
+
+##########
+# official completion settings
+# See: https://github.com/junegunn/fzf#fuzzy-completion-for-bash-and-zsh
+#
+# Note: 補完系は `$(brew --prefix)/opt/fzf/install` を実施してから検討する（現状未実施）
+##########
+
+# See: https://github.com/junegunn/fzf#settings 
+# # Use ~~ as the trigger sequence instead of the default **
+# export FZF_COMPLETION_TRIGGER='~~'
+# 
+# # Options to fzf command
+# export FZF_COMPLETION_OPTS='--border --info=inline'
+# 
+# # Use fd (https://github.com/sharkdp/fd) instead of the default find
+# # command for listing path candidates.
+# # - The first argument to the function ($1) is the base path to start traversal
+# # - See the source code (completion.{bash,zsh}) for the details.
+# _fzf_compgen_path() {
+#   fd --hidden --follow --exclude ".git" . "$1"
+# }
+# 
+# # Use fd to generate the list for directory completion
+# _fzf_compgen_dir() {
+#   fd --type d --hidden --follow --exclude ".git" . "$1"
+# }
+# 
+# # Advanced customization of fzf options via _fzf_comprun function
+# # - The first argument to the function is the name of the command.
+# # - You should make sure to pass the rest of the arguments to fzf.
+# _fzf_comprun() {
+#   local command=$1
+#   shift
+# 
+#   case "$command" in
+#     cd)           fzf --preview 'tree -C {} | head -200'   "$@" ;;
+#     export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
+#     ssh)          fzf --preview 'dig {}'                   "$@" ;;
+#     *)            fzf --preview 'bat -n --color=always {}' "$@" ;;
+#   esac
+# }
+
+##########
 # history
 ##########
 
@@ -39,7 +104,7 @@ zle -N fzf-pipe-history
 bindkey "^pp" fzf-pipe-history
 
 
-##########1
+##########
 # directory
 ##########
 
@@ -57,7 +122,7 @@ zle -N fzf-dirstack-cd
 bindkey "^pc" fzf-dirstack-cd
 
 
-##########1
+##########
 # process control
 ##########
 
@@ -74,7 +139,7 @@ function fzf-proc-kill() {
 zle -N fzf-proc-kill
 bindkey "^pk" fzf-proc-kill
 
-##########1
+##########
 # gitrocess control
 ##########
 
@@ -150,7 +215,7 @@ function openpr-by-file() {
   eval "hub browse -- $(echo ${PRS} | cut -f 2)"
 }
 
-##########1
+##########
 # grep & vim
 ##########
 
@@ -265,7 +330,7 @@ function virc {
     fi
 }
 
-##########1
+##########
 # grep & neovim
 ##########
 
@@ -334,7 +399,7 @@ function nvg-py {
     _nvgextcomex "${STR}" "py" "[0-9]:\s*#"
 }
 
-##########1
+##########
 # git grep & neovim
 ##########
 
@@ -358,7 +423,7 @@ function nv-gitgr-and {
     fi
 }
 
-##########1
+##########
 # ripgrep & neovim
 ##########
 
@@ -403,7 +468,7 @@ function nvrg-py {
     _nvrgextcomex "${STR}" "py" "[0-9]:\s*#"
 }
 
-##########1
+##########
 # oneliner
 ##########
 
