@@ -13,12 +13,6 @@ source ~/.zshrc.ssh
 source ~/.zshrc.aliases
 #source ~/.zshrc.base16
 
-#- using peco if exists
-if [[ -x "$(command -v peco)" ]]
-then
-  source ~/.zshrc.peco
-fi
-
 #- using fzf if exists
 if [[ -x "$(command -v fzf)" ]]
 then
