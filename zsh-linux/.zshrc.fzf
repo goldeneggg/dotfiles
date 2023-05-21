@@ -6,11 +6,6 @@ export FZF_DEFAULT_COMMAND='fd --hidden --exclude ".git" --type f --maxdepth 1'
 # - batでファイルの一部をpreviewする: --preview 'bat --color=always --style=numbers --line-range=:500 {}'
 export FZF_DEFAULT_OPTS='--layout=reverse --info=inline --height=50% --border'
 
-# TODO: 以下設定が何処に効いてるのか把握する
-# `command | fzf` しても `command | fzf-tmux` しても、FZF_TMUX_OPTS が効いてない
-export FZF_TMUX=1
-export FZF_TMUX_OPTS='-p80%,60%'
-
 ##########
 # official key bindings
 # See: https://github.com/junegunn/fzf#key-bindings-for-command-line
@@ -22,6 +17,11 @@ export FZF_TMUX_OPTS='-p80%,60%'
 # export FZF_CTRL_R_OPTS="TODO:"
 # export FZF_ALT_C_COMMAND="TODO:"
 # export FZF_ALT_C_OPTS="TODO:"
+
+# 以下はkey-bindingを有効化してそのkey-bindingを実行した時のみ効く設定
+# 単に `command | fzf` とか `command | fzf-tmux` しても効く設定では無い
+export FZF_TMUX=1
+export FZF_TMUX_OPTS='-p90%,60%'
 
 ##########
 # official completion settings
@@ -66,14 +66,39 @@ export FZF_TMUX_OPTS='-p80%,60%'
 # }
 
 ##########
-# history
+# common settings for tools
+##########
+
+fzf_cmd_for_tools() {
+  if [[ ${TMUX} ]]
+  then
+    fzf-tmux ${FZF_TMUX_OPTS} "$@"
+  else
+    fzf "$@"
+  fi
+}
+
+fzf_cmd_for_tools_with_preview() {
+  local preview_opt="$1"
+  shift
+  if [[ ${TMUX} ]]
+  then
+    fzf-tmux ${FZF_TMUX_OPTS} --preview "${preview_opt}" "$@"
+  else
+    fzf --preview "${preview_opt}" "$@"
+  fi
+}
+
+##########
+# tool.history
 ##########
 
 #- fzfで履歴表示用コマンド
-CMD_HIST_FZF="fc -l -n 1 | \tail -r | fzf"
+#CMD_HIST_FZF="fc -l -n 1 | \tail -r | fzf_cmd_for_tools"
+CMD_HIST_FZF="fc -l -n 1 | \tail -r | fzf_cmd_for_tools_with_preview 'echo {}'"
 
 function _fzf-history() {
-  BUFFER=`eval ${CMD_HIST_FZF}`
+  BUFFER=$(eval "${CMD_HIST_FZF}")
   zle end-of-line
   zle ${1}
 }
@@ -107,7 +132,7 @@ bindkey "^pp" fzf-pipe-history
 
 
 ##########
-# directory
+# tool.directory
 ##########
 
 #-- fzfでディレクトリスタック間をcd(pushd)
@@ -115,7 +140,7 @@ bindkey "^pp" fzf-pipe-history
 #--- recommend setting: "setopt pushd_ignore_dups"
 # Ctrl + p -> c
 function fzf-dirstack-cd() {
-  BUFFER="cd "`dirs -l -p | tail -n +2 | fzf`
+  BUFFER="cd "$(dirs -l -p | tail -n +2 | fzf_cmd_for_tools)
   zle end-of-line
   #zle accept-line
   zle clear-screen
@@ -125,16 +150,16 @@ bindkey "^pc" fzf-dirstack-cd
 
 
 ##########
-# process control
+# tool.process-control
 ##########
 
-#-- process kill
+#-- process kill -ABRT
 # Ctrl + p -> k
 function fzf-proc-kill() {
-  P=$(ps aux | fzf | awk '{print $2}')
+  P=$(ps aux | fzf_cmd_for_tools -m | awk '{print $2}')
   if [[ $? -eq 0 && ${P} != "" ]]
   then
-    BUFFER="kill -9 "${P}
+    BUFFER="kill -ABRT "${P}
   fi
   zle clear-screen
 }
@@ -142,13 +167,13 @@ zle -N fzf-proc-kill
 bindkey "^pk" fzf-proc-kill
 
 ##########
-# gitrocess control
+# tool.git-control
 ##########
 
 #-- git add
 # Ctrl + p -> g -> a
 function fzf-git-add() {
-  BUFFER="git add "$(git status -s | fzf -m | awk '{print $2}' | tr '\n' ' ')
+  BUFFER="git add "$(git status -s | fzf_cmd_for_tools_with_preview 'git diff {2}' -m | awk '{print $2}' | tr '\n' ' ')
   #zle clear-screen
   zle accept-line
 }
@@ -158,7 +183,7 @@ bindkey "^pga" fzf-git-add
 #-- git rm
 # Ctrl + p -> g -> r
 function fzf-git-rm() {
-  BUFFER="git rm "$(git status -s | fzf -m | awk '{print $2}' | tr '\n' ' ')
+  BUFFER="git rm "$(git status -s | fzf_cmd_for_tools_with_preview 'git diff {2}' -m | awk '{print $2}' | tr '\n' ' ')
   #zle clear-screen
   zle accept-line
 }
@@ -168,7 +193,7 @@ bindkey "^pgr" fzf-git-rm
 #-- git branch -D
 # Ctrl + p -> g -> d
 function fzf-git-brd() {
-  BUFFER="git branch -D "$(git branch | fzf -m | awk '{print $1}' | tr '\n' ' ')
+  BUFFER="git branch -D "$(git branch | fzf_cmd_for_tools_with_preview 'git diff {1}' -m | awk '{print $1}' | tr '\n' ' ')
   #zle clear-screen
   zle accept-line
 }
@@ -178,7 +203,7 @@ bindkey "^pgd" fzf-git-brd
 #-- git checkout
 # Ctrl + p -> g -> o
 function fzf-git-co() {
-  BUFFER="git checkout "$(git branch | fzf | awk '{print $1}' | tr '\n' ' ')
+  BUFFER="git checkout "$(git branch | fzf_cmd_for_tools_with_preview 'git diff {1}' | awk '{print $1}' | tr '\n' ' ')
   #zle clear-screen
   zle accept-line
 }
@@ -188,7 +213,7 @@ bindkey "^pgo" fzf-git-co
 #-- git checkout regs/tags/TAG
 # Ctrl + p -> g -> t
 function fzf-git-tagco() {
-  BUFFER="git checkout refs/tags/"$(git tag -l | fzf | awk '{print $1}' | tr '\n' ' ')
+  BUFFER="git checkout refs/tags/"$(git tag -l | fzf_cmd_for_tools | awk '{print $1}' | tr '\n' ' ')
   #zle clear-screen
   zle accept-line
 }
@@ -198,33 +223,40 @@ bindkey "^pgt" fzf-git-tagco
 #-- fzfでコミットハッシュを2つ選択してdiff
 function git-pdi() {
   setopt ksharrays  # 0 base array index for zsh
-  HASHES=($(git log --pretty="format:%ad %h (%an): %s" --date=iso | fzf -m | awk '{print $4}'))
+  HASHES=($(git log --pretty="format:%ad %h (%an): %s" --date=iso | fzf_cmd_for_tools -m | awk '{print $4}'))
   if [[ ${#HASHES[@]} -eq 2 ]]
   then
-    git diff ${HASHES[1]}..${HASHES[0]}
+    git diff "${HASHES[1]}".."${HASHES[0]}"
   else
     echo "selected commit count must be 2, but ${#HASHES[@]}"
   fi
 }
 
-# 指定ファイルが過去に更新されたpull reqをfzfで一覧表示し、選択したpull reqをブラウザで開く
+# 指定ファイルが過去に更新されたpull reqをfzfで一覧表示し、
+# 選択したpull reqをブラウザで開く
 function openpr-by-file() {
   declare file
-  [[ $# -ne 0 ]] && { file=${1}; } || { echo "need to assign target file"; return; }
+  if [[ $# -ne 0 ]]
+  then
+    file=${1}
+  else
+    echo "need to assign target file"
+    return
+  fi
   declare target=${2:-"develop"}
 
-  PRS=$(git pr-list ${file} ${target} | awk 'BEGIN {OFS="\t"} {print NR,$8,$1,$2,$10}' | sed -e 's%#%pull/%g' | fzf)
-  eval "hub browse -- $(echo ${PRS} | cut -f 2)"
+  PRS=$(git pr-list ${file} ${target} | awk 'BEGIN {OFS="\t"} {print NR,$8,$1,$2,$10}' | sed -e 's%#%pull/%g' | fzf_cmd_for_tools)
+  gh browse $(echo "${PRS}" | cut -f 2 | awk -F'/' '{print $2}')
 }
 
 ##########
-# grep & vim
+# tool.grep&vim
 ##########
 
 # grep => open vim by filename and line number
 function vig {
     STR="$1"
-    F=$(\grep -H -n ${STR} **/* | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(\grep -H -n "${STR}" **/* | fzf_cmd_for_tools | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       echo "${F}"
@@ -235,7 +267,7 @@ function vig {
 # ack => open vim by filename and line number
 function viack {
     STR="$1"
-    F=$(ack --nocolor ${STR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(ack --nocolor "${STR}" | fzf_cmd_for_tools | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vim ${F}"
@@ -245,7 +277,7 @@ function viack {
 # hw => open vim by filename and line number
 function vihw {
     STR="$1"
-    F=$(hw --nocolor ${STR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(hw --nocolor "${STR}" | fzf_cmd_for_tools | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vim ${F}"
@@ -255,7 +287,7 @@ function vihw {
 # rg(ripgrep) => open vim by filename and line number
 function virg {
     STR="$1"
-    F=$(rg -n --no-heading ${STR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(rg -n --no-heading "${STR}" | fzf_cmd_for_tools | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vim ${F}"
@@ -266,7 +298,7 @@ function _vigext {
     STR="$1"
     EXT=$2
 
-    F=$(\grep -H -n ${STR} **/*.${EXT} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(\grep -H -n "${STR}" "**/*.${EXT}" | fzf_cmd_for_tools | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vim ${F}"
@@ -278,7 +310,7 @@ function _vigextcomex {
     REGEXP="$3"
 
     # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
-    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(\grep -H -n -E "${STR}" "**/*.${EXT}" | \grep -v ${REGEXP} | fzf_cmd_for_tools | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vim ${F}"
@@ -325,7 +357,7 @@ function vig-php {
 function virc {
     DIR="$1"
 
-    F=$(rubocop ${DIR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(rubocop "${DIR}" | fzf_cmd_for_tools | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "vim ${F}"
@@ -333,13 +365,13 @@ function virc {
 }
 
 ##########
-# grep & neovim
+# tool.grep&neovim
 ##########
 
 # grep => open neovim by filename and line number
 function nvg {
     STR="$1"
-    F=$(\grep -H -n ${STR} **/* | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(find . -type f | xargs \grep -H -n "${STR}" | fzf_cmd_for_tools_with_preview 'bat --color=always --style=numbers --line-range={2}:+5 {1}' --delimiter=: | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       echo "${F}"
@@ -351,7 +383,7 @@ function _nvgext {
     STR="$1"
     EXT=$2
 
-    F=$(\grep -H -n ${STR} **/*.${EXT} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(find . -name "*.${EXT}" | xargs \grep -H -n "${STR}" | fzf_cmd_for_tools_with_preview 'bat --color=always --style=numbers --line-range={2}:+5 {1}' --delimiter=: | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "nvim ${F}"
@@ -363,8 +395,7 @@ function _nvgextcomex {
     EXT=$2
     REGEXP="$3"
 
-    # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
-    F=$(\grep -H -n -E ${STR} **/*.${EXT} | \grep -v ${REGEXP} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(find . -name "*.${EXT}" | xargs \grep -H -n -E "${STR}" | \grep -v ${REGEXP} | fzf_cmd_for_tools_with_preview 'bat --color=always --style=numbers --highlight-line {2} --line-range={2}:+5 {1}' --delimiter=: | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "nvim ${F}"
@@ -402,12 +433,12 @@ function nvg-py {
 }
 
 ##########
-# git grep & neovim
+# tool.git-grep&neovim
 ##########
 
 # my git grep (or) => open neovim by filename and line number
 function nv-gitgr {
-    F=$(git gr $@ | fzf | awk -F ":" '{print "+"$2" "$1}')
+    F=$(git gr "$@" | fzf_cmd_for_tools | awk -F ":" '{print "+"$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       echo "${F}"
@@ -417,7 +448,7 @@ function nv-gitgr {
 
 # my git grep (and) => open neovim by filename and line number
 function nv-gitgr-and {
-    F=$(git gr-and $@ | fzf | awk -F ":" '{print "+"$2" "$1}')
+    F=$(git gr-and "$@" | fzf_cmd_for_tools | awk -F ":" '{print "+"$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       echo "${F}"
@@ -426,13 +457,13 @@ function nv-gitgr-and {
 }
 
 ##########
-# ripgrep & neovim
+# tool.ripgrep&neovim
 ##########
 
 # rg(ripgrep) => open neovim by filename and line number
 function nvrg {
     STR="$1"
-    F=$(rg -n --no-heading ${STR} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(rg -n --no-heading "${STR}" | fzf_cmd_for_tools | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "nvim ${F}"
@@ -445,7 +476,7 @@ function _nvrgextcomex {
     REGEXP="$3"
 
     # XXX DIR階層が深すぎる再帰的検索だとgrepがHITしないという挙動が起こる
-    F=$(rg -n --no-heading ${STR} **/*.${EXT} | \grep -v ${REGEXP} | fzf | awk -F ":" '{print "-c "$2" "$1}')
+    F=$(rg -n --no-heading "${STR}" "**/*.${EXT}" | \grep -v "${REGEXP}" | fzf_cmd_for_tools | awk -F ":" '{print "-c "$2" "$1}')
     if [[ $? -eq 0 && "${F}" != "" ]]
     then
       eval "nvim ${F}"
@@ -471,7 +502,7 @@ function nvrg-py {
 }
 
 ##########
-# oneliner
+# tool.oneliner
 ##########
 
 #- for oneliner
@@ -480,7 +511,7 @@ if [[ -d $ONELINER_DIR ]]
 then
   #-- fzfで選択したonelinerコマンドを表示
   function fzf-search-oneliner() {
-    BUFFER=$(cat ${ONELINER_DIR}/*.txt | sort | fzf | awk -F"\t" '{print $1}')
+    BUFFER=$(cat ${ONELINER_DIR}/*.txt | sort | fzf_cmd_for_tools | awk -F"\t" '{print $1}')
     zle clear-screen
     #zle -M "type [ESC-j], kill parameter word and replace into real word"
     zle beginning-of-line
@@ -490,14 +521,14 @@ then
 fi
 
 ##########
-# SSH to EC2 with https://github.com/goldeneggg/lsec2
+# tool.SSH to EC2 with https://github.com/goldeneggg/lsec2
 ##########
 
 function fzf-lssh {
-    IP=$(lsec2 $@ | fzf | awk -F "\t" '{print $2}')
+    IP=$(lsec2 "$@" | fzf_cmd_for_tools | awk -F "\t" '{print $2}')
     if [[ $? -eq 0 && "${IP}" != "" ]]
     then
       echo ">>> SSH to ${IP}"
-      ssh ${IP}
+      ssh "${IP}"
     fi
 }
