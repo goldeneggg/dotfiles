@@ -90,7 +90,7 @@ function tminit() {
         ;;
       go)
         # 垂直分割=50%
-        tmux splitw -h -p 50 -c ${GH_PRACTA}/biz
+        tmux splitw -h -p 50 -c ${GH_MY}/biz
         # 水平分割 下部=50%
         tmux splitw -v -p 50 -c ${GH_MY}/structil
         # 左ペインへ
