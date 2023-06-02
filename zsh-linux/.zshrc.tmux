@@ -103,10 +103,10 @@ function tminit() {
         tmux splitw -v -p 50 -c ${GOROOT}/src
         ;;
       zig)
-        # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}/ziglings
-        # 上ペインへ
-        tmux select-pane -U
+        # # 水平分割 下部=50%
+        # tmux splitw -v -p 50 -c ${GH_PRA}/ziglings
+        # # 上ペインへ
+        # tmux select-pane -U
         tmux send-keys "cd ${GH_PRA}/watch-zig" C-m
         ;;
       misc)
