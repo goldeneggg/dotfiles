@@ -40,7 +40,7 @@ function tminit() {
     "ops"
     "blog"
     "go"
-    "zig"
+#    "zig"
     "misc"
     "eb"
   )
@@ -110,8 +110,8 @@ function tminit() {
         tmux send-keys "cd ${GH_PRA}/watch-zig" C-m
         ;;
       misc)
-        # 垂直分割=80%
-        tmux splitw -h -p 80 -c ${GH_MY}/misc-aws
+        # 垂直分割=50%
+        tmux splitw -h -p 50 -c ${GH_MY}/misc-aws
         # 水平分割 下部=80%
         tmux splitw -v -p 80 -c ${GH_PRA}/watch-aws
         # 水平分割 下部=50%
