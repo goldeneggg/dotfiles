@@ -43,6 +43,7 @@ function tminit() {
 #    "zig"
     "misc"
     "eb"
+    "W"
   )
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
@@ -97,10 +98,8 @@ function tminit() {
         tmux select-pane -L
         # cd watch-go
         tmux send-keys "cd ${GH_PRA}/watch-go" C-m
-        # 水平分割 下部=80%
-        tmux splitw -v -p 80 -c ${HOME}/goroot
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GOROOT}/src
+        tmux splitw -v -p 50 -c ${HOME}/goroot
         ;;
       zig)
         # # 水平分割 下部=50%
@@ -132,6 +131,13 @@ function tminit() {
         # 上ペインへ
         tmux select-pane -U
         tmux send-keys "cd /Volumes" C-m
+        ;;
+      W)
+        # 水平分割 下部=50%
+        tmux splitw -v -p 50 -c ${GH_DIR}
+        # 上ペインへ
+        tmux select-pane -U
+        tmux send-keys "cd ${GH_DIR}" C-m
         ;;
       *)
         ;;
