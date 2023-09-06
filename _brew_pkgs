@@ -84,6 +84,7 @@ export MY_BREW_PKGS=( \
   "fd" \
   "bat" \
   "tesseract" \
+  "telnet" \
 )
 
 export MY_BREW_CASKS=( \
