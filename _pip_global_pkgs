@@ -10,4 +10,5 @@ export MY_PIP_GLOBAL_PKGS=( \
   "cloudformation-cli-typescript-plugin" \
   "pynvim" \
   "neovim" \
+  "open-interpreter" \
 )
