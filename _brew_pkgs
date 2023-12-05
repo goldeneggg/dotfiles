@@ -86,6 +86,7 @@ export MY_BREW_PKGS=( \
   "ghostscript" \
   "pdfcpu" \
   "yamllint" \
+  "clang-format" \
 )
 
 export MY_BREW_CASKS=( \
