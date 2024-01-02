@@ -1,0 +1,7 @@
+SSH_ADD_OPT="${1:-'--apple-use-keychain'}"
+
+if [[ -n "${SSH_CONNECTION}" && -z "${SSH_AUTH_SOCK}" ]]
+then
+  eval "$(ssh-agent -s)"
+  eval "ssh-add ${SSH_ADD_OPT}"
+fi

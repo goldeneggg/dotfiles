@@ -2,3 +2,5 @@
 # (リモートシェルからではなく必ずコマンドラインから起動するコマンドが参照する環境変数の設定など)
 
 echo "---------- loaded .zlogin"
+
+source ~/.zlogin.sshconn
