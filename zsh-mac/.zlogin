@@ -3,5 +3,4 @@
 
 echo "---------- loaded .zlogin"
 
-# FIXME: VSCode SSH時に鍵のパスフレーズ入力待ちになってしまうので一旦コメントアウト
-#source ~/.zlogin.sshconn
+source ~/.zlogin.sshconn
