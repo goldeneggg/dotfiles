@@ -59,82 +59,82 @@ function tminit() {
     case ${window} in
       wk)
         # 垂直分割=50%
-        tmux splitw -h -p 50 -c ${HOME}
+        tmux splitw -h -l 50% -c ${HOME}
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${DIR_DOTFILES}
+        tmux splitw -v -l 50% -c ${DIR_DOTFILES}
         # 左ペインへ
         tmux select-pane -L
         tmux send-keys "cd ${HOME}" C-m
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${DIR_DOTFILES}
+        tmux splitw -v -l 50% -c ${DIR_DOTFILES}
         ;;
       ops)
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${HOME}
+        tmux splitw -v -l 50% -c ${HOME}
         # 上ペインへ
         tmux select-pane -U
         tmux send-keys "cd ${HOME}" C-m
         ;;
       blog)
         # 垂直分割=50%
-        tmux splitw -h -p 50 -c ${DIR_BLOGEGGG}
+        tmux splitw -h -l 50% -c ${DIR_BLOGEGGG}
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GH_PRACTA}/corporate
+        tmux splitw -v -l 50% -c ${GH_PRACTA}/corporate
         # 左ペインへ
         tmux select-pane -L
         # cd goldeneggg.github.io
         tmux send-keys "cd ${DIR_BLOGEGGGSITE}" C-m
         # 水平分割 下部=80%
-        tmux splitw -v -p 80 -c ${GH_PRACTA}/practa-inc.github.io
+        tmux splitw -v -l 80% -c ${GH_PRACTA}/practa-inc.github.io
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}/readlogs
+        tmux splitw -v -l 50% -c ${GH_PRA}/readlogs
         ;;
       go)
         # 垂直分割=50%
-        tmux splitw -h -p 50 -c ${GH_MY}/biz
+        tmux splitw -h -l 50% -c ${GH_MY}/biz
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GH_MY}/structil
+        tmux splitw -v -l 50% -c ${GH_MY}/structil
         # 左ペインへ
         tmux select-pane -L
         # cd watch-go
         tmux send-keys "cd ${GH_PRA}/watch-go" C-m
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${HOME}/goroot
+        tmux splitw -v -l 50% -c ${HOME}/goroot
         ;;
       zig)
         # # 水平分割 下部=50%
-        # tmux splitw -v -p 50 -c ${GH_PRA}/ziglings
+        # tmux splitw -v -l 50% -c ${GH_PRA}/ziglings
         # # 上ペインへ
         # tmux select-pane -U
         tmux send-keys "cd ${GH_PRA}/watch-zig" C-m
         ;;
       misc)
         # 垂直分割=50%
-        tmux splitw -h -p 50 -c ${GH_MY}/misc-aws
+        tmux splitw -h -l 50% -c ${GH_MY}/misc-aws
         # 水平分割 下部=80%
-        tmux splitw -v -p 80 -c ${GH_PRA}/watch-aws
+        tmux splitw -v -l 80% -c ${GH_PRA}/watch-aws
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}/watch-docker
+        tmux splitw -v -l 50% -c ${GH_PRA}/watch-docker
         # 左ペインへ
         tmux select-pane -L
         tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
         # 水平分割=80%
-        tmux splitw -v -p 80 -c ${GH_PRA}/watch-ruby
+        tmux splitw -v -l 80% -c ${GH_PRA}/watch-ruby
         # 水平分割=80%
-        tmux splitw -v -p 80 -c ${GH_PRA}/watch-zig
+        tmux splitw -v -l 80% -c ${GH_PRA}/watch-zig
         # 水平分割=50%
-        tmux splitw -v -p 50 -c ${GH_PRA}/watch-ai
+        tmux splitw -v -l 50% -c ${GH_PRA}/watch-ai
         ;;
       eb)
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c "${HOME}/Documents/#bookmark"
+        tmux splitw -v -l 50% -c "${HOME}/Documents/#bookmark"
         # 上ペインへ
         tmux select-pane -U
         tmux send-keys "cd /Volumes" C-m
         ;;
       W)
         # 水平分割 下部=50%
-        tmux splitw -v -p 50 -c ${GH_DIR}
+        tmux splitw -v -l 50% -c ${GH_DIR}
         # 上ペインへ
         tmux select-pane -U
         tmux send-keys "cd ${GH_DIR}" C-m
