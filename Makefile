@@ -111,5 +111,8 @@ asdf-upgrade:
 	@asdf global terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
 	@asdf reshim terraform
 
-work: asdf-upgrade init-gems init-pips init-npms
+rust-upgrade:
+	@rustup update
+
+work: asdf-upgrade rust-upgrade init-gems init-pips init-npms
 	@brew update
