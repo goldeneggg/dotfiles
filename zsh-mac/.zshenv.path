@@ -9,13 +9,10 @@ else
 fi
 export HOMEBREW_OPT_DIR=$HOMEBREW_BASE_DIR/opt
 export OPENSSL11_BREW_ROOT=$HOMEBREW_OPT_DIR/openssl@1.1
+export MYSQLCLIENT80_BREW_ROOT=$HOMEBREW_OPT_DIR/mysql-client@8.0
 export MYSQL57_BREW_ROOT=$HOMEBREW_OPT_DIR/mysql@5.7
 export POSTGRES_BREW_ROOT=$HOMEBREW_OPT_DIR/libpq
 
-#-- dmg経由でjavaをインストールした場合はJAVA_HOME関連の設定は不要
-#jdk_version="1.8.0_25"
-#export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk${jdk_version}.jdk/Contents/Home"
-export SCALA_HOME=/usr/local/scala
 export ANDROID_SDK="/Applications/Android Studio.app/sdk"
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
@@ -30,14 +27,12 @@ export TAILSCALE_APP=/Applications/Tailscale.app
 #-- "path"以外に, "cdpath","fpath","manpath" の3つも同様に自動連動
 #-- (N-/) を付けた場合、該当パスが存在しなければ無視してくれる
 path=(
-    #$JAVA_HOME/bin(N-/)
     $HOME/bin(N-/)
     # Omnisharp by NeoBundle of vim
     $HOME/.bundle/Omnisharp/server/OmniSharp/bin/Debug(N-/)
     $HOME/.cabal/bin(N-/)
     $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
     $GCP_SDK_HOME/bin(N-/)
-    $SCALA_HOME/bin(N-/)
     $ANDROID_SDK/platform-tools(N-/)
     $FLUTTER_ROOT/bin(N-/)
     $CALIBRE_APP/Contents/MacOS(N-/)
@@ -45,6 +40,7 @@ path=(
     $GOBIN(N-/)
     $GOROOT/bin(N-/)
     $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
+    $MYSQLCLIENT80_BREW_ROOT/bin(N-/)
     $MYSQL57_BREW_ROOT/bin(N-/)
     $POSTGRES_BREW_ROOT/bin(N-/)
     $HOMEBREW_BASE_DIR/bin(N-/)
