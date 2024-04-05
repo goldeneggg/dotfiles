@@ -89,6 +89,7 @@ export MY_BREW_PKGS=( \
   "clang-format" \
   "bash" \
   "pre-commit" \
+  "jnv" \
 )
 
 export MY_BREW_CASKS=( \
