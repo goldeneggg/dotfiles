@@ -11,4 +11,5 @@ export MY_PIP_GLOBAL_PKGS=( \
   "pynvim" \
   "neovim" \
   "open-interpreter" \
+  "awscli-local" \
 )
