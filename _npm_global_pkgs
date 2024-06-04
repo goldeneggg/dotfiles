@@ -12,4 +12,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "capture-website-cli" \
   "@devcontainers/cli" \
   "ajv-cli" \
+  "vitest" \
 )
