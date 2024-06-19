@@ -13,4 +13,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "@devcontainers/cli" \
   "ajv-cli" \
   "vitest" \
+  "@aws-amplify/cli" \
 )
