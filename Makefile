@@ -87,7 +87,7 @@ init-projects:
 # 	@pyenv virtualenv -f $(ver2) neovim2
 # 	@pyenv shell neovim2
 # 	@pip install pynvim
-# 	@pip install neovim 
+# 	@pip install neovim
 
 USEVER_NODEJS := 20
 USEVER_PYTHON := 3.12
@@ -116,3 +116,14 @@ rust-upgrade:
 
 work: asdf-upgrade rust-upgrade init-gems init-pips init-npms
 	@brew update
+
+# watch repos control
+WATCH_REPO_ORG_DIR := $(HOME)/github/practice-goldeneggg
+WATCHES := aws docker go wasm ai zig ruby rust graphql browser
+watch-repos-ctrl = $(foreach wr,$(WATCHES),cd $(WATCH_REPO_ORG_DIR)/watch-$(wr) && make $1;)
+
+watches-sync:
+	@$(call watch-repos-ctrl,sync)
+
+watches-update-and-sync:
+	@$(call watch-repos-ctrl,update-and-sync)
