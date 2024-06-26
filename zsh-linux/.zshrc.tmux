@@ -58,15 +58,13 @@ function tminit() {
     # ペインに分割
     case ${window} in
       wk)
+        # 水平分割 下部=50%
+        tmux splitw -v -l 50% -c ${DIR_DOTFILES}
         # 垂直分割=50%
-        tmux splitw -h -l 50% -c ${HOME}
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${DIR_DOTFILES}
-        # 左ペインへ
-        tmux select-pane -L
+        tmux splitw -h -l 50% -c ${DIR_DOTFILES}
+        # 上ペインへ
+        tmux select-pane -U
         tmux send-keys "cd ${HOME}" C-m
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${DIR_DOTFILES}
         ;;
       ops)
         # 水平分割 下部=50%
