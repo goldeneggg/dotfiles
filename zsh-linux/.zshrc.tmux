@@ -41,7 +41,7 @@ function tminit() {
     "blog"
     "go"
 #    "zig"
-    "misc"
+#    "misc"
     "eb"
     "W"
   )
@@ -146,4 +146,3 @@ function tminit() {
 
   tmux a -t ${SESS}
 }
-
