@@ -120,10 +120,13 @@ work: asdf-upgrade rust-upgrade init-gems init-pips init-npms
 # watch repos control
 WATCH_REPO_ORG_DIR := $(HOME)/github/practice-goldeneggg
 WATCHES := aws docker go wasm ai zig ruby rust graphql browser
-watch-repos-ctrl = $(foreach wr,$(WATCHES),cd $(WATCH_REPO_ORG_DIR)/watch-$(wr) && make $1;)
+watch-repos-recursive = $(foreach wr,$(WATCHES),cd $(WATCH_REPO_ORG_DIR)/watch-$(wr) && echo "---------- $(wr)" && $1 || { echo "NG!"; true; };)
 
 watches-sync:
-	@$(call watch-repos-ctrl,sync)
+	@$(call watch-repos-recursive,make sync)
 
 watches-update-and-sync:
-	@$(call watch-repos-ctrl,update-and-sync)
+	@$(call watch-repos-recursive,make update-and-sync)
+
+watches-git-diff-check:
+	@$(call watch-repos-recursive,git diff --exit-code --quiet)
