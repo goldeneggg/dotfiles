@@ -92,7 +92,7 @@ init-projects:
 USEVER_NODEJS := 20
 USEVER_PYTHON := 3.12
 USEVER_RUBY := 3.3
-USEVER_TERRAFORM := 1.8
+USEVER_TERRAFORM := 1.9
 
 asdf-latest = $(shell asdf latest $1 $2)
 
@@ -110,6 +110,14 @@ asdf-upgrade:
 	@asdf install terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
 	@asdf global terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
 	@asdf reshim terraform
+
+asdf-uninstall = for oldver in $$(asdf list $1 | \grep -v ' \*'); do echo uninstall $1 old version $${oldver}; asdf uninstall $1 $${oldver}; done
+asdf-remove-old-vers:
+	@$(call asdf-uninstall,nodejs)
+	@$(call asdf-uninstall,python)
+	@$(call asdf-uninstall,ruby)
+	@$(call asdf-uninstall,terraform)
+	@asdf reshim
 
 rust-upgrade:
 	@rustup update
