@@ -37,10 +37,8 @@ function tminit() {
 
   WINDOWS=(
     "wk"
-    "ops"
-    "blog"
     "go"
-#    "zig"
+#    "blog"
 #    "misc"
     "eb"
     "W"
@@ -66,45 +64,19 @@ function tminit() {
         tmux select-pane -U
         tmux send-keys "cd ${HOME}" C-m
         ;;
-      ops)
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${HOME}
-        # 上ペインへ
-        tmux select-pane -U
-        tmux send-keys "cd ${HOME}" C-m
-        ;;
-      blog)
-        # 垂直分割=50%
-        tmux splitw -h -l 50% -c ${DIR_BLOGEGGG}
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_PRACTA}/corporate
-        # 左ペインへ
-        tmux select-pane -L
-        # cd goldeneggg.github.io
-        tmux send-keys "cd ${DIR_BLOGEGGGSITE}" C-m
-        # 水平分割 下部=80%
-        tmux splitw -v -l 80% -c ${GH_PRACTA}/practa-inc.github.io
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_PRA}/readlogs
-        ;;
       go)
         # 垂直分割=50%
         tmux splitw -h -l 50% -c ${GH_MY}/biz
         # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_MY}/structil
+        tmux splitw -v -l 50% -c ${GH_PRA}/watch-go
         # 左ペインへ
         tmux select-pane -L
-        # cd watch-go
-        tmux send-keys "cd ${GH_PRA}/watch-go" C-m
+        # cd goldeneggg.github.io
+        tmux send-keys "cd ${HOME}/goexample" C-m
+        # 水平分割 下部=70%
+        tmux splitw -v -l 70% -c ${HOME}/gotools
         # 水平分割 下部=50%
         tmux splitw -v -l 50% -c ${HOME}/goroot
-        ;;
-      zig)
-        # # 水平分割 下部=50%
-        # tmux splitw -v -l 50% -c ${GH_PRA}/ziglings
-        # # 上ペインへ
-        # tmux select-pane -U
-        tmux send-keys "cd ${GH_PRA}/watch-zig" C-m
         ;;
       misc)
         # 垂直分割=50%
@@ -125,10 +97,27 @@ function tminit() {
         ;;
       eb)
         # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c "${HOME}/Documents/#bookmark"
-        # 上ペインへ
+        tmux splitw -v -l 70% -c "/Volumes"
+        # 水平分割=50%
+        tmux splitw -v -l 50% -c "/Volumes"
+        # 最上部ペインへ
+        tmux select-pane -U
         tmux select-pane -U
         tmux send-keys "cd /Volumes" C-m
+        ;;
+      blog)
+        # 垂直分割=50%
+        tmux splitw -h -l 50% -c ${DIR_BLOGEGGG}
+        # 水平分割 下部=50%
+        tmux splitw -v -l 50% -c ${GH_PRACTA}/corporate
+        # 左ペインへ
+        tmux select-pane -L
+        # cd goldeneggg.github.io
+        tmux send-keys "cd ${DIR_BLOGEGGGSITE}" C-m
+        # 水平分割 下部=80%
+        tmux splitw -v -l 80% -c ${GH_PRACTA}/practa-inc.github.io
+        # 水平分割 下部=50%
+        tmux splitw -v -l 50% -c ${GH_PRA}/readlogs
         ;;
       W)
         # 水平分割 下部=50%
