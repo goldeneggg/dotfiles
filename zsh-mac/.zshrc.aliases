@@ -59,6 +59,7 @@ alias split='gsplit'
 alias tail='gtail'
 alias tsort='gtsort'
 alias uniq='guniq'
+alias xargs='gxargs'
 
 ## terraform
 alias tf='terraform'
