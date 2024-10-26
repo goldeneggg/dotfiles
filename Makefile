@@ -111,12 +111,20 @@ asdf-upgrade:
 	@asdf global terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
 	@asdf reshim terraform
 
-asdf-uninstall = for oldver in $$(asdf list $1 | \grep -v ' \*'); do echo uninstall $1 old version $${oldver}; asdf uninstall $1 $${oldver}; done
-asdf-remove-old-vers:
-	@$(call asdf-uninstall,nodejs)
-	@$(call asdf-uninstall,python)
-	@$(call asdf-uninstall,ruby)
-	@$(call asdf-uninstall,terraform)
+asdf-uninstall-all-old-vers = for oldver in $$(asdf list $1 | \grep -v ' \*'); do echo uninstall $1 old version $${oldver}; asdf uninstall $1 $${oldver}; done
+asdf-uninstall-all:
+	@$(call asdf-uninstall-all-old-vers,nodejs)
+	@$(call asdf-uninstall-all-old-vers,python)
+	@$(call asdf-uninstall-all-old-vers,ruby)
+	@$(call asdf-uninstall-all-old-vers,terraform)
+	@asdf reshim
+
+asdf-uninstall-selected-vers = asdf list $1 | fzf -m | awk '{print $$1}' | xargs -I {} sh -c 'echo "uninstall $1 {}..." && asdf uninstall $1 {}'
+asdf-uninstall-selected:
+	@$(call asdf-uninstall-selected-vers,nodejs)
+	@$(call asdf-uninstall-selected-vers,python)
+	@$(call asdf-uninstall-selected-vers,ruby)
+	@$(call asdf-uninstall-selected-vers,terraform)
 	@asdf reshim
 
 rust-upgrade:
