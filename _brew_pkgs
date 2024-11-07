@@ -90,6 +90,7 @@ export MY_BREW_PKGS=( \
   "bash" \
   "pre-commit" \
   "jnv" \
+  "gallery-dl" \
 )
 
 export MY_BREW_CASKS=( \
