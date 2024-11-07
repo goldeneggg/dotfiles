@@ -89,7 +89,7 @@ init-projects:
 # 	@pip install pynvim
 # 	@pip install neovim
 
-USEVER_NODEJS := 20
+USEVER_NODEJS := 22
 USEVER_PYTHON := 3.12
 USEVER_RUBY := 3.3
 USEVER_TERRAFORM := 1.9
