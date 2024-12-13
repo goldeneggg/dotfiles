@@ -95,5 +95,4 @@ export MY_BREW_PKGS=( \
 
 export MY_BREW_CASKS=( \
   "aws-vault" \
-  "warp" \
 )
