@@ -7,12 +7,9 @@ export MY_NPM_GLOBAL_PKGS=( \
   "aws-cdk" \
   "json-schema-generator" \
   "alfred-emoj" \
-  "@google/clasp" \
   "@mhlabs/cfn-diagram" \
   "capture-website-cli" \
   "@devcontainers/cli" \
   "ajv-cli" \
   "vitest" \
-  "@aws-amplify/cli" \
-  "@biomejs/biome" \
 )
