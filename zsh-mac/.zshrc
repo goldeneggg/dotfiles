@@ -40,7 +40,9 @@ source ~/.zshrc.maconly.vagrant-coreos
 
 source ~/.iterm2_shell_integration.zsh
 
-# asdf ( `echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >> ${ZDOTDIR:-~}/.zshrc` )
-. $(brew --prefix asdf)/libexec/asdf.sh
+# fix: 2025/02: asdf最新バージョンで libexec/asdf.sh が無くなっているので修正
+# See: https://asdf-vm.com/guide/getting-started.html
+# 上記Seeに合わせて、以下は不要なのでコメントアウト
+# . $(brew --prefix asdf)/libexec/asdf.sh
 
 #source /Users/fskmt/.docker/init-zsh.sh || true # Added by Docker Desktop

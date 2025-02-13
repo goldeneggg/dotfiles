@@ -17,7 +17,7 @@ export ANDROID_SDK="/Applications/Android Studio.app/sdk"
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
-export ASDF_ROOT=$HOME/.asdf
+export ASDF_DATA_DIR=$HOME/.asdf
 export GCP_SDK_HOME=$HOME/google-cloud-sdk
 export FLUTTER_ROOT=$HOME/flutter
 export CALIBRE_APP=/Applications/calibre.app
@@ -44,14 +44,23 @@ path=(
     $MYSQL57_BREW_ROOT/bin(N-/)
     $POSTGRES_BREW_ROOT/bin(N-/)
     $HOMEBREW_BASE_DIR/bin(N-/)
+    $ASDF_DATA_DIR/shims(N-/)
     /usr/local/mysql/bin(N-/)
     /usr/local/redis/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
     {/usr/local,/usr,}/sbin(N-/)
     )
-fpath=($HOME/zsh-functions(N-/) $fpath)
-manpath=({$HOME/local,/usr/local,/usr}/share/man(N-/))
-sudo_path=({,/usr,/usr/local}/sbin(N-/))
+fpath=(
+    $HOME/zsh-functions(N-/)
+    $ASDF_DATA_DIR/completions(N-/) # See: https://asdf-vm.com/guide/getting-started.html#set-up-shell-completions-optional-3
+    $fpath
+    )
+manpath=(
+    {$HOME/local,/usr/local,/usr}/share/man(N-/)
+    )
+sudo_path=(
+    {,/usr,/usr/local}/sbin(N-/)
+    )
 
 #- typeset = declare
 #-- typeset -U : 重複要素削除
