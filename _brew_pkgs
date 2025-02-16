@@ -1,6 +1,7 @@
 export MY_BREW_TAPS=( \
   "aws/tap" \
-  "1password/tap" \  # FIXME: upgrade中にmacの管理者パスワードを問われてエラーになる
+  # FIXME: upgrade中にmacの管理者パスワードを問われてエラーになる
+  "1password/tap" \
 )
 
 # except library pkgs
@@ -12,7 +13,8 @@ export MY_BREW_TAPS=( \
 
 export MY_BREW_PKGS=( \
   "git" \
-  "hub" \  # FIXME: deprecated?
+  # FIXME: deprecated?
+  "hub" \
   "git-secrets" \
   "gh" \
   "zsh" \
@@ -52,7 +54,8 @@ export MY_BREW_PKGS=( \
   "ipcalc" \
   "urlview" \
   "extract_url" \
-  "asdf" \
+  # FIXME: asdf v0.16系がbuggyな為、v0.15系をgit cloneでインストールして回避中
+  #"asdf" \
   "direnv" \
   "translate-shell" \
   "remake" \
@@ -65,7 +68,7 @@ export MY_BREW_PKGS=( \
   "shellcheck" \
   "hadolint" \
   "awscli" \
-  "aws-sam-cli" \  # tap aws/tap
+  "aws-sam-cli" \
   "cloudformation-guard" \
   "awscurl" \
   "gitleaks" \
@@ -76,7 +79,8 @@ export MY_BREW_PKGS=( \
   "brotli" \
   "zig" \
   "openapi-generator" \
-  # "1password-cli" \  # tap FIXME: upgrade中にmacの管理者パスワードを問われてエラーになる
+  # tap FIXME: upgrade中にmacの管理者パスワードを問われてエラーになる
+  # "1password-cli" \
   "iam-policy-json-to-terraform" \
   "fzf" \
   "fd" \
