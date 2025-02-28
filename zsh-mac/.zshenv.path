@@ -45,6 +45,7 @@ path=(
     $MYSQLCLIENT80_BREW_ROOT/bin(N-/)
     $MYSQL57_BREW_ROOT/bin(N-/)
     $POSTGRES_BREW_ROOT/bin(N-/)
+    $HOMEBREW_BASE_DIR/opt/sqlite/bin(N-/)
     $HOMEBREW_BASE_DIR/bin(N-/)
     /usr/local/mysql/bin(N-/)
     /usr/local/redis/bin(N-/)
