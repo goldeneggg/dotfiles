@@ -13,6 +13,7 @@ install-brew-pkgs:
 	@export _checkbrew=$(call assert-command,brew,See https://brew.sh/index_ja)
 	@./brew_packages.bash install
 
+# TODO: `gh extension upgrade gh-copilot` も実行したい
 upgrade-brew-pkgs:
 	@export _checkbrew=$(call assert-command,brew,See https://brew.sh/index_ja)
 	@./brew_packages.bash
