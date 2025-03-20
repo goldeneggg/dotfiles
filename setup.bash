@@ -16,7 +16,7 @@ Options:
   -v | --version VERSION          target version
   --github-user GITHUB_USER       user account on github (default: "GITHUB_USER" env value)
   --github-mail GITHUB_MAIL       user mail address on github (default: "GITHUB_MAIL" env value)
-  --skip-goget                    skip go get commands
+  --skip-goget                    skip go install commands
   -h | --help                     print a summary of the options
 
 EOT
@@ -143,16 +143,16 @@ then
   if [[ "${SKIP_GOGET}" != "true" ]]
   then
     PATH=${GOROOT}/bin:${PATH}
-    # go get -v github.com/github/hub
+    # go install -v github.com/github/hub
 
-    # go get -v -u github.com/cweill/gotests
-    # go get -v -u golang.org/x/tools/cmd/goimports
-    # go get -v -u github.com/golang/lint/golint
-    # go get -v github.com/golang/lint
-    # go get -v -u golang.org/x/tools/cmd/gopls
-    go get -v -u github.com/mgechev/revive
-    go get -v -u gopkg.in/alecthomas/gometalinter.v2
-    go get -v -u github.com/awslabs/aws-cloudformation-template-formatter/cmd/cfn-format
+    # go install -v github.com/cweill/gotests@latest
+    # go install -v golang.org/x/tools/cmd/goimports@latest
+    # go install -v github.com/golang/lint/golint@latest
+    # go install -v github.com/golang/lint@latest
+    # go install -v golang.org/x/tools/cmd/gopls
+    go install -v github.com/mgechev/revive@latest
+    go install -v gopkg.in/alecthomas/gometalinter.v2@latest
+    go install -v github.com/awslabs/aws-cloudformation-template-formatter/cmd/cfn-format@latest
   fi
 fi
 
@@ -243,7 +243,7 @@ then
   # for tmux-resurrect
   mkdir -p "${HOME}"/.tmux/resurrect
 fi
-pushd "${HOME}"/.tmux/plugins || exit 1
+pushd "${HOME}"/.tmux/plugins/tpm || exit 1
 git pull --rebase origin master
 popd || exit 1
 
