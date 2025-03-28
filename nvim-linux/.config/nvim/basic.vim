@@ -53,7 +53,9 @@ if exists('&ambiwidth')
 endif
 
 " python (asdf or system global)
-if !empty($ASDF_ROOT)
+if !empty($ASDF_DATA_DIR)
+  let g:python3_host_prog=$ASDF_DATA_DIR.'/shims/python'
+elseif !empty($ASDF_ROOT)
   let g:python3_host_prog=$ASDF_ROOT.'/shims/python'
 else
   let g:python3_host_prog='/usr/bin/python'
