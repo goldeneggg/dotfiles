@@ -206,7 +206,7 @@ bindkey "^pgr" fzf-git-rm
 #-- git branch -D
 # `Ctrl + p -> g -> d`
 function fzf-git-brd() {
-  BUFFER="git branch -D "$(git branch | fzf_cmd_for_tools_with_preview 'git diff {1}' -m | awk '{print $1}' | tr '\n' ' ')
+  BUFFER="git branch -D "$(git branch --format='%(refname:short)' | fzf_cmd_for_tools_with_preview 'git diff {1}' -m | awk '{print $1}' | tr '\n' ' ')
   #zle clear-screen
   zle accept-line
 }
@@ -216,7 +216,7 @@ bindkey "^pgd" fzf-git-brd
 #-- git checkout
 # `Ctrl + p -> g -> o`
 function fzf-git-co() {
-  BUFFER="git checkout "$(git branch | fzf_cmd_for_tools_with_preview 'git diff {1}' | awk '{print $1}' | tr '\n' ' ')
+  BUFFER="git checkout "$(git branch --format='%(refname:short)' | fzf_cmd_for_tools_with_preview 'git diff {1}' | awk '{print $1}' | tr '\n' ' ')
   #zle clear-screen
   zle accept-line
 }
