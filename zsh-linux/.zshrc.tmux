@@ -37,11 +37,16 @@ function tminit() {
 
   WINDOWS=(
     "wk"
+    "W"
+    "eb-dev"
+    "eb-biz"
     "go"
+    "app"
+    "sand"
+    "watch"
+    "x"
 #    "blog"
 #    "misc"
-    "eb"
-    "W"
   )
   # 新規セッション作成
   ## TODO 既に同一セッション名のセッションが動いている場合、セッション名を動的に変化させる
@@ -64,6 +69,37 @@ function tminit() {
         tmux select-pane -U
         tmux send-keys "cd ${HOME}" C-m
         ;;
+      W)
+        # 水平分割 下部=50%
+        tmux splitw -v -l 50% -c ${GH_DIR}
+        # 上ペインへ
+        tmux select-pane -U
+        tmux send-keys "cd ${GH_DIR}" C-m
+        ;;
+      eb-dev)
+        # 水平分割 50%
+        tmux splitw -v -l 50% -c "/Volumes"
+        # 上部ペインへ
+        tmux select-pane -U
+        tmux send-keys "cd /Volumes" C-m
+        # 水平分割=50%
+        tmux splitw -v -l 50% -c "/Volumes"
+        # 下部ペインへ
+        tmux select-pane -D
+        tmux select-pane -D
+        # 水平分割=50%
+        tmux splitw -v -l 50% -c "/Volumes"
+        ;;
+      eb-biz)
+        # 水平分割 70%
+        tmux splitw -v -l 70% -c "/Volumes"
+        # 水平分割=50%
+        tmux splitw -v -l 50% -c "/Volumes"
+        # 最上部ペインへ
+        tmux select-pane -U
+        tmux select-pane -U
+        tmux send-keys "cd /Volumes" C-m
+        ;;
       go)
         # 垂直分割=50%
         tmux splitw -h -l 50% -c ${GH_MY}/biz
@@ -77,6 +113,34 @@ function tminit() {
         tmux splitw -v -l 70% -c ${HOME}/gotools
         # 水平分割 下部=50%
         tmux splitw -v -l 50% -c ${HOME}/goroot
+        ;;
+      app)
+        # 水平分割 下部=50%
+        tmux splitw -v -l 50% -c ${GH_MY}/biz/app
+        # 上ペインへ
+        tmux select-pane -U
+        tmux send-keys "cd ${GH_MY}/biz/app" C-m
+        ;;
+      sand)
+        # 水平分割 下部=50%
+        tmux splitw -v -l 50% -c ${GH_MY}
+        # 上ペインへ
+        tmux select-pane -U
+        tmux send-keys "cd ${GH_PRA}" C-m
+        ;;
+      watch)
+        # 水平分割 下部=50%
+        tmux splitw -v -l 50% -c ${GH_PRA}/watch-ai
+        # 上ペインへ
+        tmux select-pane -U
+        tmux send-keys "cd ${GH_PRA}/watch-zig" C-m
+        ;;
+      x)
+        # 水平分割 下部=50%
+        tmux splitw -v -l 50% -c /Volumes
+        # 上ペインへ
+        tmux select-pane -U
+        tmux send-keys "cd /Volumes" C-m
         ;;
       misc)
         # 垂直分割=50%
@@ -95,16 +159,6 @@ function tminit() {
         # 水平分割=50%
         tmux splitw -v -l 50% -c ${GH_PRA}/watch-ai
         ;;
-      eb)
-        # 水平分割 下部=50%
-        tmux splitw -v -l 70% -c "/Volumes"
-        # 水平分割=50%
-        tmux splitw -v -l 50% -c "/Volumes"
-        # 最上部ペインへ
-        tmux select-pane -U
-        tmux select-pane -U
-        tmux send-keys "cd /Volumes" C-m
-        ;;
       blog)
         # 垂直分割=50%
         tmux splitw -h -l 50% -c ${DIR_BLOGEGGG}
@@ -118,13 +172,6 @@ function tminit() {
         tmux splitw -v -l 80% -c ${GH_PRACTA}/practa-inc.github.io
         # 水平分割 下部=50%
         tmux splitw -v -l 50% -c ${GH_PRA}/readlogs
-        ;;
-      W)
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_DIR}
-        # 上ペインへ
-        tmux select-pane -U
-        tmux send-keys "cd ${GH_DIR}" C-m
         ;;
       *)
         ;;
