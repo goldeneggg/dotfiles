@@ -50,3 +50,6 @@ cdpath=(
     $GOPATH/src/github.com(N-/)
     $GOPATH/src/code.google.com/p(N-/)
     )
+
+# direnv
+[[ `which direnv` ]] && eval "$(direnv hook zsh)"
