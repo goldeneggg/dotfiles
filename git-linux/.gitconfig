@@ -1,6 +1,20 @@
 [user]
   name = %GITHUB_USER%
   email = %GITHUB_MAIL%
+  signingkey = /Users/fskmt/.ssh/id_ed25519.pub
+
+[credential "https://github.com"]
+  username = %GITHUB_USER%
+
+# for replacing https to SSH github accessing for specific organization
+# [url "git@github.com:ORG"]
+    # insteadOf = https://github.com/ORG
+
+[gpg]
+  format = ssh
+
+[commit]
+  gpgsign = true
 
 [core]
   autocrlf = input
@@ -30,13 +44,6 @@
   date = cyan
   hash = yellow bold
   refname = magenta
-
-[credential "https://github.com"]
-  username = %GITHUB_USER%
-
-# for replacing https to SSH github accessing for specific organization
-# [url "git@github.com:ORG"]
-    # insteadOf = https://github.com/ORG
 
 # [pager]
 #   diff = diff-so-fancy | less --tabs=1,5 -RFX
