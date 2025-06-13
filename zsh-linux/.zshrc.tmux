@@ -91,14 +91,18 @@ function tminit() {
         tmux splitw -v -l 50% -c "/Volumes"
         ;;
       eb-biz)
-        # 水平分割 70%
-        tmux splitw -v -l 70% -c "/Volumes"
-        # 水平分割=50%
+        # 水平分割 50%
         tmux splitw -v -l 50% -c "/Volumes"
-        # 最上部ペインへ
-        tmux select-pane -U
+        # 上部ペインへ
         tmux select-pane -U
         tmux send-keys "cd /Volumes" C-m
+        # 水平分割=50%
+        tmux splitw -v -l 50% -c "/Volumes"
+        # 下部ペインへ
+        tmux select-pane -D
+        tmux select-pane -D
+        # 水平分割=50%
+        tmux splitw -v -l 50% -c "/Volumes"
         ;;
       go)
         # 垂直分割=50%
@@ -115,10 +119,14 @@ function tminit() {
         tmux splitw -v -l 50% -c ${HOME}/goroot
         ;;
       app)
+        # 垂直分割 下部=50%
+        tmux splitw -h -l 50% -c ${GH_MY}/biz/app
+        # 右ペインへ
+        tmux select-pane -R
         # 水平分割 下部=50%
         tmux splitw -v -l 50% -c ${GH_MY}/biz/app
-        # 上ペインへ
-        tmux select-pane -U
+        # 下ペインへ
+        tmux select-pane -D
         tmux send-keys "cd ${GH_MY}/biz/app" C-m
         ;;
       sand)
