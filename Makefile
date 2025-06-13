@@ -100,16 +100,16 @@ asdf-latest = $(shell asdf latest $1 $2)
 asdf-upgrade:
 	@asdf plugin update --all
 	@asdf install nodejs $(call asdf-latest,nodejs,$(USEVER_NODEJS).)
-	@asdf global nodejs $(call asdf-latest,nodejs,$(USEVER_NODEJS).)
+	@asdf set --home nodejs $(call asdf-latest,nodejs,$(USEVER_NODEJS).)
 	@asdf reshim nodejs
 	@asdf install python $(call asdf-latest,python,$(USEVER_PYTHON).)
-	@asdf global python $(call asdf-latest,python,$(USEVER_PYTHON).)
+	@asdf set --home python $(call asdf-latest,python,$(USEVER_PYTHON).)
 	@asdf reshim python
 	@asdf install ruby $(call asdf-latest,ruby,$(USEVER_RUBY).)
-	@asdf global ruby $(call asdf-latest,ruby,$(USEVER_RUBY).)
+	@asdf set --home ruby $(call asdf-latest,ruby,$(USEVER_RUBY).)
 	@asdf reshim ruby
 	@asdf install terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
-	@asdf global terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
+	@asdf set --home terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
 	@asdf reshim terraform
 
 asdf-uninstall-all-old-vers = for oldver in $$(asdf list $1 | \grep -v ' \*'); do echo uninstall $1 old version $${oldver}; asdf uninstall $1 $${oldver}; done

@@ -39,7 +39,7 @@ path=(
     $TAILSCALE_APP/Contents/MacOS(N-/)
     $GOBIN(N-/)
     $GOROOT/bin(N-/)
-    $ASDF_DATA_DIR/bin(N-/)
+    #$ASDF_DATA_DIR/bin(N-/)
     $ASDF_DATA_DIR/shims(N-/)
     $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
     $MYSQLCLIENT80_BREW_ROOT/bin(N-/)
