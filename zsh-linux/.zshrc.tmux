@@ -77,30 +77,24 @@ function tminit() {
         tmux send-keys "cd ${GH_DIR}" C-m
         ;;
       eb-dev)
+        # 垂直分割 50%
+        tmux splitw -h -l 50% -c "/Volumes"
         # 水平分割 50%
         tmux splitw -v -l 50% -c "/Volumes"
-        # 上部ペインへ
-        tmux select-pane -U
+        # 左部ペインへ
+        tmux select-pane -L
         tmux send-keys "cd /Volumes" C-m
-        # 水平分割=50%
-        tmux splitw -v -l 50% -c "/Volumes"
-        # 下部ペインへ
-        tmux select-pane -D
-        tmux select-pane -D
         # 水平分割=50%
         tmux splitw -v -l 50% -c "/Volumes"
         ;;
       eb-biz)
+        # 垂直分割 50%
+        tmux splitw -h -l 50% -c "/Volumes"
         # 水平分割 50%
         tmux splitw -v -l 50% -c "/Volumes"
-        # 上部ペインへ
-        tmux select-pane -U
+        # 左部ペインへ
+        tmux select-pane -L
         tmux send-keys "cd /Volumes" C-m
-        # 水平分割=50%
-        tmux splitw -v -l 50% -c "/Volumes"
-        # 下部ペインへ
-        tmux select-pane -D
-        tmux select-pane -D
         # 水平分割=50%
         tmux splitw -v -l 50% -c "/Volumes"
         ;;
