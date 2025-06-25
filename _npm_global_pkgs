@@ -15,4 +15,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "@anthropic-ai/claude-code" \
   "@openai/codex" \
   "@modelcontextprotocol/inspector" \
+  "@google/gemini-cli" \
 )
