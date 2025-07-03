@@ -7,4 +7,5 @@ export MY_PIP_GLOBAL_PKGS=( \
   "neovim" \
   "open-interpreter" \
   "awscli-local" \
+  "uv" \
 )
