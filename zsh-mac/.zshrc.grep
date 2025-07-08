@@ -1,5 +1,5 @@
 GREP_OPTIONS="--binary-files=without-match"
-GREP_OPTIONS="-r $GREP_OPTIONS"
+#GREP_OPTIONS="-r $GREP_OPTIONS"
 GREP_OPTIONS="--exclude=\*.tmp --exclude=\*.log --exclude=\*.bak --exclude=\*.bk $GREP_OPTIONS"
 
 # [linux]GNU grep is high priority
