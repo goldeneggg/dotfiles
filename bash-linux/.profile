@@ -34,4 +34,5 @@ else
 fi
 . "$HOME/.cargo/env"
 
-#source /Users/fskmt/.docker/init-bash.sh || true # Added by Docker Desktop
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"

@@ -46,3 +46,9 @@ source ~/.iterm2_shell_integration.zsh
 # . $(brew --prefix asdf)/libexec/asdf.sh
 
 #source /Users/fskmt/.docker/init-zsh.sh || true # Added by Docker Desktop
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
