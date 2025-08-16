@@ -111,7 +111,7 @@ function tminit() {
         tmux splitw -v -l 50% -c ${GH_PRA}/watch-ai
         # 上ペインへ
         tmux select-pane -U
-        tmux send-keys "cd ${GH_PRA}/watch-zig" C-m
+        tmux send-keys "cd ${GH_PRA}/watch-aws" C-m
         ;;
       b-dev)
         # 垂直分割 50%
