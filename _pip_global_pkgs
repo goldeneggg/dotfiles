@@ -1,11 +1,9 @@
 export MY_PIP_GLOBAL_PKGS=( \
   "cfn-lint" \
-  "cfn-policy-validator" \
   "pydot" \
   "setuptools" \
   "pynvim" \
   "neovim" \
-  "open-interpreter" \
   "awscli-local" \
   "uv" \
 )
