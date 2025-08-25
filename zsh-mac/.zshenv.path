@@ -13,7 +13,7 @@ export MYSQLCLIENT80_BREW_ROOT=$HOMEBREW_OPT_DIR/mysql-client@8.0
 export MYSQL57_BREW_ROOT=$HOMEBREW_OPT_DIR/mysql@5.7
 export POSTGRES_BREW_ROOT=$HOMEBREW_OPT_DIR/libpq
 
-export ANDROID_SDK="/Applications/Android Studio.app/sdk"
+#export ANDROID_SDK="/Applications/Android Studio.app/sdk"
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export GOBIN=$GOPATH/bin
@@ -30,13 +30,14 @@ path=(
     $HOME/bin(N-/)
     # Omnisharp by NeoBundle of vim
     $HOME/.bundle/Omnisharp/server/OmniSharp/bin/Debug(N-/)
+    $HOME/.lmstudio/bin(N-/)  # LM Studio CLI
     $HOME/.cabal/bin(N-/)
     $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
-    $GCP_SDK_HOME/bin(N-/)
-    $ANDROID_SDK/platform-tools(N-/)
-    $FLUTTER_ROOT/bin(N-/)
-    $CALIBRE_APP/Contents/MacOS(N-/)
     $TAILSCALE_APP/Contents/MacOS(N-/)
+    $CALIBRE_APP/Contents/MacOS(N-/)
+    $GCP_SDK_HOME/bin(N-/)
+    #$ANDROID_SDK/platform-tools(N-/)
+    $FLUTTER_ROOT/bin(N-/)
     $GOBIN(N-/)
     $GOROOT/bin(N-/)
     #$ASDF_DATA_DIR/bin(N-/)
