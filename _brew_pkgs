@@ -98,6 +98,7 @@ export MY_BREW_PKGS=( \
   "sqlite" \
   # from tap "duaraghav8/tap"
   "dockershrink" \
+  "go-jsonnet" \
 )
 
 export MY_BREW_CASKS=( \
