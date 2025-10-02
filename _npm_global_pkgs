@@ -16,4 +16,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "@openai/codex" \
   "@modelcontextprotocol/inspector" \
   "@google/gemini-cli" \
+  "pnpm" \
 )
