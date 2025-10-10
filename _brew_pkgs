@@ -99,6 +99,7 @@ export MY_BREW_PKGS=( \
   # from tap "duaraghav8/tap"
   "dockershrink" \
   "go-jsonnet" \
+  "geckodriver" \
 )
 
 export MY_BREW_CASKS=( \
