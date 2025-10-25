@@ -18,4 +18,5 @@ export MY_NPM_GLOBAL_PKGS=( \
   "@google/gemini-cli" \
   "@github/copilot" \
   "pnpm" \
+  "@typespec/compiler" \
 )
