@@ -101,6 +101,7 @@ export MY_BREW_PKGS=( \
   "go-jsonnet" \
   "chromedriver" \
   "geckodriver" \
+  "go-task" \
 )
 
 export MY_BREW_CASKS=( \
