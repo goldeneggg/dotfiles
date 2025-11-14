@@ -103,6 +103,7 @@ export MY_BREW_PKGS=( \
   "geckodriver" \
   "go-task" \
   "mise" \
+  "terminal-notifier" \
 )
 
 export MY_BREW_CASKS=( \
