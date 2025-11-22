@@ -93,7 +93,7 @@ init-projects:
 USEVER_NODEJS := 24
 USEVER_PYTHON := 3.13
 USEVER_RUBY := 3.4
-USEVER_TERRAFORM := 1.13
+USEVER_TERRAFORM := 1.14
 
 asdf-latest = $(shell asdf latest $1 $2)
 
