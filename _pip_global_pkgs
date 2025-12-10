@@ -6,4 +6,5 @@ export MY_PIP_GLOBAL_PKGS=( \
   "neovim" \
   "awscli-local" \
   "uv" \
+  "bikeshed" \
 )
