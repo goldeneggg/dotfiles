@@ -91,7 +91,7 @@ init-projects:
 # 	@pip install neovim
 
 USEVER_NODEJS := 24
-USEVER_PYTHON := 3.13
+USEVER_PYTHON := 3.14
 USEVER_RUBY := 3.4
 USEVER_TERRAFORM := 1.14
 

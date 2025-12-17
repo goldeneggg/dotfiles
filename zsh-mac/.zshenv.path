@@ -33,6 +33,8 @@ path=(
     $HOME/.lmstudio/bin(N-/)  # LM Studio CLI
     $HOME/.cabal/bin(N-/)
     $HOME/.ebcli-virtual-env/executables(N-/)  # AWS eb-cli
+    # for uv tool install
+    $HOME/.local/bin(N-/)
     $TAILSCALE_APP/Contents/MacOS(N-/)
     $CALIBRE_APP/Contents/MacOS(N-/)
     $GCP_SDK_HOME/bin(N-/)
@@ -40,7 +42,6 @@ path=(
     $FLUTTER_ROOT/bin(N-/)
     $GOBIN(N-/)
     $GOROOT/bin(N-/)
-    #$ASDF_DATA_DIR/bin(N-/)
     $ASDF_DATA_DIR/shims(N-/)
     $OPENSSL11_BREW_ROOT/bin(N-/)  # See: .zshenv.common
     $MYSQLCLIENT80_BREW_ROOT/bin(N-/)

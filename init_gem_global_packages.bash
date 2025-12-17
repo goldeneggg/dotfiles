@@ -4,10 +4,10 @@
 ### initial setup gem packages for Mac
 ###
 
-gem --version
-
 source ./_gem_global_pkgs
 
+gem update --system
+gem --version
 for pkg in ${MY_GEM_GLOBAL_PKGS[@]}
 do
   gem install ${pkg}

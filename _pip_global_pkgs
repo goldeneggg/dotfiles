@@ -1,10 +1,5 @@
 export MY_PIP_GLOBAL_PKGS=( \
-  "cfn-lint" \
   "pydot" \
   "setuptools" \
-  "pynvim" \
   "neovim" \
-  "awscli-local" \
-  "uv" \
-  "bikeshed" \
 )

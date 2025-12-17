@@ -17,10 +17,13 @@ export ANACONDA3=$HOME/anaconda3
 path=(
     $HOME/bin(N-/)
     $HOME/local/bin(N-/)
+    # for uv tool install
+    $HOME/.local/bin(N-/)
+    $HOME/.nodebrew/current/bin(N-/)
+    $HOME/.cabal/bin(N-/)
     /usr/local/mysql/bin(N-/)
     $GOROOT/bin(N-/)
     $GOBIN(N-/)
-    $HOME/.nodebrew/current/bin(N-/)
     #$ANACONDA3/bin(N-/)
     $JAVA_HOME/bin(N-/)
     $SCALA_HOME/bin(N-/)
@@ -28,7 +31,6 @@ path=(
     $ERLANG_HOME/bin(N-/)
     $ELIXIR_HOME/bin(N-/)
     #$PIP_HOME/bin(N-/)
-    $HOME/.cabal/bin(N-/)
     {/usr/local,/usr,}/bin(N-/)
     {/usr/local,/usr,}/sbin(N-/)
     )
