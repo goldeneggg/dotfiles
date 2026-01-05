@@ -7,14 +7,16 @@
 dump.rdb
 ~*
 *.log
-
 .vim
 plugged
 configstore/
 keychain*
-
 .vscode
 tmp
+.env
+.envrc
 
+# for Claude
 Claude
-.claude
+/.claude
+.mcp.json
