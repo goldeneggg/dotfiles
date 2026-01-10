@@ -1,9 +1,28 @@
 {
+  "language": "japanese",
   "alwaysThinkingEnabled": true,
+  "outputStyle": "concise",
+  "cleanupPeriodDays": 30,
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./.envrc)",
+      "Read(~/.aws/**)",
+      "Read(~/.ssh/id_*)",
+      "Read(~/.gnupg/**)",
+      "Read(**/.git/credentials)",
+      "Read(**/credentials.json)",
+      "Read(**/service-account*.json)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "",
+        "matcher": "startup",
         "hooks": [
           {
             "type": "command",
