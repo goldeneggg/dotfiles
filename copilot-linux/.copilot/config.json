@@ -1,0 +1,7 @@
+{
+  "trusted_folders": [
+    "~/github",
+    "~/go/src",
+    "~/dotfiles"
+  ]
+}
