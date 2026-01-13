@@ -4,6 +4,7 @@
   "outputStyle": "concise",
   "cleanupPeriodDays": 30,
   "permissions": {
+    "defaultMode": "plan",
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
