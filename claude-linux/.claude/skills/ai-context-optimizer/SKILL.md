@@ -1,10 +1,10 @@
 ---
-name: optimize-ai-context
+name: ai-context-optimizer
 description: |
   AIコーディング支援ツールのコンテキストファイル（CLAUDE.md等）を最適化するスキル。
   以下の状況で使用:
   (1) ユーザーが「CLAUDE.mdを改善して」「コンテキストファイルを最適化して」と依頼した時
-  (2) ユーザーが明示的に「/optimize-ai-context」を実行した時
+  (2) ユーザーが明示的に「/ai-context」を実行した時-optimizer
   (3) AI向けドキュメントの品質改善を求められた時
 ---
 

@@ -1,10 +1,10 @@
 ---
-name: refactor-code
+name: code-refactor
 description: |
   コードをリファクタリングするスキル。
   以下の状況で使用:
   (1) ユーザーが「このコードをリファクタリングして」と依頼した時
-  (2) ユーザーが明示的に「/refactor-code」を実行した時
+  (2) ユーザーが明示的に「/code-refactor」を実行した時
   (3) コードの改善・整理を求められた時
 ---
 
