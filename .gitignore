@@ -19,4 +19,4 @@ tmp
 # for Claude
 Claude
 /.claude
-.mcp.json
+.mcp*.json
