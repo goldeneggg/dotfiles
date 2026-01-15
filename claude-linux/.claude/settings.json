@@ -1,10 +1,6 @@
 {
-  "language": "japanese",
-  "alwaysThinkingEnabled": true,
-  "outputStyle": "concise",
   "cleanupPeriodDays": 30,
   "permissions": {
-    "defaultMode": "plan",
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
@@ -18,7 +14,8 @@
       "Read(**/service-account*.json)",
       "Read(**/*.pem)",
       "Read(**/*.key)"
-    ]
+    ],
+    "defaultMode": "plan"
   },
   "hooks": {
     "SessionStart": [
@@ -65,5 +62,8 @@
         ]
       }
     ]
-  }
+  },
+  "outputStyle": "concise",
+  "language": "japanese",
+  "alwaysThinkingEnabled": true
 }
