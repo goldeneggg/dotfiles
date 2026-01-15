@@ -3,9 +3,12 @@ name: post-impl-validator
 description: |
   実装完了後のテスト、lint、ベストプラクティスレビューを自動実行するスキル。
   以下の状況で使用:
-  (1) ユーザーが「実装完了」「完了」「できた」「終わった」「実装した」などと発言した時
+  (1) ユーザーが「実装完了」「完了」「できた」「終わった」「実装した」「書き終わった」などと発言した時
   (2) ユーザーが明示的に「/post-impl-validator」を実行した時
-  (3) ファイル編集後に「コミットして」「PRを作成」などと依頼された時
+  (3) ファイル編集後に「コミットして」「PRを作成」「プッシュして」「push」などと依頼された時
+  (4) ユーザーが「テストを実行して」「テストして」「lintを確認して」「lintかけて」と個別に依頼した時
+  (5) ユーザーが「レビューして」「チェックして」「検証して」と品質確認を求めた時
+  (6) ユーザーが「これで問題ない?」「大丈夫?」と確認を求めた時
 ---
 
 # Post-Implementation Validator
@@ -19,6 +22,26 @@ description: |
 3. Lint実行 → エラー時は自動修正を試行（最大3回）
 4. テスト実行 → 失敗時は修正を提案
 5. ベストプラクティスレビュー → references/ を参照してチェック
+
+## 実装スタイル
+
+### Degrees of Freedom: Medium
+
+**理由**:
+- 検出→判定→実行の流れは固定（Low的要素）
+- 自動修正リトライやエラー解析は判断が必要（High的要素）
+- バランスを取ってMediumとする
+
+### 自律的に実行
+- 変更ファイル検出
+- プロジェクトタイプ判定
+- lint/test実行
+- 自動修正リトライ（最大3回）
+
+### ユーザー確認が必要
+- スキル実行開始の承認（初回トリガー時）
+- 手動修正が必要な場合の対処方針
+- 複数プロジェクト変更時の処理順序確認（オプション）
 
 ## プロジェクト別コマンドマッピング
 
@@ -123,6 +146,30 @@ description: |
 - `scripts/run-tests.sh <project> <workdir>` - プロジェクト別にテスト実行
 - `scripts/auto-fix.sh <project> <workdir>` - 自動修正を試行
 
+## 依存関係
+
+以下のツールがインストールされている必要があります:
+
+### 必須
+- `git` - 変更ファイル検出
+- `bash` 4.0+ - スクリプト実行（POSIX準拠）
+
+### プロジェクト別
+
+**Go**:
+- `go` コマンド（1.18+推奨）
+- デフォルトで使用: `go vet`, `go test`
+- オプション（環境変数で指定可能）: `golangci-lint`, `goimports`, `gofmt`
+
+**TypeScript/React**:
+- `npm`, `yarn`, または `pnpm`
+- package.json内に`lint`, `test`スクリプトが定義されていること
+- オプション: eslintプラグイン、prettier
+
+**Terraform**:
+- `terraform` 0.12+
+- オプション（環境変数で指定可能）: `tflint`, `tfsec`, `checkov`
+
 ## ベストプラクティス参照
 
 変更ファイルの言語/フレームワークに応じて以下を参照:
@@ -130,3 +177,22 @@ description: |
 - **Go**: `references/go-best-practices.md`
 - **TypeScript/React**: `references/typescript-react-best-practices.md`
 - **Terraform**: `references/terraform-best-practices.md`
+
+### 効率的な読み込み（grepパターン）
+
+各referencesは700-1500行と大きいため、問題検出時は以下のgrepパターンで必要箇所のみ読み込む:
+
+**go-best-practices.md (720行)**:
+- エラー検出時: `grep -A 10 -B 2 "## エラーハンドリング"`
+- 命名問題: `grep -A 10 -B 2 "## 命名規則"`
+- 並行処理: `grep -A 10 -B 2 "## 並行処理"`
+- テスト: `grep -A 10 -B 2 "## テスト"`
+
+**typescript-react-best-practices.md (1506行)**:
+- Hooks問題: `grep -A 10 -B 2 "## Hooks使用法"`
+- 型エラー: `grep -A 10 -B 2 "## 型定義"`
+- パフォーマンス: `grep -A 10 -B 2 "## パフォーマンス最適化"`
+
+**terraform-best-practices.md (1467行)**:
+- セキュリティ: `grep -A 10 -B 2 "## セキュリティ"`
+- 状態管理: `grep -A 10 -B 2 "## 状態管理"`
