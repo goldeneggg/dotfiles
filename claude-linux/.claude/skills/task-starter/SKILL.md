@@ -69,7 +69,7 @@ Web開発プロジェクト・タスクの標準ドキュメント構造を生�
 3. **todos/ - タスク分割**
    - `references/templates/todo-template.md` をベースに作成
    - 1-2時間で完了する粒度に分割
-   - 各タスクに連番フォルダ: `01-setup/`, `02-implement-xxx/`, ...
+   - 各タスクに連番フォルダ: `001-setup/`, `002-implement-xxx/`, ...
    - 依存関係を考慮した順序で配置
 
 ### Phase 4: レビューと確定
