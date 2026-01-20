@@ -60,10 +60,9 @@ def create_directories(project_path: Path) -> None:
     ]
     for dir_name in dirs:
         (project_path / dir_name).mkdir(parents=True, exist_ok=True)
-        # Create .gitkeep for empty directories
+        # Ensure .gitkeep exists so the directory is tracked by git
         gitkeep = project_path / dir_name / ".gitkeep"
-        if not any((project_path / dir_name).iterdir()):
-            gitkeep.touch()
+        gitkeep.touch()
 
 
 def init_project(
