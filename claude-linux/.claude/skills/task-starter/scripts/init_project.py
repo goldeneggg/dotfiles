@@ -21,7 +21,12 @@ def to_kebab_case(name: str) -> str:
     name = re.sub(r'[^a-zA-Z0-9-]', '', name)
     # Convert to lowercase and remove consecutive hyphens
     name = re.sub(r'-+', '-', name.lower())
-    return name.strip('-')
+    result = name.strip('-')
+    if not result:
+        raise ValueError(
+            "Project name must contain at least one alphanumeric character."
+        )
+    return result
 
 
 def create_readme(project_path: Path, project_name: str, description: str = "") -> None:
