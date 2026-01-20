@@ -37,9 +37,11 @@ Web開発プロジェクト・タスクの標準ドキュメント構造を生�
 ### Phase 2: 構造生成
 
 1. **プロジェクトフォルダを作成**
+   スキルディレクトリ（`.claude/skills/task-starter/`）内のスクリプトを実行:
    ```bash
-   python3 scripts/init_project.py "{プロジェクト名}" --path "{出力先}" --description "{概要}"
+   python3 /path/to/.claude/skills/task-starter/scripts/init_project.py "{プロジェクト名}" --path "{出力先}" --description "{概要}"
    ```
+   ※ 実行時はスキルの実際のパスに置き換える
 
    生成される構造:
    ```
