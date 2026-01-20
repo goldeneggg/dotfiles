@@ -5,7 +5,6 @@ Creates the standard folder structure for Web development projects.
 """
 
 import argparse
-import os
 import re
 from datetime import datetime
 from pathlib import Path
