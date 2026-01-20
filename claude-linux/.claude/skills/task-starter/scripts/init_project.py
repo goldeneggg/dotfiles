@@ -89,11 +89,11 @@ def init_project(
 
     project_path = Path(base_dir) / folder_name
 
-    if project_path.exists():
+    # Create project directory (race-safe)
+    try:
+        project_path.mkdir(parents=True)
+    except FileExistsError:
         raise FileExistsError(f"Project directory already exists: {project_path}")
-
-    # Create project directory
-    project_path.mkdir(parents=True)
 
     # Create structure
     create_directories(project_path)
