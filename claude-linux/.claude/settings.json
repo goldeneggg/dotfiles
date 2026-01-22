@@ -1,6 +1,20 @@
 {
   "cleanupPeriodDays": 30,
   "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Read(./.git/config)",
+      "Read(./package.json)",
+      "Read(./Makefile)",
+      "Read(./go.mod)",
+      "Read(./requirements.txt)",
+      "Read(./Gemfile)",
+      "Read(./Cargo.toml)",
+      "Read(./composer.json)"
+    ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
