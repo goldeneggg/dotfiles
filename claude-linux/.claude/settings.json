@@ -77,10 +77,6 @@
       }
     ]
   },
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.sh"
-  },
   "outputStyle": "concise",
   "language": "japanese",
   "alwaysThinkingEnabled": true
