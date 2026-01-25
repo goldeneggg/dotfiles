@@ -2,6 +2,9 @@
   "cleanupPeriodDays": 30,
   "permissions": {
     "allow": [
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",
@@ -13,7 +16,8 @@
       "Read(./requirements.txt)",
       "Read(./Gemfile)",
       "Read(./Cargo.toml)",
-      "Read(./composer.json)"
+      "Read(./composer.json)",
+      "WebSearch"
     ],
     "deny": [
       "Read(./.env)",
@@ -27,7 +31,20 @@
       "Read(**/credentials.json)",
       "Read(**/service-account*.json)",
       "Read(**/*.pem)",
-      "Read(**/*.key)"
+      "Read(**/*.key)",
+      "Bash(sudo:*)"
+    ],
+    "ask": [
+      "Bash(chmod:*)",
+      "Bash(chown:*)",
+      "Bash(kill:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(touch:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(rmdir:*)"
     ],
     "defaultMode": "plan"
   },
