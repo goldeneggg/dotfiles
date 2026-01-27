@@ -36,9 +36,7 @@ function tminit() {
   SESS=${1:-${DEFAULT_SESS_NAME}}
 
   WINDOWS=(
-    "wk"
-    "PARTNER-1"
-    "PARTNER-2"
+    "home"
     "app"
     "go"
     "watch"
@@ -142,44 +140,6 @@ function tminit() {
         tmux select-pane -U
         tmux send-keys "cd /Volumes" C-m
         ;;
-      sand)
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_MY}
-        # 上ペインへ
-        tmux select-pane -U
-        tmux send-keys "cd ${GH_PRA}" C-m
-        ;;
-      misc)
-        # 垂直分割=50%
-        tmux splitw -h -l 50% -c ${GH_MY}/misc-aws
-        # 水平分割 下部=80%
-        tmux splitw -v -l 80% -c ${GH_PRA}/watch-aws
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_PRA}/watch-docker
-        # 左ペインへ
-        tmux select-pane -L
-        tmux send-keys "cd ${GH_PRA}/watch-wasm" C-m
-        # 水平分割=80%
-        tmux splitw -v -l 80% -c ${GH_PRA}/watch-ruby
-        # 水平分割=80%
-        tmux splitw -v -l 80% -c ${GH_PRA}/watch-zig
-        # 水平分割=50%
-        tmux splitw -v -l 50% -c ${GH_PRA}/watch-ai
-        ;;
-      blog)
-        # 垂直分割=50%
-        tmux splitw -h -l 50% -c ${DIR_BLOGEGGG}
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_PRACTA}/corporate
-        # 左ペインへ
-        tmux select-pane -L
-        # cd goldeneggg.github.io
-        tmux send-keys "cd ${DIR_BLOGEGGGSITE}" C-m
-        # 水平分割 下部=80%
-        tmux splitw -v -l 80% -c ${GH_PRACTA}/practa-inc.github.io
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_PRA}/readlogs
-        ;;
       *)
         ;;
     esac
@@ -188,4 +148,34 @@ function tminit() {
   done
 
   tmux a -t ${SESS}
+}
+
+function tmccsplitpanes() {
+  # 水平分割 下部=50%
+  tmux splitw -v -l 50%
+  # 上ペインへ
+  tmux select-pane -U
+  # 垂直分割=50%
+  tmux splitw -h -l 50%
+  # 右ペインへ
+  #tmux select-pane -R
+  # 水平分割 下部=50%
+  tmux splitw -v -l 50%
+  # 下ペインへ
+  tmux select-pane -D
+  # 垂直分割=50%
+  tmux splitw -h -l 50%
+  # 右ペインへ
+  #tmux select-pane -R
+  # 水平分割 下部=50%
+  tmux splitw -v -l 50%
+}
+
+function tmcmdallpanes() {
+  cmd="${1:-"ls -la"}"
+  tmux list-panes -F "#{pane_id}" | xargs -I {} tmux send-keys -t {} "${cmd}" Enter
+}
+
+function tmccstartallpanes() {
+  tmcmdtallpanes "claude"
 }
