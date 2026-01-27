@@ -23,7 +23,7 @@ Terraform構成の依存関係管理とバリデーションを体系的に評�
 まず、analyze_terraform.pyスクリプトを使用してTerraform構成を分析します。
 
 ```bash
-python3 scripts/analyze_terraform.py <terraform_directory>
+python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform.py <terraform_directory>
 ```
 
 このスクリプトは以下をJSON形式で出力:
@@ -148,7 +148,7 @@ terraform validate
 terraform plan
 
 # 再度分析スクリプトを実行して改善を確認
-python3 scripts/analyze_terraform.py <terraform_directory>
+python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform.py <terraform_directory>
 ```
 
 ## 評価観点の詳細
@@ -224,7 +224,7 @@ Terraform構成ファイルを解析し、改善点を特定します。
 **使用方法**:
 
 ```bash
-python3 scripts/analyze_terraform.py <terraform_directory>
+python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform.py <terraform_directory>
 ```
 
 **出力例**:
