@@ -209,12 +209,14 @@ ORG_IGNORE_TARGETS=( \
   "Gemfile.local.lock" \
   ".solargraph.yml" \
 )
-
 echo "#----- original global .gitignores" >> "${GH_GLOBAL_IGNORE}"
 for ot in "${ORG_IGNORE_TARGETS[@]}"
 do
   echo "${ot}" >> "${GH_GLOBAL_IGNORE}"
 done
+
+# mine
+echo ".goldeneggg" >> "${GH_GLOBAL_IGNORE}"
 
 # $HOME/bin
 if [[ ! -d ${HOME}/bin ]]
