@@ -31,7 +31,7 @@ git管理されたリポジトリに対して徹底的なコードレビュー�
 **GitHub PRレビューの場合：**
 
 ```bash
-~/.claude/skills/pr-reviewer/scripts/diff.sh --repo {repo} --pr {pr_num}
+{このSKILL.mdのディレクトリ}/scripts/diff.sh --repo {repo} --pr {pr_num}
 ```
 
 - `{repo}`: "owner/name" 形式のリポジトリ（例: "goldeneggg/biz"）
@@ -46,7 +46,7 @@ gh pr view {pr_num} --repo {repo} --json title,body --jq '.title + "\n\n" + .bod
 **ローカルブランチレビューの場合：**
 
 ```bash
-~/.claude/skills/pr-reviewer/scripts/diff.sh --branch {target_branch} --base {base_branch}
+{このSKILL.mdのディレクトリ}/scripts/diff.sh --branch {target_branch} --base {base_branch}
 ```
 
 - `{target_branch}`: レビュー対象のブランチ（例: "fix-ai"）
