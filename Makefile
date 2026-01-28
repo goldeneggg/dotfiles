@@ -1,7 +1,11 @@
+SHELL := /bin/bash
+
 # required command detection
 assert-command = $(if $(shell hash $1 2>&1),$(error '$1' command is missing. $2),)
 $(call assert-command,curl,)
 $(call assert-command,git,)
+
+assert-var = $(if $($1),,$(error $1 variable is not assigned))
 
 # OS confirmation
 OSFLG := L
@@ -57,38 +61,6 @@ init-gems:
 
 init-projects:
 	@./init_my_github_projects.bash
-
-# DEPRECATED: これ以降のpyenv前提メモは全てDEPRECATED
-# --- re-activate for neovim
-# 1. Run this make target  ※このMakeをそのままmake実行しても途中でコケるので、手動実施する必要あり
-# 2. Run `pip install flake8`
-# 3. Run `nvim` -> `:UpdateRemotePlugin`
-#
-# "pyenv virtualenv -f VER neovimN" した後の "pyenv shell neovimN" が重要
-# これを実施することでpyenv versionsした時に仮想環境もリストアップされるようになる
-# => これにより、PYENV_ROOT/versions/neovimN というシムリンクが作成される（はず）
-# neovimのconfigではこのシムリンクを参照してpythonの具体的なバージョン番号を指定しなくても良い形にしたい
-#
-# Note: ;UpdateRemotePlugin が Failed to load python3 host. You can try to see what happened by starting nvim with $NVIM_PYTHON_LOG_FILE set and opening the generated log file.
-# 等のエラーになる場合は、neovimのconfigで "let g:python3_host_prog" で設定しているパスが誤っている可能性があるので見直す
-#
-# Note: Vim8の場合だと "Vim(pythonx):ModuleNotFoundError: No module named 'neovim'" というエラーになる
-# pipで導入したpythonが無視されシステム？のpython3を使っている為、そのpython3でpynvimとneovimをpip installしないとダメ
-# - Vim8を開いて :pyx print(sys.version); print(sys.path) を実行して、Vim8が使ってるpython3のバージョンとパスを確認
-# - 確認したパスと関連しているフォルダの bin/python3.x を利用して "python3.x -m pip install {pynvim,neovim}" する
-# - Vim8を開き直してエラーが解消されたか確認
-# upgrade-python:
-# 	@export _checkpyenv=$(call assert-command,pyenv,)
-# 	@echo '>>>>>>>>>> Start python upgrade for neovim'
-# 	@pyenv global $(ver3) $(ver2) && pyenv rehash
-# 	@pyenv virtualenv -f $(ver3) neovim3
-# 	@pyenv shell neovim3
-# 	@pip install pynvim
-# 	@pip install neovim
-# 	@pyenv virtualenv -f $(ver2) neovim2
-# 	@pyenv shell neovim2
-# 	@pip install pynvim
-# 	@pip install neovim
 
 USEVER_NODEJS := 24
 USEVER_PYTHON := 3.14
@@ -147,3 +119,46 @@ watches-update-and-sync:
 
 watches-git-diff-check:
 	@$(call watch-repos-recursive,git diff --exit-code --quiet)
+
+cc-skill-subtree-add:
+	@$(call assert-var,REPO)
+	@$(call assert-var,GH_REMOTE)
+	@$(call assert-var,NAME)
+	@$(call assert-var,REPO_DIR)
+	@TEMP_DIR=$$(mktemp -d) && \
+		git clone --depth 1 --filter=blob:none --sparse https://github.com/${REPO}.git "$$TEMP_DIR" && \
+		cd "$$TEMP_DIR" && \
+		git sparse-checkout set $(REPO_DIR)/$(NAME) && \
+		cd - > /dev/null && \
+		mkdir -p claude-linux/.claude/skills && \
+		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" claude-linux/.claude/skills/ && \
+		rm -rf "$$TEMP_DIR" && \
+		git add claude-linux/.claude/skills/$(NAME) && \
+		git commit -m "Add $(NAME) skill from $(REPO)"
+
+cc-official-skill-subtree-add: REPO := anthropics/skills
+cc-official-skill-subtree-add: GH_REMOTE := anthropics-skills
+cc-official-skill-subtree-add: REPO_DIR := skills
+cc-official-skill-subtree-add: cc-skill-subtree-add
+
+cc-skill-subtree-update:
+	@$(call assert-var,REPO)
+	@$(call assert-var,GH_REMOTE)
+	@$(call assert-var,NAME)
+	@$(call assert-var,REPO_DIR)
+	@TEMP_DIR=$$(mktemp -d) && \
+		git clone --depth 1 --filter=blob:none --sparse https://github.com/${REPO}.git "$$TEMP_DIR" && \
+		cd "$$TEMP_DIR" && \
+		git sparse-checkout set $(REPO_DIR)/$(NAME) && \
+		cd - > /dev/null && \
+		rm -rf claude-linux/.claude/skills/$(NAME) && \
+		mkdir -p claude-linux/.claude/skills && \
+		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" claude-linux/.claude/skills/ && \
+		rm -rf "$$TEMP_DIR" && \
+		git add claude-linux/.claude/skills/$(NAME) && \
+		git commit -m "Update $(NAME) skill from $(REPO)"
+
+cc-official-skill-subtree-update: REPO := anthropics/skills
+cc-official-skill-subtree-update: GH_REMOTE := anthropics-skills
+cc-official-skill-subtree-update: REPO_DIR := skills
+cc-official-skill-subtree-update: cc-skill-subtree-update
