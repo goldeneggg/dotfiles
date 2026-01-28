@@ -120,6 +120,8 @@ watches-update-and-sync:
 watches-git-diff-check:
 	@$(call watch-repos-recursive,git diff --exit-code --quiet)
 
+CC_SKILLS_DIR := ./claude-linux/.claude/skills
+
 cc-skill-subtree-add:
 	@$(call assert-var,REPO)
 	@$(call assert-var,GH_REMOTE)
@@ -130,10 +132,10 @@ cc-skill-subtree-add:
 		cd "$$TEMP_DIR" && \
 		git sparse-checkout set $(REPO_DIR)/$(NAME) && \
 		cd - > /dev/null && \
-		mkdir -p claude-linux/.claude/skills && \
-		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" claude-linux/.claude/skills/ && \
+		mkdir -p $(CC_SKILLS_DIR) && \
+		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" $(CC_SKILLS_DIR)/ && \
 		rm -rf "$$TEMP_DIR" && \
-		git add claude-linux/.claude/skills/$(NAME) && \
+		git add $(CC_SKILLS_DIR)/$(NAME) && \
 		git commit -m "Add $(NAME) skill from $(REPO)"
 
 cc-official-skill-subtree-add: REPO := anthropics/skills
@@ -151,12 +153,10 @@ cc-skill-subtree-update:
 		cd "$$TEMP_DIR" && \
 		git sparse-checkout set $(REPO_DIR)/$(NAME) && \
 		cd - > /dev/null && \
-		rm -rf claude-linux/.claude/skills/$(NAME) && \
-		mkdir -p claude-linux/.claude/skills && \
-		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" claude-linux/.claude/skills/ && \
-		rm -rf "$$TEMP_DIR" && \
-		git add claude-linux/.claude/skills/$(NAME) && \
-		git commit -m "Update $(NAME) skill from $(REPO)"
+		rm -rf $(CC_SKILLS_DIR)/$(NAME) && \
+		mkdir -p $(CC_SKILLS_DIR) && \
+		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" $(CC_SKILLS_DIR)/ && \
+		rm -rf "$$TEMP_DIR"
 
 cc-official-skill-subtree-update: REPO := anthropics/skills
 cc-official-skill-subtree-update: GH_REMOTE := anthropics-skills
