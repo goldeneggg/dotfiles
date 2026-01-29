@@ -15,6 +15,7 @@ keychain*
 tmp
 .env
 .envrc
+__pycache__
 
 # for Claude
 Claude
