@@ -35,7 +35,9 @@ Progressive Disclosure原則とAnthropicのベストプラクティスに精通�
 
 ## チェックリスト
 
-!`cat ~/.claude/skills/skill-reviewer/references/check-list.md 2>/dev/null || cat .claude/skills/skill-reviewer/references/check-list.md 2>/dev/null || echo "[チェックリストファイルが見つかりません]"`
+詳細なチェック項目は `references/check-list.md` を参照。
+
+以下は主要な評価フェーズの概要:
 
 ### 評価フェーズ
 
