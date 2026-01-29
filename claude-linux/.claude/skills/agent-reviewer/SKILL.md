@@ -32,7 +32,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ## チェックリストの活用
 
-詳細なチェック項目は `references/check-list.md` を参照。
+詳細なチェック項目は `references/agent-check-list.md` を参照。
 
 ### 評価フェーズ
 
@@ -79,7 +79,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 - **セキュリティ**: bypassPermissionsの使用が本当に必要か、最小権限の原則に従っているか、hooksスクリプトが安全か
 - **パフォーマンス**: モデル選択がコスト効率を考慮しているか、プロンプト長が適切か
 
-詳細な評価基準は `references/check-list.md` を確認すること。
+詳細な評価基準は `references/agent-check-list.md` を確認すること。
 
 ## レビュー実行プロセス
 
@@ -91,7 +91,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ### ステップ2: チェックリスト評価
 
-`references/check-list.md` を読み込み、各フェーズの項目を順次確認。
+`references/agent-check-list.md` を読み込み、各フェーズの項目を順次確認。
 
 各項目について以下のいずれかで判定:
 
@@ -286,7 +286,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ### トークン効率
 
-- `references/check-list.md`は初回に全体読み込み
+- `references/agent-check-list.md`は初回に全体読み込み
 - 対象Agentファイルは必要箇所のみRead
 - 大きなシステムプロンプトの場合、セクションごとに評価
 
@@ -334,7 +334,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ## チェックリスト詳細参照
 
-各フェーズの詳細なチェック項目は `references/check-list.md` を確認すること。
+各フェーズの詳細なチェック項目は `references/agent-check-list.md` を確認すること。
 
 主要チェックポイント:
 
