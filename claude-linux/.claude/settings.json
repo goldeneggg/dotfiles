@@ -1,50 +1,54 @@
 {
+  "alwaysThinkingEnabled": true,
   "cleanupPeriodDays": 30,
+  "language": "japanese",
+  "outputStyle": "concise",
   "permissions": {
     "allow": [
-      "Bash(ls:*)",
-      "Bash(cat:*)",
-      "Bash(find:*)",
-      "Bash(git status*)",
-      "Bash(git diff*)",
-      "Bash(git log*)",
-      "Bash(git branch*)",
+      "Bash(cat *)",
+      "Bash(find *)",
+      "Bash(git branch *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git status *)",
+      "Bash(ls *)",
+      "Read(./.env.example)",
+      "Read(./.env.sample)",
       "Read(./.git/config)",
-      "Read(./package.json)",
-      "Read(./Makefile)",
-      "Read(./go.mod)",
-      "Read(./requirements.txt)",
-      "Read(./Gemfile)",
       "Read(./Cargo.toml)",
+      "Read(./Gemfile)",
+      "Read(./Makefile)",
       "Read(./composer.json)",
+      "Read(./go.mod)",
+      "Read(./package.json)",
+      "Read(./requirements.txt)",
       "WebSearch"
     ],
     "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./secrets/**)",
-      "Read(./.envrc)",
-      "Read(~/.aws/**)",
-      "Read(~/.ssh/id_*)",
-      "Read(~/.gnupg/**)",
+      "Bash(sudo *)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
       "Read(**/.git/credentials)",
       "Read(**/credentials.json)",
       "Read(**/service-account*.json)",
-      "Read(**/*.pem)",
-      "Read(**/*.key)",
-      "Bash(sudo:*)"
+      "Read(./.env)",
+      "Read(./.envrc)",
+      "Read(./secrets/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.ssh/id_*)"
     ],
     "ask": [
-      "Bash(chmod:*)",
-      "Bash(chown:*)",
-      "Bash(kill:*)",
-      "Bash(curl:*)",
-      "Bash(wget:*)",
-      "Bash(touch:*)",
-      "Bash(cp:*)",
-      "Bash(mv:*)",
-      "Bash(rm:*)",
-      "Bash(rmdir:*)"
+      "Bash(chmod *)",
+      "Bash(chown *)",
+      "Bash(cp *)",
+      "Bash(curl *)",
+      "Bash(kill *)",
+      "Bash(mv *)",
+      "Bash(rm *)",
+      "Bash(rmdir *)",
+      "Bash(touch *)",
+      "Bash(wget *)"
     ],
     "defaultMode": "plan"
   },
@@ -93,8 +97,5 @@
         ]
       }
     ]
-  },
-  "outputStyle": "concise",
-  "language": "japanese",
-  "alwaysThinkingEnabled": true
+  }
 }
