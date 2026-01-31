@@ -59,7 +59,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/session-logger.sh"
+            "command": "~/.claude/hooks/SessionStart-startup.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/UserPromptSubmit.sh"
           }
         ]
       }
@@ -70,7 +80,94 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/bash-command-logger.sh"
+            "command": "~/.claude/hooks/PreToolUse-Bash.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PreToolUse-WebFetch.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PreToolUse-WebSearch.sh"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PermissionRequest.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PostToolUse-Bash.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PostToolUse-WebFetch.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PostToolUse-WebSearch.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PostToolUseFailure-Bash.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PostToolUseFailure-WebFetch.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PostToolUseFailure-WebSearch.sh"
           }
         ]
       }
@@ -81,7 +178,29 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/notification.sh"
+            "command": "~/.claude/hooks/Notification.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/SubagentStart.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/SubagentStop.sh"
           }
         ]
       }
@@ -92,7 +211,29 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/stop-notification.sh"
+            "command": "~/.claude/hooks/Stop.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/PreCompact-auto.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "logout|prompt_input_exit|bypass_permissions_disabled|other",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/SessionEnd-except-clear.sh"
           }
         ]
       }

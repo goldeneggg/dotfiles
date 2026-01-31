@@ -6,10 +6,16 @@ set -euo pipefail
 
 # terminal-notifier の存在チェック
 if ! command -v terminal-notifier >/dev/null 2>&1; then
-    exit 0
+  exit 0
+fi
+
+pjt='unknown'
+if [[ -n "${PWD}" ]]
+then
+  pjt="$(basename "${PWD}")"
 fi
 
 terminal-notifier \
-    -title 'Claude Code' \
-    -subtitle 'Stop' \
-    -message 'Claude Codeの作業が完了したっぽいで'
+  -title 'Claude Code' \
+  -subtitle "✅️ Stop: ${pjt}" \
+  -message '終了や！！'
