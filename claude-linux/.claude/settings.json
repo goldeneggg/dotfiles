@@ -7,6 +7,14 @@
     "allow": [
       "Bash(cat *)",
       "Bash(find *)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue status *)",
+      "Bash(gh issue view *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr status *)",
+      "Bash(gh pr view *)",
+      "Bash(gh search *)",
       "Bash(git branch *)",
       "Bash(git diff *)",
       "Bash(git log *)",
@@ -22,6 +30,7 @@
       "Read(./go.mod)",
       "Read(./package.json)",
       "Read(./requirements.txt)",
+      "WebFetch(domain:github.com)",
       "WebSearch"
     ],
     "deny": [
