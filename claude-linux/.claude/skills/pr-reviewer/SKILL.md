@@ -4,7 +4,7 @@ description: |
   Review code changes in GitHub pull requests or local git branches against main branch.
 
   Use this skill when:
-  - "goldeneggg/biz の PR #123 をレビューして"
+  - "goldeneggg/dotfiles の PR #123 をレビューして"
   - "このPRのコード品質をチェックして"
   - "feature/new-api ブランチをレビュー"
   - "develop と比較してレビューして"
