@@ -3,9 +3,9 @@ name: gh-issue-fixer
 description: |
   GitHub Issue を修正するスキル。
   以下の状況で使用:
-  (1) ユーザーが「Issue #XX を修正して」と依頼した時
-  (2) ユーザーが明示的に「/gh-issue-fixer」を実行した時
-  (3) GitHub Issue の対応を求められた時
+    (1) ユーザーが「Issue #XX を修正して」と依頼した時
+    (2) ユーザーが明示的に「/gh-issue-fixer」を実行した時
+    (3) GitHub Issue の対応を求められた時
 ---
 
 # Fix GitHub Issue

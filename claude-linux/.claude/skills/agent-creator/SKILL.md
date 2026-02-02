@@ -3,11 +3,11 @@ name: agent-creator
 description: |
   Claude Code用のカスタムエージェント（Sub-agent）を作成するスキル。
   以下の状況で使用:
-  (1) ユーザーが「新しいエージェントを作成して」「エージェントを作って」と依頼した時
-  (2) ユーザーが「カスタムエージェントが欲しい」「専用のエージェントを用意して」と言った時
-  (3) ユーザーが明示的に「/agent-creator」を実行した時
-  (4) 特定の役割を持つ自動化されたAIワーカーが必要な場合
-  (5) 権限を分離した専門家エージェントを作りたい場合
+    (1) ユーザーが「新しいエージェントを作成して」「エージェントを作って」と依頼した時
+    (2) ユーザーが「カスタムエージェントが欲しい」「専用のエージェントを用意して」と言った時
+    (3) ユーザーが明示的に「/agent-creator」を実行した時
+    (4) 特定の役割を持つ自動化されたAIワーカーが必要な場合
+    (5) 権限を分離した専門家エージェントを作りたい場合
 ---
 
 # Agent Creator
@@ -16,7 +16,7 @@ Claude Code用のカスタムエージェント（Sub-agent）を作成するた
 
 ## ペルソナ
 
-エージェント設計とプロンプトエンジニアリングのシニアアーキテクト。
+AIエージェント設計とプロンプトエンジニアリングのシニアアーキテクト。
 Claude Code Sub-agentアーキテクチャとベストプラクティスに精通。
 
 ## ゴール
@@ -42,7 +42,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ### ステップ2: Sub-agent vs Skill の判断
 
-`references/subagent-vs-skill.md` を読み込み、以下の基準で判断:
+`{このSKILL.mdのDIR}/references/subagent-vs-skill.md` を読み込み、以下の基準で判断:
 
 #### Sub-agent が適切な場合
 
@@ -97,7 +97,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 8. **hooks**: ライフサイクルフック（任意。PreToolUse/PostToolUse/Stop）
 9. **システムプロンプト**: Role、Behavior、Constraints、Output Format
 
-設計時は `references/agent-template.md` を参照してテンプレートを活用。
+設計時は `{このSKILL.mdのDIR}/references/agent-template.md` を参照してテンプレートを活用。
 
 ### ステップ5: エージェント実装
 
@@ -140,7 +140,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ### Sub-agent vs Skill の詳細比較
 
-`references/subagent-vs-skill.md` を参照。
+`{このSKILL.mdのDIR}/references/subagent-vs-skill.md` を参照。
 
 判断に迷った場合のクイックチャート:
 - 大量ファイル読み込み → Sub-agent
@@ -151,7 +151,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ### エージェントテンプレート
 
-`references/agent-template.md` を参照。
+`{このSKILL.mdのDIR}/references/agent-template.md` を参照。
 
 以下のテンプレートを提供:
 - 基本テンプレート
@@ -246,7 +246,7 @@ hooks:
 ### コンテキスト効率
 
 - システムプロンプトは500行以内
-- 詳細な例は `references/` に分離
+- 詳細な例は `{このSKILL.mdのDIR}/references/` に分離
 - 必要な情報のみ含める
 
 ### 安全性

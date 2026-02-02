@@ -49,7 +49,7 @@
   - ⚠️ WARNING: Sub Agentとの併用（`context: fork` + `agent` 指定）を検討すべき
   - ❌ FAIL: Sub Agentとして再実装すべき
 
-**参照:** `references/subagent-vs-skill.md` の「使い分けのポイント」「補足: クイックチャート」
+**参照:** `{このファイルのDIR}/subagent-vs-skill.md` の「使い分けのポイント」「補足: クイックチャート」
 
 ---
 
@@ -132,7 +132,7 @@
   - ✅ PASS: カスタムエージェントが `.claude/agents/` に実際に存在する
   - ❌ FAIL: 存在しないエージェント名を指定している
 
-**参照:** `references/subagent-vs-skill.md` の「Skill → Sub Agent」セクション
+**参照:** `{このファイルのDIR}/subagent-vs-skill.md` の「Skill → Sub Agent」セクション
 
 ---
 

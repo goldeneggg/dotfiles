@@ -1,6 +1,12 @@
 ---
 name: terraform-validation-enhancer
-description: Terraform構成の依存関係管理とバリデーションを評価・強化するスキル。Terraform 1.14以上を対象に、variable validation、depends_on/lifecycle、precondition/postcondition、check blockの現状評価と改善提案を実施。(1) 既存Terraform構成の評価・診断、(2) バリデーション不足の自動検出と修正提案、(3) ベストプラクティス適用、(4) セキュリティ・可用性要件の検証が必要な場合に使用。
+description: |
+  Terraform構成の依存関係管理とバリデーションを評価・強化するスキル
+  Terraform 1.14以上を対象に、variable validation、depends_on/lifecycle、precondition/postcondition、check blockの現状評価と改善提案を実施
+  (1) 既存Terraform構成の評価・診断
+  (2) バリデーション不足の自動検出と修正提案
+  (3) ベストプラクティス適用
+  (4) セキュリティ・可用性要件の検証が必要な場合に使用。
 ---
 
 # Terraform Validation Enhancer
@@ -51,7 +57,7 @@ python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform
 
 ### ステップ3: 修正の実施
 
-優先度に基づいて修正を実施します。具体的なパターンは`references/validation-patterns.md`を参照してください。
+優先度に基づいて修正を実施します。具体的なパターンは`{このSKILL.mdのDIR}/references/validation-patterns.md`を参照してください。
 
 #### 3.1 Variable Validation の追加
 
@@ -159,7 +165,7 @@ python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform
 - センシティブな変数に`sensitive = true`が設定されているか
 - error_messageが具体的で理解しやすいか
 
-**詳細**: `references/validation-patterns.md#variable-validation-patterns`
+**詳細**: `{このSKILL.mdのDIR}/references/validation-patterns.md#variable-validation-patterns`
 
 ### Resource Dependencies
 
@@ -167,7 +173,7 @@ python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform
 - モジュール間の依存関係が明確に表現されているか
 - 循環依存が発生していないか
 
-**詳細**: `references/validation-patterns.md#resource-dependencies-depends_on`
+**詳細**: `{このSKILL.mdのDIR}/references/validation-patterns.md#resource-dependencies-depends_on`
 
 ### Lifecycle Management
 
@@ -175,7 +181,7 @@ python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform
 - ダウンタイムを避けるため`create_before_destroy`が適切に使用されているか
 - `ignore_changes`の使用が正当化されているか
 
-**詳細**: `references/validation-patterns.md#lifecycle-management`
+**詳細**: `{このSKILL.mdのDIR}/references/validation-patterns.md#lifecycle-management`
 
 ### Preconditions and Postconditions
 
@@ -183,7 +189,7 @@ python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform
 - リソース作成の前提条件がpreconditionで検証されているか
 - リソースの重要な属性がpostconditionで検証されているか
 
-**詳細**: `references/validation-patterns.md#preconditions-and-postconditions`
+**詳細**: `{このSKILL.mdのDIR}/references/validation-patterns.md#preconditions-and-postconditions`
 
 ### Check Blocks
 
@@ -191,13 +197,13 @@ python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform
 - セキュリティ要件を検証するcheck blockが存在するか
 - 環境別の要件がcheck blockで検証されているか
 
-**詳細**: `references/validation-patterns.md#check-blocks`
+**詳細**: `{このSKILL.mdのDIR}/references/validation-patterns.md#check-blocks`
 
 ## リファレンス
 
 ### Terraform 1.14 ドキュメント
 
-詳細な構文とオプションは`references/terraform-v1.14-docs.md`を参照してください。以下のセクションが含まれます:
+詳細な構文とオプションは`{このSKILL.mdのDIR}/references/terraform-v1.14-docs.md`を参照してください。以下のセクションが含まれます:
 
 - Variable Validation の完全な仕様
 - Check Blocks の使用方法
@@ -207,7 +213,7 @@ python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform
 
 ### バリデーションパターン集
 
-実践的なコード例とベストプラクティスは`references/validation-patterns.md`を参照してください。以下が含まれます:
+実践的なコード例とベストプラクティスは`{このSKILL.mdのDIR}/references/validation-patterns.md`を参照してください。以下が含まれます:
 
 - 値の範囲チェック、文字列パターンマッチ等のvalidationパターン
 - 明示的依存関係、モジュール間依存等のdepends_onパターン
@@ -270,7 +276,7 @@ python3 ~/.claude/skills/terraform-validation-enhancer/scripts/analyze_terraform
 
 ### analyze_terraform.py実行時のエラー
 
-- **権限エラー**: スクリプトに実行権限を付与 (`chmod +x scripts/analyze_terraform.py`)
+- **権限エラー**: スクリプトに実行権限を付与 (`chmod +x {このSKILL.mdのDIR}/scripts/analyze_terraform.py`)
 - **Python バージョン**: Python 3.7以上が必要
 
 ### 誤検知への対処

@@ -1,6 +1,13 @@
 ---
 name: browser-ext-creator
-description: "ブラウザ拡張機能の開発を支援するスキル。Chrome (Manifest V3) と Firefox に対応したブラウザ拡張を設計・実装する。以下の状況で使用: (1) ユーザーが「ブラウザ拡張を作って」「Chrome拡張を実装して」「Firefox拡張を開発して」と依頼した時、(2) ユーザーが明示的に「/browser-ext-creator」を実行した時、(3) 特定のウェブサイトの機能拡張や自動化を求められた時、(4) content script、background script、popup UIなどの拡張機能コンポーネントの実装が必要な時"
+description: |
+  ブラウザ拡張機能の開発を支援するスキル。
+  Chrome (Manifest V3) と Firefox に対応したブラウザ拡張を設計・実装する。
+  以下の状況で使用:
+    (1) ユーザーが「ブラウザ拡張を作って」「Chrome拡張を実装して」「Firefox拡張を開発して」と依頼した時
+    (2) ユーザーが明示的に「/browser-ext-creator」を実行した時
+    (3) 特定のウェブサイトの機能拡張や自動化を求められた時
+    (4) content script、background script、popup UIなどの拡張機能コンポーネントの実装が必要な時
 ---
 
 # Browser Extension Creator
@@ -13,7 +20,7 @@ description: "ブラウザ拡張機能の開発を支援するスキル。Chrome
 1. 要件収集 → AskUserQuestion で機能仕様を確認
 2. 設計     → プロジェクト構造とファイル構成を決定
 3. 実装     → テンプレートをベースにコード生成
-4. レビュー → セキュリティ・パフォーマンス観点で自己評価
+4. 自己評価 → セキュリティ・パフォーマンス観点で自己評価
 ```
 
 ## Step 1: 要件収集
@@ -38,7 +45,7 @@ AskUserQuestion ツールで以下を確認する：
 - **外部API連携**: エンドポイント、リクエスト/レスポンス形式
 - **データ保存**: `chrome.storage.sync` / `chrome.storage.local` の使用
 
-## Step 2: プロジェクト構造
+## Step 2: 設計（プロジェクト構造の決定）
 
 ### Chrome (Manifest V3)
 
@@ -184,7 +191,7 @@ const loadSettings = async () => {
 };
 ```
 
-## Step 4: 自己評価チェックリスト
+## Step 4: 自己評価
 
 生成したコードを以下の観点で評価：
 
@@ -226,12 +233,12 @@ const loadSettings = async () => {
 
 詳細な技術情報：
 
-- **Manifest V3 詳細**: [references/manifest-v3.md](references/manifest-v3.md)
-- **セキュリティガイド**: [references/security.md](references/security.md)
+- **Manifest V3 詳細**: {このSKILL.mdのDIR}/references/manifest-v3.md
+- **セキュリティガイド**: {このSKILL.mdのDIR}/references/security.md
 
 ## テンプレート
 
 プロジェクトテンプレート：
 
-- **Chrome**: [assets/chrome-template/](assets/chrome-template/)
-- **Firefox**: [assets/firefox-template/](assets/firefox-template/)
+- **Chrome**: {このSKILL.mdのDIR}/assets/chrome-template
+- **Firefox**: {このSKILL.mdのDIR}/assets/firefox-template

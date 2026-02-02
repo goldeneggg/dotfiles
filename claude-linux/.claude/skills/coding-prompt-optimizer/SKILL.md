@@ -3,9 +3,9 @@ name: coding-prompt-optimizer
 description: |
   コーディング用プロンプトを最適化・添削するスキル。
   以下の状況で使用:
-  (1) ユーザーが「このプロンプトを改善して」「プロンプトを最適化して」と依頼した時
-  (2) ユーザーが明示的に「/coding-prompt-optimizer」を実行した時
-  (3) AI向けプロンプトの品質改善を求められた時
+    (1) ユーザーが「このプロンプトを改善して」「プロンプトを最適化して」と依頼した時
+    (2) ユーザーが明示的に「/coding-prompt-optimizer」を実行した時
+    (3) AI向けプロンプトの品質改善を求められた時
 ---
 
 # Optimize Coding Prompt
@@ -29,7 +29,7 @@ LLMの推論（Reasoning）、計画（Planning）、評価（Evaluation）能�
 
 ## 評価基準
 
-詳細は `references/rubrics.md` を参照。
+詳細は `{このSKILL.mdのDIR}/references/rubrics.md` を参照。
 
 ### 採点ルーブリック概要
 

@@ -75,5 +75,5 @@ else
     --find-copies \
     -C \
     --no-color \
-    "${target_branch}..${base_branch}"
+    "${base_branch}..${target_branch}"
 fi

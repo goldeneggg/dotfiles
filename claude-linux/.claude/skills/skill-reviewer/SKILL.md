@@ -3,11 +3,11 @@ name: skill-reviewer
 description: |
   既存スキルの品質をレビューし、改善提案を行うスキル。
   以下の状況で使用:
-  (1) ユーザーが「[スキル名]をレビューして」「[スキル名]の品質を確認して」「[スキル名]を評価して」と依頼した時
-  (2) ユーザーが明示的に「/skill-reviewer [スキル名]」を実行した時
-  (3) スキル開発完了後、「公開前にチェックして」「最終確認して」と求められた時
-  (4) スキル改善時、「どこを直すべきか教えて」「改善点を提案して」と相談された時
-  (5) スキル設計時、「このスキルの設計をレビューして」と依頼された時
+    (1) ユーザーが「[スキル名]をレビューして」「[スキル名]の品質を確認して」「[スキル名]を評価して」と依頼した時
+    (2) ユーザーが明示的に「/skill-reviewer [スキル名]」を実行した時
+    (3) スキル開発完了後、「公開前にチェックして」「最終確認して」と求められた時
+    (4) スキル改善時、「どこを直すべきか教えて」「改善点を提案して」と相談された時
+    (5) スキル設計時、「このスキルの設計をレビューして」と依頼された時
 argument-hint: [skill-name]
 allowed-tools: Read, Grep, Glob
 ---
@@ -35,7 +35,7 @@ Progressive Disclosure原則とAnthropicのベストプラクティスに精通�
 
 ## チェックリスト
 
-詳細なチェック項目は `references/skill-check-list.md` を参照。
+詳細なチェック項目は `{このSKILL.mdのDIR}/references/skill-check-list.md` を参照。
 
 以下は主要な評価フェーズの概要:
 
@@ -79,7 +79,7 @@ Progressive Disclosure原則とAnthropicのベストプラクティスに精通�
 - **ドキュメント完全性**: README.md等の余分なファイルがないか、必要な情報が揃っているか
 - **保守性**: 他の開発者が理解・修正できる構造か
 
-詳細な評価基準は `references/skill-check-list.md` を確認すること。
+詳細な評価基準は `{このSKILL.mdのDIR}/references/skill-check-list.md` を確認すること。
 
 ## レビュー実行プロセス
 
@@ -203,7 +203,7 @@ Progressive Disclosure原則とAnthropicのベストプラクティスに精通�
 
 - 全項目を一度に評価せず、フェーズごとに区切る
 - 問題が多い場合は重要度順に段階的提示（一度に10個以上の問題を提示しない）
-- 詳細なチェック基準は`references/skill-check-list.md`に委譲
+- 詳細なチェック基準は`{このSKILL.mdのDIR}/references/skill-check-list.md`に委譲
 
 ### 具体性
 

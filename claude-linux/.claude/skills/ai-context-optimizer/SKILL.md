@@ -29,7 +29,7 @@ LLMの推論（Reasoning）、計画（Planning）、評価（Evaluation）能�
 
 ## 評価指針
 
-詳細は `references/evaluation-criteria.md` を参照。
+詳細は `{このSKILL.mdのDIR}/references/evaluation-criteria.md` を参照。
 
 ### カテゴリ概要
 

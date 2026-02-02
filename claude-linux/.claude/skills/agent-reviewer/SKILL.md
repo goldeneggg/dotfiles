@@ -3,10 +3,10 @@ name: agent-reviewer
 description: |
   既存Custom Agentの品質をレビューし、改善提案を行うスキル。
   以下の状況で使用:
-  (1) ユーザーが「[Agent名]をレビューして」「[Agent名]の品質を確認して」と依頼した時
-  (2) ユーザーが明示的に「/agent-reviewer」を実行した時
-  (3) Agent開発完了後、公開前の最終チェックを求められた時
-  (4) Agent改善時、「どこを直すべきか教えて」と相談された時
+    (1) ユーザーが「[Agent名]をレビューして」「[Agent名]の品質を確認して」と依頼した時
+    (2) ユーザーが明示的に「/agent-reviewer」を実行した時
+    (3) Agent開発完了後、公開前の最終チェックを求められた時
+    (4) Agent改善時、「どこを直すべきか教えて」と相談された時
 ---
 
 # Agent Reviewer
@@ -15,7 +15,7 @@ description: |
 
 ## ペルソナ
 
-Agent設計とプロンプトエンジニアリングのシニアアーキテクト。
+AIエージェント設計とプロンプトエンジニアリングのシニアアーキテクト。
 Claude Code Sub-agentアーキテクチャとベストプラクティスに精通。
 
 ## ゴール
@@ -32,7 +32,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ## チェックリストの活用
 
-詳細なチェック項目は `references/agent-check-list.md` を参照。
+詳細なチェック項目は `{このSKILL.mdのDIR}/references/agent-check-list.md` を参照。
 
 ### 評価フェーズ
 
@@ -79,7 +79,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 - **セキュリティ**: bypassPermissionsの使用が本当に必要か、最小権限の原則に従っているか、hooksスクリプトが安全か
 - **パフォーマンス**: モデル選択がコスト効率を考慮しているか、プロンプト長が適切か
 
-詳細な評価基準は `references/agent-check-list.md` を確認すること。
+詳細な評価基準は `{このSKILL.mdのDIR}/references/agent-check-list.md` を確認すること。
 
 ## レビュー実行プロセス
 
@@ -91,7 +91,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ### ステップ2: チェックリスト評価
 
-`references/agent-check-list.md` を読み込み、各フェーズの項目を順次確認。
+`{このSKILL.mdのDIR}/references/agent-check-list.md` を読み込み、各フェーズの項目を順次確認。
 
 各項目について以下のいずれかで判定:
 
@@ -125,11 +125,11 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 ⚠️ **具体的シナリオ**: 2つしか想定されていない
    **推奨**: 最低3つのユースケースを文書化
 
-❌ **境界の明確化**: Agentの範囲が不明瞭
+❌ **境界の明確化**: AgentのScopeが不明瞭
    **問題**: システムプロンプトに「何を含まないか」の記述がない
    **改善案**:
    ```markdown
-   ## Agentの範囲
+   # Scope（やること・やらないこと）
 
    このAgentは以下を含む:
    - ...
@@ -143,7 +143,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ✅ **実際のユーザー発話**: 想定されている（description参照）
 
-❌ **エッジケース**: 異常系の想定が不足
+❌ **エッジケース**: Behavior（振る舞い）における異常系の想定が不足
    **問題**: システムプロンプトに失敗パターンの記述なし
    **改善案**:
    ```markdown
@@ -286,7 +286,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ### トークン効率
 
-- `references/agent-check-list.md`は初回に全体読み込み
+- `{このSKILL.mdのDIR}/references/agent-check-list.md`は初回に全体読み込み
 - 対象Agentファイルは必要箇所のみRead
 - 大きなシステムプロンプトの場合、セクションごとに評価
 
@@ -334,7 +334,7 @@ Claude Code Sub-agentアーキテクチャとベストプラクティスに精�
 
 ## チェックリスト詳細参照
 
-各フェーズの詳細なチェック項目は `references/agent-check-list.md` を確認すること。
+各フェーズの詳細なチェック項目は `{このSKILL.mdのDIR}/references/agent-check-list.md` を確認すること。
 
 主要チェックポイント:
 
