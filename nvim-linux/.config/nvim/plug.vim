@@ -48,7 +48,7 @@ Plug 'mattn/emmet-vim'  "zencodingの記法でHTMLやCSSの構造を書き, 「C
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'Shougo/neomru.vim'
-Plug 'github/copilot.vim'
+"Plug 'github/copilot.vim'
 
 " completion: coc.nvim with LSP
 "" - 1st, :Cocinstall coc-gocode  " for golang. See: https://www.npmjs.com/package/coc-gocode
