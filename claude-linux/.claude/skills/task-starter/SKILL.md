@@ -49,7 +49,9 @@ Web開発プロジェクト・タスクの標準ドキュメント構造を生�
    ├── references/         # 現状分析資料
    ├── files/              # 参考データ・ファイル
    ├── specs/              # 要件・仕様書
-   └── todos/              # タスクドキュメント
+   ├── todos/              # タスクドキュメント
+   │   └── 001-{task-name}/
+   └── logs/               # タスク作業ログ置き場
        └── 001-{task-name}/
    ```
 
@@ -84,11 +86,14 @@ Web開発プロジェクト・タスクの標準ドキュメント構造を生�
    ├── 📁 files/
    ├── 📁 specs/
    │   └── 📄 feature-spec.md
-   └── 📁 todos/
+   ├── 📁 todos/
+   │   ├── 📁 001-setup/
+   │   │   └── 📄 README.md
+   │   └── 📁 002-implement/
+   │       └── 📄 README.md
+   └── 📁 logs/
        ├── 📁 001-setup/
-       │   └── 📄 README.md
        └── 📁 002-implement/
-           └── 📄 README.md
    ```
 
 2. **ユーザーレビューを依頼**
