@@ -39,12 +39,12 @@ git管理されたリポジトリに対して徹底的なコードレビュー�
 
 ### 1. コード変更とコンテキストの取得
 
-レビュー対象に応じて適切なdiffスクリプトを実行します：
+レビュー対象に応じて適切なdiffコマンドを実行します：
 
 **GitHub PRレビューの場合：**
 
 ```bash
-{このSKILL.mdのディレクトリ}/scripts/diff.sh --repo {repo} --pr {pr_num}
+gh pr diff {pr_num} --repo {repo}
 ```
 
 - `{repo}`: "owner/name" 形式のリポジトリ（例: "goldeneggg/biz"）
@@ -59,7 +59,7 @@ gh pr view {pr_num} --repo {repo} --json title,body --jq '.title + "\n\n" + .bod
 **ローカルブランチレビューの場合：**
 
 ```bash
-{このSKILL.mdのディレクトリ}/scripts/diff.sh --branch {target_branch} --base {base_branch}
+git diff {base_branch}..{target_branch}
 ```
 
 - `{target_branch}`: レビュー対象のブランチ（例: "fix-ai"）
@@ -194,7 +194,7 @@ gh pr view {pr_num} --repo {repo} --json title,body --jq '.title + "\n\n" + .bod
 
 レビュー実行時に発生する可能性のあるエラーと対処方法：
 
-### diff.sh実行失敗
+### diff取得失敗
 
 **原因:**
 - PR番号が存在しない
