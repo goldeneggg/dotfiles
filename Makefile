@@ -120,6 +120,9 @@ watches-update-and-sync:
 watches-git-diff-check:
 	@$(call watch-repos-recursive,git diff --exit-code --quiet)
 
+# ----------
+# for AI skills management
+# ----------
 AI_SKILLS_DIR := ./ai-linux/.claude/skills
 
 cc-skill-subtree-add:
