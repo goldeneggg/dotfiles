@@ -120,7 +120,7 @@ watches-update-and-sync:
 watches-git-diff-check:
 	@$(call watch-repos-recursive,git diff --exit-code --quiet)
 
-CC_SKILLS_DIR := ./claude-linux/.claude/skills
+AI_SKILLS_DIR := ./ai-linux/.claude/skills
 
 cc-skill-subtree-add:
 	@$(call assert-var,REPO)
@@ -132,10 +132,10 @@ cc-skill-subtree-add:
 		cd "$$TEMP_DIR" && \
 		git sparse-checkout set $(REPO_DIR)/$(NAME) && \
 		cd - > /dev/null && \
-		mkdir -p $(CC_SKILLS_DIR) && \
-		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" $(CC_SKILLS_DIR)/ && \
+		mkdir -p $(AI_SKILLS_DIR) && \
+		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" $(AI_SKILLS_DIR)/ && \
 		rm -rf "$$TEMP_DIR" && \
-		git add $(CC_SKILLS_DIR)/$(NAME) && \
+		git add $(AI_SKILLS_DIR)/$(NAME) && \
 		git commit -m "Add $(NAME) skill from $(REPO)"
 
 cc-official-skill-subtree-add: REPO := anthropics/skills
@@ -153,9 +153,9 @@ cc-skill-subtree-update:
 		cd "$$TEMP_DIR" && \
 		git sparse-checkout set $(REPO_DIR)/$(NAME) && \
 		cd - > /dev/null && \
-		rm -rf $(CC_SKILLS_DIR)/$(NAME) && \
-		mkdir -p $(CC_SKILLS_DIR) && \
-		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" $(CC_SKILLS_DIR)/ && \
+		rm -rf $(AI_SKILLS_DIR)/$(NAME) && \
+		mkdir -p $(AI_SKILLS_DIR) && \
+		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" $(AI_SKILLS_DIR)/ && \
 		rm -rf "$$TEMP_DIR"
 
 cc-official-skill-subtree-update: REPO := anthropics/skills
