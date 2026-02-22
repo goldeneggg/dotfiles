@@ -92,7 +92,7 @@ DB変更が発生する場合:
    git add {変更したファイル}
    ```
 3. **コミットログファイルの出力**
-   - ファイルに書き出す（`git commit -F` で使用）。出力先ディレクトリが未指定ならAskUserQuestionで確認し、ファイル名は他ファイルと重複しない名前を使う
+   - `commit-YYYYmmddHHMMSS-{title}.txt` というファイル名でファイルに書き出す（`git commit -F` で使用）。出力先ディレクトリが未指定ならAskUserQuestionで確認し、他ファイルとファイル名はが重複してはならない
    - 形式:
      ```
      {Conventional Commits形式のメッセージ}
