@@ -56,25 +56,28 @@ description: |
    ```
 
 2. **参考ファイルの有無を確認**
-   - ユーザーに参考データ・ファイルがあるか質問
+   - ユーザーに参考データ・ファイルがあるか AskUserQuestionツールで確認
    - あれば `files/` にコピーまたはリンク
 
 ### Phase 3: ドキュメント生成
 
 1. **references/ - 現状分析（既存コード改修時のみ）**
-   - `{このSKILL.mdのDIR}/references/templates/reference-template.md` をベースに作成
+   - {このSKILL.mdのDIR}/references/templates/reference-template.md をベースに作成
    - 現状のアーキテクチャ、主要コンポーネント、処理フローを記載
+   - 不明点はAskUserQuestionツールで随時確認
 
 2. **specs/ - 仕様書**
-   - `{このSKILL.mdのDIR}/references/templates/spec-template.md` をベースに作成
+   - {このSKILL.mdのDIR}/references/templates/spec-template.md をベースに作成
    - 要件、技術仕様、UI/UX、依存関係を記載
+   - 不明点はAskUserQuestionツールで随時確認
 
 3. **todos/ - タスク分割**
-   - `{このSKILL.mdのDIR}/references/templates/todo-template.md` をベースに作成
-   - 1-2時間で完了する粒度に分割
-   - 各タスクに連番フォルダ: `001-setup/`, `002-implement-xxx/`, ...
+   - {このSKILL.mdのDIR}/references/templates/todo-template.md をベースに作成
+   - 1-2時間で完了し、エラー無しでコミット可能な粒度に分割
+   - 各タスクに連番フォルダ: 001-setup/, 002-implement-xxx/, ...
    - 依存関係を考慮した順序で配置
    - 各タスクファイル内には references/ , specs/ への参照パスを記載
+   - 不明点はAskUserQuestionツールで随時確認
 
 ### Phase 4: レビューと確定
 
@@ -165,10 +168,10 @@ description: |
 
 ### scripts/
 
-- `{このSKILL.mdのDIR}/scripts/init_project.py` - プロジェクトフォルダ構造を生成（Python 3必須）
+- {このSKILL.mdのDIR}/scripts/init_project.py - プロジェクトフォルダ構造を生成（Python 3必須）
 
 ### references/templates/
 
-- `{このSKILL.mdのDIR}/references/templates/spec-template.md` - 仕様書テンプレート
-- `{このSKILL.mdのDIR}/references/templates/todo-template.md` - TODOタスクテンプレート
-- `{このSKILL.mdのDIR}/references/templates/reference-template.md` - 現状分析テンプレート
+- {このSKILL.mdのDIR}/references/templates/spec-template.md - 仕様書テンプレート
+- {このSKILL.mdのDIR}/references/templates/todo-template.md - TODOタスクテンプレート
+- {このSKILL.mdのDIR}/references/templates/reference-template.md - 現状分析テンプレート
