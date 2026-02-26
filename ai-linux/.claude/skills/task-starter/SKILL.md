@@ -69,7 +69,7 @@ description: |
 2. **specs/ - 仕様書**
    - {このSKILL.mdのDIR}/references/templates/spec-template.md をベースに作成
    - 要件、技術仕様、UI/UX、依存関係を記載
-   - 不明点はAskUserQuestionツールで随時確認
+   - 不明点はAskUserQuestionツールで随時確認。特に「完了条件」「成功の定義」はユーザーと相談して明確にすること
 
 3. **todos/ - タスク分割**
    - {このSKILL.mdのDIR}/references/templates/todo-template.md をベースに作成
