@@ -59,8 +59,7 @@
       "Bash(rmdir *)",
       "Bash(touch *)",
       "Bash(wget *)"
-    ],
-    "defaultMode": "plan"
+    ]
   },
   "hooks": {
     "SessionStart": [
