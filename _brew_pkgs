@@ -99,7 +99,6 @@ export MY_BREW_PKGS=( \
   # from tap "duaraghav8/tap"
   "dockershrink" \
   "go-jsonnet" \
-  "chromedriver" \
   "geckodriver" \
   "go-task" \
   "mise" \
