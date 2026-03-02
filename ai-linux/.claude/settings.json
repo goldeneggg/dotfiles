@@ -17,6 +17,7 @@
       "Bash(gh search *)",
       "Bash(git branch *)",
       "Bash(git diff *)",
+      "Bash(git show *)",
       "Bash(git log *)",
       "Bash(git status *)",
       "Bash(ls *)",
