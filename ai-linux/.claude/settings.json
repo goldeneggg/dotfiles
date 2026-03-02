@@ -25,6 +25,7 @@
       "Bash(hostname *)",
       "Bash(uname *)",
       "Bash(id *)",
+      "Bash(bash -n *)",
       "Bash(gh issue list *)",
       "Bash(gh issue status *)",
       "Bash(gh issue view *)",
