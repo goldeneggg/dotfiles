@@ -127,6 +127,7 @@ AI_SKILLS_DIR := ./ai-linux/.claude/skills
 
 # Skill list: REPO|REPO_DIR|SKILL_NAME (pipe-separated tuples)
 # Add new skills by appending entries to this list
+# if REPO_DIR is ".", it means the skill is located at the root of the repo
 SKILL_REPOS := \
 	anthropics/skills|skills|skill-creator
 
