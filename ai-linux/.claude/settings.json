@@ -51,7 +51,8 @@
       "Read(./package.json)",
       "Read(./requirements.txt)",
       "WebFetch(domain:github.com)",
-      "WebSearch"
+      "WebSearch",
+      "sequentialthinking"
     ],
     "deny": [
       "Bash(sudo *)",
