@@ -13,22 +13,8 @@ OSFLG := L
 ifeq ($(shell uname),Darwin)
 OSFLG := M
 
-install-brew-pkgs:
-	@export _checkbrew=$(call assert-command,brew,See https://brew.sh/index_ja)
-	@./brew_packages.bash install
-
-# TODO: `gh extension upgrade gh-copilot` も実行したい
-upgrade-brew-pkgs:
-	@export _checkbrew=$(call assert-command,brew,See https://brew.sh/index_ja)
-	@./brew_packages.bash
-endif
-
 # bashes
 setup-bash = ./setup.bash -$1 --github-user goldeneggg --github-mail jpshadowapps@gmail.com $2
-
-###
-# targets
-###
 
 make-version:
 	@echo $(MAKE_VERSION)
@@ -62,6 +48,27 @@ init-gems:
 init-projects:
 	@./init_my_github_projects.bash
 
+rust-upgrade:
+	@rustup update
+
+work: asdf-upgrade rust-upgrade init-gems init-pips init-npms
+	@brew update
+
+# ----------
+# homebrew
+# ----------
+install-brew-pkgs:
+	@export _checkbrew=$(call assert-command,brew,See https://brew.sh/index_ja)
+	@./brew_packages.bash install
+
+# TODO: `gh extension upgrade gh-copilot` も実行したい
+upgrade-brew-pkgs:
+	@export _checkbrew=$(call assert-command,brew,See https://brew.sh/index_ja)
+	@./brew_packages.bash
+
+# ----------
+# asdf
+# ----------
 USEVER_NODEJS := 24
 USEVER_PYTHON := 3.14
 USEVER_RUBY := 3.4
@@ -100,12 +107,32 @@ asdf-uninstall-selected:
 	@$(call asdf-uninstall-selected-vers,terraform)
 	@asdf reshim
 
-rust-upgrade:
-	@rustup update
+# ----------
+# install tools and libraries without package managers
+# ----------
+# 1Password CLI
+USEVER_OP_CLI := 2.32.1
+# GPG key for 1Password CLI signature verification
+OP_CLI_GPG_KEY := 3FEF9748469ADBE15DA7CA80AC2D62742012EA22
 
-work: asdf-upgrade rust-upgrade init-gems init-pips init-npms
-	@brew update
+# Install 1Password CLI with GPG signature verification
+install-op-cli:
+	@echo "Installing 1Password CLI v$(USEVER_OP_CLI)..."
+	@TEMP_DIR=$$(mktemp -d) && \
+	trap 'rm -rf "$$TEMP_DIR"' EXIT && \
+	curl -sSfL "https://cache.agilebits.com/dist/1P/op2/pkg/v$(USEVER_OP_CLI)/op_darwin_arm64_v$(USEVER_OP_CLI).zip" -o "$$TEMP_DIR/op.zip" && \
+	unzip -q "$$TEMP_DIR/op.zip" -d "$$TEMP_DIR" && \
+	gpg --keyserver hkps://keyserver.ubuntu.com --receive-keys $(OP_CLI_GPG_KEY) && \
+	gpg --verify "$$TEMP_DIR/op.sig" "$$TEMP_DIR/op" && \
+	mkdir -p $(HOME)/bin && \
+	mv "$$TEMP_DIR/op" $(HOME)/bin/op && \
+	test -x $(HOME)/bin/op || chmod 755 $(HOME)/bin/op && \
+	echo "1Password CLI v$(USEVER_OP_CLI) installed successfully at $(HOME)/bin/op"
+endif
 
+# ----------
+# repository watching
+# ----------
 # watch repos control
 WATCH_REPO_ORG_DIR := $(HOME)/github/practice-goldeneggg
 WATCHES := ai aws browser docker go react ruby wasm zig
