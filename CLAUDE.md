@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a dotfiles repository using **GNU Stow** for symlink-based configuration management. Supports macOS (`-mac` suffix) and Linux (`-linux` suffix) with platform-specific directories.
 
+## Initial Settings
+
+The following skills must be assumed.
+
+- @~/.claude/skills/security-awareness/SKILL.md
+
 ## Commands
 
 ### Initial Setup (new machine)
