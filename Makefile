@@ -125,43 +125,42 @@ watches-git-diff-check:
 # ----------
 AI_SKILLS_DIR := ./ai-linux/.claude/skills
 
-cc-skill-subtree-add:
-	@$(call assert-var,REPO)
-	@$(call assert-var,GH_REMOTE)
-	@$(call assert-var,NAME)
-	@$(call assert-var,REPO_DIR)
-	@TEMP_DIR=$$(mktemp -d) && \
-		git clone --depth 1 --filter=blob:none --sparse https://github.com/${REPO}.git "$$TEMP_DIR" && \
-		cd "$$TEMP_DIR" && \
-		git sparse-checkout set $(REPO_DIR)/$(NAME) && \
-		cd - > /dev/null && \
-		mkdir -p $(AI_SKILLS_DIR) && \
-		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" $(AI_SKILLS_DIR)/ && \
-		rm -rf "$$TEMP_DIR" && \
-		git add $(AI_SKILLS_DIR)/$(NAME) && \
-		git commit -m "Add $(NAME) skill from $(REPO)"
+# Skill list: REPO|REPO_DIR|SKILL_NAME (pipe-separated tuples)
+# Add new skills by appending entries to this list
+SKILL_REPOS := \
+	anthropics/skills|skills|skill-creator
 
-cc-official-skill-subtree-add: REPO := anthropics/skills
-cc-official-skill-subtree-add: GH_REMOTE := anthropics-skills
-cc-official-skill-subtree-add: REPO_DIR := skills
-cc-official-skill-subtree-add: cc-skill-subtree-add
+# Helper functions to extract fields from pipe-separated tuples
+skill-repo-of = $(word 1,$(subst |, ,$1))
+skill-dir-of = $(word 2,$(subst |, ,$1))
+skill-name-of = $(word 3,$(subst |, ,$1))
 
-cc-skill-subtree-update:
-	@$(call assert-var,REPO)
-	@$(call assert-var,GH_REMOTE)
-	@$(call assert-var,NAME)
-	@$(call assert-var,REPO_DIR)
-	@TEMP_DIR=$$(mktemp -d) && \
-		git clone --depth 1 --filter=blob:none --sparse https://github.com/${REPO}.git "$$TEMP_DIR" && \
-		cd "$$TEMP_DIR" && \
-		git sparse-checkout set $(REPO_DIR)/$(NAME) && \
-		cd - > /dev/null && \
-		rm -rf $(AI_SKILLS_DIR)/$(NAME) && \
-		mkdir -p $(AI_SKILLS_DIR) && \
-		cp -r "$$TEMP_DIR/$(REPO_DIR)/$(NAME)" $(AI_SKILLS_DIR)/ && \
-		rm -rf "$$TEMP_DIR"
+# Sparse checkout a skill from a github repo into a temp dir, then copy to AI_SKILLS_DIR
+# Args: $1=repo, $2=repo_dir, $3=skill_name
+define skill-sparse-checkout
+	TEMP_DIR=$$(mktemp -d) && \
+	git clone --depth 1 --filter=blob:none --sparse https://github.com/$1.git "$$TEMP_DIR" && \
+	cd "$$TEMP_DIR" && \
+	git sparse-checkout set $2/$3 && \
+	cd - > /dev/null && \
+	mkdir -p $(AI_SKILLS_DIR) && \
+	cp -r "$$TEMP_DIR/$2/$3" $(AI_SKILLS_DIR)/ && \
+	rm -rf "$$TEMP_DIR"
+endef
 
-cc-official-skill-subtree-update: REPO := anthropics/skills
-cc-official-skill-subtree-update: GH_REMOTE := anthropics-skills
-cc-official-skill-subtree-update: REPO_DIR := skills
-cc-official-skill-subtree-update: cc-skill-subtree-update
+# Batch add all skills in SKILL_REPOS (skips already-added skills, no auto-commit)
+skill-repo-add-all:
+	@$(foreach item,$(SKILL_REPOS), \
+		if [ -d "$(AI_SKILLS_DIR)/$(call skill-name-of,$(item))" ]; then \
+			echo "SKIP: $(call skill-name-of,$(item)) already exists"; \
+		else \
+			echo "ADD: $(call skill-name-of,$(item)) from $(call skill-repo-of,$(item))..." && \
+			$(call skill-sparse-checkout,$(call skill-repo-of,$(item)),$(call skill-dir-of,$(item)),$(call skill-name-of,$(item))); \
+		fi ;)
+
+# Batch update all skills in SKILL_REPOS
+skill-repo-update-all:
+	@$(foreach item,$(SKILL_REPOS), \
+		echo "UPDATE: $(call skill-name-of,$(item)) from $(call skill-repo-of,$(item))..." && \
+		rm -rf $(AI_SKILLS_DIR)/$(call skill-name-of,$(item)) && \
+		$(call skill-sparse-checkout,$(call skill-repo-of,$(item)),$(call skill-dir-of,$(item)),$(call skill-name-of,$(item))) ;)
