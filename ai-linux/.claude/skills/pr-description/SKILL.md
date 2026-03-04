@@ -17,8 +17,6 @@ description: |
   - "pull request descriptionをテンプレートに沿って書いて"
   - "このブランチのPR説明文を出力して"
   - 明示的に /pr-description を実行した時
-context: fork
-agent: general-purpose
 ---
 
 # pr-description
