@@ -2,4 +2,5 @@ export MY_PIP_GLOBAL_PKGS=( \
   "pydot" \
   "setuptools" \
   "neovim" \
+  "anthropic" \
 )
