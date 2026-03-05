@@ -193,3 +193,45 @@ skill-repo-update-all:
 		echo "UPDATE: $(call skill-name-of,$(item)) from $(call skill-repo-of,$(item))..." && \
 		rm -rf $(AI_SKILLS_DIR)/$(call skill-name-of,$(item)) && \
 		$(call skill-sparse-checkout,$(call skill-repo-of,$(item)),$(call skill-dir-of,$(item)),$(call skill-name-of,$(item))) ;)
+
+#------------------------------
+# AI coding
+#------------------------------
+copilot-cli:
+	@copilot --additional-mcp-config @.copilot/mcp-config.json \
+		--allow-tool 'shell(cat)' \
+		--allow-tool 'shell(head)' \
+		--allow-tool 'shell(tail)' \
+		--allow-tool 'shell(sort)' \
+		--allow-tool 'shell(uniq)' \
+		--allow-tool 'shell(grep)' \
+		--allow-tool 'shell(rg)' \
+		--allow-tool 'shell(find)' \
+		--allow-tool 'shell(pwd)' \
+		--allow-tool 'shell(ls)' \
+		--allow-tool 'shell(tree)' \
+		--allow-tool 'shell(wc)' \
+		--allow-tool 'shell(stat)' \
+		--allow-tool 'shell(file)' \
+		--allow-tool 'shell(cd)' \
+		--allow-tool 'shell(date)' \
+		--allow-tool 'shell(whoami)' \
+		--allow-tool 'shell(uname)' \
+		--allow-tool 'shell(id)' \
+		--allow-tool 'shell(gh issue list)' \
+		--allow-tool 'shell(gh issue status)' \
+		--allow-tool 'shell(gh issue view)' \
+		--allow-tool 'shell(gh pr diff)' \
+		--allow-tool 'shell(gh pr list)' \
+		--allow-tool 'shell(gh pr status)' \
+		--allow-tool 'shell(gh pr view)' \
+		--allow-tool 'shell(git branch)' \
+		--allow-tool 'shell(git diff)' \
+		--allow-tool 'shell(git show)' \
+		--allow-tool 'shell(git log)' \
+		--allow-tool 'shell(git status)' \
+		--allow-tool 'shell(git add)' \
+		--deny-tool 'shell(sudo)' \
+		--deny-tool 'shell(git commit)' \
+		--deny-tool 'shell(git push)' \
+		--allow-url github.com
