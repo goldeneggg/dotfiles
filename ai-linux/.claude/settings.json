@@ -40,6 +40,7 @@
       "Bash(git log *)",
       "Bash(git status *)",
       "Bash(git add *)",
+      "Bash(git fetch *)",
       "Read(./.env.example)",
       "Read(./.env.sample)",
       "Read(./.git/config)",
