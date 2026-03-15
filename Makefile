@@ -157,7 +157,8 @@ AI_SKILLS_DIR := ./ai-linux/.claude/skills
 # if REPO_DIR is ".", it means the skill is located at the root of the repo
 SKILL_REPOS := \
 	anthropics/skills|skills|skill-creator \
-	1Password/SCAM|skills|security-awareness
+	1Password/SCAM|skills|security-awareness \
+	pasky/chrome-cdp-skill|skills|chrome-cdp
 
 # Helper functions to extract fields from pipe-separated tuples
 skill-repo-of = $(word 1,$(subst |, ,$1))
