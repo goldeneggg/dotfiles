@@ -57,6 +57,7 @@ def create_directories(project_path: Path) -> None:
         "files",
         "specs",
         "todos",
+        "logs",
     ]
     for dir_name in dirs:
         (project_path / dir_name).mkdir(parents=True, exist_ok=True)

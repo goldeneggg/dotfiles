@@ -1,29 +1,52 @@
 ---
 name: task-starter
 description: |
-  ソフトウェア/Web開発プロジェクト・タスクの開始時に必要なドキュメント群を作成するスキル。
+  ソフトウェア/Web開発プロジェクト・タスクの開始時に、標準フォルダ構造・仕様書・TODOタスクのドキュメント群を生成するスキル。
   以下の状況で使用:
-    (1) ユーザーが「新しいプロジェクトを始めたい」「タスクを開始したい」「プロジェクトをセットアップして」と依頼した時
-    (2) ユーザーが明示的に「/task-starter」を実行した時
-    (3) 新機能開発、リファクタリング、バグ修正などのタスクで計画・ドキュメント整備が必要な時
-    (4) 「ドキュメント構造を作って」「プロジェクトの骨組みを用意して」と依頼された時
-    (5) 「タスク管理用のフォルダを作成して」「開発の準備をして」と依頼された時
-    (6) 「TODOリストを整理したい」「作業計画を立てたい」と相談された時
-    (7) 「仕様書のテンプレートが欲しい」「タスク分割を手伝って」と依頼された時
+    (1) 「新しいプロジェクトを始めたい」「タスクを開始したい」「プロジェクトをセットアップして」
+    (2) 明示的に「/task-starter」を実行した時
+    (3) 新機能開発・リファクタリング・バグ修正で計画・ドキュメント整備が必要な時
+    (4) 「ドキュメント構造を作って」「プロジェクトの骨組みを用意して」
+    (5) 「タスク管理用のフォルダを作成して」「開発の準備をして」
+    (6) 「仕様書のテンプレートが欲しい」「タスク分割を手伝って」
+    (7) 「作業計画をゼロから立てたい」「新規タスクの計画書を作って」
+  注意: 既存TODOの実行・進捗管理はtask-performerの担当。このスキルは「新規作成」に特化。
+argument-hint: "[プロジェクト名]"
+disable-model-invocation: true
 ---
 
 # Task Starter
 
 ソフトウェア/Web開発プロジェクト・タスクの標準ドキュメント構造を生成し、計画を支援する。
 
+## スコープ
+
+### 含むもの
+- プロジェクトフォルダ構造の新規生成
+- 仕様書・TODOタスク・現状分析ドキュメントの作成
+- タスク分割と計画の策定
+
+### 含まないもの
+- 既存TODOタスクの実行・進捗管理（→ task-performer）
+- コードの実装作業
+- 既存ドキュメントの更新・メンテナンス
+
+## 成功基準
+
+- 指定ディレクトリにYYYYMMDD-{name}/フォルダ構造が生成されている
+- specs/ に要件・技術仕様を含む仕様書が作成されている
+- todos/ に1-2時間粒度のタスクが依存順に配置されている
+- ユーザーがPhase 4のレビューで承認している
+
 ## ワークフロー
 
 ### Phase 1: 情報収集
 
 1. **プロジェクト基本情報を収集**
+   `$ARGUMENTS` が指定されている場合はプロジェクト名として使用する。
    ```
-   AskUserQuestionツールで確認:
-   - プロジェクト/タスク名
+   AskUserQuestionツールで確認（$ARGUMENTSで既知の項目はスキップ）:
+   - プロジェクト/タスク名（$ARGUMENTSがあれば確認のみ）
    - 出力先ディレクトリ
    - 概要と目的
    - 新規開発 or 既存コード改修
@@ -62,17 +85,17 @@ description: |
 ### Phase 3: ドキュメント生成
 
 1. **references/ - 現状分析（既存コード改修時のみ）**
-   - {このSKILL.mdのDIR}/references/templates/reference-template.md をベースに作成
+   - references/templates/reference-template.md をベースに作成
    - 現状のアーキテクチャ、主要コンポーネント、処理フローを記載
    - 不明点はAskUserQuestionツールで随時確認
 
 2. **specs/ - 仕様書**
-   - {このSKILL.mdのDIR}/references/templates/spec-template.md をベースに作成
+   - references/templates/spec-template.md をベースに作成
    - 要件、技術仕様、UI/UX、依存関係を記載
    - 不明点はAskUserQuestionツールで随時確認。特に「完了条件」「成功の定義」はユーザーと相談して明確にすること
 
 3. **todos/ - タスク分割**
-   - {このSKILL.mdのDIR}/references/templates/todo-template.md をベースに作成
+   - references/templates/todo-template.md をベースに作成
    - 1-2時間で完了し、エラー無しでコミット可能な粒度に分割
    - 各タスクに連番フォルダ: 001-setup/, 002-implement-xxx/, ...
    - 依存関係を考慮した順序で配置
@@ -161,17 +184,22 @@ description: |
 
 ## 前提条件
 
-- Python 3.x（`{このSKILL.mdのDIR}/scripts/init_project.py`の実行に必要）
+- Python 3.x（`scripts/init_project.py`の実行に必要）
 - 出力先ディレクトリへの書き込み権限
 
 ## リソース
 
 ### scripts/
 
-- {このSKILL.mdのDIR}/scripts/init_project.py - プロジェクトフォルダ構造を生成（Python 3必須）
+- scripts/init_project.py - プロジェクトフォルダ構造を生成（Python 3必須）
+  - 入力: プロジェクト名(必須), --path(出力先), --description(概要)
+  - 出力: YYYYMMDD-{kebab-case-name}/ ディレクトリ + README.md + サブフォルダ群
+  - 参照頻度: 毎回（Phase 2で必ず実行）
 
 ### references/templates/
 
-- {このSKILL.mdのDIR}/references/templates/spec-template.md - 仕様書テンプレート
-- {このSKILL.mdのDIR}/references/templates/todo-template.md - TODOタスクテンプレート
-- {このSKILL.mdのDIR}/references/templates/reference-template.md - 現状分析テンプレート
+以下のテンプレートはPhase 3で毎回参照する。ドキュメント生成のベースとして使用。
+
+- references/templates/spec-template.md - 仕様書テンプレート（毎回参照）
+- references/templates/todo-template.md - TODOタスクテンプレート（毎回参照）
+- references/templates/reference-template.md - 現状分析テンプレート（既存コード改修時のみ参照）
