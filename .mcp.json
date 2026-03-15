@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "sequentialthinking": {
+      "command": "${DOCKER_FULL_PATH}",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--init",
+        "mcp/sequentialthinking:latest"
+      ]
+    },
+    "context7": {
+      "command": "${DOCKER_FULL_PATH}",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--init",
+        "-e", "MCP_TRANSPORT=stdio",
+        "mcp/context7:latest"
+      ]
+    },
+    "chrome-devtools": {
+      "command": "${NPX_FULL_PATH}",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ]
+    }
+  }
+}

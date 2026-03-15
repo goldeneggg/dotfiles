@@ -22,4 +22,5 @@ Claude
 .claude/settings.local.json
 
 # for AI CLis
-*mcp*.json
+.mcp.full.json
+.copilot
