@@ -1,5 +1,13 @@
 # Sub Agent vs Skill
 
+## Contents
+- 定義すべき内容（Sub Agent / Skill それぞれの記述内容）
+- 使い分けのポイント（Sub Agent向き / Skill向きの判断基準）
+- 補足: クイックチャート（5項目の判定フロー）
+- 相互連携（Sub Agent→Skill / Skill→Sub Agent の組み合わせ方）
+- 汎用テンプレート（Sub Agent / Skill のYAMLテンプレート）
+- 参考文献（公式ドキュメントリンク集）
+
 ## 定義すべき内容
 
 ### Sub Agent
