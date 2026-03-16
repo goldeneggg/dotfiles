@@ -58,6 +58,33 @@ tools:
 # 親会話のスキルは継承されないため、必要な知識はここで指定
 # skills:
 #   - my-custom-skill
+
+# メモリスコープ（任意）
+# エージェントが学習を蓄積する範囲を指定
+#   user: 全プロジェクト横断で学習を蓄積（推奨デフォルト）
+#   project: プロジェクト固有の知識（VCS共有向け）
+#   local: プロジェクト固有の知識（VCS除外向け）
+# memory: user
+
+# Git worktree隔離（任意）
+# コード変更を行うAgentや並行実行が想定されるAgentで使用
+# isolation: worktree
+
+# 最大ターン数（任意）
+# 暴走防止の安全装置。タスクの複雑さに応じて設定
+# maxTurns: 20
+
+# MCP Server設定（任意）
+# メインコンテキストから分離すべきサーバーがある場合に使用
+# mcpServers:
+#   my-server:
+#     type: stdio
+#     command: "node"
+#     args: ["./server.js"]
+
+# バックグラウンド実行（任意）
+# 使用時はAskUserQuestionが使えない制約に注意
+# background: true
 ---
 
 # Role（役割）
