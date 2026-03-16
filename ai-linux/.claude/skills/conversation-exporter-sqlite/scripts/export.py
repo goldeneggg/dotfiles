@@ -155,7 +155,7 @@ CREATE INDEX IF NOT EXISTS idx_memory_files_project ON memory_files(project_path
 
 def encode_project_path(project_path: str) -> str:
     """プロジェクトパスをClaude Codeのディレクトリ名形式にエンコード."""
-    return project_path.replace("/", "-")
+    return project_path.replace("/", "-").replace("_", "-")
 
 
 def find_project_dir(project_path: str) -> Path | None:
