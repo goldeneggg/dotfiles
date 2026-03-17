@@ -27,6 +27,13 @@
         "-y",
         "chrome-devtools-mcp@latest"
       ]
+    },
+    "drawio": {
+      "command": "${NPX_FULL_PATH}",
+      "args": [
+        "-y",
+        "@drawio/mcp"
+      ]
     }
   }
 }
