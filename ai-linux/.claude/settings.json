@@ -1,5 +1,6 @@
 {
   "alwaysThinkingEnabled": true,
+  "autoMemoryEnabled": false,
   "cleanupPeriodDays": 30,
   "language": "japanese",
   "outputStyle": "concise",
