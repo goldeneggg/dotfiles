@@ -5,6 +5,7 @@
   "language": "japanese",
   "outputStyle": "concise",
   "permissions": {
+    "defaultMode": "acceptEdits",
     "allow": [
       "Bash(cat *)",
       "Bash(head *)",
