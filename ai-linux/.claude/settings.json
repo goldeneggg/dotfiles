@@ -54,7 +54,7 @@
       "Read(./requirements.txt)",
       "WebFetch(domain:github.com)",
       "WebSearch",
-      "sequentialthinking"
+      "mcp__sequential-thinking__sequentialthinking"
     ],
     "deny": [
       "Bash(sudo *)",
