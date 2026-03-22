@@ -155,7 +155,7 @@ AI_SKILLS_DIR := ./ai-linux/.claude/skills
 # Skill list: REPO|REPO_DIR|SKILL_NAME (pipe-separated tuples)
 # Add new skills by appending entries to this list
 # if REPO_DIR is ".", it means the skill is located at the root of the repo
-SKILL_REPOS := \
+EXTERNAL_SKILL_REPOS := \
 	anthropics/skills|skills|skill-creator \
 	1Password/SCAM|skills|security-awareness \
 	pasky/chrome-cdp-skill|skills|chrome-cdp
@@ -178,9 +178,9 @@ define skill-sparse-checkout
 	rm -rf "$$TEMP_DIR"
 endef
 
-# Batch add all skills in SKILL_REPOS (skips already-added skills, no auto-commit)
+# Batch add all skills in EXTERNAL_SKILL_REPOS (skips already-added skills, no auto-commit)
 skill-repo-add-all:
-	@$(foreach item,$(SKILL_REPOS), \
+	@$(foreach item,$(EXTERNAL_SKILL_REPOS), \
 		if [ -d "$(AI_SKILLS_DIR)/$(call skill-name-of,$(item))" ]; then \
 			echo "SKIP: $(call skill-name-of,$(item)) already exists"; \
 		else \
@@ -188,9 +188,9 @@ skill-repo-add-all:
 			$(call skill-sparse-checkout,$(call skill-repo-of,$(item)),$(call skill-dir-of,$(item)),$(call skill-name-of,$(item))); \
 		fi ;)
 
-# Batch update all skills in SKILL_REPOS
+# Batch update all skills in EXTERNAL_SKILL_REPOS
 skill-repo-update-all:
-	@$(foreach item,$(SKILL_REPOS), \
+	@$(foreach item,$(EXTERNAL_SKILL_REPOS), \
 		echo "UPDATE: $(call skill-name-of,$(item)) from $(call skill-repo-of,$(item))..." && \
 		rm -rf $(AI_SKILLS_DIR)/$(call skill-name-of,$(item)) && \
 		$(call skill-sparse-checkout,$(call skill-repo-of,$(item)),$(call skill-dir-of,$(item)),$(call skill-name-of,$(item))) ;)
