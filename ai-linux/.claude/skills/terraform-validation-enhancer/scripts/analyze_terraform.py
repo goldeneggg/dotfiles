@@ -48,16 +48,28 @@ class TerraformAnalyzer:
         """Run all analyses and return results."""
         self.find_tf_files()
 
-        for tf_file in self.tf_files:
-            with open(tf_file, 'r', encoding='utf-8') as f:
-                content = f.read()
-                lines = content.split('\n')
+        if not self.tf_files:
+            print(f"Warning: No .tf files found in {self.directory}", file=sys.stderr)
 
-                self._analyze_variables(tf_file, content, lines)
-                self._analyze_resources(tf_file, content, lines)
-                self._analyze_data_sources(tf_file, content, lines)
-                self._analyze_modules(tf_file, content, lines)
-                self._check_for_check_blocks(tf_file, content, lines)
+        for tf_file in self.tf_files:
+            try:
+                with open(tf_file, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    lines = content.split('\n')
+
+                    self._analyze_variables(tf_file, content, lines)
+                    self._analyze_resources(tf_file, content, lines)
+                    self._analyze_data_sources(tf_file, content, lines)
+                    self._analyze_modules(tf_file, content, lines)
+                    self._check_for_check_blocks(tf_file, content, lines)
+            except (IOError, UnicodeDecodeError) as e:
+                self.issues.append(ValidationIssue(
+                    file=str(tf_file.relative_to(self.directory)),
+                    line=0,
+                    severity="warning",
+                    category="validation",
+                    message=f"Could not read file: {e}",
+                ))
 
         return self._generate_report()
 
