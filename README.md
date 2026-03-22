@@ -1,76 +1,127 @@
-## Setup
+# dotfiles
+
+Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/), supporting both **macOS** and **Linux**.
+
+## What's Included
+
+| Tool | Description |
+|------|-------------|
+| **zsh** | Modular config (`.zshrc.prompt`, `.zshrc.fzf`, `.zshrc.aliases`, etc.) |
+| **tmux** | Split config with TPM plugin manager |
+| **Neovim** | Modern setup with vim-plug |
+| **Git** | Template-based config with global gitignore generation |
+| **AI tools** | Skills and rules for AI coding assistants |
+
+### Package Management
+
+- **[Homebrew](https://brew.sh/)** — system packages (see [`_brew_pkgs`](./_brew_pkgs))
+- **[asdf](https://asdf-vm.com/)** — runtime versions (Node.js, Python, Ruby, Terraform)
+- **npm / pip / uv / gem** — language-specific packages
+
+## Prerequisites
+
+- macOS or Linux
+- [GNU Stow](https://www.gnu.org/software/stow/)
+- [Homebrew](https://brew.sh/) (macOS only)
+- Git
+
+## Installation
+
+> **Warning**: Review the code before running. These are *my* personal settings — they will overwrite your existing configs.
 
 ```sh
-git clone [this project] ~/dotfiles
+# 1. Clone
+git clone https://github.com/goldeneggg/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
-# for Mac only
-# *require to install Homebrew. See: https://brew.sh/index_ja
+# 2. Install Homebrew packages (macOS only)
 make install-brew-pkgs
 
+# 3. Run setup (creates symlinks, configures git, installs plugins)
 make setup
 ```
 
-## Install npm global packages
+## Usage
+
+### Regular Updates
 
 ```sh
-make init-npms
+make reset              # Update dotfiles (skip go install)
+make reset-with-goget   # Update dotfiles with go install
+make work               # Full upgrade: asdf + rust + gems + pips + npms + brew
 ```
 
-## Setup my projects
+### Package Installation
 
 ```sh
-make init-projects
+make init-npms          # npm global packages
+make init-pips          # pip global packages
+make init-gems          # gem global packages
+make init-projects      # Clone personal GitHub projects
 ```
 
-## Update
-
-### dotfiles
+### Version Management (asdf)
 
 ```sh
-make reset
-
-# skip "go get" as follows
-make reset-skip-goget
+make asdf-upgrade             # Upgrade Node.js, Python, Ruby, Terraform
+make asdf-uninstall-all       # Remove old versions
+make asdf-uninstall-selected  # Interactive removal via fzf
 ```
 
-## Refactoring
+### Homebrew (macOS)
 
-### [Improving Git protocol security on GitHub \| The GitHub Blog](https://github.blog/2021-09-01-improving-git-protocol-security-github/) の対応
+```sh
+make install-brew-pkgs   # Initial install
+make upgrade-brew-pkgs   # Upgrade packages
+```
 
-neobundleのgit submodule URLが `git://` になっているので、`https://` に変更する
+### Other
 
-1. .gitmodules 修正
-    - `url = https://github.com/Shougo/neobundle.vim`
-2. `git submodule sync`
-3. `git submodule update --remote --recursive` が正常動作するか確認
-    - 上手くいかない場合、 `The unauthenticated git protocol on port 9418 is no longer supported.` エラーが出る
+```sh
+make install-op-cli          # Install 1Password CLI (GPG verified)
+make skill-repo-add-all      # Add external AI skills
+make skill-repo-update-all   # Update external AI skills
+```
 
-### anyenv -> asdf切り替え
+## How It Works
 
-See: [GitHub \- asdf\-vm/asdf: Extendable version manager with support for Ruby, Node\.js, Elixir, Erlang & more](https://github.com/asdf-vm/asdf)
+### Directory Convention
 
-1. `brew update && brew install asdf`
-2. `echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >> ${ZDOTDIR:-~}/.zshrc`
-3. ターミナル再起動
-4. `asdf plugin add ruby`
-    - `asdf list all ruby` でインストール可能バージョン確認
-5. `asdf install ruby 3.0.4`
-6. `asdf install ruby 2.7.6`
-7. `asdf global ruby 3.0.4`
-8. `asdf reshim ruby`
-9. シェルやターミナルを再起動して `ruby -v` で動作確認
-10. 以降、pythonとnodejsも同様の流れでインストール
-11. 言語ごとにglobalに導入したいツールやライブラリをインストール
-    - nodejs `npm install -g ...` (`make init-npms`)
-    - python `pip install --upgrade ...` (`make init-pips`)
-        - ___pythonだけインストールしただけではツールのPATHが通っておらず `asdf reshim python` して解決___
-    - ruby `gem install ...` (`make init-gems`)
-12. ~/.asdfrc ファイル作成
-    - See: [Using Existing Tool Version Files](http://asdf-vm.com/guide/getting-started.html#using-existing-tool-version-files)
-13. 必要に応じて各プロジェクト配下に .tool-versions ファイルを用意
+```text
+<tool>-linux/     # Linux configs — mirrors $HOME structure
+<tool>-mac/       # macOS configs — mirrors $HOME structure
+```
 
-※ anyenv
+GNU Stow creates symlinks from these directories into `$HOME`:
 
-1. `rm -fr ~/.anyenv`
-2. `brew uninstall anyenv`
+```sh
+stow -R --verbose=2 zsh-linux
+# Creates: ~/.zshrc -> dotfiles/zsh-linux/.zshrc
+```
+
+Mac configs can symlink to Linux versions for shared components:
+
+```text
+git-mac/.gitconfig -> ../git-linux/.gitconfig
+```
+
+### Setup Process
+
+1. Stow all `*-linux/` or `*-mac/` directories (creates symlinks)
+2. Replace `%GITHUB_USER%` / `%GITHUB_MAIL%` placeholders in `.gitconfig`
+3. Generate `.gitignore_global` from [github/gitignore](https://github.com/github/gitignore) templates
+4. Install tmux plugin manager (TPM) and base16-shell
+
+## Customization
+
+Personal or machine-specific configs go in `~/.personal/` — this directory is not tracked by git.
+
+## Notes
+
+- SSH keys must be set up before `make init-projects`
+- Run `asdf reshim <lang>` after installing packages to update PATH
+- M1 Mac: `/opt/homebrew` / Intel Mac: `/usr/local`
+
+## License
+
+MIT
