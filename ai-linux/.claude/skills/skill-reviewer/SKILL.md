@@ -3,7 +3,7 @@ name: skill-reviewer
 description: |
   既存スキルの品質を構造化チェックリストに基づいてレビューし、優先度付きの改善提案を行う。設計・実装・検証・公開前の4フェーズで評価する。「スキルをレビューして」「スキルの品質を確認して」「公開前にチェックして」「改善点を提案して」と依頼された時、または明示的に「/skill-reviewer」を実行した時に使用する。Sub Agentのレビューにはagent-reviewerを、新規スキル作成にはskill-creatorを使うこと。
 argument-hint: [skill-name]
-allowed-tools: Read, Grep, Glob
+allowed-tools: Read, Grep, Glob, AskUserQuestion
 ---
 
 # Skill Reviewer
@@ -155,7 +155,7 @@ references/内のファイルが読めない、または存在しない場合:
 
 ### トークン効率
 
-- チェックリストは動的読み込み（!`cat`構文）で最新の内容を取得
+- チェックリストは `references/skill-check-list.md` をReadツールで読み込み、最新の内容を取得
 - 対象スキルのreferences/が複数ある場合、内容を推測してから選択的読み込み
 - SKILL.mdと対象スキルのファイル群はGlobで探索→必要箇所のみRead
 

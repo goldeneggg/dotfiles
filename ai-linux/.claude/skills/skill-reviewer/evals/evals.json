@@ -1,0 +1,48 @@
+{
+  "skill_name": "skill-reviewer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/skill-reviewer pdf-processing",
+      "expected_output": "4-phase evaluation with PASS/WARNING/FAIL judgments, problem summary by severity, and prioritized action list",
+      "files": [],
+      "expectations": [
+        "All 4 phases (preparation, implementation, verification, pre-release) are evaluated",
+        "Each checklist item has a PASS/WARNING/FAIL judgment",
+        "Summary includes problem counts by severity (Critical/High/Medium/Low)",
+        "Priority action list with concrete improvement suggestions is provided"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/skill-reviewer nonexistent-skill",
+      "expected_output": "Similar skill names suggested and user prompted to confirm",
+      "files": [],
+      "expectations": [
+        "Glob search is performed in .claude/skills/ for similar names",
+        "Candidate skill names are presented to the user",
+        "AskUserQuestion is used to confirm the correct target"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/skill-reviewer",
+      "expected_output": "User is asked to specify which skill to review",
+      "files": [],
+      "expectations": [
+        "AskUserQuestion tool is invoked to ask for the target skill name",
+        "No evaluation is started without a target"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "このスキルの改善点を教えて",
+      "expected_output": "Skill reviewer triggers and asks which skill to review, or reviews the contextually relevant skill",
+      "files": [],
+      "expectations": [
+        "skill-reviewer skill is triggered (not skill-creator or pr-reviewer)",
+        "Review process begins or user is asked to specify target"
+      ]
+    }
+  ]
+}
