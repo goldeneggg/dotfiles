@@ -48,7 +48,7 @@ projects 1──N sessions 1──N messages 1──N tool_uses
 エクスポートスクリプトを実行する:
 
 ```bash
-python3 <skill-path>/scripts/export.py --project-path <cwd>
+python3 scripts/export.py --project-path <cwd>
 ```
 
 ### オプション

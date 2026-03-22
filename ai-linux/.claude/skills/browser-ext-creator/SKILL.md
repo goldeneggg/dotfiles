@@ -120,8 +120,8 @@ Firefox はほぼ同じ構造だが、`manifest.json` に差異あり（`browser
 ### manifest.json
 
 テンプレートをベースにユーザー要件に合わせてカスタマイズする:
-- **Chrome**: `{このSKILL.mdのDIR}/assets/chrome-template/manifest.json` をコピーして編集
-- **Firefox**: `{このSKILL.mdのDIR}/assets/firefox-template/manifest.json` をコピーして編集
+- **Chrome**: `assets/chrome-template/manifest.json` をコピーして編集
+- **Firefox**: `assets/firefox-template/manifest.json` をコピーして編集
 
 カスタマイズ時の主なポイント:
 - `name`, `description`: ユーザー指定の拡張名・説明に置換
@@ -281,13 +281,13 @@ Step 4のチェックリストで ❌ が見つかった場合:
 
 | 資料 | パス | 用途 | 参照頻度 |
 |------|------|------|----------|
-| Manifest V3 詳細 | `{このSKILL.mdのDIR}/references/manifest-v3.md` | Chrome/Firefox差異の確認、permissions選定、Content Script/Background Scriptの実装パターン | **毎回** — Step 2-3で必ず参照 |
-| セキュリティガイド | `{このSKILL.mdのDIR}/references/security.md` | XSS防止、CSP設定、API通信・ストレージのセキュリティ確認 | **時々** — 外部API連携やユーザー入力を扱う場合にStep 3-4で参照 |
-| トリガーテスト | `{このSKILL.mdのDIR}/references/trigger-tests.md` | description改善時の回帰テスト用。正常系8例・異常系5例・境界3例 | **保守時のみ** — スキルのdescription変更時に参照 |
+| Manifest V3 詳細 | `references/manifest-v3.md` | Chrome/Firefox差異の確認、permissions選定、Content Script/Background Scriptの実装パターン | **毎回** — Step 2-3で必ず参照 |
+| セキュリティガイド | `references/security.md` | XSS防止、CSP設定、API通信・ストレージのセキュリティ確認 | **時々** — 外部API連携やユーザー入力を扱う場合にStep 3-4で参照 |
+| トリガーテスト | `references/trigger-tests.md` | description改善時の回帰テスト用。正常系8例・異常系5例・境界3例 | **保守時のみ** — スキルのdescription変更時に参照 |
 
 ## テンプレート
 
 プロジェクトテンプレート：
 
-- **Chrome**: {このSKILL.mdのDIR}/assets/chrome-template
-- **Firefox**: {このSKILL.mdのDIR}/assets/firefox-template
+- **Chrome**: assets/chrome-template
+- **Firefox**: assets/firefox-template

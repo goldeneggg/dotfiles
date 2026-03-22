@@ -57,7 +57,7 @@ echo "content" | python3 scripts/convert.py - --from html
 python3 scripts/convert.py <input_file> --output output.md
 ```
 
-**スクリプトパス:** `~/.claude/skills/md-converter/scripts/convert.py`
+**スクリプトパス:** `scripts/convert.py`
 
 **プレーンテキストの場合**
 

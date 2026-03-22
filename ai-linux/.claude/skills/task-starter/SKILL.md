@@ -62,7 +62,7 @@ disable-model-invocation: true
 1. **プロジェクトフォルダを作成**
    スキルディレクトリ内のスクリプトを実行:
    ```bash
-   python3 ~/.claude/skills/task-starter/scripts/init_project.py "{プロジェクト名}" --path "{出力先}" --description "{概要}"
+   python3 scripts/init_project.py "{プロジェクト名}" --path "{出力先}" --description "{概要}"
    ```
 
    生成される構造:

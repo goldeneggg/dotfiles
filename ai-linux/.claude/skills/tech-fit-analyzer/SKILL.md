@@ -86,7 +86,6 @@ description: >
 
 ローカルリポジトリの場合：
 - まず `bash scripts/repo-snapshot.sh [パス]` を実行してスナップショットを取得
-  （スクリプトは [スキルのパス]/scripts/repo-snapshot.sh にある）
 - 参考: references/stack-detection.md にconfig→スタックの対応表あり
 - 主要な設定ファイルを読み、代表的なソースファイルを2-3個確認する
 
