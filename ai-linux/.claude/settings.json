@@ -1,11 +1,6 @@
 {
-  "alwaysThinkingEnabled": true,
-  "autoMemoryEnabled": false,
   "cleanupPeriodDays": 30,
-  "language": "japanese",
-  "outputStyle": "concise",
   "permissions": {
-    "defaultMode": "acceptEdits",
     "allow": [
       "Bash(cat *)",
       "Bash(head *)",
@@ -82,7 +77,8 @@
       "Bash(rmdir *)",
       "Bash(touch *)",
       "Bash(wget *)"
-    ]
+    ],
+    "defaultMode": "acceptEdits"
   },
   "hooks": {
     "SessionStart": [
@@ -270,5 +266,12 @@
         ]
       }
     ]
+  },
+  "outputStyle": "concise",
+  "language": "japanese",
+  "alwaysThinkingEnabled": true,
+  "autoMemoryEnabled": false,
+  "enabledPlugins": {
+    "skill-creator@claude-plugins-official": true
   }
 }

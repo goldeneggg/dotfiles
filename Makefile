@@ -156,7 +156,6 @@ AI_SKILLS_DIR := ./ai-linux/.claude/skills
 # Add new skills by appending entries to this list
 # if REPO_DIR is ".", it means the skill is located at the root of the repo
 EXTERNAL_SKILL_REPOS := \
-	anthropics/skills|skills|skill-creator \
 	1Password/SCAM|skills|security-awareness \
 	pasky/chrome-cdp-skill|skills|chrome-cdp
 
