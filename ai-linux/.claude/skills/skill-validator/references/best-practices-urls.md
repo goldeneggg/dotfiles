@@ -1,0 +1,7 @@
+# ベストプラクティス参照URL
+
+# 検証時に WebFetch で取得し、対象スキルとの準拠性を検証するURLリスト。
+# 1行1URL。空行と # で始まるコメント行は無視される。
+# ファイルが空またはURLが1つもない場合、Phase 3 はスキップされる。
+
+- https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices.md
