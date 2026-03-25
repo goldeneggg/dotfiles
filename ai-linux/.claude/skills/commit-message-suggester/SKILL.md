@@ -25,12 +25,13 @@ description: |
 ## 引数
 
 ```
-/commit-message-suggester [--mode short|long] [--scope <scope>] [--lang <language>]
+/commit-message-suggester [--mode short|long] [--scope <scope>] [--lang <language>] [--export-dir <dir>]
 ```
 
 - `--mode` (任意): `short`（デフォルト）または `long`
 - `--scope` (任意): スコープを明示的に指定（省略時は差分から自動推定）
 - `--lang` (任意): メッセージの記述言語（デフォルト: `en`）。`ja` で日本語、`en` で英語。type と scope は常に英語
+- `--export-dir` (任意): 提案したメッセージをファイルに保存する場合のディレクトリパス。指定された場合、"commit-{`date +'%Y%m%d%H%M%S'` コマンドの実行結果}-{title}.txt" というファイル名でファイルに書き出す（`git commit -F` で使用する想定）。ディレクトリが未指定ならAskUserQuestionで確認（デフォルトは `./tmp/`
 
 ## 実行フロー
 
