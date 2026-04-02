@@ -207,15 +207,15 @@ FROM file_history GROUP BY file_hash ORDER BY versions DESC LIMIT 10;
 
 ```sql
 -- タイプ別サブエージェント使用
-SELECT subagent_type, COUNT(*) as count,
+SELECT agent_type, COUNT(*) as count,
        AVG(msg_count) as avg_messages
 FROM (
-  SELECT sa.subagent_type, sa.agent_id,
+  SELECT sa.agent_type, sa.agent_id,
          COUNT(sm.uuid) as msg_count
   FROM subagents sa
   LEFT JOIN subagent_messages sm ON sa.agent_id = sm.agent_id
   GROUP BY sa.agent_id
-) GROUP BY subagent_type ORDER BY count DESC;
+) GROUP BY agent_type ORDER BY count DESC;
 ```
 
 ### 7. 時系列トレンド分析
@@ -249,6 +249,8 @@ FROM sessions GROUP BY week ORDER BY week;
 ## 実装上の注意
 
 - SQLiteへのアクセスはBashツールで `sqlite3` コマンドを使用する
+- **スキーマ事前確認**: クエリ実行前に `sqlite3 DB ".schema テーブル名"` で実際のカラム名を確認する。本スキルのサンプルSQLとエクスポーター側の実装が乖離している可能性があるため、サンプルSQLのカラム名をそのまま信用しないこと
+- **並列実行時のリスク分離**: スキーマ未確認のテーブルへのクエリは、確実に成功するクエリ群と別バッチで実行する。1件のエラーで他の並列クエリが連鎖キャンセルされるのを防ぐため
 - クエリ結果が大きい場合はLIMITで制限する
 - NULLデータ（特にトークン数）を適切にハンドルする（COALESCEやIS NOT NULL）
 - JSONフィールドの抽出には `json_extract()` を使用する
