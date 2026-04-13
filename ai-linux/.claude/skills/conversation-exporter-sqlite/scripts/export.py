@@ -68,10 +68,19 @@ CREATE TABLE IF NOT EXISTS messages (
     cwd TEXT,
     git_branch TEXT,
     is_sidechain INTEGER DEFAULT 0,
+    is_meta INTEGER DEFAULT 0,
     user_type TEXT,
     subtype TEXT,
+    message_api_id TEXT,
+    request_id TEXT,
+    stop_reason TEXT,
+    service_tier TEXT,
     usage_input_tokens INTEGER,
     usage_output_tokens INTEGER,
+    usage_cache_creation_input_tokens INTEGER,
+    usage_cache_read_input_tokens INTEGER,
+    usage_cache_creation_5m INTEGER,
+    usage_cache_creation_1h INTEGER,
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
 
@@ -108,8 +117,16 @@ CREATE TABLE IF NOT EXISTS subagent_messages (
     model TEXT,
     timestamp TEXT,
     is_sidechain INTEGER DEFAULT 0,
+    message_api_id TEXT,
+    request_id TEXT,
+    stop_reason TEXT,
+    service_tier TEXT,
     usage_input_tokens INTEGER,
     usage_output_tokens INTEGER,
+    usage_cache_creation_input_tokens INTEGER,
+    usage_cache_read_input_tokens INTEGER,
+    usage_cache_creation_5m INTEGER,
+    usage_cache_creation_1h INTEGER,
     FOREIGN KEY (agent_id) REFERENCES subagents(agent_id),
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
@@ -283,6 +300,42 @@ def serialize_content(content) -> str:
 
 # --- Database Operations ---
 
+def _add_column_if_missing(conn: sqlite3.Connection, table: str, column: str, coltype: str):
+    """既存テーブルにカラムを追加（存在しない場合のみ）."""
+    existing = {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+    if column not in existing:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {coltype}")
+
+
+def migrate_schema(conn: sqlite3.Connection):
+    """既存DBのスキーマを最新版に移行（非破壊）."""
+    extra_cols_messages = [
+        ("is_meta", "INTEGER DEFAULT 0"),
+        ("message_api_id", "TEXT"),
+        ("request_id", "TEXT"),
+        ("stop_reason", "TEXT"),
+        ("service_tier", "TEXT"),
+        ("usage_cache_creation_input_tokens", "INTEGER"),
+        ("usage_cache_read_input_tokens", "INTEGER"),
+        ("usage_cache_creation_5m", "INTEGER"),
+        ("usage_cache_creation_1h", "INTEGER"),
+    ]
+    extra_cols_subagent = [
+        ("message_api_id", "TEXT"),
+        ("request_id", "TEXT"),
+        ("stop_reason", "TEXT"),
+        ("service_tier", "TEXT"),
+        ("usage_cache_creation_input_tokens", "INTEGER"),
+        ("usage_cache_read_input_tokens", "INTEGER"),
+        ("usage_cache_creation_5m", "INTEGER"),
+        ("usage_cache_creation_1h", "INTEGER"),
+    ]
+    for col, typ in extra_cols_messages:
+        _add_column_if_missing(conn, "messages", col, typ)
+    for col, typ in extra_cols_subagent:
+        _add_column_if_missing(conn, "subagent_messages", col, typ)
+
+
 def init_db(db_path: Path) -> sqlite3.Connection:
     """SQLiteデータベースを初期化."""
     db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -291,6 +344,7 @@ def init_db(db_path: Path) -> sqlite3.Connection:
     # インポート中はFK制約を無効化（挿入順序の依存を回避）
     conn.execute("PRAGMA foreign_keys=OFF")
     conn.executescript(SCHEMA_SQL)
+    migrate_schema(conn)
     return conn
 
 
@@ -341,13 +395,22 @@ def upsert_message(conn: sqlite3.Connection, msg: dict):
     """メッセージをUpsert."""
     conn.execute("""
         INSERT INTO messages (uuid, session_id, parent_uuid, type, role, content, model,
-                              timestamp, cwd, git_branch, is_sidechain, user_type, subtype,
-                              usage_input_tokens, usage_output_tokens)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                              timestamp, cwd, git_branch, is_sidechain, is_meta, user_type, subtype,
+                              message_api_id, request_id, stop_reason, service_tier,
+                              usage_input_tokens, usage_output_tokens,
+                              usage_cache_creation_input_tokens, usage_cache_read_input_tokens,
+                              usage_cache_creation_5m, usage_cache_creation_1h)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(uuid) DO UPDATE SET
             content = excluded.content,
+            stop_reason = excluded.stop_reason,
+            service_tier = excluded.service_tier,
             usage_input_tokens = excluded.usage_input_tokens,
-            usage_output_tokens = excluded.usage_output_tokens
+            usage_output_tokens = excluded.usage_output_tokens,
+            usage_cache_creation_input_tokens = excluded.usage_cache_creation_input_tokens,
+            usage_cache_read_input_tokens = excluded.usage_cache_read_input_tokens,
+            usage_cache_creation_5m = excluded.usage_cache_creation_5m,
+            usage_cache_creation_1h = excluded.usage_cache_creation_1h
     """, (
         msg["uuid"],
         msg["session_id"],
@@ -360,10 +423,19 @@ def upsert_message(conn: sqlite3.Connection, msg: dict):
         msg.get("cwd"),
         msg.get("git_branch"),
         1 if msg.get("is_sidechain") else 0,
+        1 if msg.get("is_meta") else 0,
         msg.get("user_type"),
         msg.get("subtype"),
+        msg.get("message_api_id"),
+        msg.get("request_id"),
+        msg.get("stop_reason"),
+        msg.get("service_tier"),
         msg.get("usage_input_tokens"),
         msg.get("usage_output_tokens"),
+        msg.get("usage_cache_creation_input_tokens"),
+        msg.get("usage_cache_read_input_tokens"),
+        msg.get("usage_cache_creation_5m"),
+        msg.get("usage_cache_creation_1h"),
     ))
 
 
@@ -403,10 +475,15 @@ def upsert_subagent_message(conn: sqlite3.Connection, msg: dict):
     conn.execute("""
         INSERT INTO subagent_messages (uuid, agent_id, session_id, parent_uuid, type, role,
                                         content, model, timestamp, is_sidechain,
-                                        usage_input_tokens, usage_output_tokens)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                        message_api_id, request_id, stop_reason, service_tier,
+                                        usage_input_tokens, usage_output_tokens,
+                                        usage_cache_creation_input_tokens, usage_cache_read_input_tokens,
+                                        usage_cache_creation_5m, usage_cache_creation_1h)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(uuid) DO UPDATE SET
-            content = excluded.content
+            content = excluded.content,
+            usage_cache_creation_input_tokens = excluded.usage_cache_creation_input_tokens,
+            usage_cache_read_input_tokens = excluded.usage_cache_read_input_tokens
     """, (
         msg["uuid"],
         msg["agent_id"],
@@ -418,8 +495,16 @@ def upsert_subagent_message(conn: sqlite3.Connection, msg: dict):
         msg.get("model"),
         msg.get("timestamp"),
         1 if msg.get("is_sidechain") else 0,
+        msg.get("message_api_id"),
+        msg.get("request_id"),
+        msg.get("stop_reason"),
+        msg.get("service_tier"),
         msg.get("usage_input_tokens"),
         msg.get("usage_output_tokens"),
+        msg.get("usage_cache_creation_input_tokens"),
+        msg.get("usage_cache_read_input_tokens"),
+        msg.get("usage_cache_creation_5m"),
+        msg.get("usage_cache_creation_1h"),
     ))
 
 
@@ -539,7 +624,8 @@ def export_session(
 
         msg_data = rec.get("message", {})
         msg_content = msg_data.get("content", rec.get("content", ""))
-        usage = msg_data.get("usage", {})
+        usage = msg_data.get("usage", {}) or {}
+        cache_creation = usage.get("cache_creation") or {}
 
         msg = {
             "uuid": rec.get("uuid", str(uuid.uuid4())),
@@ -553,10 +639,19 @@ def export_session(
             "cwd": rec.get("cwd"),
             "git_branch": rec.get("gitBranch"),
             "is_sidechain": rec.get("isSidechain", False),
+            "is_meta": rec.get("isMeta", False),
             "user_type": rec.get("userType"),
             "subtype": rec.get("subtype"),
+            "message_api_id": msg_data.get("id"),
+            "request_id": rec.get("requestId"),
+            "stop_reason": msg_data.get("stop_reason"),
+            "service_tier": usage.get("service_tier"),
             "usage_input_tokens": usage.get("input_tokens"),
             "usage_output_tokens": usage.get("output_tokens"),
+            "usage_cache_creation_input_tokens": usage.get("cache_creation_input_tokens"),
+            "usage_cache_read_input_tokens": usage.get("cache_read_input_tokens"),
+            "usage_cache_creation_5m": cache_creation.get("ephemeral_5m_input_tokens"),
+            "usage_cache_creation_1h": cache_creation.get("ephemeral_1h_input_tokens"),
         }
 
         upsert_message(conn, msg)
@@ -606,7 +701,8 @@ def export_session(
                 for rec in agent_messages:
                     msg_data = rec.get("message", {})
                     msg_content = msg_data.get("content", rec.get("content", ""))
-                    usage = msg_data.get("usage", {})
+                    usage = msg_data.get("usage", {}) or {}
+                    cache_creation = usage.get("cache_creation") or {}
 
                     sa_msg = {
                         "uuid": rec.get("uuid", str(uuid.uuid4())),
@@ -619,8 +715,16 @@ def export_session(
                         "model": msg_data.get("model"),
                         "timestamp": rec.get("timestamp"),
                         "is_sidechain": rec.get("isSidechain", False),
+                        "message_api_id": msg_data.get("id"),
+                        "request_id": rec.get("requestId"),
+                        "stop_reason": msg_data.get("stop_reason"),
+                        "service_tier": usage.get("service_tier"),
                         "usage_input_tokens": usage.get("input_tokens"),
                         "usage_output_tokens": usage.get("output_tokens"),
+                        "usage_cache_creation_input_tokens": usage.get("cache_creation_input_tokens"),
+                        "usage_cache_read_input_tokens": usage.get("cache_read_input_tokens"),
+                        "usage_cache_creation_5m": cache_creation.get("ephemeral_5m_input_tokens"),
+                        "usage_cache_creation_1h": cache_creation.get("ephemeral_1h_input_tokens"),
                     }
                     upsert_subagent_message(conn, sa_msg)
                     agent_msg_count += 1
