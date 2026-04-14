@@ -12,7 +12,6 @@ description: |
     (7) 「作業計画をゼロから立てたい」「新規タスクの計画書を作って」
   注意: 既存TODOの実行・進捗管理はtask-performerの担当。このスキルは「新規作成」に特化。
 argument-hint: "[プロジェクト名]"
-disable-model-invocation: true
 ---
 
 # Task Starter
