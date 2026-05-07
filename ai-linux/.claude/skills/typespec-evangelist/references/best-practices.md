@@ -1,65 +1,83 @@
-# TypeSpecによるAPIスキーマ設計のベストプラクティス
+# TypeSpec による API スキーマ設計のベストプラクティス
 
-> **📌 バージョン情報（2026年5月時点）**
-> TypeSpec は **1.11.0** が最新リリースです。2025年5月に 1.0 GA（一般提供）となり、プロダクション利用が公式にサポートされています。
+> **バージョン情報（2026 年 5 月時点）**
 >
-> | コンポーネント | ステータス |
-> |---|---|
-> | `@typespec/compiler` / `@typespec/http` / `@typespec/openapi` | ✅ 安定版（Stable） |
-> | `@typespec/openapi3` / `@typespec/json-schema` | ✅ 安定版（Stable） |
-> | `@typespec/versioning` / `@typespec/rest` / `@typespec/xml` | 🔶 プレビュー（Preview） |
-> | クライアント・サーバーコード生成（.NET / JS / Java / Python） | 🔶 プレビュー（Preview） |
+> TypeSpec のコアパッケージは **1.11.0** が最新リリース（2026-04-07 公開）。2025 年 5 月に 1.0 GA となり、プロダクション利用が公式にサポートされている。
+>
+> **パッケージ番号体系の注意**: TypeSpec は「コア / 安定拡張」と「プレビュー拡張」で番号体系が分かれている。`package.json` を書く際はこの違いを意識する。
+>
+> | カテゴリ | パッケージ | 番号体系 | ステータス |
+> |---|---|---|---|
+> | コア | `@typespec/compiler` | 1.x | 安定（Stable） |
+> | 安定拡張 | `@typespec/openapi`, `@typespec/openapi3`, `@typespec/json-schema`, `@typespec/rest` | 1.x | 安定（Stable） |
+> | HTTP プロトコル | `@typespec/http` | 0.x | 安定だが番号体系は 0.x（コアと別の進化サイクル） |
+> | プレビュー拡張 | `@typespec/versioning`, `@typespec/xml`, `@typespec/streams`, `@typespec/sse`, `@typespec/protobuf` | 0.x | プレビュー（API 変更の可能性あり） |
+> | コード生成 | `@typespec/http-client-*`, `@typespec/http-server-*`（.NET / JS / Java / Python） | 0.x | プレビュー |
+>
+> 各パッケージの最新バージョンは `npm view <pkg> version` で確認すること。コアの 1.x と HTTP の 0.x は同期更新されないため、`package.json` に書く際は実バージョンを確認する。
 
-TypeSpecを利用してAPIスキーマを実装する際は、単一のコードベースを「信頼できる情報源（Single Source of Truth）」とし、一貫性のあるAPI定義やクライアントコード、ドキュメントを生成できるように設計することが重要です。
+TypeSpec を利用して API スキーマを実装する際は、単一のコードベースを「信頼できる情報源（Single Source of Truth）」とし、一貫性のある API 定義・クライアントコード・ドキュメントを生成できるように設計する。
 
 ---
 
 ## 1. 名前空間（Namespace）のネストによる論理的な構造化
 
-APIのモデルや操作（Operation）は、名前空間を使用して論理的にグループ化します。特にネストされた名前空間を活用することで、以下の利点が得られます。
+API のモデルや操作（Operation）は、名前空間を使用して論理的にグループ化する。特にネストされた名前空間を活用することで、以下の利点が得られる。
 
-- **整理と管理の向上**: 関連する操作（例: CRUD操作など）をまとめることで、APIの全体構造が把握しやすくなります。
-- **Operation IDの明確化**: OpenAPIなどの仕様を出力する際、TypeSpecは名前空間をプレフィックスとして `operationId` に自動付与するため（例: `Pets_listPets`）、どのリソースに対する操作であるかが明確になります。
-- **名前の衝突回避**: 異なるリソース間で同名の操作やモデルが存在した場合の衝突を防ぎます。
+- **整理と管理の向上**: 関連する操作（例: CRUD 操作など）をまとめることで、API の全体構造が把握しやすくなる
+- **Operation ID の明確化**: OpenAPI などの仕様を出力する際、TypeSpec は名前空間をプレフィックスとして `operationId` に自動付与する（例: `Pets_listPets`）。どのリソースに対する操作であるかが明確になる
+- **名前の衝突回避**: 異なるリソース間で同名の操作やモデルが存在した場合の衝突を防ぐ
 
 ### `@tag` デコレータによる操作グルーピング
 
-名前空間による構造化に加え、`@tag` デコレータを使うことでOpenAPIドキュメント上での操作グループをさらに細かく制御できます。名前空間とタグは別軸の整理方法であり、組み合わせることでより読みやすいAPIドキュメントが生成されます。
+名前空間による構造化に加え、`@tag` デコレータで OpenAPI ドキュメント上の操作グループをさらに細かく制御できる。名前空間とタグは別軸の整理方法であり、組み合わせるとより読みやすい API ドキュメントが生成される。
 
-```typescript
-interface Routes {
-  @tag("Search")
-  @route("")
+`@tag` は **interface 全体に 1 回付ければ配下の全操作に伝搬する**。各 op に同じタグを繰り返し付けるのは冗長であり、メンテナンスの負担も増えるため避ける。
+
+```typespec
+@tag("Search")
+@route("/search")
+interface SearchRoutes {
+  @get list(): SearchModel.Search[];
+
   @get
-  getSearch(): SearchModel.Search[];
-
-  @tag("Search")
   @route("/byName/{name}")
-  @get
-  getSearchByName(@path name: string): SearchModel.Search;
+  byName(@path name: string): SearchModel.Search;
 }
 ```
+
+特定の op のみ別タグを当てたい場合は op 単位で `@tag` を併記すれば上書きできる。
 
 ---
 
 ## 2. 共通パラメータとモデルの再利用
 
-複数のAPI操作で共通して使用されるパラメータ（例: リクエストID、ロケール情報、クライアントバージョンなど）は、個別の操作にハードコードするべきではありません。
+複数の API 操作で共通して使用されるパラメータ（例: リクエスト ID、ロケール情報、クライアントバージョンなど）は、個別の操作にハードコードしない。
 
-代わりに、共通パラメータを一つのモデルとして定義し、**スプレッド演算子（`...`）**を使用して各操作の引数に展開します。これにより、API全体でパラメータの適用が一貫し、冗長性とエラーの発生を減らすことができます。
+代わりに、共通パラメータを一つのモデルとして定義し、**スプレッド演算子（`...`）** で各操作の引数に展開する。これにより、API 全体でパラメータの適用が一貫し、冗長性とエラーの発生を減らせる。
+
+```typespec
+model CommonHeaders {
+  @header("X-Request-ID") requestId?: string;
+  @header("Accept-Language") locale?: string;
+}
+
+op listUsers(...CommonHeaders): User[];
+op getUser(...CommonHeaders, @path id: string): User;
+```
 
 ---
 
 ## 3. カスタムレスポンスと構造化されたエラーモデルの定義
 
-- **カスタムレスポンスモデル**: TypeSpecのHTTPライブラリに組み込まれた標準レスポンス（`OkResponse (200)` や `CreatedResponse (201)` など）を拡張（`extends`）して、ドメインに特化した名前付きレスポンスモデルを定義します。これによりAPIの意図が明確になり、コードの重複を防ぐことができます。
-- **エラーモデルの共通化**: 生のステータスコードをそのまま返すのではなく、`@error` デコレータを用いて `ValidationError` や `NotFoundError` といった構造化されたエラーモデルを定義します。各操作の戻り値には、`|` 演算子を用いて正常系とエラー系のモデルを併記することで、クライアント側でのエラーハンドリングが予測しやすくなります。
+- **カスタムレスポンスモデル**: TypeSpec の HTTP ライブラリに組み込まれた標準レスポンス（`OkResponse (200)` や `CreatedResponse (201)` など）を `extends` で拡張し、ドメインに特化した名前付きレスポンスモデルを定義する。これにより API の意図が明確になり、コードの重複を防げる。
+- **エラーモデルの共通化**: 生のステータスコードをそのまま返すのではなく、`@error` デコレータで `ValidationError` や `NotFoundError` といった構造化されたエラーモデルを定義する。各操作の戻り値には `|` 演算子で正常系とエラー系のモデルを併記し、クライアント側でのエラーハンドリングが予測しやすいようにする。
 
 ### ジェネリックなレスポンスラッパーパターン
 
-ジェネリック型を活用した共通レスポンスラッパーを定義することで、成功・エラーの構造をAPI全体で統一できます。
+ジェネリック型を活用した共通レスポンスラッパーを定義することで、成功・エラーの構造を API 全体で統一できる。
 
-```typescript
+```typespec
 namespace DefaultResponse;
 
 model Response<T> {
@@ -74,37 +92,48 @@ model ResponseError {
 }
 ```
 
-各エンドポイントではこのラッパーを使い回します。
+各エンドポイントではこのラッパーを使い回す。
 
-```typescript
+```typespec
 op getSearch(): DefaultResponse.Response<SearchModel.Search[]>;
 op getUser(@path id: string): DefaultResponse.Response<User>;
 ```
 
-### PATCH操作と部分更新（1.0以降の変更点）
+### PATCH 操作と部分更新（1.0 以降の変更点）
 
-TypeSpec 1.0 以降、`@patch` はデフォルトで "implicit optionality"（暗黙的な省略可能化）変換を適用しなくなりました。部分更新（JSON Merge-Patch）を実装するには、`MergePatchUpdate<T>` テンプレートを明示的に使用します。
+TypeSpec 1.0 以降、`@patch` はデフォルトで「implicit optionality」（暗黙的な省略可能化）変換を適用しなくなった。部分更新（JSON Merge-Patch）を実装するには、**`@typespec/http` が提供する `MergePatchUpdate<T>` テンプレート** を明示的に使用する。
 
-```typescript
-// ✅ 推奨: JSON Merge-Patch による部分更新
+```typespec
+import "@typespec/http";
+
+using TypeSpec.Http;
+
+// 推奨: JSON Merge-Patch による部分更新
 @patch op update(@body pet: MergePatchUpdate<Pet>): void;
 
-// 旧来の挙動を維持したい場合（非推奨）
-@patch(#{ implicitOptionality: true }) op update(@body pet: Pet): void;
+// 旧来の挙動を維持したい場合（非推奨・段階的移行用）
+@patch(#{ implicitOptionality: true }) op updateLegacy(@body pet: Pet): void;
 ```
+
+`MergePatchUpdate<T>` は `T` のすべてのプロパティを optional にしつつ、merge-patch のセマンティクス（明示的 `null` で削除、未指定で据え置き）を型レベルで表現する。`import "@typespec/http"` と `using TypeSpec.Http` の宣言が必要なことに注意。
 
 ---
 
 ## 4. ライフサイクル・ビジビリティ（Visibility）の活用
 
-TypeSpecの強力な機能である「Visibility（可視性）」を利用することで、リクエスト時とレスポンス時などの「文脈」に応じてモデルの構造（ビュー）を動的に変化させることができます。
+TypeSpec の強力な機能である「Visibility（可視性）」を利用すると、リクエスト時とレスポンス時などの「文脈」に応じてモデルの構造（ビュー）を動的に変化させられる。
 
-組み込みのライフサイクル修飾子（`Lifecycle.Create`, `Lifecycle.Read`, `Lifecycle.Update`, `Lifecycle.Delete`, `Lifecycle.Query`）をプロパティに適用することで、以下の制御が可能です。
+組み込みのライフサイクル修飾子をプロパティに適用することで、以下の制御が可能。
 
-- **レスポンス専用**: 自動生成される `id` のように、`Lifecycle.Read`（GETレスポンスなど）でのみ表示させる。
-- **リクエスト専用**: `password` のように、`Lifecycle.Create` や `Lifecycle.Update`（POST/PUTリクエスト）でのみ入力を許可する。
+| 修飾子 | 適用文脈 | 典型的用途 |
+|---|---|---|
+| `Lifecycle.Read` | GET レスポンス | 自動採番 ID、サーバー算出フィールド |
+| `Lifecycle.Create` | POST リクエスト | パスワード等の作成時のみ受け取る入力 |
+| `Lifecycle.Update` | PUT/PATCH リクエスト | 更新可能だが作成時は不要なフィールド |
+| `Lifecycle.Delete` | DELETE リクエスト | 削除時の追加パラメータ |
+| `Lifecycle.Query` | GET クエリパラメータ | 検索フィルタ・ソート条件 |
 
-```typescript
+```typespec
 model TodoItem {
   @visibility(Lifecycle.Read)
   id: string;          // レスポンスのみに含まれる
@@ -114,72 +143,96 @@ model TodoItem {
 
   @visibility(Lifecycle.Create)
   initialTag?: string; // 作成時のみ指定可能
+
+  @visibility(Lifecycle.Read, Lifecycle.Update)
+  lastModifiedAt?: utcDateTime; // 読み取りと更新で見える
+}
+
+// クエリパラメータ専用 Visibility の例
+model TodoQueryParams {
+  @query
+  @visibility(Lifecycle.Query)
+  status?: "open" | "done";
+
+  @query
+  @visibility(Lifecycle.Query)
+  dueBefore?: utcDateTime;
 }
 ```
 
-これにより、POST用・GET用といった似たようなモデルを複数作成する（型の増殖）必要がなくなり、単一の論理モデルを維持したままシンプルに管理できます。
+これにより POST 用・GET 用といった似たようなモデルを複数作成する（型の増殖）必要がなくなり、単一の論理モデルを維持したままシンプルに管理できる。
 
-### `FilterVisibility` の活用（1.11.0以降推奨）
+### `FilterVisibility` の活用（1.11.0 以降推奨）
 
-TypeSpec 1.11.0 から、`@withVisibilityFilter` デコレータは**非推奨**となりました。代わりに `FilterVisibility` テンプレートを使用します。`FilterVisibility` はデコレータメタデータの保持に関するバグが修正されており、より正確なビジビリティ変換を提供します。
+TypeSpec 1.11.0 から、`@withVisibilityFilter` デコレータは **非推奨** となった。代わりに `FilterVisibility` テンプレートを使用する。`FilterVisibility` はデコレータメタデータの保持に関するバグが修正されており、より正確なビジビリティ変換を提供する。
 
-```typescript
-// ✅ 推奨（1.11.0以降）
-model CreateAndReadExample
-  is FilterVisibility
-    Example,
-    #{ all: #[Lifecycle.Create, Lifecycle.Read] },
-    "CreateAndRead{name}"
-  >;
+```typespec
+// 推奨（1.11.0 以降）
+model CreateAndReadExample is FilterVisibility<
+  Example,
+  #{ all: #[Lifecycle.Create, Lifecycle.Read] },
+  "CreateAndRead{name}"
+>;
 
-// ❌ 非推奨（@withVisibilityFilter）
+// 非推奨: @withVisibilityFilter
 // @withVisibilityFilter(#{ all: #[Lifecycle.Create] })
 // model CreateExample is Example {}
 ```
+
+第 1 引数は対象モデル、第 2 引数はフィルタ条件（`all` で全マッチ、`any` でいずれかマッチ）、第 3 引数は派生モデルの命名テンプレート。
 
 ---
 
 ## 5. 堅牢なルーティング定義
 
-エンドポイントのパス定義には、`@route` デコレータを使用して明示的に記述する方法のほかに、`@autoRoute` と `@segment` デコレータを組み合わせる方法があります。
+エンドポイントのパス定義には、`@route` デコレータで明示的に記述する方法と、`@autoRoute` と `@segment` を組み合わせる方法がある。
 
-リソース指向の設計においては、モデル側に `@segment` でパスのセグメント（例: `pets`）を定義し、インターフェースや操作に `@autoRoute` を適用することで、パラメータからURLルートを自動かつ一貫して生成できるため、保守性が高まります。
+リソース指向の設計では、モデル側に `@segment` でパスのセグメント（例: `pets`）を定義し、インターフェースや操作に `@autoRoute` を適用することで、パラメータから URL ルートを自動かつ一貫して生成できる。
+
+選択指針:
+- **小〜中規模・直感的なパス重視** → `@route` で明示
+- **CRUD が定型化された大規模リソース** → `@autoRoute` + `@segment`
+
+混在は避け、プロジェクト内で一貫させる。
 
 ---
 
-## 6. APIのバージョン管理（Versioning）の統合
+## 6. API のバージョン管理（Versioning）の統合
 
-> ⚠️ **`@typespec/versioning` は現在プレビューライブラリ**です。本番環境での採用にあたっては、将来的なAPIの変更に注意してください。
+`@typespec/versioning` ライブラリを使うと、API の変更を既存クライアントに影響を与えずに進化させられる。
 
-APIの変更を既存クライアントに影響を与えずに安全に進めるため、初期段階から `@typespec/versioning` ライブラリを使用することが推奨されます。
+詳細は **[`versioning-guide.md`](./versioning-guide.md)** を参照。要点のみ:
 
-列挙型（`enum`）でサポートするバージョンを定義し、APIのNamespaceに `@versioned` デコレータを設定します。APIの変更箇所に以下のようなデコレータを付与することで、同一のコードベースから各バージョンごとのAPI仕様を独立して生成できます。
-
-| デコレータ | 用途 |
-|---|---|
-| `@added` | 特定のバージョンから追加 |
-| `@removed` | 削除 |
-| `@renamedFrom` | プロパティ名の変更 |
-| `@madeOptional` | 必須から任意への変更 |
+- ライブラリは現在 **プレビュー**。番号体系は 0.x（コアの 1.x とは独立）
+- `@versioned` を namespace に付け、`enum Versions` でバージョンを列挙
+- 進化系デコレータ: `@added` / `@removed` / `@renamedFrom` / `@madeOptional` / `@madeRequired` / `@typeChangedFrom`
+- 採用判断は「公開 API か」「互換性が重要か」で決める。プレビュー API の変更追従コストはバージョニング欠如による破壊的変更コストより通常小さい
 
 ---
 
 ## 7. 認証・認可ポリシーの明示
 
-APIのセキュリティ要件は、`@useAuth` デコレータを使用して明示的に定義します。`BearerAuth`、`BasicAuth`、`OAuth2` などの標準的な認証方式を利用し、Namespace全体・Interface・個別のOperationレベルに適用します。
+API のセキュリティ要件は `@useAuth` で明示的に定義する。`BearerAuth`、`BasicAuth`、`OAuth2Auth` などの標準認証方式を、Namespace 全体・Interface・個別 Operation のレベルで適用する。
 
-これを適用することで、生成されるOpenAPIドキュメント上で「どのエンドポイントがどのような認証を要求するか」がセキュリティ定義として正確に出力されます。
+これにより、生成される OpenAPI 上で「どのエンドポイントがどのような認証を要求するか」がセキュリティ定義として正確に出力される。
 
-```typescript
+```typespec
 @useAuth(BearerAuth)
 interface ProtectedRoutes {
   @get getProfile(): UserProfile;
 
-  // 一部のエンドポイントは認証不要にする場合
+  // 一部のエンドポイントは認証不要
   @useAuth(NoAuth)
   @get
   getPublicInfo(): PublicInfo;
 }
+```
+
+複数の認証方式を許可する場合は union で並べる:
+
+```typespec
+@useAuth(BearerAuth | OAuth2Auth<["read", "write"]>)
+namespace MyApi;
 ```
 
 ---
@@ -188,61 +241,48 @@ interface ProtectedRoutes {
 
 ### 命名規則
 
-TypeSpecの公式スタイルガイドに従い、以下のケースを使用します。
+TypeSpec の公式スタイルガイドに従い、以下のケースを使用する。
 
 | 対象 | ケース |
 |---|---|
-| モデル、名前空間、インターフェース、ユニオン | `PascalCase` |
-| 操作（Operation）、プロパティ、スカラー | `camelCase` |
+| モデル、名前空間、インターフェース、ユニオン、Enum 名 | `PascalCase` |
+| 操作（Operation）、プロパティ、スカラー、Enum メンバ | `camelCase` |
 
 ### ドキュメンテーション
 
-APIを利用する開発者向けに、ドキュメンテーションコメント（`/** */`）または `@doc` デコレータを使用して、各モデルや操作の目的・詳細を記述します。ドキュメントにはMarkdownフォーマットが使用でき、生成されるドキュメントの品質向上に直接繋がります。
+API を利用する開発者向けに、ドキュメンテーションコメント（`/** */`）または `@doc` デコレータで、各モデル・操作の目的や詳細を記述する。Markdown が使えるため、生成ドキュメントの品質向上に直結する。
 
-```typescript
+```typespec
 /**
  * ユーザーリソースを表すモデル。
- * 管理APIおよびプロフィールAPIで共通して使用される。
+ * 管理 API およびプロフィール API で共通して使用される。
  */
 model User {
-  /** システムが自動採番するユーザーID */
+  /** システムが自動採番するユーザー ID */
   @visibility(Lifecycle.Read)
   id: string;
 
-  /** ユーザーの表示名（1〜100文字） */
+  /** ユーザーの表示名（1〜100 文字） */
   @minLength(1)
   @maxLength(100)
   displayName: string;
 }
 ```
 
+`/** */` と `@doc` は等価だが、コメント形式の方が IDE 表示で扱いやすい場合が多い。
+
 ### 開発環境のセットアップ
 
-快適な開発のために、以下のツールを活用します。
-
-- **VS Code拡張（TypeSpec for VS Code）**: シンタックスハイライト、バリデーション、オートコンプリート、ナビゲーションを提供します。Visual Studio Marketplaceからインストール可能です。
-- **`tsp compile . --watch`**: ファイル保存のたびに自動コンパイルするウォッチモード。開発中は常に有効にすることを推奨します。
-- **`tsp format`**: TypeSpec 1.0 以降、`tspconfig.yaml` を含むすべての管理ファイルをフォーマット可能です。CIに組み込むことでコードスタイルを統一できます。
-- **`tspconfig.yaml`**: エミッターの出力先・フォーマット・オプションを一元管理する設定ファイルです。
-
-```yaml
-emit:
-  - "@typespec/openapi3"
-options:
-  "@typespec/openapi3":
-    emitter-output-dir: "{output-dir}/schema"
-    openapi-versions:
-      - 3.1.0
-linter:
-  extends:
-    - "@typespec/http/all"
-```
+- **VS Code 拡張（TypeSpec for VS Code）**: シンタックスハイライト、バリデーション、オートコンプリート、ナビゲーションを提供。Visual Studio Marketplace から導入可能
+- **`tsp compile . --watch`**: ファイル保存のたびに自動コンパイル。開発中は常時有効を推奨
+- **`tsp format`**: TypeSpec 1.0 以降、`tspconfig.yaml` を含む全ファイルをフォーマット可能。CI に組み込めばコードスタイルを統一できる
+- **`tspconfig.yaml`**: エミッターの出力先・フォーマット・オプションを一元管理。詳細は [`tspconfig-cookbook.md`](./tspconfig-cookbook.md) を参照
 
 ---
 
 ## 9. プロジェクト構造とファイル分割
 
-規模が大きくなるにつれて、すべての定義を `main.tsp` 一枚に書き続けることはスケールしません。早期にファイルを分割し、モジュール化された構造を採用することを推奨します。
+規模が大きくなると、すべての定義を `main.tsp` 一枚に書き続けるのはスケールしない。早期にファイルを分割し、モジュール化された構造を採用する。
 
 ```
 ├── main.tsp                # エントリポイント・サービス定義
@@ -255,39 +295,37 @@ linter:
     └── orders.tsp
 ```
 
-`main.tsp` はエントリポイントとして各ファイルをインポートし、サービスメタデータとルートのバインディングのみを担当します。
+`main.tsp` はエントリポイントとして各ファイルをインポートし、サービスメタデータとルートのバインディングのみを担当する。
 
-```typescript
+```typespec
 import "@typespec/http";
 import "./routes/users.tsp";
 import "./routes/orders.tsp";
 
 using TypeSpec.Http;
 
-@service({ title: "My API" })
+@service(#{ title: "My API" })
 @server("https://api.example.com", "API endpoint")
 namespace MyApi;
-
-@route("/users")
-interface Users extends global.Users.Routes {}
-
-@route("/orders")
-interface Orders extends global.Orders.Routes {}
 ```
 
-この構成により、以下のメリットが得られます。
+`@service` の引数は **object value literal `#{ ... }`**（TypeSpec 1.0 以降の正規構文）。旧来の object literal `({ ... })` は非推奨。
 
-- **スケーラビリティ**: 新しいリソースを追加する際に、既存ファイルへの影響を最小化できます。
-- **再利用性**: 共通モデルを `models/common.tsp` に集約し、複数のルートから参照できます。
-- **可読性**: 担当領域ごとにファイルが分かれるため、目的のコードをすばやく見つけられます。
+この構成により得られるメリット:
+
+- **スケーラビリティ**: 新しいリソース追加時の既存ファイルへの影響を最小化
+- **再利用性**: 共通モデルを `models/common.tsp` に集約し、複数ルートから参照
+- **可読性**: 担当領域ごとにファイルが分かれ、目的のコードをすばやく見つけられる
+
+分割の目安: リソース数が 5 を超える、または `main.tsp` が 200 行を超えたら検討する。
 
 ---
 
-## 10. Linterによる品質ゲート
+## 10. Linter による品質ゲート
 
-TypeSpecには組み込みのLinterフレームワークが搭載されており、アンチパターンの検出やベストプラクティスへの準拠を自動的に強制できます。Linterはコンパイルエラーとは異なり、「動作はするが改善の余地がある」コードを検出します（例: すべての型にドキュメントを要求するルールなど）。
+TypeSpec には組み込み Linter フレームワークがあり、アンチパターン検出やベストプラクティスへの準拠を自動的に強制できる。Linter はコンパイルエラーとは異なり「動作はするが改善の余地がある」コードを検出する（例: 全型にドキュメントを要求するルール）。
 
-`tspconfig.yaml` に組み込み、CIパイプラインで実行することで、レビュープロセスに依存せず品質基準を機械的に担保できます。
+`tspconfig.yaml` に組み込み、CI パイプラインで実行することで、レビュープロセスに依存せず品質基準を機械的に担保できる。
 
 ```yaml
 linter:
@@ -295,57 +333,67 @@ linter:
     - "@typespec/http/all"
 ```
 
-チームのAPIガイドラインに合わせたカスタムルールセットの作成も可能です。また、`tsp compile` 実行時に `--stats` フラグを付けると（1.1.0以降）、パフォーマンスや複雑度の統計情報を確認できます。
+ルールセットの選び方:
 
-```bash
-tsp compile . --stats
-```
+| ルールセット | 想定運用 |
+|---|---|
+| `@typespec/http/all` | 新規プロジェクト・厳しめの規約 |
+| `@typespec/http/recommended` | 既存プロジェクトの段階導入 |
+
+詳細は [`tspconfig-cookbook.md`](./tspconfig-cookbook.md) を参照。
+
+`tsp compile . --stats`（1.1.0 以降）でパフォーマンスや複雑度の統計情報を確認できる。リポジトリの成長に伴うコンパイル時間劣化の検知に有用。
 
 ---
 
 ## 11. 下流ツールチェーンとの統合（コード生成パイプライン）
 
-TypeSpecの最大のメリットの一つは、単一のスキーマからバックエンド・フロントエンド・ドキュメントのすべてを自動生成できる点です。TypeSpecをパイプラインの起点として位置づけることで、スタック全体の一貫性を担保できます。
+TypeSpec の最大のメリットの一つは、単一スキーマからバックエンド・フロントエンド・ドキュメントのすべてを自動生成できる点。TypeSpec をパイプラインの起点に置くことで、スタック全体の一貫性を担保できる。
 
 ```
 TypeSpec (.tsp)
-    │
-    ▼ tsp compile .
+    |
+    | tsp compile .
+    v
 OpenAPI (openapi.yaml)
-    │
-    ├──▶ バックエンド: oapi-codegen（Go）/ http-server-csharp / http-server-js 等
-    │         型安全なサーバースタブ・バリデーションを自動生成
-    │
-    ├──▶ フロントエンド: openapi-typescript（TypeScript）/ http-client-js 等
-    │         型付きAPIクライアントを自動生成
-    │
-    └──▶ ドキュメント: Redocly CLI / Swagger UI 等
-              インタラクティブなAPIドキュメントを自動生成
+    |
+    +--> バックエンド: oapi-codegen (Go) / http-server-csharp / http-server-js
+    |        型安全なサーバースタブ・バリデーションを自動生成
+    |
+    +--> フロントエンド: openapi-typescript / http-client-js
+    |        型付き API クライアントを自動生成
+    |
+    +--> ドキュメント: Redocly CLI / Swagger UI
+             インタラクティブな API ドキュメントを自動生成
 ```
 
 ### 主な統合ツール
 
 | 用途 | ツール例 | ステータス |
 |---|---|---|
-| OpenAPI 3.0/3.1 出力 | `@typespec/openapi3` | ✅ 安定版 |
-| JSON Schema 出力 | `@typespec/json-schema` | ✅ 安定版 |
+| OpenAPI 3.0/3.1 出力 | `@typespec/openapi3` | 安定（1.x） |
+| JSON Schema 出力 | `@typespec/json-schema` | 安定（1.x） |
 | Go サーバーコード生成 | `oapi-codegen` | 外部ツール |
-| TypeScript クライアント生成 | `@typespec/http-client-js` | 🔶 プレビュー |
-| C# クライアント/サーバー生成 | `@typespec/http-client-csharp` / `@typespec/http-server-csharp` | 🔶 プレビュー |
-| Java / Python クライアント生成 | `@typespec/http-client-java` / `@typespec/http-client-python` | 🔶 プレビュー |
+| TypeScript クライアント生成 | `@typespec/http-client-js` | プレビュー（0.x） |
+| C# クライアント/サーバー生成 | `@typespec/http-client-csharp` / `@typespec/http-server-csharp` | プレビュー（0.x） |
+| Java / Python クライアント生成 | `@typespec/http-client-java` / `@typespec/http-client-python` | プレビュー（0.x） |
 | ドキュメント生成 | `@redocly/cli`, Swagger UI | 外部ツール |
 
-このアプローチにより、バックエンドとフロントエンドが同じOpenAPIファイルから生成されるため、スキーマから乖離した実装が生まれにくくなります。TypeSpecのスキーマを更新して再コンパイルするだけで、コンパイルエラーとして不整合を即座に検出できます。
+このアプローチにより、バックエンドとフロントエンドが同じ OpenAPI ファイルから生成されるため、スキーマから乖離した実装が生まれにくくなる。TypeSpec のスキーマを更新して再コンパイルするだけで、コンパイルエラーとして不整合を即座に検出できる。
+
+OpenAPI/JSON Schema からの移行については [`migration-openapi.md`](./migration-openapi.md) を参照。
 
 ---
 
-これらのベストプラクティスを遵守することで、APIの可読性・再利用性・保守性が向上し、TypeSpecのポテンシャルを最大限に活用した堅牢なシステム設計が可能になります。
+これらのベストプラクティスを遵守することで、API の可読性・再利用性・保守性が向上し、TypeSpec のポテンシャルを最大限に活用した堅牢なシステム設計が可能になる。
 
 ---
 
 > **参考情報源**
+>
 > - [TypeSpec 公式ドキュメント](https://typespec.io/docs/)
-> - [TypeSpec 1.0 GA リリースブログ](https://typespec.io/blog/typespec-1-0-GA-release/)（2025年5月）
-> - [TypeSpec 1.11.0 リリースノート](https://typespec.io/release-notes/typespec-1-11-0/)（最新）
-> - [Microsoft Learn — TypeSpec Overview](https://learn.microsoft.com/en-us/azure/developer/typespec/overview)（2026年3月更新）
-> - [GitHub microsoft/typespec](https://github.com/microsoft/typespec)
+> - [TypeSpec 1.0 GA リリースブログ](https://typespec.io/blog/typespec-1-0-GA-release/)（2025 年 5 月）
+> - [TypeSpec 1.11.0 リリース（GitHub）](https://github.com/microsoft/typespec/releases)（2026 年 4 月）
+> - [Microsoft Learn — TypeSpec Overview](https://learn.microsoft.com/en-us/azure/developer/typespec/overview)
+> - [microsoft/typespec リポジトリ](https://github.com/microsoft/typespec)
+> - [microsoft/typespec petstore サンプル](https://github.com/microsoft/typespec/blob/main/packages/samples/specs/rest/petstore/petstore.tsp)（`@service(#{ title: ... })` 構文の正規例）
