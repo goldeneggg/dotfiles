@@ -1,0 +1,53 @@
+{
+  "skill_name": "author-analyzer",
+  "evals": [
+    {
+      "id": 1,
+      "name": "explicit-repo-full-analysis",
+      "prompt": "goldeneggg/dotfiles における goldeneggg のコミット・PR・Issueを横断分析して、実績・評価ポイント・得意分野を含むレポートを Markdown ファイルとして出力して。",
+      "expected_output": "./author-analysis-goldeneggg-<YYYYMMDD>.md が作成され、(1) 実績データセクション（コミット数、変更行数、PR/Issue件数）、(2) 評価ポイントセクション（数値根拠付き）、(3) 得意分野セクション（拡張子・パスベースの推定）を含むこと。会話内に要約も出力されること。",
+      "assertions": [
+        {"id": "report-file-exists", "text": "outputs/ ディレクトリに author-analysis-goldeneggg-<YYYYMMDD>.md 形式の Markdown ファイルが存在する"},
+        {"id": "has-data-section", "text": "レポートに事実ベースの「データセクション」（コミット数・変更行数・PR/Issue件数）が含まれている"},
+        {"id": "has-evaluation-section", "text": "レポートに「評価ポイント / セールスポイント」セクションが含まれており、数値根拠が紐づいている"},
+        {"id": "has-strength-section", "text": "レポートに「得意分野」セクションが含まれており、拡張子別行数や上位ディレクトリ等のシグナルから推定されている"},
+        {"id": "represents-prs", "text": "代表的なPRがタイトルとURL付きで複数件示されている、または PR が0件であることが明記されている"},
+        {"id": "no-empty-evaluation", "text": "評価セクションが空文・テンプレ的褒め言葉だけになっておらず、根拠が文中に引用されている"},
+        {"id": "conventional-commits-distribution", "text": "Conventional Commits の type 分布が集計表として示されている"},
+        {"id": "uses-aggregate-script", "text": "with_skill 側ではスキル付属の aggregate.py が使われている"}
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "period-filter",
+      "prompt": "goldeneggg/dotfiles における goldeneggg の 2025-01-01 以降の活動を分析してレポートを作って。",
+      "expected_output": "--since 2025-01-01 が解釈され、その期間のコミット/PR/Issue のみが集計対象となる。レポート冒頭で対象期間が明示される。",
+      "assertions": [
+        {"id": "report-file-exists", "text": "outputs/ ディレクトリに Markdown レポートが存在する"},
+        {"id": "period-applied", "text": "コミット集計の対象期間が 2025-01-01 以降に絞られている"},
+        {"id": "period-stated-in-report", "text": "レポート冒頭または概要セクションで「対象期間: 2025-01-01 以降」が明示されている"},
+        {"id": "has-data-section", "text": "実績データセクションが含まれている"},
+        {"id": "has-evaluation-and-strength", "text": "評価ポイントと得意分野の両セクションが含まれている"},
+        {"id": "since-flag-honored", "text": "git log または gh で since/created:>=2025-01-01 のフィルタが指定されている"}
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "informal-sales-pitch",
+      "prompt": "@goldeneggg のセールスポイントを goldeneggg/dotfiles でのアウトプット見て教えて欲しい。得意な領域も知りたい。",
+      "expected_output": "@ プレフィクスが除去されて goldeneggg として処理される。レポートには「評価ポイント」と「得意分野」セクションが含まれ、それぞれに数値根拠が紐づいている。",
+      "assertions": [
+        {"id": "report-file-exists", "text": "outputs/ ディレクトリに Markdown レポートが存在する"},
+        {"id": "at-prefix-stripped", "text": "@goldeneggg の @ プレフィクスが除去され、author として goldeneggg が処理されている"},
+        {"id": "has-evaluation-section", "text": "「評価ポイント / セールスポイント」セクションが含まれている"},
+        {"id": "has-strength-section", "text": "「得意分野」セクションが含まれている"},
+        {"id": "evaluation-grounded", "text": "評価ポイントの主張に数値根拠が紐づいている"},
+        {"id": "strength-grounded", "text": "得意分野の主張に拡張子別行数や上位ディレクトリ等のシグナルが根拠として併記されている"},
+        {"id": "no-baseless-claims", "text": "データから読み取れない文化的評価（リーダーシップ等）が含まれていない"}
+      ],
+      "files": []
+    }
+  ]
+}
