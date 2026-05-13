@@ -9,6 +9,7 @@ Usage:
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -71,6 +72,13 @@ CREATE TABLE IF NOT EXISTS messages (
     is_meta INTEGER DEFAULT 0,
     user_type TEXT,
     subtype TEXT,
+    entrypoint TEXT,
+    claude_version TEXT,
+    prompt_id TEXT,
+    permission_mode TEXT,
+    source_tool_assistant_uuid TEXT,
+    attribution_plugin TEXT,
+    attribution_skill TEXT,
     message_api_id TEXT,
     request_id TEXT,
     stop_reason TEXT,
@@ -81,6 +89,21 @@ CREATE TABLE IF NOT EXISTS messages (
     usage_cache_read_input_tokens INTEGER,
     usage_cache_creation_5m INTEGER,
     usage_cache_creation_1h INTEGER,
+    usage_web_search_requests INTEGER,
+    usage_web_fetch_requests INTEGER,
+    usage_speed TEXT,
+    usage_inference_geo TEXT,
+    usage_iterations TEXT,
+    -- system タイプ用（hook 実行サマリ・ローカルコマンド出力など）
+    level TEXT,
+    duration_ms INTEGER,
+    has_output INTEGER,
+    hook_count INTEGER,
+    hook_infos TEXT,
+    hook_errors TEXT,
+    prevented_continuation INTEGER,
+    tool_use_id TEXT,
+    message_count INTEGER,
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
 
@@ -116,7 +139,19 @@ CREATE TABLE IF NOT EXISTS subagent_messages (
     content TEXT,
     model TEXT,
     timestamp TEXT,
+    cwd TEXT,
+    git_branch TEXT,
     is_sidechain INTEGER DEFAULT 0,
+    is_meta INTEGER DEFAULT 0,
+    user_type TEXT,
+    subtype TEXT,
+    entrypoint TEXT,
+    claude_version TEXT,
+    prompt_id TEXT,
+    permission_mode TEXT,
+    source_tool_assistant_uuid TEXT,
+    attribution_plugin TEXT,
+    attribution_skill TEXT,
     message_api_id TEXT,
     request_id TEXT,
     stop_reason TEXT,
@@ -127,7 +162,94 @@ CREATE TABLE IF NOT EXISTS subagent_messages (
     usage_cache_read_input_tokens INTEGER,
     usage_cache_creation_5m INTEGER,
     usage_cache_creation_1h INTEGER,
+    usage_web_search_requests INTEGER,
+    usage_web_fetch_requests INTEGER,
+    usage_speed TEXT,
+    usage_inference_geo TEXT,
+    usage_iterations TEXT,
     FOREIGN KEY (agent_id) REFERENCES subagents(agent_id),
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
+-- ツール実行結果（user メッセージ内 tool_result の構造化メタ）
+CREATE TABLE IF NOT EXISTS tool_results (
+    tool_use_id TEXT PRIMARY KEY,
+    message_uuid TEXT,
+    session_id TEXT NOT NULL,
+    stdout TEXT,
+    stderr TEXT,
+    interrupted INTEGER,
+    is_image INTEGER,
+    no_output_expected INTEGER,
+    is_error INTEGER,
+    raw_result TEXT,
+    timestamp TEXT,
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
+-- 添付情報（skill_listing, deferred_tools_delta など）
+CREATE TABLE IF NOT EXISTS attachments (
+    uuid TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    parent_uuid TEXT,
+    attachment_type TEXT,
+    attachment_data TEXT,
+    timestamp TEXT,
+    cwd TEXT,
+    git_branch TEXT,
+    user_type TEXT,
+    entrypoint TEXT,
+    claude_version TEXT,
+    is_sidechain INTEGER DEFAULT 0,
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
+-- パーミッションモード変更履歴
+CREATE TABLE IF NOT EXISTS permission_modes (
+    id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    permission_mode TEXT,
+    sequence INTEGER,
+    exported_at TEXT,
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
+-- 最終プロンプト記録
+CREATE TABLE IF NOT EXISTS last_prompts (
+    leaf_uuid TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    last_prompt TEXT,
+    exported_at TEXT,
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
+-- ファイル履歴スナップショット（trackedFileBackups）
+CREATE TABLE IF NOT EXISTS file_history_snapshots (
+    message_id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    is_snapshot_update INTEGER,
+    snapshot_timestamp TEXT,
+    tracked_file_backups TEXT,
+    raw_snapshot TEXT,
+    exported_at TEXT,
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
+-- AIタイトル（セッションごとの最新値）
+CREATE TABLE IF NOT EXISTS ai_titles (
+    session_id TEXT PRIMARY KEY,
+    ai_title TEXT,
+    exported_at TEXT,
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
+-- バックグラウンドタスクのキュー操作
+CREATE TABLE IF NOT EXISTS queue_operations (
+    id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    operation TEXT,
+    content TEXT,
+    timestamp TEXT,
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
 
@@ -156,17 +278,29 @@ CREATE TABLE IF NOT EXISTS file_history (
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
 
--- インデックス
+"""
+
+# インデックスは migrate_schema() で新カラムを追加した後に実行する
+# （旧スキーマDBに対して新カラムへのCREATE INDEXが走るとエラーになるため分離）
+INDEX_SQL = """
 CREATE INDEX IF NOT EXISTS idx_sessions_project ON sessions(project_path);
 CREATE INDEX IF NOT EXISTS idx_sessions_created ON sessions(created_at);
 CREATE INDEX IF NOT EXISTS idx_messages_session ON messages(session_id);
 CREATE INDEX IF NOT EXISTS idx_messages_type ON messages(type);
 CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp);
+CREATE INDEX IF NOT EXISTS idx_messages_prompt_id ON messages(prompt_id);
 CREATE INDEX IF NOT EXISTS idx_tool_uses_session ON tool_uses(session_id);
 CREATE INDEX IF NOT EXISTS idx_tool_uses_tool_name ON tool_uses(tool_name);
+CREATE INDEX IF NOT EXISTS idx_tool_results_session ON tool_results(session_id);
 CREATE INDEX IF NOT EXISTS idx_subagent_messages_agent ON subagent_messages(agent_id);
 CREATE INDEX IF NOT EXISTS idx_subagent_messages_session ON subagent_messages(session_id);
 CREATE INDEX IF NOT EXISTS idx_memory_files_project ON memory_files(project_path);
+CREATE INDEX IF NOT EXISTS idx_attachments_session ON attachments(session_id);
+CREATE INDEX IF NOT EXISTS idx_attachments_type ON attachments(attachment_type);
+CREATE INDEX IF NOT EXISTS idx_permission_modes_session ON permission_modes(session_id);
+CREATE INDEX IF NOT EXISTS idx_last_prompts_session ON last_prompts(session_id);
+CREATE INDEX IF NOT EXISTS idx_file_history_snapshots_session ON file_history_snapshots(session_id);
+CREATE INDEX IF NOT EXISTS idx_queue_operations_session ON queue_operations(session_id);
 """
 
 
@@ -319,6 +453,29 @@ def migrate_schema(conn: sqlite3.Connection):
         ("usage_cache_read_input_tokens", "INTEGER"),
         ("usage_cache_creation_5m", "INTEGER"),
         ("usage_cache_creation_1h", "INTEGER"),
+        # Claude Code 2.1 系で追加されたフィールド
+        ("entrypoint", "TEXT"),
+        ("claude_version", "TEXT"),
+        ("prompt_id", "TEXT"),
+        ("permission_mode", "TEXT"),
+        ("source_tool_assistant_uuid", "TEXT"),
+        ("attribution_plugin", "TEXT"),
+        ("attribution_skill", "TEXT"),
+        ("usage_web_search_requests", "INTEGER"),
+        ("usage_web_fetch_requests", "INTEGER"),
+        ("usage_speed", "TEXT"),
+        ("usage_inference_geo", "TEXT"),
+        ("usage_iterations", "TEXT"),
+        # system タイプ用
+        ("level", "TEXT"),
+        ("duration_ms", "INTEGER"),
+        ("has_output", "INTEGER"),
+        ("hook_count", "INTEGER"),
+        ("hook_infos", "TEXT"),
+        ("hook_errors", "TEXT"),
+        ("prevented_continuation", "INTEGER"),
+        ("tool_use_id", "TEXT"),
+        ("message_count", "INTEGER"),
     ]
     extra_cols_subagent = [
         ("message_api_id", "TEXT"),
@@ -329,6 +486,23 @@ def migrate_schema(conn: sqlite3.Connection):
         ("usage_cache_read_input_tokens", "INTEGER"),
         ("usage_cache_creation_5m", "INTEGER"),
         ("usage_cache_creation_1h", "INTEGER"),
+        ("cwd", "TEXT"),
+        ("git_branch", "TEXT"),
+        ("is_meta", "INTEGER DEFAULT 0"),
+        ("user_type", "TEXT"),
+        ("subtype", "TEXT"),
+        ("entrypoint", "TEXT"),
+        ("claude_version", "TEXT"),
+        ("prompt_id", "TEXT"),
+        ("permission_mode", "TEXT"),
+        ("source_tool_assistant_uuid", "TEXT"),
+        ("attribution_plugin", "TEXT"),
+        ("attribution_skill", "TEXT"),
+        ("usage_web_search_requests", "INTEGER"),
+        ("usage_web_fetch_requests", "INTEGER"),
+        ("usage_speed", "TEXT"),
+        ("usage_inference_geo", "TEXT"),
+        ("usage_iterations", "TEXT"),
     ]
     for col, typ in extra_cols_messages:
         _add_column_if_missing(conn, "messages", col, typ)
@@ -343,8 +517,12 @@ def init_db(db_path: Path) -> sqlite3.Connection:
     conn.execute("PRAGMA journal_mode=WAL")
     # インポート中はFK制約を無効化（挿入順序の依存を回避）
     conn.execute("PRAGMA foreign_keys=OFF")
+    # 1. テーブル作成（CREATE TABLE IF NOT EXISTS なので既存テーブルは温存）
     conn.executescript(SCHEMA_SQL)
+    # 2. 既存テーブルへの非破壊カラム追加
     migrate_schema(conn)
+    # 3. インデックス作成（新カラム上のインデックスを含むため migrate 後）
+    conn.executescript(INDEX_SQL)
     return conn
 
 
@@ -394,13 +572,26 @@ def upsert_session(conn: sqlite3.Connection, session_data: dict):
 def upsert_message(conn: sqlite3.Connection, msg: dict):
     """メッセージをUpsert."""
     conn.execute("""
-        INSERT INTO messages (uuid, session_id, parent_uuid, type, role, content, model,
-                              timestamp, cwd, git_branch, is_sidechain, is_meta, user_type, subtype,
-                              message_api_id, request_id, stop_reason, service_tier,
-                              usage_input_tokens, usage_output_tokens,
-                              usage_cache_creation_input_tokens, usage_cache_read_input_tokens,
-                              usage_cache_creation_5m, usage_cache_creation_1h)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO messages (
+            uuid, session_id, parent_uuid, type, role, content, model,
+            timestamp, cwd, git_branch, is_sidechain, is_meta, user_type, subtype,
+            entrypoint, claude_version, prompt_id, permission_mode,
+            source_tool_assistant_uuid, attribution_plugin, attribution_skill,
+            message_api_id, request_id, stop_reason, service_tier,
+            usage_input_tokens, usage_output_tokens,
+            usage_cache_creation_input_tokens, usage_cache_read_input_tokens,
+            usage_cache_creation_5m, usage_cache_creation_1h,
+            usage_web_search_requests, usage_web_fetch_requests,
+            usage_speed, usage_inference_geo, usage_iterations,
+            level, duration_ms, has_output, hook_count, hook_infos, hook_errors,
+            prevented_continuation, tool_use_id, message_count
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(uuid) DO UPDATE SET
             content = excluded.content,
             stop_reason = excluded.stop_reason,
@@ -410,7 +601,18 @@ def upsert_message(conn: sqlite3.Connection, msg: dict):
             usage_cache_creation_input_tokens = excluded.usage_cache_creation_input_tokens,
             usage_cache_read_input_tokens = excluded.usage_cache_read_input_tokens,
             usage_cache_creation_5m = excluded.usage_cache_creation_5m,
-            usage_cache_creation_1h = excluded.usage_cache_creation_1h
+            usage_cache_creation_1h = excluded.usage_cache_creation_1h,
+            usage_web_search_requests = excluded.usage_web_search_requests,
+            usage_web_fetch_requests = excluded.usage_web_fetch_requests,
+            usage_speed = excluded.usage_speed,
+            usage_inference_geo = excluded.usage_inference_geo,
+            usage_iterations = excluded.usage_iterations,
+            attribution_plugin = COALESCE(excluded.attribution_plugin, messages.attribution_plugin),
+            attribution_skill = COALESCE(excluded.attribution_skill, messages.attribution_skill),
+            permission_mode = COALESCE(excluded.permission_mode, messages.permission_mode),
+            hook_infos = excluded.hook_infos,
+            hook_errors = excluded.hook_errors,
+            hook_count = excluded.hook_count
     """, (
         msg["uuid"],
         msg["session_id"],
@@ -426,6 +628,13 @@ def upsert_message(conn: sqlite3.Connection, msg: dict):
         1 if msg.get("is_meta") else 0,
         msg.get("user_type"),
         msg.get("subtype"),
+        msg.get("entrypoint"),
+        msg.get("claude_version"),
+        msg.get("prompt_id"),
+        msg.get("permission_mode"),
+        msg.get("source_tool_assistant_uuid"),
+        msg.get("attribution_plugin"),
+        msg.get("attribution_skill"),
         msg.get("message_api_id"),
         msg.get("request_id"),
         msg.get("stop_reason"),
@@ -436,6 +645,20 @@ def upsert_message(conn: sqlite3.Connection, msg: dict):
         msg.get("usage_cache_read_input_tokens"),
         msg.get("usage_cache_creation_5m"),
         msg.get("usage_cache_creation_1h"),
+        msg.get("usage_web_search_requests"),
+        msg.get("usage_web_fetch_requests"),
+        msg.get("usage_speed"),
+        msg.get("usage_inference_geo"),
+        msg.get("usage_iterations"),
+        msg.get("level"),
+        msg.get("duration_ms"),
+        1 if msg.get("has_output") else (0 if msg.get("has_output") is False else None),
+        msg.get("hook_count"),
+        msg.get("hook_infos"),
+        msg.get("hook_errors"),
+        1 if msg.get("prevented_continuation") else (0 if msg.get("prevented_continuation") is False else None),
+        msg.get("tool_use_id"),
+        msg.get("message_count"),
     ))
 
 
@@ -473,17 +696,35 @@ def upsert_subagent(conn: sqlite3.Connection, agent: dict):
 def upsert_subagent_message(conn: sqlite3.Connection, msg: dict):
     """サブエージェントメッセージをUpsert."""
     conn.execute("""
-        INSERT INTO subagent_messages (uuid, agent_id, session_id, parent_uuid, type, role,
-                                        content, model, timestamp, is_sidechain,
-                                        message_api_id, request_id, stop_reason, service_tier,
-                                        usage_input_tokens, usage_output_tokens,
-                                        usage_cache_creation_input_tokens, usage_cache_read_input_tokens,
-                                        usage_cache_creation_5m, usage_cache_creation_1h)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO subagent_messages (
+            uuid, agent_id, session_id, parent_uuid, type, role,
+            content, model, timestamp, cwd, git_branch, is_sidechain, is_meta,
+            user_type, subtype, entrypoint, claude_version, prompt_id, permission_mode,
+            source_tool_assistant_uuid, attribution_plugin, attribution_skill,
+            message_api_id, request_id, stop_reason, service_tier,
+            usage_input_tokens, usage_output_tokens,
+            usage_cache_creation_input_tokens, usage_cache_read_input_tokens,
+            usage_cache_creation_5m, usage_cache_creation_1h,
+            usage_web_search_requests, usage_web_fetch_requests,
+            usage_speed, usage_inference_geo, usage_iterations
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?,
+                ?, ?, ?,
+                ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?)
         ON CONFLICT(uuid) DO UPDATE SET
             content = excluded.content,
             usage_cache_creation_input_tokens = excluded.usage_cache_creation_input_tokens,
-            usage_cache_read_input_tokens = excluded.usage_cache_read_input_tokens
+            usage_cache_read_input_tokens = excluded.usage_cache_read_input_tokens,
+            usage_web_search_requests = excluded.usage_web_search_requests,
+            usage_web_fetch_requests = excluded.usage_web_fetch_requests,
+            usage_speed = excluded.usage_speed,
+            usage_inference_geo = excluded.usage_inference_geo,
+            usage_iterations = excluded.usage_iterations,
+            attribution_plugin = COALESCE(excluded.attribution_plugin, subagent_messages.attribution_plugin),
+            attribution_skill = COALESCE(excluded.attribution_skill, subagent_messages.attribution_skill)
     """, (
         msg["uuid"],
         msg["agent_id"],
@@ -494,7 +735,19 @@ def upsert_subagent_message(conn: sqlite3.Connection, msg: dict):
         msg["content"],
         msg.get("model"),
         msg.get("timestamp"),
+        msg.get("cwd"),
+        msg.get("git_branch"),
         1 if msg.get("is_sidechain") else 0,
+        1 if msg.get("is_meta") else 0,
+        msg.get("user_type"),
+        msg.get("subtype"),
+        msg.get("entrypoint"),
+        msg.get("claude_version"),
+        msg.get("prompt_id"),
+        msg.get("permission_mode"),
+        msg.get("source_tool_assistant_uuid"),
+        msg.get("attribution_plugin"),
+        msg.get("attribution_skill"),
         msg.get("message_api_id"),
         msg.get("request_id"),
         msg.get("stop_reason"),
@@ -505,6 +758,11 @@ def upsert_subagent_message(conn: sqlite3.Connection, msg: dict):
         msg.get("usage_cache_read_input_tokens"),
         msg.get("usage_cache_creation_5m"),
         msg.get("usage_cache_creation_1h"),
+        msg.get("usage_web_search_requests"),
+        msg.get("usage_web_fetch_requests"),
+        msg.get("usage_speed"),
+        msg.get("usage_inference_geo"),
+        msg.get("usage_iterations"),
     ))
 
 
@@ -546,6 +804,158 @@ def upsert_file_history(conn: sqlite3.Connection, fh: dict):
     ))
 
 
+def upsert_tool_result(conn: sqlite3.Connection, tr: dict):
+    """ツール実行結果をUpsert (user メッセージ内の tool_result)."""
+    conn.execute("""
+        INSERT INTO tool_results (
+            tool_use_id, message_uuid, session_id,
+            stdout, stderr, interrupted, is_image, no_output_expected, is_error,
+            raw_result, timestamp
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(tool_use_id) DO UPDATE SET
+            stdout = excluded.stdout,
+            stderr = excluded.stderr,
+            interrupted = excluded.interrupted,
+            is_image = excluded.is_image,
+            no_output_expected = excluded.no_output_expected,
+            is_error = excluded.is_error,
+            raw_result = excluded.raw_result
+    """, (
+        tr["tool_use_id"],
+        tr.get("message_uuid"),
+        tr["session_id"],
+        tr.get("stdout"),
+        tr.get("stderr"),
+        _bool_to_int(tr.get("interrupted")),
+        _bool_to_int(tr.get("is_image")),
+        _bool_to_int(tr.get("no_output_expected")),
+        _bool_to_int(tr.get("is_error")),
+        tr.get("raw_result"),
+        tr.get("timestamp"),
+    ))
+
+
+def upsert_attachment(conn: sqlite3.Connection, att: dict):
+    """添付情報をUpsert."""
+    conn.execute("""
+        INSERT INTO attachments (
+            uuid, session_id, parent_uuid, attachment_type, attachment_data,
+            timestamp, cwd, git_branch, user_type, entrypoint, claude_version, is_sidechain
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(uuid) DO UPDATE SET
+            attachment_data = excluded.attachment_data
+    """, (
+        att["uuid"],
+        att["session_id"],
+        att.get("parent_uuid"),
+        att.get("attachment_type"),
+        att.get("attachment_data"),
+        att.get("timestamp"),
+        att.get("cwd"),
+        att.get("git_branch"),
+        att.get("user_type"),
+        att.get("entrypoint"),
+        att.get("claude_version"),
+        1 if att.get("is_sidechain") else 0,
+    ))
+
+
+def upsert_permission_mode(conn: sqlite3.Connection, pm: dict):
+    """パーミッションモード変更履歴をUpsert."""
+    conn.execute("""
+        INSERT INTO permission_modes (id, session_id, permission_mode, sequence, exported_at)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            permission_mode = excluded.permission_mode,
+            exported_at = excluded.exported_at
+    """, (
+        pm["id"],
+        pm["session_id"],
+        pm.get("permission_mode"),
+        pm.get("sequence"),
+        datetime.now(timezone.utc).isoformat(),
+    ))
+
+
+def upsert_last_prompt(conn: sqlite3.Connection, lp: dict):
+    """最終プロンプトをUpsert."""
+    conn.execute("""
+        INSERT INTO last_prompts (leaf_uuid, session_id, last_prompt, exported_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(leaf_uuid) DO UPDATE SET
+            last_prompt = excluded.last_prompt,
+            exported_at = excluded.exported_at
+    """, (
+        lp["leaf_uuid"],
+        lp["session_id"],
+        lp.get("last_prompt"),
+        datetime.now(timezone.utc).isoformat(),
+    ))
+
+
+def upsert_file_history_snapshot(conn: sqlite3.Connection, fhs: dict):
+    """ファイル履歴スナップショットをUpsert."""
+    conn.execute("""
+        INSERT INTO file_history_snapshots (
+            message_id, session_id, is_snapshot_update,
+            snapshot_timestamp, tracked_file_backups, raw_snapshot, exported_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(message_id) DO UPDATE SET
+            is_snapshot_update = excluded.is_snapshot_update,
+            tracked_file_backups = excluded.tracked_file_backups,
+            raw_snapshot = excluded.raw_snapshot,
+            exported_at = excluded.exported_at
+    """, (
+        fhs["message_id"],
+        fhs["session_id"],
+        1 if fhs.get("is_snapshot_update") else 0,
+        fhs.get("snapshot_timestamp"),
+        fhs.get("tracked_file_backups"),
+        fhs.get("raw_snapshot"),
+        datetime.now(timezone.utc).isoformat(),
+    ))
+
+
+def upsert_ai_title(conn: sqlite3.Connection, at: dict):
+    """AIタイトルをUpsert（セッションごと最新値）."""
+    conn.execute("""
+        INSERT INTO ai_titles (session_id, ai_title, exported_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT(session_id) DO UPDATE SET
+            ai_title = excluded.ai_title,
+            exported_at = excluded.exported_at
+    """, (
+        at["session_id"],
+        at.get("ai_title"),
+        datetime.now(timezone.utc).isoformat(),
+    ))
+
+
+def upsert_queue_operation(conn: sqlite3.Connection, qo: dict):
+    """キュー操作をUpsert."""
+    conn.execute("""
+        INSERT INTO queue_operations (id, session_id, operation, content, timestamp)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO NOTHING
+    """, (
+        qo["id"],
+        qo["session_id"],
+        qo.get("operation"),
+        qo.get("content"),
+        qo.get("timestamp"),
+    ))
+
+
+def _bool_to_int(v):
+    """True/False/Noneを1/0/Noneに変換."""
+    if v is None:
+        return None
+    return 1 if v else 0
+
+
 # --- Export Logic ---
 
 def export_session(
@@ -562,10 +972,17 @@ def export_session(
     stats = {
         "messages": 0,
         "tool_uses": 0,
+        "tool_results": 0,
         "subagents": 0,
         "subagent_messages": 0,
         "memory_files": 0,
         "file_history": 0,
+        "attachments": 0,
+        "permission_modes": 0,
+        "last_prompts": 0,
+        "file_history_snapshots": 0,
+        "ai_titles": 0,
+        "queue_operations": 0,
     }
 
     # プロジェクトをUpsert
@@ -610,29 +1027,119 @@ def export_session(
     # セッションを先にUpsert（外部キー制約のため）
     upsert_session(conn, session_meta)
 
-    # --- メッセージ処理 ---
-    message_records = [r for r in records if r.get("type") in ("user", "assistant", "system")]
+    # --- メッセージ・新規レコードタイプ処理 ---
+    permission_mode_seq = 0
 
-    for rec in message_records:
-        # セッションメタデータの補完（最初のレコードから）
-        if not session_meta["cwd"] and rec.get("cwd"):
-            session_meta["cwd"] = rec["cwd"]
-        if not session_meta["git_branch"] and rec.get("gitBranch"):
-            session_meta["git_branch"] = rec["gitBranch"]
-        if not session_meta["claude_version"] and rec.get("version"):
-            session_meta["claude_version"] = rec["version"]
+    for rec in records:
+        rec_type = rec.get("type")
+
+        # セッションメタデータの補完（メッセージ系レコードから）
+        if rec_type in ("user", "assistant", "system"):
+            if not session_meta["cwd"] and rec.get("cwd"):
+                session_meta["cwd"] = rec["cwd"]
+            if not session_meta["git_branch"] and rec.get("gitBranch"):
+                session_meta["git_branch"] = rec["gitBranch"]
+            if not session_meta["claude_version"] and rec.get("version"):
+                session_meta["claude_version"] = rec["version"]
+
+        # --- 新規レコードタイプの処理 ---
+        if rec_type == "permission-mode":
+            permission_mode_seq += 1
+            pm_id = f"{session_id}:{permission_mode_seq}:{rec.get('permissionMode','')}"
+            upsert_permission_mode(conn, {
+                "id": pm_id,
+                "session_id": session_id,
+                "permission_mode": rec.get("permissionMode"),
+                "sequence": permission_mode_seq,
+            })
+            stats["permission_modes"] += 1
+            continue
+
+        if rec_type == "last-prompt":
+            upsert_last_prompt(conn, {
+                "leaf_uuid": rec.get("leafUuid") or str(uuid.uuid4()),
+                "session_id": session_id,
+                "last_prompt": rec.get("lastPrompt"),
+            })
+            stats["last_prompts"] += 1
+            continue
+
+        if rec_type == "ai-title":
+            upsert_ai_title(conn, {
+                "session_id": session_id,
+                "ai_title": rec.get("aiTitle"),
+            })
+            stats["ai_titles"] += 1
+            continue
+
+        if rec_type == "file-history-snapshot":
+            snap = rec.get("snapshot") or {}
+            msg_id = rec.get("messageId") or snap.get("messageId") or str(uuid.uuid4())
+            upsert_file_history_snapshot(conn, {
+                "message_id": msg_id,
+                "session_id": session_id,
+                "is_snapshot_update": rec.get("isSnapshotUpdate", False),
+                "snapshot_timestamp": snap.get("timestamp"),
+                "tracked_file_backups": json.dumps(
+                    snap.get("trackedFileBackups", {}), ensure_ascii=False
+                ),
+                "raw_snapshot": json.dumps(snap, ensure_ascii=False),
+            })
+            stats["file_history_snapshots"] += 1
+            continue
+
+        if rec_type == "queue-operation":
+            # idは timestamp+content のhashで安定化
+            qo_key = f"{rec.get('timestamp','')}|{rec.get('operation','')}|{rec.get('content','')}"
+            qo_id = hashlib.sha256(qo_key.encode("utf-8")).hexdigest()[:24]
+            upsert_queue_operation(conn, {
+                "id": f"{session_id}:{qo_id}",
+                "session_id": session_id,
+                "operation": rec.get("operation"),
+                "content": rec.get("content"),
+                "timestamp": rec.get("timestamp"),
+            })
+            stats["queue_operations"] += 1
+            continue
+
+        if rec_type == "attachment":
+            attachment = rec.get("attachment") or {}
+            upsert_attachment(conn, {
+                "uuid": rec.get("uuid") or str(uuid.uuid4()),
+                "session_id": session_id,
+                "parent_uuid": rec.get("parentUuid"),
+                "attachment_type": attachment.get("type"),
+                "attachment_data": json.dumps(attachment, ensure_ascii=False),
+                "timestamp": rec.get("timestamp"),
+                "cwd": rec.get("cwd"),
+                "git_branch": rec.get("gitBranch"),
+                "user_type": rec.get("userType"),
+                "entrypoint": rec.get("entrypoint"),
+                "claude_version": rec.get("version"),
+                "is_sidechain": rec.get("isSidechain", False),
+            })
+            stats["attachments"] += 1
+            continue
+
+        # --- メッセージ系（user / assistant / system） ---
+        if rec_type not in ("user", "assistant", "system"):
+            continue
 
         msg_data = rec.get("message", {})
         msg_content = msg_data.get("content", rec.get("content", ""))
         usage = msg_data.get("usage", {}) or {}
         cache_creation = usage.get("cache_creation") or {}
+        server_tool = usage.get("server_tool_use") or {}
+        iterations = usage.get("iterations")
+
+        msg_uuid = rec.get("uuid") or str(uuid.uuid4())
 
         msg = {
-            "uuid": rec.get("uuid", str(uuid.uuid4())),
+            "uuid": msg_uuid,
             "session_id": session_id,
             "parent_uuid": rec.get("parentUuid"),
-            "type": rec["type"],
-            "role": msg_data.get("role", rec["type"]),
+            "type": rec_type,
+            "role": msg_data.get("role", rec_type),
             "content": serialize_content(msg_content),
             "model": msg_data.get("model"),
             "timestamp": rec.get("timestamp"),
@@ -642,9 +1149,16 @@ def export_session(
             "is_meta": rec.get("isMeta", False),
             "user_type": rec.get("userType"),
             "subtype": rec.get("subtype"),
+            "entrypoint": rec.get("entrypoint"),
+            "claude_version": rec.get("version"),
+            "prompt_id": rec.get("promptId"),
+            "permission_mode": rec.get("permissionMode"),
+            "source_tool_assistant_uuid": rec.get("sourceToolAssistantUUID"),
+            "attribution_plugin": rec.get("attributionPlugin"),
+            "attribution_skill": rec.get("attributionSkill"),
             "message_api_id": msg_data.get("id"),
             "request_id": rec.get("requestId"),
-            "stop_reason": msg_data.get("stop_reason"),
+            "stop_reason": msg_data.get("stop_reason") or rec.get("stopReason"),
             "service_tier": usage.get("service_tier"),
             "usage_input_tokens": usage.get("input_tokens"),
             "usage_output_tokens": usage.get("output_tokens"),
@@ -652,20 +1166,74 @@ def export_session(
             "usage_cache_read_input_tokens": usage.get("cache_read_input_tokens"),
             "usage_cache_creation_5m": cache_creation.get("ephemeral_5m_input_tokens"),
             "usage_cache_creation_1h": cache_creation.get("ephemeral_1h_input_tokens"),
+            "usage_web_search_requests": server_tool.get("web_search_requests"),
+            "usage_web_fetch_requests": server_tool.get("web_fetch_requests"),
+            "usage_speed": usage.get("speed"),
+            "usage_inference_geo": usage.get("inference_geo"),
+            "usage_iterations": json.dumps(iterations, ensure_ascii=False) if iterations is not None else None,
+            # system タイプ用フィールド
+            "level": rec.get("level"),
+            "duration_ms": rec.get("durationMs"),
+            "has_output": rec.get("hasOutput"),
+            "hook_count": rec.get("hookCount"),
+            "hook_infos": json.dumps(rec.get("hookInfos"), ensure_ascii=False) if rec.get("hookInfos") is not None else None,
+            "hook_errors": json.dumps(rec.get("hookErrors"), ensure_ascii=False) if rec.get("hookErrors") is not None else None,
+            "prevented_continuation": rec.get("preventedContinuation"),
+            "tool_use_id": rec.get("toolUseID"),
+            "message_count": rec.get("messageCount"),
         }
 
         upsert_message(conn, msg)
         stats["messages"] += 1
 
-        # ツール使用の抽出
-        if rec["type"] == "assistant":
+        # assistant: ツール使用の抽出
+        if rec_type == "assistant":
             tool_uses = extract_tool_uses(rec)
             for tu in tool_uses:
-                tu["message_uuid"] = msg["uuid"]
+                tu["message_uuid"] = msg_uuid
                 tu["session_id"] = session_id
                 tu["timestamp"] = rec.get("timestamp")
                 upsert_tool_use(conn, tu)
                 stats["tool_uses"] += 1
+
+        # user: tool_result の抽出（messageのcontentブロック + toolUseResultメタ）
+        if rec_type == "user":
+            tu_result_raw = rec.get("toolUseResult")
+            # toolUseResult は dict (構造化) または str (シンプル出力) の両形態がある
+            if isinstance(tu_result_raw, dict):
+                tu_result_meta = tu_result_raw
+                raw_result_json = json.dumps(tu_result_raw, ensure_ascii=False)
+            elif isinstance(tu_result_raw, str):
+                tu_result_meta = {"stdout": tu_result_raw}
+                raw_result_json = tu_result_raw
+            else:
+                tu_result_meta = {}
+                raw_result_json = None
+
+            content = msg_data.get("content") if isinstance(msg_data, dict) else None
+            if isinstance(content, list):
+                for block in content:
+                    if not isinstance(block, dict):
+                        continue
+                    if block.get("type") != "tool_result":
+                        continue
+                    tu_id = block.get("tool_use_id") or block.get("id")
+                    if not tu_id:
+                        continue
+                    upsert_tool_result(conn, {
+                        "tool_use_id": tu_id,
+                        "message_uuid": msg_uuid,
+                        "session_id": session_id,
+                        "stdout": tu_result_meta.get("stdout"),
+                        "stderr": tu_result_meta.get("stderr"),
+                        "interrupted": tu_result_meta.get("interrupted"),
+                        "is_image": tu_result_meta.get("isImage"),
+                        "no_output_expected": tu_result_meta.get("noOutputExpected"),
+                        "is_error": block.get("is_error"),
+                        "raw_result": raw_result_json,
+                        "timestamp": rec.get("timestamp"),
+                    })
+                    stats["tool_results"] += 1
 
     # メッセージ数を更新
     if not session_meta["message_count"]:
@@ -703,6 +1271,8 @@ def export_session(
                     msg_content = msg_data.get("content", rec.get("content", ""))
                     usage = msg_data.get("usage", {}) or {}
                     cache_creation = usage.get("cache_creation") or {}
+                    server_tool = usage.get("server_tool_use") or {}
+                    iterations = usage.get("iterations")
 
                     sa_msg = {
                         "uuid": rec.get("uuid", str(uuid.uuid4())),
@@ -714,7 +1284,19 @@ def export_session(
                         "content": serialize_content(msg_content),
                         "model": msg_data.get("model"),
                         "timestamp": rec.get("timestamp"),
+                        "cwd": rec.get("cwd"),
+                        "git_branch": rec.get("gitBranch"),
                         "is_sidechain": rec.get("isSidechain", False),
+                        "is_meta": rec.get("isMeta", False),
+                        "user_type": rec.get("userType"),
+                        "subtype": rec.get("subtype"),
+                        "entrypoint": rec.get("entrypoint"),
+                        "claude_version": rec.get("version"),
+                        "prompt_id": rec.get("promptId"),
+                        "permission_mode": rec.get("permissionMode"),
+                        "source_tool_assistant_uuid": rec.get("sourceToolAssistantUUID"),
+                        "attribution_plugin": rec.get("attributionPlugin"),
+                        "attribution_skill": rec.get("attributionSkill"),
                         "message_api_id": msg_data.get("id"),
                         "request_id": rec.get("requestId"),
                         "stop_reason": msg_data.get("stop_reason"),
@@ -725,6 +1307,11 @@ def export_session(
                         "usage_cache_read_input_tokens": usage.get("cache_read_input_tokens"),
                         "usage_cache_creation_5m": cache_creation.get("ephemeral_5m_input_tokens"),
                         "usage_cache_creation_1h": cache_creation.get("ephemeral_1h_input_tokens"),
+                        "usage_web_search_requests": server_tool.get("web_search_requests"),
+                        "usage_web_fetch_requests": server_tool.get("web_fetch_requests"),
+                        "usage_speed": usage.get("speed"),
+                        "usage_inference_geo": usage.get("inference_geo"),
+                        "usage_iterations": json.dumps(iterations, ensure_ascii=False) if iterations is not None else None,
                     }
                     upsert_subagent_message(conn, sa_msg)
                     agent_msg_count += 1
