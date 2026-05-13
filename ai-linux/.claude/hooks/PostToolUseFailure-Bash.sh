@@ -2,9 +2,13 @@
 
 set -euo pipefail
 
-# output history log
+# stdin を先に取り込む（後段で複数回参照するため）
+input="$(cat)"
+
 THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-"${THIS_DIR}/history-logger.sh" "Bash failure" "$(cat)"
+
+# output history log
+"${THIS_DIR}/history-logger.sh" "Bash failure" "${input}"
 
 # output error log
-"${THIS_DIR}/error-logger.sh" "Bash failure" "$(cat)"
+"${THIS_DIR}/error-logger.sh" "Bash failure" "${input}"

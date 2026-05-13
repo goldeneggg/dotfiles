@@ -1,8 +1,15 @@
 #!/bin/bash
 # Notification Hook
-# Claude Code が確認を待っているときに通知を表示
+# Claude Code が確認を待っているときに履歴ログを記録し通知を表示
 
 set -euo pipefail
+
+# stdin を先に取り込む
+input="$(cat)"
+
+# output history log
+THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+"${THIS_DIR}/history-logger.sh" "Notification" "${input}"
 
 # terminal-notifier の存在チェック
 if ! command -v terminal-notifier >/dev/null 2>&1; then

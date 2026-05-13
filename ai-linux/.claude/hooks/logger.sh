@@ -40,6 +40,16 @@ readonly TRUNCATE_FIELDS=(
   ".content"
   ".message"
   ".tool_response.stdout"
+  ".tool_response.stderr"
+  ".tool_response.output"
+  ".error"
+  ".error_message"
+  ".response_summary"
+  ".command_args"
+  ".expansion_type"
+  ".task_description"
+  ".reason"
+  ".permission_rule"
 )
 
 # 各フィールドに対してカット処理を適用
