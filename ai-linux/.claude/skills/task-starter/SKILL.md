@@ -1,7 +1,8 @@
 ---
 name: task-starter
 description: |
-  ソフトウェア/Web開発プロジェクト・タスクの開始時に、標準フォルダ構造・仕様書・TODOタスクのドキュメント群を生成するスキル。
+  ソフトウェア/Web開発プロジェクト・タスクの開始時に、標準フォルダ構造・仕様書・TODOタスクのドキュメント群を生成し、
+  さらに「並行実行可能なタスクの分類」「依存DAGとクリティカルパスを含むロードマップ」「Claude Code最新機能を活用した推奨ワークロード」までを一括生成するスキル。
   以下の状況で使用:
     (1) 「新しいプロジェクトを始めたい」「タスクを開始したい」「プロジェクトをセットアップして」
     (2) 明示的に「/task-starter」を実行した時
@@ -10,20 +11,24 @@ description: |
     (5) 「タスク管理用のフォルダを作成して」「開発の準備をして」
     (6) 「仕様書のテンプレートが欲しい」「タスク分割を手伝って」
     (7) 「作業計画をゼロから立てたい」「新規タスクの計画書を作って」
-  注意: 既存TODOの実行・進捗管理はtask-performerの担当。このスキルは「新規作成」に特化。
+    (8) 「並行で進められるタスクを整理して」「最速で完了させる作業計画を立てて」
+    (9) 「タスクのDAG/ロードマップを作って」「クリティカルパスを出して」
+  注意: 既存TODOの実行・進捗管理はtask-performerの担当。このスキルは「新規作成」と「ロードマップ設計」に特化。
 argument-hint: "[プロジェクト名]"
 ---
 
 # Task Starter
 
-ソフトウェア/Web開発プロジェクト・タスクの標準ドキュメント構造を生成し、計画を支援する。
+ソフトウェア/Web開発プロジェクト・タスクの標準ドキュメント構造を生成し、依存関係を分析した上で、最速完了に向けたロードマップと推奨ワークロードまで提示する。
 
 ## スコープ
 
 ### 含むもの
 - プロジェクトフォルダ構造の新規生成
 - 仕様書・TODOタスク・現状分析ドキュメントの作成
-- タスク分割と計画の策定
+- タスク分割（依存メタ情報付き）と計画策定
+- **依存DAG・クリティカルパス・並行可能タスク群の特定**
+- **Claude Code 最新機能（Subagents並列・/goal・worktree・/batch等）を活用した推奨ワークロードの提示**
 
 ### 含まないもの
 - 既存TODOタスクの実行・進捗管理（→ task-performer）
@@ -32,17 +37,18 @@ argument-hint: "[プロジェクト名]"
 
 ## 成功基準
 
-- 指定ディレクトリにYYYYMMDD-{name}/フォルダ構造が生成されている
-- specs/ に要件・技術仕様を含む仕様書が作成されている
-- todos/ に1-2時間粒度のタスクが依存順に配置されている
-- ユーザーがPhase 4のレビューで承認している
+- 指定ディレクトリに `YYYYMMDD-{name}/` フォルダ構造が生成されている
+- `specs/` に要件・技術仕様を含む仕様書が作成されている
+- `todos/` に1-2時間粒度のタスクが依存順に配置され、各 `README.md` の先頭フロントマターに `depends_on` / `parallel_group` が明記されている
+- `todos/README.md` に Mermaid DAG・タスク表・クリティカルパス・並行可能タスク群・推奨ワークロードが記載されている
+- ユーザーが Phase 5 のレビューで承認している
 
 ## ワークフロー
 
 ### Phase 1: 情報収集
 
 1. **プロジェクト基本情報を収集**
-   `$ARGUMENTS` が指定されている場合はプロジェクト名として使用する。
+   `$ARGUMENTS` が指定されている場合はプロジェクト名として使用。
    ```
    AskUserQuestionツールで確認（$ARGUMENTSで既知の項目はスキップ）:
    - プロジェクト/タスク名（$ARGUMENTSがあれば確認のみ）
@@ -59,7 +65,6 @@ argument-hint: "[プロジェクト名]"
 ### Phase 2: 構造生成
 
 1. **プロジェクトフォルダを作成**
-   スキルディレクトリ内のスクリプトを実行:
    ```bash
    python3 scripts/init_project.py "{プロジェクト名}" --path "{出力先}" --description "{概要}"
    ```
@@ -72,6 +77,7 @@ argument-hint: "[プロジェクト名]"
    ├── files/              # 参考データ・ファイル
    ├── specs/              # 要件・仕様書
    ├── todos/              # タスクドキュメント
+   │   ├── README.md       # タスクロードマップ（Phase 4で内容を埋める）
    │   └── 001-{task-name}/
    └── logs/               # タスク作業ログ置き場
        └── 001-{task-name}/
@@ -84,24 +90,52 @@ argument-hint: "[プロジェクト名]"
 ### Phase 3: ドキュメント生成
 
 1. **references/ - 現状分析（既存コード改修時のみ）**
-   - references/templates/reference-template.md をベースに作成
+   - `references/templates/reference-template.md` をベースに作成
    - 現状のアーキテクチャ、主要コンポーネント、処理フローを記載
    - 不明点はAskUserQuestionツールで随時確認
 
 2. **specs/ - 仕様書**
-   - references/templates/spec-template.md をベースに作成
+   - `references/templates/spec-template.md` をベースに作成
    - 要件、技術仕様、UI/UX、依存関係を記載
-   - 不明点はAskUserQuestionツールで随時確認。特に「完了条件」「成功の定義」はユーザーと相談して明確にすること
+   - 「完了条件」「成功の定義」はユーザーと相談して明確にすること（後の `/goal` 条件に使う）
 
-3. **todos/ - タスク分割**
-   - references/templates/todo-template.md をベースに作成
+3. **todos/ - タスク分割（依存メタ付き）**
+   - `references/templates/todo-template.md` をベースに作成
    - 1-2時間で完了し、エラー無しでコミット可能な粒度に分割
-   - 各タスクに連番フォルダ: 001-setup/, 002-implement-xxx/, ...
-   - 依存関係を考慮した順序で配置
-   - 各タスクファイル内には references/ , specs/ への参照パスを記載
+   - 各タスクに連番フォルダ: `001-setup/`, `002-implement-xxx/`, ...
+   - **各 `README.md` 冒頭にYAMLフロントマターで以下を必ず明記**:
+     - `id`: タスクID
+     - `estimated_time`: 推定時間
+     - `depends_on`: 前提タスクIDの配列（無ければ `[]`）
+     - `parallel_group`: 並行可能なグループ名（無ければ `null`）
+     - `parallelizable`: subagentで並行実行を推奨するか
    - 不明点はAskUserQuestionツールで随時確認
 
-### Phase 4: レビューと確定
+### Phase 4: 依存分析とロードマップ生成（**新設**）
+
+このフェーズで「並行実行可能 vs 直列必須」の分類と、最速完了のための作業ロードマップ・推奨ワークロードを生成する。
+
+1. **依存関係の整理**
+   各 `todos/{ID}/README.md` のフロントマター（`depends_on`, `parallel_group`）を集約し、以下を算出:
+   - **依存DAG**: タスク間の有向グラフ
+   - **クリティカルパス**: 推定時間の合計が最大となる経路（全体所要時間を決定する経路）
+   - **並行グループ**: 同じ前提を持ち、編集ファイルが独立しているタスク群
+
+2. **並行可能性の判定基準**
+   2タスクA, Bが「並行実行可能」とみなせる条件:
+   - AとBの間に依存関係がない（DAG上で互いに到達不能）
+   - **編集対象ファイルが重複しない** （重複する場合は worktree 隔離が必要 → 推奨ワークロードで明示）
+   - 共通の状態（DB、外部リソース等）への破壊的変更がない
+
+3. **`todos/README.md` を生成**
+   `references/templates/roadmap-template.md` をベースに以下を埋める:
+   - **タスク一覧表**: ID/概要/前提/並行グループ/推定時間/並行推奨フラグ
+   - **Mermaid 依存DAG**: `graph TD` 記法で可視化、並行グループは `classDef` で色分け
+   - **クリティカルパス**: 経路と合計時間
+   - **並行グループ詳細**: 各グループに属するタスクと「非干渉性の根拠」
+   - **推奨ワークロード**: 後述の「推奨ワークロード設計指針」に従う
+
+### Phase 5: レビューと確定（旧Phase 4）
 
 1. **生成結果を一覧表示**
    ```
@@ -113,50 +147,88 @@ argument-hint: "[プロジェクト名]"
    ├── 📁 specs/
    │   └── 📄 feature-spec.md
    ├── 📁 todos/
+   │   ├── 📄 README.md          ← ロードマップ + 推奨ワークロード
    │   ├── 📁 001-setup/
-   │   │   └── 📄 README.md
+   │   │   └── 📄 README.md      ← フロントマター付き
    │   └── 📁 002-implement/
    │       └── 📄 README.md
    └── 📁 logs/
-       ├── 📁 001-setup/
-       └── 📁 002-implement/
    ```
 
 2. **ユーザーレビューを依頼**
-   - 構造と内容を確認してもらう
+   - `todos/README.md` の DAG・クリティカルパス・推奨ワークロードを重点的に確認してもらう
    - フィードバックに基づき修正
 
 3. **承認後、完了メッセージを表示**
+
+---
+
+## 推奨ワークロード設計指針
+
+`todos/README.md` の「推奨ワークロード」セクションは、Claude Code の以下の機能を**プロジェクト特性に応じて**組み合わせて提示する。テンプレートをそのまま貼るのではなく、実プロジェクトの依存DAGに応じて具体的なAgent呼び出し例まで書き起こすこと。
+
+### 機能ごとの使い分け表
+
+| 機能 | 適用条件 | 役割 |
+| --- | --- | --- |
+| **Subagents 並列実行**（1メッセージで複数Agent呼び出し） | 並行可能タスクが2-5個 | 同一セッション内で並列化、結果はメインに集約 |
+| **`isolation: worktree`** オプション | 並行Agentが同じファイルを触る可能性 | git worktreeで隔離 |
+| **`/batch`** | 5-30個の機械的に類似した独立変更 | 自動的にworktree-isolated subagentに分散しPRを作成 |
+| **Agent View** (`claude agents`) | 長時間バックグラウンド実行が複数 | バックグラウンドセッションをダッシュボードで管理 |
+| **`/goal`** | 検証可能な完了条件がある（テストpass等） | 条件達成までターン継続、ユーザー操作不要 |
+| **task-performer スキル** | 個別タスクを順次実行 | 1タスクずつ確実に進める |
+| **Hooks (Stop / PostToolUse)** | 完了通知・自動lint等 | 各タスク終了時の自動アクション |
+
+### 推奨ワークロードの構成テンプレート
+
+`todos/README.md` の「推奨ワークロード」セクションでは、以下の順で具体例を書く:
+
+1. **Step 1: 直列必須タスク** — 順次実行する初期タスク（例: 001-setup）
+2. **Step 2: 並行可能タスクの並列実行** — 1メッセージで複数 Agent ツール呼び出しする具体例。`subagent_type`, `description`, `prompt`, `isolation` まで明記
+3. **Step 3+: 統合・後続タスク** — 並行終了後に走るタスク
+4. **オプション: `/goal` 全自動化** — 完了条件（specsから引用）を提示
+5. **オプション: 完了通知Hook** — Stop hookでの通知例（必要なら）
+
+### Subagent 並列呼び出しの注意点
+
+- **1メッセージ内に複数の Agent 呼び出しを並べる**ことで並列実行される（順次呼び出しではない）
+- `isolation: worktree` 指定時は、Agent終了後に変更内容のmerge手順も明記する
+- `prompt` には「`todos/{ID}/README.md` の作業内容を完了させ、受け入れ条件を全て満たす」と明記し、自己完結させる
+
+---
 
 ## TODOタスク分割ガイドライン
 
 ### 粒度の基準
 - **目安**: 1-2時間で完了
 - **明確なゴール**: 完了条件が明確
-- **独立性**: 他タスクへの依存を最小化しつつ、同時対応すべき内容は1つのタスクに内包
+- **独立性**: 並行可能性を最大化するため、編集ファイル領域が分離されるよう分割を工夫する
 
-### ソフトウェア/Web開発での典型的な分割パターン
+### ソフトウェア/Web開発での典型的な分割パターン（並行性込み）
 
 **フロントエンド機能追加**:
-1. 001-design-component - コンポーネント設計
-2. 002-implement-ui - UI実装
-3. 003-add-state-management - 状態管理追加
-4. 004-integrate-api - API連携
-5. 005-add-tests - テスト追加
+1. 001-design-component (順次)
+2. 002-implement-ui (Group A・001完了後)
+3. 003-add-state-management (Group A・001完了後・別ファイル)
+4. 004-integrate-api (002, 003完了後)
+5. 005-add-tests (004完了後)
+
+→ Group A の002と003は別ファイル領域なら並行可能
 
 **API開発**:
-1. 001-design-api - API設計
-2. 002-implement-endpoint - エンドポイント実装
-3. 003-add-validation - バリデーション追加
-4. 004-add-error-handling - エラーハンドリング
-5. 005-add-tests - テスト追加
+1. 001-design-api (順次)
+2. 002-implement-endpoint (Group B・001完了後)
+3. 003-add-validation (Group B・001完了後・別ファイル)
+4. 004-add-error-handling (002完了後)
+5. 005-add-tests (004完了後)
 
 **リファクタリング**:
-1. 001-analyze-current - 現状分析
-2. 002-design-new-structure - 新構造設計
-3. 003-extract-xxx - 抽出・分離
-4. 004-update-references - 参照更新
-5. 005-verify-behavior - 動作確認
+1. 001-analyze-current (順次)
+2. 002-design-new-structure (順次)
+3. 003-extract-xxx (Group C・002完了後)
+4. 004-extract-yyy (Group C・002完了後・別領域)
+5. 005-update-references (003, 004完了後)
+6. 006-verify-behavior (005完了後)
 
 ## 実装スタイル
 
@@ -169,7 +241,8 @@ argument-hint: "[プロジェクト名]"
 ### ユーザーインタラクション
 
 - **Phase 1**: 必須（プロジェクト情報収集）
-- **Phase 4**: 必須（レビューと承認）
+- **Phase 4**: 並行可能性の判定で曖昧な場合はAskUserQuestionで確認
+- **Phase 5**: 必須（レビューと承認）
 - **途中キャンセル**: 生成途中のファイルは削除またはユーザーに確認
 
 ## エラーハンドリング
@@ -180,6 +253,7 @@ argument-hint: "[プロジェクト名]"
 | 権限不足でファイル作成不可   | エラーを報告し、別の出力先を提案               |
 | 情報収集中にキャンセル       | 確認後、生成済みファイルを削除するか選択させる |
 | Python 3が未インストール     | 手動でフォルダ構造を作成する代替手順を案内     |
+| 循環依存を検出               | エラー報告し、依存定義の見直しを依頼           |
 
 ## 前提条件
 
@@ -190,15 +264,16 @@ argument-hint: "[プロジェクト名]"
 
 ### scripts/
 
-- scripts/init_project.py - プロジェクトフォルダ構造を生成（Python 3必須）
-  - 入力: プロジェクト名(必須), --path(出力先), --description(概要)
-  - 出力: YYYYMMDD-{kebab-case-name}/ ディレクトリ + README.md + サブフォルダ群
+- `scripts/init_project.py` - プロジェクトフォルダ構造を生成（Python 3必須）
+  - 入力: プロジェクト名(必須), `--path`(出力先), `--description`(概要)
+  - 出力: `YYYYMMDD-{kebab-case-name}/` ディレクトリ + README.md + サブフォルダ群 + `todos/README.md` 雛形
   - 参照頻度: 毎回（Phase 2で必ず実行）
 
 ### references/templates/
 
-以下のテンプレートはPhase 3で毎回参照する。ドキュメント生成のベースとして使用。
+以下のテンプレートはPhase 3〜4で参照する。ドキュメント生成のベースとして使用。
 
-- references/templates/spec-template.md - 仕様書テンプレート（毎回参照）
-- references/templates/todo-template.md - TODOタスクテンプレート（毎回参照）
-- references/templates/reference-template.md - 現状分析テンプレート（既存コード改修時のみ参照）
+- `references/templates/spec-template.md` - 仕様書テンプレート（Phase 3で毎回参照）
+- `references/templates/todo-template.md` - TODOタスクテンプレート（Phase 3で毎回参照、フロントマター必須）
+- `references/templates/reference-template.md` - 現状分析テンプレート（既存コード改修時のみ）
+- `references/templates/roadmap-template.md` - **タスクロードマップテンプレート（Phase 4で毎回参照）**

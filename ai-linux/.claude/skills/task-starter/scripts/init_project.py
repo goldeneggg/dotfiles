@@ -66,6 +66,46 @@ def create_directories(project_path: Path) -> None:
         gitkeep.touch()
 
 
+def create_todos_readme(project_path: Path, project_name: str) -> None:
+    """Create a placeholder todos/README.md for the roadmap.
+
+    Phase 4 (依存分析とロードマップ生成) でこのファイルを書き換える。
+    最初は雛形のみを置いておき、タスク分割完了後に内容が埋まる前提。
+    """
+    content = f"""# タスクロードマップ: {project_name}
+
+> このファイルは雛形です。タスク分割完了後（Phase 4）に
+> `references/templates/roadmap-template.md` をベースに以下を埋めてください:
+>
+> - タスク一覧表（前提・並行グループ・推定時間）
+> - Mermaid 依存DAG
+> - クリティカルパス
+> - 並行可能タスク群と非干渉性の根拠
+> - 推奨ワークロード（Subagents並列 / /goal / worktree など Claude Code 機能の活用法）
+
+## タスク一覧
+
+<!-- ここにタスク表を記載 -->
+
+## 依存DAG
+
+<!-- ここに Mermaid graph TD を記載 -->
+
+## クリティカルパス
+
+<!-- 最長経路と合計推定時間 -->
+
+## 並行可能タスク群
+
+<!-- Group A, B... と所属タスク -->
+
+## 推奨ワークロード
+
+<!-- Step 1, 2, 3 ... の具体的な実行手順 -->
+"""
+    (project_path / "todos" / "README.md").write_text(content, encoding="utf-8")
+
+
 def init_project(
     base_dir: str,
     project_name: str,
@@ -98,6 +138,7 @@ def init_project(
     # Create structure
     create_directories(project_path)
     create_readme(project_path, project_name, description)
+    create_todos_readme(project_path, project_name)
 
     return project_path
 
