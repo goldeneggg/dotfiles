@@ -506,7 +506,8 @@
     "kotlin-lsp@claude-plugins-official": true,
     "terraform@claude-plugins-official": true,
     "auth0@claude-plugins-official": true,
-    "cloud-sql-postgresql@claude-plugins-official": true
+    "cloud-sql-postgresql@claude-plugins-official": true,
+    "session-report@claude-plugins-official": true
   },
   "outputStyle": "concise",
   "language": "japanese",
