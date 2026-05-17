@@ -1,30 +1,38 @@
 ---
-name: autofix-pr
+name: local-autofix-pr
 description: |
-  現在のブランチに紐づくPull RequestのCI失敗と未解決レビューコメントを収集・分析し、
-  ローカルClaude Codeで修正・コミット・pushまでを一括で行うスキル。
-  Claude Code on the Webの `/autofix-pr` コマンドをローカルCLI向けに移植したもので、
-  「watch（永続監視）」は行わず、呼び出された時点のスナップショットに対して単発実行する。
-  デフォルトはCI失敗と未解決レビューコメントの両方を修正対象とし、prompt引数で対象を絞り込める。
+  PRに紐づくCI失敗（lint/型/テスト失敗、checks赤）と未解決レビューコメント（行コメント・
+  suggestion・CHANGES_REQUESTED）をローカルClaude Codeで対話的に収集・修正・コミット・
+  pushする日本語対応スキル。Claude Code 標準の built-in `/autofix-pr` コマンドとは別物で、
+  以下の点で明確に差別化されている:
+
+  - **対話・日本語応答前提**: AskUserQuestion で各ステップ確認しながら進める
+  - **push 前 diff 確認必須**: 自動 push せず、必ずユーザーに diff を見せて承認を得る
+  - **commit-message-suggester 連携**: Conventional Commits メッセージは別スキルに委譲
+  - **watch（永続監視）は行わない**: 呼び出し時点スナップショットの単発実行
+  - **早期終了判定あり**: ブロッカー無しなら即終了し /loop 周回でも副作用なし
 
   必ずこのスキルをトリガーすべきケース:
-  - "autofix-pr を実行して" "/autofix-pr"
-  - "PRのCI失敗を直して" "PRのレビューコメントに対応して"
-  - "現ブランチのPRのCIエラーを修正してpushして"
-  - "PR #123 のlintエラーだけ直して"
-  - "レビューで指摘された箇所を直して"
-  - "CIが落ちてるから修正して" "checksが赤いから直して"
-  - "review commentに対応する変更を入れて"
-  - Web版の /autofix-pr を使いたいがローカルClaude Codeで完結させたい時
+  - "local-autofix-pr 実行して" "/local-autofix-pr"
+  - "PR の CI 失敗を対話的に直してから push して" "checks 赤いとこ直して diff 見せて"
+  - "lint / 型エラー / mypy / eslint の指摘を直してコミットしてからpush"
+  - "レビューコメントへの対応コミットを作って、push 前に diff 確認させて"
+  - "@reviewer の suggestion / 行コメント / unresolved thread に対応して、push は止めて確認させて"
+  - "PR #123 の未解決 review thread 全部対応して、コミットメッセージは日本語で要約して"
+  - "built-in /autofix-pr じゃなくてローカル対話型で CI 直して"
+  - "/loop と組み合わせて、ノーオペ早期終了するやつで回したい"
 
-  以下のケースでは別スキルを優先:
-  - PRのコードレビュー自体を行う → pr-reviewer
-  - PR説明文の生成 → pr-description
-  - PR作成（新規 gh pr create） → 通常のgitワークフロー
+  以下のケースでは別スキルを優先（衝突しないが用途が違う）:
+  - 自動 watch / 即応型で CI・レビューに反応 → built-in `/autofix-pr`（Claude Code 標準）
+  - PR本体のコードレビュー → pr-reviewer
+  - PR説明文生成 → pr-description
+  - PR新規作成（gh pr create） → 通常 git ワークフロー
+  - コミットメッセージ提案のみ → commit-message-suggester
+  - GitHub Actions 単発分析 → gh-action-run-validator
 argument-hint: "[prompt] [--pr <番号>] [--ci-only] [--reviews-only] [--no-push]"
 ---
 
-# autofix-pr
+# local-autofix-pr
 
 現在のブランチに紐づくPRに対して、CI失敗ログと未解決レビューコメントを収集し、
 それらを解消する修正をローカルで行い、コミット・pushする。
