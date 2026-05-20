@@ -502,17 +502,15 @@
     "pr-review-toolkit@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
-    "linear@claude-plugins-official": true,
-    "kotlin-lsp@claude-plugins-official": true,
     "terraform@claude-plugins-official": false,
-    "auth0@claude-plugins-official": true,
-    "cloud-sql-postgresql@claude-plugins-official": true,
+    "auth0@claude-plugins-official": false,
+    "cloud-sql-postgresql@claude-plugins-official": false,
     "session-report@claude-plugins-official": true
   },
   "outputStyle": "concise",
   "language": "japanese",
   "alwaysThinkingEnabled": true,
   "autoMemoryEnabled": false,
-  "skipAutoPermissionPrompt": true,
-  "verbose": true
+  "verbose": true,
+  "skipAutoPermissionPrompt": true
 }
