@@ -513,5 +513,6 @@
   "language": "japanese",
   "alwaysThinkingEnabled": true,
   "autoMemoryEnabled": false,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "verbose": true
 }
