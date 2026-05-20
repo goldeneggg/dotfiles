@@ -512,5 +512,6 @@
   "outputStyle": "concise",
   "language": "japanese",
   "alwaysThinkingEnabled": true,
-  "autoMemoryEnabled": false
+  "autoMemoryEnabled": false,
+  "skipAutoPermissionPrompt": true
 }
