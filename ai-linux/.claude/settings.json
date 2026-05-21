@@ -511,6 +511,6 @@
   "language": "japanese",
   "alwaysThinkingEnabled": true,
   "autoMemoryEnabled": false,
-  "verbose": true,
+  "verbose": false,
   "skipAutoPermissionPrompt": true
 }
