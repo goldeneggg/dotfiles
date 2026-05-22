@@ -1,28 +1,19 @@
 ---
 name: typespec-evangelist
 description: |
-  TypeSpec の専門家として、API スキーマの新規実装、既存 .tsp ファイルのレビュー・検証、
-  OpenAPI/JSON Schema からの移行、TypeSpec プロジェクトの初期セットアップを支援するスキル。
-  references/ 配下の各ガイド（best-practices / versioning / migration / tspconfig、TypeSpec 1.11.0 準拠）を
-  信頼できる情報源として活用し、名前空間設計・Visibility・Versioning・認証・コード生成パイプラインなどの
-  観点を体系的にカバーする。
+  TypeSpec専門家として、APIスキーマ設計・実装、.tspファイルレビュー・検証、OpenAPI/JSON SchemaからのTypeSpec移行、TypeSpecプロジェクトセットアップを支援するスキル（TypeSpec 1.11.0準拠）。
 
-  以下の状況で必ずトリガーすべき:
-  (1) ユーザーが「TypeSpec で API を設計して」「.tsp を書いて」「API スキーマを実装して」と依頼した時
-  (2) ユーザーが「この .tsp ファイルをレビューして」「TypeSpec 実装を検証して」と依頼した時
-  (3) ユーザーが「OpenAPI を TypeSpec に移行して」「JSON Schema を .tsp に変換して」と依頼した時
-  (4) ユーザーが「TypeSpec プロジェクトをセットアップして」「tspconfig.yaml を整備して」と依頼した時
-  (5) ユーザーが明示的に「/typespec-evangelist」を実行した時
-  (6) ユーザーが TypeSpec 関連のベストプラクティス・命名規則・Visibility・Versioning について質問した時
-  (7) ユーザーが「@typespec/openapi3」「tsp compile」「@service」「@route」などの TypeSpec 固有のキーワードに触れた時
-  (8) API 設計の文脈で「Single Source of Truth」「スキーマファースト」「型安全な API クライアント生成」を扱う時
+  以下の状況で積極的にトリガーすること:
+  - 「TypeSpecでAPIを設計して」「.tspを書いて」「APIスキーマを実装して」
+  - 「.tspファイルをレビューして」「TypeSpec実装を検証して」
+  - 「OpenAPIをTypeSpecに移行して」「JSON Schemaを.tspに変換して」
+  - 「TypeSpecプロジェクトをセットアップして」「tspconfig.yamlを整備して」
+  - 「/typespec-evangelist」の明示実行
+  - TypeSpec関連のベストプラクティス・Visibility・Versioningの質問
+  - 「@typespec/openapi3」「tsp compile」「@service」「@route」などのキーワード
+  - 「スキーマファースト」「型安全なAPIクライアント生成」の文脈
 
-  TypeSpec / .tsp / tspconfig / API スキーマ設計に関わる依頼は、明示的にスキル名を指定されなくても積極的にトリガーすること。
-
-  ただし、以下のケースではトリガーしない:
-  - 既存 OpenAPI を直接編集・バリデーションするだけで、TypeSpec への移行を意図しない依頼
-  - TypeScript の `type` 定義や Zod スキーマなど、TypeSpec 言語自体とは無関係な型システムの依頼
-  - 単に Swagger UI や Redoc など、API ドキュメンテーションツールの設定のみを扱う依頼
+  トリガーしないケース: OpenAPIの直接編集のみ / TypeScript typeやZodなど非TypeSpec型システム / Swagger UIなどドキュメントツール設定のみ
 ---
 
 # TypeSpec Evangelist
