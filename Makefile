@@ -195,7 +195,7 @@ skill-repo-update-all:
 		$(call skill-sparse-checkout,$(call skill-repo-of,$(item)),$(call skill-dir-of,$(item)),$(call skill-name-of,$(item))) ;)
 
 #------------------------------
-# AI coding
+# for AI coding
 #------------------------------
 copilot-cli:
 	@copilot --additional-mcp-config @.copilot/mcp-config.json \
@@ -235,3 +235,69 @@ copilot-cli:
 		--deny-tool 'shell(git commit)' \
 		--deny-tool 'shell(git push)' \
 		--allow-url github.com
+
+.PHONY: sync-claudemd-to-agentsmd
+sync-claudemd-to-agentsmd: ## CLAUDE.md を再帰的に探索し、同ディレクトリに AGENTS.md symlink を作成する
+	@find . -name "CLAUDE.md" -not -path "*/.git/*" -not -path "*/node_modules/*" | while read f; do \
+		dir=$$(dirname "$$f"); \
+		ln -sf CLAUDE.md "$$dir/AGENTS.md"; \
+		echo "Created: $$dir/AGENTS.md -> CLAUDE.md"; \
+	done
+
+# ----------
+# AI tools MCP configuration sync
+# ----------
+CLAUDE_MCP_JSON := ./.mcp.json
+CODEX_CONFIG_DIR := ./.codex
+CODEX_CONFIG_FILE := $(CODEX_CONFIG_DIR)/config.toml
+
+define SYNC_MCP_TO_CODEX_SCRIPT
+import json, os, re
+
+src = "$(CLAUDE_MCP_JSON)"
+dst = "$(CODEX_CONFIG_FILE)"
+
+with open(src) as f:
+    cfg = json.load(f)
+
+servers = cfg.get("mcpServers", {})
+lines = []
+for name, srv in servers.items():
+    lines.append("[mcp_servers.{}]".format(name))
+    cmd_expanded = os.path.expandvars(srv.get("command", ""))
+    cmd = os.path.basename(cmd_expanded) if cmd_expanded else srv.get("command", "")
+    lines.append('command = "{}"'.format(cmd))
+    args = srv.get("args", [])
+    if args:
+        args_toml = ", ".join('"{}"'.format(a) for a in args)
+        lines.append("args = [{}]".format(args_toml))
+    lines.append('env_vars = ["PATH"]')
+    env = srv.get("env", {})
+    if env:
+        lines.append("[mcp_servers.{}.env]".format(name))
+        for k, v in env.items():
+            lines.append('{} = "{}"'.format(k, v))
+    lines.append("")
+
+new_section = "\n".join(lines)
+marker_begin = "# sync-mcp-begin\n"
+marker_end = "# sync-mcp-end\n"
+
+existing = open(dst).read() if os.path.exists(dst) else ""
+cleaned = re.sub(r"\n*# sync-mcp-begin\n.*?# sync-mcp-end\n?", "", existing, flags=re.DOTALL).strip()
+content = (cleaned + "\n\n" if cleaned else "") + marker_begin + new_section + marker_end
+
+with open(dst, "w") as f:
+    f.write(content)
+
+print("Synced {} MCP servers to {}".format(len(servers), dst))
+for name in servers:
+    print("  - " + name)
+endef
+export SYNC_MCP_TO_CODEX_SCRIPT
+
+.PHONY: sync-claude-mcpconf-to-codex
+sync-claude-mcpconf-to-codex: ## Claude Code の .mcp.json を Codex の ~/.codex/config.toml の mcp_servers セクションに同期する
+	@[ -f "$(CLAUDE_MCP_JSON)" ] || { echo "Error: $(CLAUDE_MCP_JSON) not found"; exit 1; }
+	@mkdir -p "$(CODEX_CONFIG_DIR)"
+	@echo "$$SYNC_MCP_TO_CODEX_SCRIPT" | python3
