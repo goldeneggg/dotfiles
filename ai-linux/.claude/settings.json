@@ -505,7 +505,16 @@
     "terraform@claude-plugins-official": false,
     "auth0@claude-plugins-official": false,
     "cloud-sql-postgresql@claude-plugins-official": false,
-    "session-report@claude-plugins-official": true
+    "session-report@claude-plugins-official": true,
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
   },
   "outputStyle": "concise",
   "language": "japanese",
