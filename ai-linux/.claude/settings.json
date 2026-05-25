@@ -521,5 +521,6 @@
   "alwaysThinkingEnabled": true,
   "autoMemoryEnabled": false,
   "verbose": false,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "agentPushNotifEnabled": true
 }
