@@ -9,7 +9,7 @@ description: |
     (2) `todos/NNN-{task}/README.md` 形式のパスを起点としてプロジェクト全体のコンテキスト収集を依頼された時
     (3) task-performer がタスク実行のためにプロジェクトコンテキストを必要とした時（委譲先として）
     (4) ユーザーが明示的に「タスクの背景資料を集めて」「specs/references を読んで要約して」と依頼した時
-model: haiku
+model: sonnet
 tools:
   - Read
   - Grep

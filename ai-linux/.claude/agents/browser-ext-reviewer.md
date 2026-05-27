@@ -7,6 +7,7 @@ description: |
   (2) ユーザーが「Chrome/Firefox互換性をチェックして」「クロスブラウザ対応を確認して」と依頼した時
   (3) ブラウザ拡張のPRレビュー時にクロスブラウザ互換性を確認したい時
   (4) manifest.jsonの変更を含むコミットを検証したい時
+model: sonnet
 tools: ["Read", "Grep", "Glob"]
 maxTurns: 20
 ---
