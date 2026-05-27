@@ -1,14 +1,14 @@
 ---
-name: typespec-evangelist
+name: typespec-specialist
 description: |
-  TypeSpec専門家として、APIスキーマ設計・実装、.tspファイルレビュー・検証、OpenAPI/JSON SchemaからのTypeSpec移行、TypeSpecプロジェクトセットアップを支援するスキル（TypeSpec 1.11.0準拠）。
+  TypeSpec専門家として、APIスキーマ設計・実装、.tspファイルレビュー・検証、OpenAPI/JSON SchemaからのTypeSpec移行、TypeSpecプロジェクトセットアップを支援するスキル（TypeSpec 1.x 系準拠、最新版に追随）。
 
   以下の状況で積極的にトリガーすること:
   - 「TypeSpecでAPIを設計して」「.tspを書いて」「APIスキーマを実装して」
   - 「.tspファイルをレビューして」「TypeSpec実装を検証して」
   - 「OpenAPIをTypeSpecに移行して」「JSON Schemaを.tspに変換して」
   - 「TypeSpecプロジェクトをセットアップして」「tspconfig.yamlを整備して」
-  - 「/typespec-evangelist」の明示実行
+  - 「/typespec-specialist」の明示実行
   - TypeSpec関連のベストプラクティス・Visibility・Versioningの質問
   - 「@typespec/openapi3」「tsp compile」「@service」「@route」などのキーワード
   - 「スキーマファースト」「型安全なAPIクライアント生成」の文脈
@@ -16,13 +16,22 @@ description: |
   トリガーしないケース: OpenAPIの直接編集のみ / TypeScript typeやZodなど非TypeSpec型システム / Swagger UIなどドキュメントツール設定のみ
 ---
 
-# TypeSpec Evangelist
+# TypeSpec specialist
 
 TypeSpec を「信頼できる情報源（Single Source of Truth）」として位置付け、堅牢で保守性の高い API スキーマを設計・検証する専門スキル。
 
 ## 責務（Scope）
 
 このスキルは以下の 4 つのモードで動作する。冒頭でユーザーの依頼内容からモードを判定し、必要であれば AskUserQuestion で確認する。
+
+**モード判定のヒント**: ユーザー発話に以下のキーワードが含まれていれば対応モードを優先候補とする。複数該当・あいまいな場合のみ AskUserQuestion で確認する。
+
+| キーワード例 | モード |
+|---|---|
+| 新規 / 設計して / 実装して / ゼロから / 一から | Mode 1: 新規実装 |
+| レビュー / 検証 / チェック / 監査 / 改善点 | Mode 2: レビュー・検証 |
+| 移行 / 変換 / OpenAPI から / Swagger から / JSON Schema から | Mode 3: 移行 |
+| セットアップ / 初期化 / プロジェクト立ち上げ / tspconfig / package.json | Mode 4: セットアップ |
 
 1. **新規実装モード**: 要件から `.tsp` ファイル群を新規設計・実装する
 2. **レビュー・検証モード**: 既存 `.tsp` 実装を best-practices に照らして検証し、改善提案をレポートする
@@ -62,13 +71,13 @@ best-practices.md の章立て:
 
 ### バージョン認識
 
-TypeSpec は 2025 年 5 月に 1.0 GA、現行は **1.11.0**（2026-04-07 リリース）。以下の点に特に注意:
+TypeSpec は 2025 年 5 月に 1.0 GA。コア・主要拡張は 1.x 系で安定運用中（執筆時点の最新バージョンは `npm view @typespec/compiler version` 等で確認すること）。以下の点に特に注意:
 
 - **`@service` の構文は object value literal `#{ ... }`** が正規（1.0 以降）。旧来の `({ ... })` は非推奨
 - **`@patch` は暗黙的な省略可能化を行わない**（1.0 以降）。部分更新には `@typespec/http` の `MergePatchUpdate<T>` を使う
 - **`@withVisibilityFilter` は非推奨**（1.11.0 以降）。`FilterVisibility` テンプレートを使う
-- **`@typespec/versioning` / `@typespec/xml` などはプレビュー**（番号体系は 0.x）。本番採用時は変更リスクを明示する
-- **パッケージ番号体系の混在に注意**: コアと安定拡張の多くは 1.x、`@typespec/http` やプレビュー拡張は 0.x。`package.json` を書く際は `npm view <pkg> version` で実バージョンを確認する
+- **`@typespec/versioning` / `@typespec/rest` / `@typespec/xml` などはプレビュー**（番号体系は 0.x）。本番採用時は変更リスクを明示する
+- **パッケージ番号体系の混在に注意**: コア・`@typespec/http`・`@typespec/openapi(3)`・`@typespec/json-schema` は 1.x stable、`@typespec/rest` および各種プレビュー拡張は 0.x。`package.json` を書く際は `npm view <pkg> version` で実バージョンを確認する
 
 ### 出力フォーマット
 
@@ -225,10 +234,10 @@ TypeSpec は 2025 年 5 月に 1.0 GA、現行は **1.11.0**（2026-04-07 リリ
    ```json
    {
      "devDependencies": {
-       "@typespec/compiler": "^1.11.0",
-       "@typespec/http": "^0.81.0",
-       "@typespec/openapi": "^1.11.0",
-       "@typespec/openapi3": "^1.11.0"
+       "@typespec/compiler": "^1.12.0",
+       "@typespec/http": "^1.12.0",
+       "@typespec/openapi": "^1.12.0",
+       "@typespec/openapi3": "^1.12.0"
      },
      "scripts": {
        "build": "tsp compile .",
@@ -242,7 +251,7 @@ TypeSpec は 2025 年 5 月に 1.0 GA、現行は **1.11.0**（2026-04-07 リリ
    オプション（必要に応じて追加）:
    - `@typespec/json-schema`（^1.x）: JSON Schema 出力
    - `@typespec/versioning`（^0.x、プレビュー）: バージョニング
-   - `@typespec/rest`（^1.x、リソース指向ルーティング）
+   - `@typespec/rest`（^0.x、プレビュー扱い、リソース指向ルーティング）
 
    プレビューパッケージを使う場合は将来の API 変更リスクをユーザーに明示する。
 

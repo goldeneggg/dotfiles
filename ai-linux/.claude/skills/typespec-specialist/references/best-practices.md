@@ -1,20 +1,20 @@
 # TypeSpec による API スキーマ設計のベストプラクティス
 
-> **バージョン情報（2026 年 5 月時点）**
+> **バージョン情報（執筆時点）**
 >
-> TypeSpec のコアパッケージは **1.11.0** が最新リリース（2026-04-07 公開）。2025 年 5 月に 1.0 GA となり、プロダクション利用が公式にサポートされている。
+> TypeSpec は 2025-05-06 に 1.0 GA。コアおよび主要拡張は 1.x 系で進化中で、プロダクション利用が公式にサポートされている。具体的な最新版は `npm view @typespec/<pkg> version` で確認すること。
 >
 > **パッケージ番号体系の注意**: TypeSpec は「コア / 安定拡張」と「プレビュー拡張」で番号体系が分かれている。`package.json` を書く際はこの違いを意識する。
 >
 > | カテゴリ | パッケージ | 番号体系 | ステータス |
 > |---|---|---|---|
 > | コア | `@typespec/compiler` | 1.x | 安定（Stable） |
-> | 安定拡張 | `@typespec/openapi`, `@typespec/openapi3`, `@typespec/json-schema`, `@typespec/rest` | 1.x | 安定（Stable） |
-> | HTTP プロトコル | `@typespec/http` | 0.x | 安定だが番号体系は 0.x（コアと別の進化サイクル） |
-> | プレビュー拡張 | `@typespec/versioning`, `@typespec/xml`, `@typespec/streams`, `@typespec/sse`, `@typespec/protobuf` | 0.x | プレビュー（API 変更の可能性あり） |
+> | 安定拡張 | `@typespec/openapi`, `@typespec/openapi3`, `@typespec/json-schema` | 1.x | 安定（Stable） |
+> | HTTP プロトコル | `@typespec/http` | 1.x | 安定（1.0 はコア 1.0 GA と同時に到達） |
+> | プレビュー拡張 | `@typespec/versioning`, `@typespec/rest`, `@typespec/xml`, `@typespec/streams`, `@typespec/sse`, `@typespec/protobuf` | 0.x | プレビュー（API 変更の可能性あり） |
 > | コード生成 | `@typespec/http-client-*`, `@typespec/http-server-*`（.NET / JS / Java / Python） | 0.x | プレビュー |
 >
-> 各パッケージの最新バージョンは `npm view <pkg> version` で確認すること。コアの 1.x と HTTP の 0.x は同期更新されないため、`package.json` に書く際は実バージョンを確認する。
+> 各パッケージの最新バージョンは `npm view <pkg> version` で確認すること。プレビュー拡張は独自の 0.x サイクルでリリースされるため、`package.json` に書く際は実バージョンを必ず確認する。
 
 TypeSpec を利用して API スキーマを実装する際は、単一のコードベースを「信頼できる情報源（Single Source of Truth）」とし、一貫性のある API 定義・クライアントコード・ドキュメントを生成できるように設計する。
 
@@ -393,7 +393,7 @@ OpenAPI/JSON Schema からの移行については [`migration-openapi.md`](./mi
 >
 > - [TypeSpec 公式ドキュメント](https://typespec.io/docs/)
 > - [TypeSpec 1.0 GA リリースブログ](https://typespec.io/blog/typespec-1-0-GA-release/)（2025 年 5 月）
-> - [TypeSpec 1.11.0 リリース（GitHub）](https://github.com/microsoft/typespec/releases)（2026 年 4 月）
+> - [TypeSpec リリース一覧（GitHub）](https://github.com/microsoft/typespec/releases)（最新版は実環境で `npm view @typespec/compiler version` を確認）
 > - [Microsoft Learn — TypeSpec Overview](https://learn.microsoft.com/en-us/azure/developer/typespec/overview)
 > - [microsoft/typespec リポジトリ](https://github.com/microsoft/typespec)
 > - [microsoft/typespec petstore サンプル](https://github.com/microsoft/typespec/blob/main/packages/samples/specs/rest/petstore/petstore.tsp)（`@service(#{ title: ... })` 構文の正規例）
