@@ -506,7 +506,8 @@
     "auth0@claude-plugins-official": false,
     "cloud-sql-postgresql@claude-plugins-official": false,
     "session-report@claude-plugins-official": true,
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "security-guidance@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
@@ -521,6 +522,6 @@
   "alwaysThinkingEnabled": true,
   "autoMemoryEnabled": false,
   "verbose": false,
-  "skipAutoPermissionPrompt": true,
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
