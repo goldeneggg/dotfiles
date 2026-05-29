@@ -520,6 +520,7 @@
   "outputStyle": "concise",
   "language": "japanese",
   "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
   "autoMemoryEnabled": false,
   "verbose": false,
   "agentPushNotifEnabled": true,
