@@ -156,8 +156,7 @@ AI_SKILLS_DIR := ./ai-linux/.claude/skills
 # Add new skills by appending entries to this list
 # if REPO_DIR is ".", it means the skill is located at the root of the repo
 EXTERNAL_SKILL_REPOS := \
-	1Password/SCAM|skills|security-awareness \
-	pasky/chrome-cdp-skill|skills|chrome-cdp
+	1Password/SCAM|skills|security-awareness
 
 # Helper functions to extract fields from pipe-separated tuples
 skill-repo-of = $(word 1,$(subst |, ,$1))
