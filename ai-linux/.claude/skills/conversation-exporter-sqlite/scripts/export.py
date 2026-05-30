@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS sessions (
     cwd TEXT,
     git_branch TEXT,
     claude_version TEXT,
+    slug TEXT,
     first_prompt TEXT,
     summary TEXT,
     message_count INTEGER,
@@ -74,15 +75,26 @@ CREATE TABLE IF NOT EXISTS messages (
     subtype TEXT,
     entrypoint TEXT,
     claude_version TEXT,
+    slug TEXT,
     prompt_id TEXT,
     permission_mode TEXT,
     source_tool_assistant_uuid TEXT,
+    source_tool_use_id TEXT,
+    interrupted_message_id TEXT,
     attribution_plugin TEXT,
     attribution_skill TEXT,
+    attribution_mcp_server TEXT,
+    attribution_mcp_tool TEXT,
     message_api_id TEXT,
     request_id TEXT,
     stop_reason TEXT,
+    stop_sequence TEXT,
+    stop_details TEXT,
     service_tier TEXT,
+    diagnostics TEXT,
+    context_management TEXT,
+    is_api_error_message INTEGER,
+    api_error_status INTEGER,
     usage_input_tokens INTEGER,
     usage_output_tokens INTEGER,
     usage_cache_creation_input_tokens INTEGER,
@@ -104,6 +116,11 @@ CREATE TABLE IF NOT EXISTS messages (
     prevented_continuation INTEGER,
     tool_use_id TEXT,
     message_count INTEGER,
+    -- system api_error サブタイプ用
+    error_data TEXT,
+    retry_in_ms REAL,
+    retry_attempt INTEGER,
+    max_retries INTEGER,
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
 
@@ -152,10 +169,16 @@ CREATE TABLE IF NOT EXISTS subagent_messages (
     source_tool_assistant_uuid TEXT,
     attribution_plugin TEXT,
     attribution_skill TEXT,
+    attribution_mcp_server TEXT,
+    attribution_mcp_tool TEXT,
     message_api_id TEXT,
     request_id TEXT,
     stop_reason TEXT,
+    stop_sequence TEXT,
+    stop_details TEXT,
     service_tier TEXT,
+    diagnostics TEXT,
+    context_management TEXT,
     usage_input_tokens INTEGER,
     usage_output_tokens INTEGER,
     usage_cache_creation_input_tokens INTEGER,
@@ -176,6 +199,9 @@ CREATE TABLE IF NOT EXISTS tool_results (
     tool_use_id TEXT PRIMARY KEY,
     message_uuid TEXT,
     session_id TEXT NOT NULL,
+    result_type TEXT,
+    file_path TEXT,
+    user_modified INTEGER,
     stdout TEXT,
     stderr TEXT,
     interrupted INTEGER,
@@ -253,6 +279,37 @@ CREATE TABLE IF NOT EXISTS queue_operations (
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
 );
 
+-- セッション動作モード変更履歴（mode レコード。permission-mode とは別系統）
+CREATE TABLE IF NOT EXISTS modes (
+    id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    mode TEXT,
+    sequence INTEGER,
+    exported_at TEXT,
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
+-- クラウド/Webセッション連携（bridge-session レコード）
+CREATE TABLE IF NOT EXISTS bridge_sessions (
+    bridge_session_id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    last_sequence_num INTEGER,
+    exported_at TEXT,
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
+-- 作成したPRへのリンク（pr-link レコード）
+CREATE TABLE IF NOT EXISTS pr_links (
+    id TEXT PRIMARY KEY,
+    session_id TEXT NOT NULL,
+    pr_number INTEGER,
+    pr_url TEXT,
+    pr_repository TEXT,
+    timestamp TEXT,
+    exported_at TEXT,
+    FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+);
+
 -- メモリファイル（プロジェクトに紐づく）
 CREATE TABLE IF NOT EXISTS memory_files (
     file_path TEXT PRIMARY KEY,
@@ -301,6 +358,11 @@ CREATE INDEX IF NOT EXISTS idx_permission_modes_session ON permission_modes(sess
 CREATE INDEX IF NOT EXISTS idx_last_prompts_session ON last_prompts(session_id);
 CREATE INDEX IF NOT EXISTS idx_file_history_snapshots_session ON file_history_snapshots(session_id);
 CREATE INDEX IF NOT EXISTS idx_queue_operations_session ON queue_operations(session_id);
+CREATE INDEX IF NOT EXISTS idx_modes_session ON modes(session_id);
+CREATE INDEX IF NOT EXISTS idx_bridge_sessions_session ON bridge_sessions(session_id);
+CREATE INDEX IF NOT EXISTS idx_pr_links_session ON pr_links(session_id);
+CREATE INDEX IF NOT EXISTS idx_messages_mcp_server ON messages(attribution_mcp_server);
+CREATE INDEX IF NOT EXISTS idx_tool_results_result_type ON tool_results(result_type);
 """
 
 
@@ -476,6 +538,23 @@ def migrate_schema(conn: sqlite3.Connection):
         ("prevented_continuation", "INTEGER"),
         ("tool_use_id", "TEXT"),
         ("message_count", "INTEGER"),
+        # Claude Code 2.1.150+ で追加されたフィールド
+        ("slug", "TEXT"),
+        ("source_tool_use_id", "TEXT"),
+        ("interrupted_message_id", "TEXT"),
+        ("attribution_mcp_server", "TEXT"),
+        ("attribution_mcp_tool", "TEXT"),
+        ("stop_sequence", "TEXT"),
+        ("stop_details", "TEXT"),
+        ("diagnostics", "TEXT"),
+        ("context_management", "TEXT"),
+        ("is_api_error_message", "INTEGER"),
+        ("api_error_status", "INTEGER"),
+        # system api_error サブタイプ用
+        ("error_data", "TEXT"),
+        ("retry_in_ms", "REAL"),
+        ("retry_attempt", "INTEGER"),
+        ("max_retries", "INTEGER"),
     ]
     extra_cols_subagent = [
         ("message_api_id", "TEXT"),
@@ -503,11 +582,30 @@ def migrate_schema(conn: sqlite3.Connection):
         ("usage_speed", "TEXT"),
         ("usage_inference_geo", "TEXT"),
         ("usage_iterations", "TEXT"),
+        # Claude Code 2.1.150+ で追加されたフィールド
+        ("attribution_mcp_server", "TEXT"),
+        ("attribution_mcp_tool", "TEXT"),
+        ("stop_sequence", "TEXT"),
+        ("stop_details", "TEXT"),
+        ("diagnostics", "TEXT"),
+        ("context_management", "TEXT"),
+    ]
+    extra_cols_sessions = [
+        ("slug", "TEXT"),
+    ]
+    extra_cols_tool_results = [
+        ("result_type", "TEXT"),
+        ("file_path", "TEXT"),
+        ("user_modified", "INTEGER"),
     ]
     for col, typ in extra_cols_messages:
         _add_column_if_missing(conn, "messages", col, typ)
     for col, typ in extra_cols_subagent:
         _add_column_if_missing(conn, "subagent_messages", col, typ)
+    for col, typ in extra_cols_sessions:
+        _add_column_if_missing(conn, "sessions", col, typ)
+    for col, typ in extra_cols_tool_results:
+        _add_column_if_missing(conn, "tool_results", col, typ)
 
 
 def init_db(db_path: Path) -> sqlite3.Connection:
@@ -540,14 +638,15 @@ def upsert_project(conn: sqlite3.Connection, project_path: str, claude_dir_name:
 def upsert_session(conn: sqlite3.Connection, session_data: dict):
     """セッションメタデータをUpsert."""
     conn.execute("""
-        INSERT INTO sessions (session_id, project_path, cwd, git_branch, claude_version,
+        INSERT INTO sessions (session_id, project_path, cwd, git_branch, claude_version, slug,
                               first_prompt, summary, message_count, created_at, modified_at, exported_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(session_id) DO UPDATE SET
             project_path = COALESCE(NULLIF(excluded.project_path, ''), sessions.project_path),
             cwd = COALESCE(NULLIF(excluded.cwd, ''), sessions.cwd),
             git_branch = COALESCE(NULLIF(excluded.git_branch, ''), sessions.git_branch),
             claude_version = COALESCE(NULLIF(excluded.claude_version, ''), sessions.claude_version),
+            slug = COALESCE(NULLIF(excluded.slug, ''), sessions.slug),
             first_prompt = COALESCE(NULLIF(excluded.first_prompt, ''), sessions.first_prompt),
             summary = COALESCE(NULLIF(excluded.summary, ''), sessions.summary),
             message_count = MAX(excluded.message_count, sessions.message_count),
@@ -560,6 +659,7 @@ def upsert_session(conn: sqlite3.Connection, session_data: dict):
         session_data.get("cwd", ""),
         session_data.get("git_branch", ""),
         session_data.get("claude_version", ""),
+        session_data.get("slug", ""),
         session_data.get("first_prompt", ""),
         session_data.get("summary", ""),
         session_data.get("message_count", 0),
@@ -575,27 +675,41 @@ def upsert_message(conn: sqlite3.Connection, msg: dict):
         INSERT INTO messages (
             uuid, session_id, parent_uuid, type, role, content, model,
             timestamp, cwd, git_branch, is_sidechain, is_meta, user_type, subtype,
-            entrypoint, claude_version, prompt_id, permission_mode,
-            source_tool_assistant_uuid, attribution_plugin, attribution_skill,
-            message_api_id, request_id, stop_reason, service_tier,
+            entrypoint, claude_version, slug, prompt_id, permission_mode,
+            source_tool_assistant_uuid, source_tool_use_id, interrupted_message_id,
+            attribution_plugin, attribution_skill, attribution_mcp_server, attribution_mcp_tool,
+            message_api_id, request_id, stop_reason, stop_sequence, stop_details, service_tier,
+            diagnostics, context_management, is_api_error_message, api_error_status,
             usage_input_tokens, usage_output_tokens,
             usage_cache_creation_input_tokens, usage_cache_read_input_tokens,
             usage_cache_creation_5m, usage_cache_creation_1h,
             usage_web_search_requests, usage_web_fetch_requests,
             usage_speed, usage_inference_geo, usage_iterations,
             level, duration_ms, has_output, hook_count, hook_infos, hook_errors,
-            prevented_continuation, tool_use_id, message_count
+            prevented_continuation, tool_use_id, message_count,
+            error_data, retry_in_ms, retry_attempt, max_retries
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?,
+                ?, ?, ?,
+                ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?,
                 ?, ?, ?, ?,
                 ?, ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?,
-                ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ?, ?, ?, ?, ?, ?,
+                ?, ?, ?,
+                ?, ?, ?, ?)
         ON CONFLICT(uuid) DO UPDATE SET
             content = excluded.content,
             stop_reason = excluded.stop_reason,
+            stop_sequence = excluded.stop_sequence,
+            stop_details = excluded.stop_details,
             service_tier = excluded.service_tier,
+            diagnostics = excluded.diagnostics,
+            context_management = excluded.context_management,
+            is_api_error_message = excluded.is_api_error_message,
+            api_error_status = excluded.api_error_status,
             usage_input_tokens = excluded.usage_input_tokens,
             usage_output_tokens = excluded.usage_output_tokens,
             usage_cache_creation_input_tokens = excluded.usage_cache_creation_input_tokens,
@@ -607,12 +721,19 @@ def upsert_message(conn: sqlite3.Connection, msg: dict):
             usage_speed = excluded.usage_speed,
             usage_inference_geo = excluded.usage_inference_geo,
             usage_iterations = excluded.usage_iterations,
+            slug = COALESCE(excluded.slug, messages.slug),
             attribution_plugin = COALESCE(excluded.attribution_plugin, messages.attribution_plugin),
             attribution_skill = COALESCE(excluded.attribution_skill, messages.attribution_skill),
+            attribution_mcp_server = COALESCE(excluded.attribution_mcp_server, messages.attribution_mcp_server),
+            attribution_mcp_tool = COALESCE(excluded.attribution_mcp_tool, messages.attribution_mcp_tool),
             permission_mode = COALESCE(excluded.permission_mode, messages.permission_mode),
             hook_infos = excluded.hook_infos,
             hook_errors = excluded.hook_errors,
-            hook_count = excluded.hook_count
+            hook_count = excluded.hook_count,
+            error_data = excluded.error_data,
+            retry_in_ms = excluded.retry_in_ms,
+            retry_attempt = excluded.retry_attempt,
+            max_retries = excluded.max_retries
     """, (
         msg["uuid"],
         msg["session_id"],
@@ -630,15 +751,26 @@ def upsert_message(conn: sqlite3.Connection, msg: dict):
         msg.get("subtype"),
         msg.get("entrypoint"),
         msg.get("claude_version"),
+        msg.get("slug"),
         msg.get("prompt_id"),
         msg.get("permission_mode"),
         msg.get("source_tool_assistant_uuid"),
+        msg.get("source_tool_use_id"),
+        msg.get("interrupted_message_id"),
         msg.get("attribution_plugin"),
         msg.get("attribution_skill"),
+        msg.get("attribution_mcp_server"),
+        msg.get("attribution_mcp_tool"),
         msg.get("message_api_id"),
         msg.get("request_id"),
         msg.get("stop_reason"),
+        msg.get("stop_sequence"),
+        msg.get("stop_details"),
         msg.get("service_tier"),
+        msg.get("diagnostics"),
+        msg.get("context_management"),
+        1 if msg.get("is_api_error_message") else (0 if msg.get("is_api_error_message") is False else None),
+        msg.get("api_error_status"),
         msg.get("usage_input_tokens"),
         msg.get("usage_output_tokens"),
         msg.get("usage_cache_creation_input_tokens"),
@@ -659,6 +791,10 @@ def upsert_message(conn: sqlite3.Connection, msg: dict):
         1 if msg.get("prevented_continuation") else (0 if msg.get("prevented_continuation") is False else None),
         msg.get("tool_use_id"),
         msg.get("message_count"),
+        msg.get("error_data"),
+        msg.get("retry_in_ms"),
+        msg.get("retry_attempt"),
+        msg.get("max_retries"),
     ))
 
 
@@ -701,7 +837,9 @@ def upsert_subagent_message(conn: sqlite3.Connection, msg: dict):
             content, model, timestamp, cwd, git_branch, is_sidechain, is_meta,
             user_type, subtype, entrypoint, claude_version, prompt_id, permission_mode,
             source_tool_assistant_uuid, attribution_plugin, attribution_skill,
-            message_api_id, request_id, stop_reason, service_tier,
+            attribution_mcp_server, attribution_mcp_tool,
+            message_api_id, request_id, stop_reason, stop_sequence, stop_details, service_tier,
+            diagnostics, context_management,
             usage_input_tokens, usage_output_tokens,
             usage_cache_creation_input_tokens, usage_cache_read_input_tokens,
             usage_cache_creation_5m, usage_cache_creation_1h,
@@ -711,7 +849,9 @@ def upsert_subagent_message(conn: sqlite3.Connection, msg: dict):
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?, ?,
                 ?, ?, ?,
-                ?, ?, ?, ?,
+                ?, ?,
+                ?, ?, ?, ?, ?, ?,
+                ?, ?,
                 ?, ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?)
         ON CONFLICT(uuid) DO UPDATE SET
@@ -723,8 +863,14 @@ def upsert_subagent_message(conn: sqlite3.Connection, msg: dict):
             usage_speed = excluded.usage_speed,
             usage_inference_geo = excluded.usage_inference_geo,
             usage_iterations = excluded.usage_iterations,
+            stop_sequence = excluded.stop_sequence,
+            stop_details = excluded.stop_details,
+            diagnostics = excluded.diagnostics,
+            context_management = excluded.context_management,
             attribution_plugin = COALESCE(excluded.attribution_plugin, subagent_messages.attribution_plugin),
-            attribution_skill = COALESCE(excluded.attribution_skill, subagent_messages.attribution_skill)
+            attribution_skill = COALESCE(excluded.attribution_skill, subagent_messages.attribution_skill),
+            attribution_mcp_server = COALESCE(excluded.attribution_mcp_server, subagent_messages.attribution_mcp_server),
+            attribution_mcp_tool = COALESCE(excluded.attribution_mcp_tool, subagent_messages.attribution_mcp_tool)
     """, (
         msg["uuid"],
         msg["agent_id"],
@@ -748,10 +894,16 @@ def upsert_subagent_message(conn: sqlite3.Connection, msg: dict):
         msg.get("source_tool_assistant_uuid"),
         msg.get("attribution_plugin"),
         msg.get("attribution_skill"),
+        msg.get("attribution_mcp_server"),
+        msg.get("attribution_mcp_tool"),
         msg.get("message_api_id"),
         msg.get("request_id"),
         msg.get("stop_reason"),
+        msg.get("stop_sequence"),
+        msg.get("stop_details"),
         msg.get("service_tier"),
+        msg.get("diagnostics"),
+        msg.get("context_management"),
         msg.get("usage_input_tokens"),
         msg.get("usage_output_tokens"),
         msg.get("usage_cache_creation_input_tokens"),
@@ -809,11 +961,15 @@ def upsert_tool_result(conn: sqlite3.Connection, tr: dict):
     conn.execute("""
         INSERT INTO tool_results (
             tool_use_id, message_uuid, session_id,
+            result_type, file_path, user_modified,
             stdout, stderr, interrupted, is_image, no_output_expected, is_error,
             raw_result, timestamp
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(tool_use_id) DO UPDATE SET
+            result_type = excluded.result_type,
+            file_path = excluded.file_path,
+            user_modified = excluded.user_modified,
             stdout = excluded.stdout,
             stderr = excluded.stderr,
             interrupted = excluded.interrupted,
@@ -825,6 +981,9 @@ def upsert_tool_result(conn: sqlite3.Connection, tr: dict):
         tr["tool_use_id"],
         tr.get("message_uuid"),
         tr["session_id"],
+        tr.get("result_type"),
+        tr.get("file_path"),
+        _bool_to_int(tr.get("user_modified")),
         tr.get("stdout"),
         tr.get("stderr"),
         _bool_to_int(tr.get("interrupted")),
@@ -949,6 +1108,60 @@ def upsert_queue_operation(conn: sqlite3.Connection, qo: dict):
     ))
 
 
+def upsert_mode(conn: sqlite3.Connection, m: dict):
+    """セッション動作モード変更履歴をUpsert."""
+    conn.execute("""
+        INSERT INTO modes (id, session_id, mode, sequence, exported_at)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            mode = excluded.mode,
+            exported_at = excluded.exported_at
+    """, (
+        m["id"],
+        m["session_id"],
+        m.get("mode"),
+        m.get("sequence"),
+        datetime.now(timezone.utc).isoformat(),
+    ))
+
+
+def upsert_bridge_session(conn: sqlite3.Connection, bs: dict):
+    """クラウド/Webセッション連携情報をUpsert."""
+    conn.execute("""
+        INSERT INTO bridge_sessions (bridge_session_id, session_id, last_sequence_num, exported_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(bridge_session_id) DO UPDATE SET
+            last_sequence_num = excluded.last_sequence_num,
+            exported_at = excluded.exported_at
+    """, (
+        bs["bridge_session_id"],
+        bs["session_id"],
+        bs.get("last_sequence_num"),
+        datetime.now(timezone.utc).isoformat(),
+    ))
+
+
+def upsert_pr_link(conn: sqlite3.Connection, pl: dict):
+    """PRリンクをUpsert."""
+    conn.execute("""
+        INSERT INTO pr_links (id, session_id, pr_number, pr_url, pr_repository, timestamp, exported_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            pr_url = excluded.pr_url,
+            pr_repository = excluded.pr_repository,
+            timestamp = excluded.timestamp,
+            exported_at = excluded.exported_at
+    """, (
+        pl["id"],
+        pl["session_id"],
+        pl.get("pr_number"),
+        pl.get("pr_url"),
+        pl.get("pr_repository"),
+        pl.get("timestamp"),
+        datetime.now(timezone.utc).isoformat(),
+    ))
+
+
 def _bool_to_int(v):
     """True/False/Noneを1/0/Noneに変換."""
     if v is None:
@@ -983,6 +1196,9 @@ def export_session(
         "file_history_snapshots": 0,
         "ai_titles": 0,
         "queue_operations": 0,
+        "modes": 0,
+        "bridge_sessions": 0,
+        "pr_links": 0,
     }
 
     # プロジェクトをUpsert
@@ -998,6 +1214,7 @@ def export_session(
         "cwd": "",
         "git_branch": "",
         "claude_version": "",
+        "slug": "",
         "first_prompt": "",
         "summary": "",
         "message_count": 0,
@@ -1029,20 +1246,60 @@ def export_session(
 
     # --- メッセージ・新規レコードタイプ処理 ---
     permission_mode_seq = 0
+    mode_seq = 0
 
     for rec in records:
         rec_type = rec.get("type")
 
-        # セッションメタデータの補完（メッセージ系レコードから）
-        if rec_type in ("user", "assistant", "system"):
-            if not session_meta["cwd"] and rec.get("cwd"):
-                session_meta["cwd"] = rec["cwd"]
-            if not session_meta["git_branch"] and rec.get("gitBranch"):
-                session_meta["git_branch"] = rec["gitBranch"]
-            if not session_meta["claude_version"] and rec.get("version"):
-                session_meta["claude_version"] = rec["version"]
+        # セッションメタデータの補完（あらゆるレコードから）
+        if not session_meta["cwd"] and rec.get("cwd"):
+            session_meta["cwd"] = rec["cwd"]
+        if not session_meta["git_branch"] and rec.get("gitBranch"):
+            session_meta["git_branch"] = rec["gitBranch"]
+        if not session_meta["claude_version"] and rec.get("version"):
+            session_meta["claude_version"] = rec["version"]
+        # slug はセッション単位で一定の人間可読エイリアス（任意レコードに付随）
+        if not session_meta["slug"] and rec.get("slug"):
+            session_meta["slug"] = rec["slug"]
 
         # --- 新規レコードタイプの処理 ---
+        if rec_type == "mode":
+            mode_seq += 1
+            mode_id = f"{session_id}:{mode_seq}:{rec.get('mode','')}"
+            upsert_mode(conn, {
+                "id": mode_id,
+                "session_id": session_id,
+                "mode": rec.get("mode"),
+                "sequence": mode_seq,
+            })
+            stats["modes"] += 1
+            continue
+
+        if rec_type == "bridge-session":
+            bsid = rec.get("bridgeSessionId")
+            if bsid:
+                upsert_bridge_session(conn, {
+                    "bridge_session_id": bsid,
+                    "session_id": session_id,
+                    "last_sequence_num": rec.get("lastSequenceNum"),
+                })
+                stats["bridge_sessions"] += 1
+            continue
+
+        if rec_type == "pr-link":
+            pr_number = rec.get("prNumber")
+            pl_id = f"{session_id}:{pr_number}" if pr_number is not None else f"{session_id}:{uuid.uuid4()}"
+            upsert_pr_link(conn, {
+                "id": pl_id,
+                "session_id": session_id,
+                "pr_number": pr_number,
+                "pr_url": rec.get("prUrl"),
+                "pr_repository": rec.get("prRepository"),
+                "timestamp": rec.get("timestamp"),
+            })
+            stats["pr_links"] += 1
+            continue
+
         if rec_type == "permission-mode":
             permission_mode_seq += 1
             pm_id = f"{session_id}:{permission_mode_seq}:{rec.get('permissionMode','')}"
@@ -1131,6 +1388,11 @@ def export_session(
         cache_creation = usage.get("cache_creation") or {}
         server_tool = usage.get("server_tool_use") or {}
         iterations = usage.get("iterations")
+        diagnostics = msg_data.get("diagnostics")
+        context_management = msg_data.get("context_management")
+        stop_details = msg_data.get("stop_details")
+        # system api_error サブタイプの error は dict 構造
+        error_obj = rec.get("error")
 
         msg_uuid = rec.get("uuid") or str(uuid.uuid4())
 
@@ -1151,15 +1413,26 @@ def export_session(
             "subtype": rec.get("subtype"),
             "entrypoint": rec.get("entrypoint"),
             "claude_version": rec.get("version"),
+            "slug": rec.get("slug"),
             "prompt_id": rec.get("promptId"),
             "permission_mode": rec.get("permissionMode"),
             "source_tool_assistant_uuid": rec.get("sourceToolAssistantUUID"),
+            "source_tool_use_id": rec.get("sourceToolUseID"),
+            "interrupted_message_id": rec.get("interruptedMessageId"),
             "attribution_plugin": rec.get("attributionPlugin"),
             "attribution_skill": rec.get("attributionSkill"),
+            "attribution_mcp_server": rec.get("attributionMcpServer"),
+            "attribution_mcp_tool": rec.get("attributionMcpTool"),
             "message_api_id": msg_data.get("id"),
             "request_id": rec.get("requestId"),
             "stop_reason": msg_data.get("stop_reason") or rec.get("stopReason"),
+            "stop_sequence": msg_data.get("stop_sequence"),
+            "stop_details": json.dumps(stop_details, ensure_ascii=False) if stop_details is not None else None,
             "service_tier": usage.get("service_tier"),
+            "diagnostics": json.dumps(diagnostics, ensure_ascii=False) if diagnostics is not None else None,
+            "context_management": json.dumps(context_management, ensure_ascii=False) if context_management is not None else None,
+            "is_api_error_message": rec.get("isApiErrorMessage"),
+            "api_error_status": rec.get("apiErrorStatus"),
             "usage_input_tokens": usage.get("input_tokens"),
             "usage_output_tokens": usage.get("output_tokens"),
             "usage_cache_creation_input_tokens": usage.get("cache_creation_input_tokens"),
@@ -1181,6 +1454,11 @@ def export_session(
             "prevented_continuation": rec.get("preventedContinuation"),
             "tool_use_id": rec.get("toolUseID"),
             "message_count": rec.get("messageCount"),
+            # system api_error サブタイプ用
+            "error_data": json.dumps(error_obj, ensure_ascii=False) if error_obj is not None else None,
+            "retry_in_ms": rec.get("retryInMs"),
+            "retry_attempt": rec.get("retryAttempt"),
+            "max_retries": rec.get("maxRetries"),
         }
 
         upsert_message(conn, msg)
@@ -1210,6 +1488,12 @@ def export_session(
                 tu_result_meta = {}
                 raw_result_json = None
 
+            # filePath は直下、または file オブジェクト配下（Read結果など）に存在しうる
+            file_obj = tu_result_meta.get("file")
+            file_path = tu_result_meta.get("filePath")
+            if not file_path and isinstance(file_obj, dict):
+                file_path = file_obj.get("filePath")
+
             content = msg_data.get("content") if isinstance(msg_data, dict) else None
             if isinstance(content, list):
                 for block in content:
@@ -1224,6 +1508,9 @@ def export_session(
                         "tool_use_id": tu_id,
                         "message_uuid": msg_uuid,
                         "session_id": session_id,
+                        "result_type": tu_result_meta.get("type"),
+                        "file_path": file_path,
+                        "user_modified": tu_result_meta.get("userModified"),
                         "stdout": tu_result_meta.get("stdout"),
                         "stderr": tu_result_meta.get("stderr"),
                         "interrupted": tu_result_meta.get("interrupted"),
@@ -1273,6 +1560,9 @@ def export_session(
                     cache_creation = usage.get("cache_creation") or {}
                     server_tool = usage.get("server_tool_use") or {}
                     iterations = usage.get("iterations")
+                    diagnostics = msg_data.get("diagnostics")
+                    context_management = msg_data.get("context_management")
+                    stop_details = msg_data.get("stop_details")
 
                     sa_msg = {
                         "uuid": rec.get("uuid", str(uuid.uuid4())),
@@ -1297,10 +1587,16 @@ def export_session(
                         "source_tool_assistant_uuid": rec.get("sourceToolAssistantUUID"),
                         "attribution_plugin": rec.get("attributionPlugin"),
                         "attribution_skill": rec.get("attributionSkill"),
+                        "attribution_mcp_server": rec.get("attributionMcpServer"),
+                        "attribution_mcp_tool": rec.get("attributionMcpTool"),
                         "message_api_id": msg_data.get("id"),
                         "request_id": rec.get("requestId"),
                         "stop_reason": msg_data.get("stop_reason"),
+                        "stop_sequence": msg_data.get("stop_sequence"),
+                        "stop_details": json.dumps(stop_details, ensure_ascii=False) if stop_details is not None else None,
                         "service_tier": usage.get("service_tier"),
+                        "diagnostics": json.dumps(diagnostics, ensure_ascii=False) if diagnostics is not None else None,
+                        "context_management": json.dumps(context_management, ensure_ascii=False) if context_management is not None else None,
                         "usage_input_tokens": usage.get("input_tokens"),
                         "usage_output_tokens": usage.get("output_tokens"),
                         "usage_cache_creation_input_tokens": usage.get("cache_creation_input_tokens"),
