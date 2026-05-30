@@ -24,4 +24,4 @@ Claude
 # for AI CLis
 .mcp.full.json
 .copilot
-.codex
+**/.codex/config.toml
