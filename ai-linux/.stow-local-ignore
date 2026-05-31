@@ -1,0 +1,24 @@
+# GNU Stow ignore list for this package.
+# NOTE: Defining this file OVERRIDES Stow's built-in default ignore list,
+#       so the common patterns below are re-declared explicitly.
+# Patterns are Perl regexes matched against the full (package-relative) path
+# and against each path segment.
+
+# codex CLI runtime-managed config.
+# It is rewritten by codex on every run and is git-ignored
+# (see .gitignore: "**/.codex/config.toml"). Symlink-managing it causes
+# `stow` to ABORT THE WHOLE PACKAGE on conflict, which previously blocked
+# CLAUDE.md from being linked. Keep it out of stow entirely.
+config\.toml
+
+# macOS Finder metadata (would also conflict if Finder regenerates it)
+\.DS_Store
+
+# VCS metadata
+\.git
+\.gitignore
+\.gitmodules
+
+# Editor backup / autosave files
+.+~
+\#.*\#
