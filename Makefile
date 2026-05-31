@@ -300,3 +300,120 @@ sync-claude-mcpconf-to-codex: ## Claude Code の .mcp.json を Codex の ~/.code
 	@[ -f "$(CLAUDE_MCP_JSON)" ] || { echo "Error: $(CLAUDE_MCP_JSON) not found"; exit 1; }
 	@mkdir -p "$(CODEX_CONFIG_DIR)"
 	@echo "$$SYNC_MCP_TO_CODEX_SCRIPT" | python3
+
+
+# ----------
+# AI tools subagents configuration sync
+# ----------
+CLAUDE_AGENTS_DIR := ./ai-linux/.claude/agents
+CODEX_AGENTS_DIR := ./ai-linux/.codex/agents
+
+define SYNC_SUBAGENTS_TO_CODEX_SCRIPT
+import os, glob, re
+
+src_dir = "$(CLAUDE_AGENTS_DIR)"
+dst_dir = "$(CODEX_AGENTS_DIR)"
+
+# 再生成のたびに孤児(.toml)が残らないよう、出力先の .toml を一旦すべて削除する
+for old in glob.glob(os.path.join(dst_dir, "*.toml")):
+    os.remove(old)
+
+
+def parse_frontmatter(text):
+    # 先頭の --- ... --- を frontmatter、それ以降を本文として分離する
+    m = re.match(r"^---\n(.*?)\n---\n?(.*)\Z", text, re.DOTALL)
+    if not m:
+        return None, ""
+    return m.group(1), m.group(2)
+
+
+def parse_fields(fm):
+    # PyYAML 非依存の簡易パーサ。トップレベルの key: value と
+    # ブロックスカラー(| / >)のみを対象とする(tools 等のリストは無視)
+    lines = fm.split("\n")
+    data = {}
+    i = 0
+    n = len(lines)
+    while i < n:
+        line = lines[i]
+        m = re.match(r"^([A-Za-z_]+):\s?(.*)\Z", line)
+        if not m or line[:1] == " ":
+            i += 1
+            continue
+        key = m.group(1)
+        val = m.group(2).strip()
+        if val in ("|", "|-", "|+", ">", ">-", ">+"):
+            # ブロックスカラー: 後続のインデント行を集めて共通インデントを除去する
+            i += 1
+            raw = []
+            while i < n:
+                bl = lines[i]
+                if bl.strip() == "":
+                    raw.append("")
+                    i += 1
+                    continue
+                if bl[:1] == " ":
+                    raw.append(bl)
+                    i += 1
+                else:
+                    break
+            indents = [len(x) - len(x.lstrip(" ")) for x in raw if x.strip()]
+            ind = min(indents) if indents else 0
+            block = [(x[ind:] if len(x) >= ind else x) for x in raw]
+            while block and block[-1] == "":
+                block.pop()
+            data[key] = "\n".join(block)
+        else:
+            # インラインのクオートを除去する
+            if len(val) >= 2 and ((val[0] == '"' and val[-1] == '"') or (val[0] == "'" and val[-1] == "'")):
+                val = val[1:-1]
+            data[key] = val
+            i += 1
+    return data
+
+
+files = sorted(glob.glob(os.path.join(src_dir, "*.md")))
+count = 0
+for path in files:
+    fname = os.path.basename(path)
+    with open(path) as f:
+        text = f.read()
+    fm, body = parse_frontmatter(text)
+    if fm is None:
+        print("  ! skip {}: frontmatter not found".format(fname))
+        continue
+    fields = parse_fields(fm)
+    name = fields.get("name", "").strip()
+    desc = fields.get("description", "").strip()
+    body = body.strip()
+    # Codex の必須3項目(name/description/developer_instructions)を担保する
+    if not name:
+        print("  ! skip {}: missing name".format(fname))
+        continue
+    if not body:
+        print("  ! skip {}: empty body (developer_instructions)".format(fname))
+        continue
+    # TOML 複数行 literal string は ''' を内包できないため、含む場合は手動対応に回す
+    if ("'''" in desc) or ("'''" in body):
+        print("  ! skip {}: contains triple single-quote, needs manual handling".format(fname))
+        continue
+    out = []
+    out.append('name = "{}"'.format(name))
+    out.append("description = '''\n{}\n'''".format(desc))
+    out.append("developer_instructions = '''\n{}\n'''".format(body))
+    content = "\n".join(out) + "\n"
+    dst = os.path.join(dst_dir, name + ".toml")
+    with open(dst, "w") as f:
+        f.write(content)
+    print("  - {} -> {}".format(fname, dst))
+    count += 1
+
+print("Synced {} subagents to {}".format(count, dst_dir))
+endef
+export SYNC_SUBAGENTS_TO_CODEX_SCRIPT
+
+.PHONY: sync-claude-subagents-to-codex
+sync-claude-subagents-to-codex: ## Claude Code の .claude/agents/*.md を Codex の .codex/agents/*.toml に変換同期する
+	@[ -d "$(CLAUDE_AGENTS_DIR)" ] || { echo "Error: $(CLAUDE_AGENTS_DIR) not found"; exit 1; }
+	@mkdir -p "$(CODEX_AGENTS_DIR)"
+	@echo "$$SYNC_SUBAGENTS_TO_CODEX_SCRIPT" | python3
