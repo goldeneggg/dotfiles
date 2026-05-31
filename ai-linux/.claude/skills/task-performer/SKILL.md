@@ -351,6 +351,7 @@ DB変更が発生する場合:
 | エラー | 対応 |
 |--------|------|
 | タスクファイルが存在しない | エラーを報告し、正しいパスをAskUserQuestionで確認。Globで `todos/**/README.md` を検索して候補を提示 |
+| ディレクトリを `Read`/`cat`（`EISDIR`） | `todos/NNN-{task}/` 等はディレクトリ。読む対象は内部のファイル（`README.md` 等）。`Glob` で配下を特定してから読む。実装中もソースのディレクトリパスを直接 `Read`/`cat` しない |
 | task-starterプロジェクト構造が不完全 | specs/やreferences/が空でも続行。読み込めたファイルのみで計画を立案し、不足情報はAskUserQuestionで補完 |
 | テスト環境が未設定 | AskUserQuestionで確認後、テスト環境がない場合はPhase 5をスキップ。スキップした旨をPhase 7の報告に記載 |
 | Lint環境が未設定 | AskUserQuestionで確認後、Lint環境がない場合はPhase 6をスキップ。スキップした旨をPhase 7の報告に記載 |

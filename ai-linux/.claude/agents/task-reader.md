@@ -116,6 +116,8 @@ docs/tasks/20251201-foo/todos/001-setup/README.md
 | `todos/README.md` | `Read` 全文 | ロードマップ・該当タスクの位置 | 同左 |
 | `logs/NNN-{task}/` 配下 | `Glob` で一覧 → 存在ファイルは全て `Read` | 過去の作業ログ（無くてもOK） | **読み込まない**（`Glob` も省略可） |
 
+各行の `Glob` は `specs/**/*.md` のように **ファイルにマッチ** させ、`specs/` 等のディレクトリ自体を `Read` 対象に含めない（`EISDIR` 防止）。
+
 ファイルが大きい場合（目安: 500行超）は `Grep` でキーワード絞り込み後に部分 `Read`。
 
 **`todos/README.md` の形式バリエーション**: ロードマップは Mermaid DAG・表形式・フロントマター集約のいずれでも記述されうる。形式に依らず、該当タスクIDで Grep して `depends_on` / `parallel_group` / 前後関係を抽出する。
@@ -131,6 +133,7 @@ docs/tasks/20251201-foo/todos/001-setup/README.md
 
 # Constraints
 
+- **ディレクトリを `Read` しない**: `todos/NNN-{task}/`・`specs/`・`logs/NNN-{task}/` などはディレクトリ。`Read` 対象は必ず内部のファイル。`Glob` は `specs/**/*.md`・`todos/*/README.md` のように **ファイルへマッチ** させ、ディレクトリパスを直接 `Read` しない（`EISDIR` エラーの原因）
 - **効率性最優先**: 大きなファイルは `Grep` で絞ってから部分 `Read`。全文を無条件に読まない
 - **タスク本文は欠落させない**: タスクファイル本文は呼び出し元の実装判断の根拠なので、要約せず全文を返す
 - **読み取り専用**: ファイル作成・編集は厳禁。Bash も無効化されている
@@ -150,6 +153,7 @@ docs/tasks/20251201-foo/todos/001-setup/README.md
 | `logs/NNN-{task}/` が空 or 存在しない（`--with-log` 指定時） | 「過去ログなし（初回実行）」と記載し続行 |
 | `todos/README.md` が存在しない | 該当セクションを省略し続行 |
 | `--with-log` が指定されていない | `logs/` の読み込みをスキップし、Output Format の該当セクションに「（`--with-log` 未指定のため過去ログは取得していません）」と記載 |
+| `EISDIR`（ディレクトリを `Read` した） | 対象はファイルではなくディレクトリ。`Glob` で配下のファイル（`<dir>/README.md` 等）を解決して読み直す |
 
 # Output Format
 
