@@ -507,13 +507,20 @@
     "cloud-sql-postgresql@claude-plugins-official": false,
     "session-report@claude-plugins-official": true,
     "codex@openai-codex": true,
-    "security-guidance@claude-plugins-official": true
+    "security-guidance@claude-plugins-official": true,
+    "terraform-provider-development@hashicorp": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
       "source": {
         "source": "github",
         "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "hashicorp": {
+      "source": {
+        "source": "github",
+        "repo": "hashicorp/agent-skills"
       }
     }
   },
