@@ -9,7 +9,7 @@
 # (see .gitignore: "**/.codex/config.toml"). Symlink-managing it causes
 # `stow` to ABORT THE WHOLE PACKAGE on conflict, which previously blocked
 # CLAUDE.md from being linked. Keep it out of stow entirely.
-config\.toml
+# config\.toml
 
 # macOS Finder metadata (would also conflict if Finder regenerates it)
 \.DS_Store
