@@ -494,6 +494,7 @@
       }
     ]
   },
+  "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
@@ -531,6 +532,5 @@
   "autoMemoryEnabled": false,
   "verbose": false,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "workflowKeywordTriggerEnabled": false
+  "skipAutoPermissionPrompt": true
 }
