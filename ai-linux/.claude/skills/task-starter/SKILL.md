@@ -25,6 +25,7 @@ argument-hint: "[プロジェクト名]"
 
 ### 含むもの
 - プロジェクトフォルダ構造の新規生成
+- **ドキュメント形式の選択（Markdown / 自己完結HTML）**
 - 仕様書・TODOタスク・現状分析ドキュメントの作成
 - タスク分割（依存メタ情報付き）と計画策定
 - **依存DAG・クリティカルパス・並行可能タスク群の特定**
@@ -57,11 +58,12 @@ argument-hint: "[プロジェクト名]"
 
 ## 成功基準
 
+- Phase 1 でユーザーに選択させたドキュメント形式（Markdown / HTML）で全ドキュメントが一貫して生成されている（拡張子は `.md` または `.html`）
 - 指定ディレクトリに `YYYYMMDD-{name}/` フォルダ構造が生成されている
 - `specs/` に要件・技術仕様を含む仕様書が作成され、非機能要件にセキュリティ・耐障害性・高可用性・スケーラビリティの方針が記載されている
-- `todos/` に1-2時間粒度のタスクが**`0xx` 番台（`001`〜`099`）**で依存順に配置され、各 `README.md` の先頭フロントマターに `depends_on` / `parallel_group` が明記されている（`1xx` 番台は予約のため未使用）
-- 各 `todos/{ID}/README.md` に「開発原則チェック」（4原則の該当 or N/A理由）が記載されている
-- `todos/README.md` に Mermaid DAG・タスク表・クリティカルパス・並行可能タスク群・推奨ワークロードが記載されている
+- `todos/` に1-2時間粒度のタスクが**`0xx` 番台（`001`〜`099`）**で依存順に配置され、各TODOに依存メタ（`depends_on` / `parallel_group`）が明記されている（Markdownはフロントマター、HTMLは `<script type="application/x-task-meta">`。`1xx` 番台は予約のため未使用）
+- 各TODOに「開発原則チェック」（4原則の該当 or N/A理由）が記載されている
+- ロードマップ（`todos/README.*`）に Mermaid DAG・タスク表・クリティカルパス・並行可能タスク群・推奨ワークロードが記載されている（HTML時は Mermaid が `<pre class="mermaid">` で描画される）
 - ユーザーが Phase 5 のレビューで承認している
 
 ## ワークフロー
@@ -78,7 +80,13 @@ argument-hint: "[プロジェクト名]"
    - 新規開発 or 既存コード改修
    ```
 
-2. **既存コード改修の場合、現状を分析**
+2. **ドキュメント形式を確認（必須）**
+   AskUserQuestionツールで、生成ドキュメントを **Markdown** と **HTML** のどちらにするか確認する。
+   - **Markdown（既定）**: `.md` で生成。`task-performer` での実行や git 差分レビューに向く
+   - **HTML**: 自己完結HTML（`.html`）で生成。ブラウザで開くだけで体裁・Mermaid図が表示され、共有・閲覧に向く
+   選択結果（`md` / `html`）を以降の Phase 2〜4 で一貫して使う。HTML を選んだ場合は **必ず `references/html-output-guide.md` を読んでから** ドキュメントを生成する。
+
+3. **既存コード改修の場合、現状を分析**
    - 関連ファイルをGlob/Grep/Readで調査
    - アーキテクチャと処理フローを把握
    - 課題・改善点を特定
@@ -86,19 +94,20 @@ argument-hint: "[プロジェクト名]"
 ### Phase 2: 構造生成
 
 1. **プロジェクトフォルダを作成**
+   `--format` には Phase 1 で選んだ形式（`md` / `html`）を渡す。
    ```bash
-   python3 scripts/init_project.py "{プロジェクト名}" --path "{出力先}" --description "{概要}"
+   python3 scripts/init_project.py "{プロジェクト名}" --path "{出力先}" --description "{概要}" --format {md|html}
    ```
 
-   生成される構造:
+   生成される構造（拡張子は選択形式に従う。以下は Markdown 選択時の例）:
    ```
    YYYYMMDD-{kebab-case-name}/
-   ├── README.md           # 概要と目的
+   ├── README.md           # 概要と目的（HTML選択時は README.html）
    ├── references/         # 現状分析資料
    ├── files/              # 参考データ・ファイル
    ├── specs/              # 要件・仕様書
    ├── todos/              # タスクドキュメント（新規は 0xx 番台。1xx は実行中追加用に予約）
-   │   ├── README.md       # タスクロードマップ（Phase 4で内容を埋める）
+   │   ├── README.md       # タスクロードマップ（Phase 4で内容を埋める。HTML選択時は README.html）
    │   └── 001-{task-name}/
    └── logs/               # タスク作業ログ置き場（タスク番号ごとのサブディレクトリは作らない）
    ```
@@ -108,6 +117,8 @@ argument-hint: "[プロジェクト名]"
    - あれば `files/` にコピーまたはリンク
 
 ### Phase 3: ドキュメント生成
+
+各ドキュメントは `references/templates/*.md` のテンプレートをベースに生成する。**HTML を選んだ場合は、テンプレートの構造を `references/html-output-guide.md` のルールに従って自己完結HTMLに変換して書き出す**（共有シェル `references/templates/html-shell.html` を使用、Mermaid は `<pre class="mermaid">`、TODOの依存メタは `<script type="application/x-task-meta">` に埋め込む）。テンプレートの各セクション・コメントの意図は形式を問わず維持する。
 
 1. **references/ - 現状分析（既存コード改修時のみ）**
    - `references/templates/reference-template.md` をベースに作成
@@ -143,7 +154,9 @@ argument-hint: "[プロジェクト名]"
 このフェーズで「並行実行可能 vs 直列必須」の分類と、最速完了のための作業ロードマップ・推奨ワークロードを生成する。
 
 1. **依存関係の整理**
-   各 `todos/{ID}/README.md` のフロントマター（`depends_on`, `parallel_group`）を集約し、以下を算出:
+   各 TODO の依存メタ（`depends_on`, `parallel_group`）を集約し、以下を算出する。メタの所在は形式で異なる:
+   - **Markdown時**: `todos/{ID}/README.md` 冒頭の YAML フロントマター
+   - **HTML時**: `todos/{ID}/README.html` の `<script type="application/x-task-meta">` ブロック（内部はYAML）
    - **依存DAG**: タスク間の有向グラフ
    - **クリティカルパス**: 推定時間の合計が最大となる経路（全体所要時間を決定する経路）
    - **並行グループ**: 同じ前提を持ち、編集ファイルが独立しているタスク群
@@ -267,7 +280,7 @@ argument-hint: "[プロジェクト名]"
 
 ### ユーザーインタラクション
 
-- **Phase 1**: 必須（プロジェクト情報収集）
+- **Phase 1**: 必須（プロジェクト情報収集 + ドキュメント形式の確認）
 - **Phase 4**: 並行可能性の判定で曖昧な場合はAskUserQuestionで確認
 - **Phase 5**: 必須（レビューと承認）
 - **途中キャンセル**: 生成途中のファイルは削除またはユーザーに確認
@@ -281,6 +294,7 @@ argument-hint: "[プロジェクト名]"
 | 情報収集中にキャンセル       | 確認後、生成済みファイルを削除するか選択させる |
 | Python 3が未インストール     | 手動でフォルダ構造を作成する代替手順を案内     |
 | 循環依存を検出               | エラー報告し、依存定義の見直しを依頼           |
+| HTMLシェルが見つからない     | `init_project.py` が明示エラーで停止。`references/templates/html-shell.html` の存在を確認 |
 
 ## 前提条件
 
@@ -292,15 +306,20 @@ argument-hint: "[プロジェクト名]"
 ### scripts/
 
 - `scripts/init_project.py` - プロジェクトフォルダ構造を生成（Python 3必須）
-  - 入力: プロジェクト名(必須), `--path`(出力先), `--description`(概要)
-  - 出力: `YYYYMMDD-{kebab-case-name}/` ディレクトリ + README.md + サブフォルダ群 + `todos/README.md` 雛形
+  - 入力: プロジェクト名(必須), `--path`(出力先), `--description`(概要), `--format`(`md` / `html`、既定 `md`)
+  - 出力: `YYYYMMDD-{kebab-case-name}/` ディレクトリ + README + サブフォルダ群 + `todos/README` 雛形（拡張子は形式に従う）
   - 参照頻度: 毎回（Phase 2で必ず実行）
+
+### references/
+
+- `references/html-output-guide.md` - **HTML形式選択時の生成ルール（Phase 1でHTMLを選んだら必ず参照）**。シェル使用法・Mermaid・依存メタ埋め込み・拡張子規約・task-performer互換注記
 
 ### references/templates/
 
 以下のテンプレートはPhase 3〜4で参照する。ドキュメント生成のベースとして使用。
 
 - `references/templates/spec-template.md` - 仕様書テンプレート（Phase 3で毎回参照）
-- `references/templates/todo-template.md` - TODOタスクテンプレート（Phase 3で毎回参照、フロントマター必須）
+- `references/templates/todo-template.md` - TODOタスクテンプレート（Phase 3で毎回参照、依存メタ必須）
 - `references/templates/reference-template.md` - 現状分析テンプレート（既存コード改修時のみ）
 - `references/templates/roadmap-template.md` - **タスクロードマップテンプレート（Phase 4で毎回参照）**
+- `references/templates/html-shell.html` - **自己完結HTMLの共有シェル（HTML形式選択時にスクリプト/Claude双方が使用）**

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!--
+  task-starter 自己完結HTMLシェル（単一ソース）
+
+  使い方は references/html-output-guide.md を参照。
+  title プレースホルダ（二重波括弧 TITLE）と body プレースホルダ（二重波括弧 BODY）を置換して使う。
+  ここでは説明文に実際のプレースホルダ文字列を書かない（置換で巻き込まれるのを防ぐため）。
+
+  なぜ自己完結か:
+    - ブラウザで開くだけで体裁・Mermaid図が表示され、外部CSS/ビルド不要
+    - Mermaid は CDN から module 読込し startOnLoad で pre.mermaid を自動描画
+-->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
+                 "Noto Sans JP", Meiryo, sans-serif;
+    line-height: 1.7;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem;
+    color: #24292f;
+    background: #ffffff;
+  }
+  h1, h2 { border-bottom: 1px solid #d0d7de; padding-bottom: .3em; }
+  h1 { font-size: 1.8rem; line-height: 1.3; }
+  h2 { font-size: 1.4rem; margin-top: 2rem; line-height: 1.3; }
+  h3 { font-size: 1.15rem; line-height: 1.3; }
+  code {
+    background: #afb8c133; padding: .2em .4em; border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .9em;
+  }
+  pre { background: #f6f8fa; padding: 1rem; border-radius: 6px; overflow: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #d0d7de; padding: .5em .75em; text-align: left; }
+  th { background: #f6f8fa; }
+  blockquote { border-left: .25em solid #d0d7de; padding: 0 1em; color: #57606a; margin: 1rem 0; }
+  a { color: #0969da; }
+  ul { padding-left: 1.5em; }
+  /* TODO の依存メタを人にも見せる任意のビュー（machine-readable な script とは別） */
+  .task-meta-view {
+    background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px;
+    padding: .5rem 1rem; font-size: .9em;
+  }
+  /* Mermaid 図はコンテナ背景を透過し中央寄せ */
+  pre.mermaid { background: transparent; text-align: center; }
+  @media (prefers-color-scheme: dark) {
+    body { color: #c9d1d9; background: #0d1117; }
+    h1, h2 { border-color: #30363d; }
+    th { background: #161b22; }
+    pre { background: #161b22; }
+    blockquote { color: #8b949e; }
+    .task-meta-view { background: #161b22; border-color: #30363d; }
+  }
+</style>
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({ startOnLoad: true });
+</script>
+</head>
+<body>
+{{BODY}}
+</body>
+</html>
