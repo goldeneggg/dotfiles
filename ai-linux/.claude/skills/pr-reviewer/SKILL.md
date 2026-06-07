@@ -17,7 +17,6 @@ description: |
   - "Check code quality of this branch"
 argument-hint: "{owner/repo} {PR番号} or {PR URL} or {ブランチ名} [--base ベースブランチ] [--outline 概要]"
 context: fork
-agent: general-purpose
 ---
 
 # pr-reviewer

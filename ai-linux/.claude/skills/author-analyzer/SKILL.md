@@ -24,7 +24,6 @@ description: |
   - GitHub Actions実行ログの分析 → gh-action-run-validator
 argument-hint: "<author> [owner/repo ...] [--since YYYY-MM-DD] [--until YYYY-MM-DD]"
 context: fork
-agent: general-purpose
 ---
 
 # author-analyzer

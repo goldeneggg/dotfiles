@@ -11,7 +11,6 @@ description: >
   技術そのものの理解・比較・動向把握はこのスキルの担当。
   「最近話題のXって何？」のようなカジュアルな質問でも発動してよい。
 context: fork
-agent: general-purpose
 ---
 
 # Tech Researcher
