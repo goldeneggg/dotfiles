@@ -2,14 +2,16 @@
   "cleanupPeriodDays": 30,
   "permissions": {
     "allow": [
+      "Bash(fd *)",
+      "Bash(rg *)",
+      "Bash(rga *)",
       "Bash(cat *)",
       "Bash(head *)",
       "Bash(tail *)",
       "Bash(sort *)",
       "Bash(uniq *)",
-      "Bash(grep *)",
-      "Bash(rg *)",
       "Bash(find *)",
+      "Bash(grep *)",
       "Bash(pwd *)",
       "Bash(ls *)",
       "Bash(tree *)",
@@ -52,8 +54,6 @@
       "Read(./go.mod)",
       "Read(./package.json)",
       "Read(./requirements.txt)",
-      "Glob",
-      "Grep",
       "WebFetch(domain:github.com)",
       "WebSearch",
       "mcp__sequential-thinking__sequentialthinking"
