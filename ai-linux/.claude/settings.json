@@ -145,6 +145,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "~/.claude/hooks/enforce-builtin-tools.sh"
+          },
+          {
+            "type": "command",
             "command": "~/.claude/hooks/PreToolUse-Bash.sh"
           }
         ]
