@@ -23,8 +23,7 @@ normalize_cmd() {
 }
 
 SEGMENTS=$(printf '%s' "$COMMAND" \
-  | tr '|' '\n' \
-  | awk '{gsub(/&&|\|\||;|&/, "\n"); print}')
+  | awk '{gsub(/&&|\|\||;|\||&/, "\n"); print}')
 
 while IFS= read -r segment; do
   [ -z "$segment" ] && continue
