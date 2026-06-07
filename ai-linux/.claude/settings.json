@@ -52,6 +52,8 @@
       "Read(./go.mod)",
       "Read(./package.json)",
       "Read(./requirements.txt)",
+      "Glob",
+      "Grep",
       "WebFetch(domain:github.com)",
       "WebSearch",
       "mcp__sequential-thinking__sequentialthinking"
