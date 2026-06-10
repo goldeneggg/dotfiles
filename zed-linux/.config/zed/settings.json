@@ -33,7 +33,7 @@
   "minimap": {
     "show": "never",
   },
-  "buffer_font_fallbacks": ["Monaco", "Menlo", "Courier New", "monospace"],
+  "buffer_font_fallbacks": ["Monaco", "Menlo", "Courier New"],
   "buffer_font_family": "Ubuntu Mono derivative Powerline",
   "file_types": {
     "terraform": ["*.hcl"],
