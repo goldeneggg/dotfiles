@@ -25,7 +25,8 @@
       "command": "${NPX_FULL_PATH}",
       "args": [
         "-y",
-        "chrome-devtools-mcp@latest"
+        "chrome-devtools-mcp@latest",
+        "--autoConnect"
       ]
     },
     "drawio": {
