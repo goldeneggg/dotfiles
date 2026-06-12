@@ -1,6 +1,6 @@
 # ログイン時にただ一度だけ行なえばよい設定
 # (リモートシェルからではなく必ずコマンドラインから起動するコマンドが参照する環境変数の設定など)
 
-echo "---------- loaded .zlogin"
+#echo "---------- loaded .zlogin"
 
 source ~/.zlogin.sshconn

@@ -1,4 +1,4 @@
-echo "---------- loaded .zprofile"
+#echo "---------- loaded .zprofile"
 
 # See: https://zenn.dev/tet0h/articles/a92651d52bd82460aefb
 # 20250403: /opt/homebrew/bin がPATHの先頭になってしまって.zshenv.pathの設定が無意味になってしまっているので、

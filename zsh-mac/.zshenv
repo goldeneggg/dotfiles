@@ -4,11 +4,10 @@
 #  2.リモートホストから直接起動する可能性があるコマンドに関する設定やエイリアス・シェル関数の定義
 #  3.2が参照する環境変数等の設定(cvsやrsyncのための変数など）
 
-echo "---------- loaded .zshenv"
+#echo "---------- loaded .zshenv"
 
 # m1 mac or not ("true" or "false")
-if [[ "$(uname -m)" = "arm64" ]]
-then
+if [[ "$(uname -m)" = "arm64" ]]; then
   export IS_M1_MAC="true"
 else
   export IS_M1_MAC="false"

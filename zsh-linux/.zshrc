@@ -1,7 +1,7 @@
 # 対話的に起動する場合にのみ必要な設定。シェルのオプションの設定。
 # すべてのエイリアス・シェル関数・キー割り当て・補完動作の定義・プロンプトなどほぼすべての個人嗜好設定。
 
-echo "---------- loaded .zshrc"
+#echo "---------- loaded .zshrc"
 
 source ~/.zshrc.oscommon
 
@@ -16,16 +16,13 @@ source ~/.zshrc.aliases
 #source ~/.zshrc.base16
 
 #- using fzf if exists
-if [[ -x "$(command -v fzf)" ]]
-then
+if [[ -x "$(command -v fzf)" ]]; then
   source ~/.zshrc.fzf
 fi
 
 #- 個人のその端末専用のローカルな設定を ~/.personal に配置
-if [[ -d ~/.personal ]]
-then
-  for f in `ls -d ~/.personal/*`
-  do
+if [[ -d ~/.personal ]]; then
+  for f in $(ls -d ~/.personal/*); do
     source ${f}
   done
 fi
