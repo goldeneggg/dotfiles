@@ -2,7 +2,6 @@ export MY_BREW_TAPS=( \
   "aws/tap" \
   # FIXME: upgrade中にmacの管理者パスワードを問われてエラーになる
   "1password/tap" \
-  "duaraghav8/tap" \
 )
 
 # except library pkgs
@@ -96,8 +95,6 @@ export MY_BREW_PKGS=( \
   "jnv" \
   "gallery-dl" \
   "sqlite" \
-  # from tap "duaraghav8/tap"
-  "dockershrink" \
   "go-jsonnet" \
   "geckodriver" \
   "go-task" \
