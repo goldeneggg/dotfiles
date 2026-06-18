@@ -534,5 +534,9 @@
   "autoMemoryEnabled": false,
   "verbose": false,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  }
 }
