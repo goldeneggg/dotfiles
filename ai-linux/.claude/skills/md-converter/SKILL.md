@@ -8,6 +8,7 @@ description: |
     (3) ユーザーが明示的に「/md-converter」を実行した時
     (4) RST, AsciiDoc, HTMLなどからmarkdownへの変換が必要な時
     (5) 形式が不明なテキストをmarkdownとして整形したい時
+argument-hint: "<ファイルパス or テキスト> [--from html|rst|asciidoc] [--output ファイルパス]"
 ---
 
 # md-converter

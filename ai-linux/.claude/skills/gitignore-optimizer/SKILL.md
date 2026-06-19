@@ -10,6 +10,7 @@ description: |
   (4) プロジェクト初期セットアップで.gitignoreの整備を求められた時
   (5) 新しい技術スタック導入時に.gitignoreの更新が必要な時
   .gitignoreの作成・編集・レビューに関する依頼全般でトリガーすべき。
+argument-hint: "[プロジェクトパス]"
 ---
 
 # Gitignore Optimizer

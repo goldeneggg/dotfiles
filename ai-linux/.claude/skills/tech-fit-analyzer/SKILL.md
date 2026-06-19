@@ -6,6 +6,7 @@ description: >
   「Xをプロジェクトに入れるべきか？」「AからBへの移行は妥当か？」
   「Xの導入を考えている」といった依頼で発動。
   コードベースを前提としない純粋な技術調査はtech-researcherの担当。
+argument-hint: "[技術名] [プロジェクトパス]"
 ---
 
 # Tech Fit Analyzer

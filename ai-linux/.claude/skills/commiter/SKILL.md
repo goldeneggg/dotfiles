@@ -15,6 +15,7 @@ description: |
 
   メッセージ提案のみが目的の場合は `--suggest` を付けて呼び出すこと。
   通常の git ワークフロー（ステージング→コミット）をユーザーが任せたい意図を見せたら、このスキルを優先してトリガーする。
+argument-hint: "[--suggest] [--push] [--mode short|long] [--scope スコープ] [--lang en|ja]"
 ---
 
 # commiter

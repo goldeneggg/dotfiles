@@ -14,6 +14,7 @@ description: |
   - 「スキーマファースト」「型安全なAPIクライアント生成」の文脈
 
   トリガーしないケース: OpenAPIの直接編集のみ / TypeScript typeやZodなど非TypeSpec型システム / Swagger UIなどドキュメントツール設定のみ
+argument-hint: "[.tspファイルパス or OpenAPIファイルパス]"
 ---
 
 # TypeSpec specialist

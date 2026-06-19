@@ -7,6 +7,7 @@ description: |
     (2) ユーザーが明示的に「/agent-reviewer」を実行した時
     (3) Agent開発完了後、公開前の最終チェックを求められた時
     (4) Agent改善時、「どこを直すべきか教えて」と相談された時
+argument-hint: "[エージェントパス]"
 ---
 
 # Agent Reviewer

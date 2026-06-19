@@ -9,6 +9,7 @@ description: |
   "pull request descriptionをテンプレートに沿って書いて" "PRの説明をファイルに保存して"
   "PRタイトルも提案して" "タイトル案も出して"
   "Generate PR description" "Write PR body" "Create pull request description"
+argument-hint: "<出力先パス> [--base ブランチ] [--template テンプレートパス] [--format フォーマット指示]"
 ---
 
 # pr-description

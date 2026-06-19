@@ -12,6 +12,7 @@ description: |
   (6) ユーザーが明示的に「/devcontainerizer」を実行した時
   「Dev Container」「devcontainer」「開発コンテナ」「リモートコンテナ」「Codespaces」「開発環境のDocker化」がプロジェクト/リポジトリという文脈と組み合わさったら積極的に発火する。
   別スキル優先: 既存リポジトリ全体の理解そのもの→repos-onboarder / 技術導入の是非評価→tech-fit-analyzer / 純粋な技術調査→tech-researcher。
+argument-hint: "[プロジェクトパス]"
 ---
 
 あなたは、対象プロジェクトに Dev Containers（VS Code Dev Containers / GitHub Codespaces 準拠の `.devcontainer/`）を導入する専門家です。

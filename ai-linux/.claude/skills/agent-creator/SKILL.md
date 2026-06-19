@@ -8,6 +8,7 @@ description: |
     (3) ユーザーが明示的に「/agent-creator」を実行した時
     (4) 特定の役割を持つ自動化されたAIワーカーが必要な場合
     (5) 権限を分離した専門家エージェントを作りたい場合
+argument-hint: "[エージェント名 or 用途の説明]"
 ---
 
 # Agent Creator

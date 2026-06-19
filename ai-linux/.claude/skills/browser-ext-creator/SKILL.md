@@ -12,6 +12,7 @@ description: |
     (6) 「GitHubのPRページにボタンを追加したい」のようにページ埋め込みUIを求められた時
     (7) 「ページ内のテキストを選択したらAPIに投げる拡張を作って」のように外部API連携を含む拡張を依頼された時
     (8) 「Tampermonkeyスクリプトを正式なChrome拡張にしたい」のように拡張への変換を求められた時
+argument-hint: "[機能の説明]"
 ---
 
 # Browser Extension Creator

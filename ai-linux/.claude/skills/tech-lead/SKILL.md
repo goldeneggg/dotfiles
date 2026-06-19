@@ -15,6 +15,7 @@ description: >
   ただし次は別スキルの担当: 特定コードベースへの技術導入是非の評価→tech-fit-analyzer、
   技術そのもののWeb調査・比較→tech-researcher、新規プロジェクトのドキュメント雛形/タスク分割
   生成→task-starter、単一PRやブランチのコードレビュー実行→pr-reviewer。
+argument-hint: "[相談内容]"
 ---
 
 # Tech Lead
