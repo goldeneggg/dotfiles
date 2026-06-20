@@ -91,20 +91,12 @@ asdf-upgrade:
 	@asdf set --home terraform $(call asdf-latest,terraform,$(USEVER_TERRAFORM).)
 	@asdf reshim terraform
 
-asdf-uninstall-all-old-vers = for oldver in $$(asdf list $1 | \grep -v ' \*'); do echo uninstall $1 old version $${oldver}; asdf uninstall $1 $${oldver}; done
 asdf-uninstall-all:
-	@$(call asdf-uninstall-all-old-vers,nodejs)
-	@$(call asdf-uninstall-all-old-vers,python)
-	@$(call asdf-uninstall-all-old-vers,ruby)
-	@$(call asdf-uninstall-all-old-vers,terraform)
+	@./scripts/asdf_uninstall_old_versions.bash nodejs python ruby terraform
 	@asdf reshim
 
-asdf-uninstall-selected-vers = asdf list $1 | fzf -m | awk '{print $$1}' | xargs -I {} sh -c 'echo "uninstall $1 {}..." && asdf uninstall $1 {}'
 asdf-uninstall-selected:
-	@$(call asdf-uninstall-selected-vers,nodejs)
-	@$(call asdf-uninstall-selected-vers,python)
-	@$(call asdf-uninstall-selected-vers,ruby)
-	@$(call asdf-uninstall-selected-vers,terraform)
+	@./scripts/asdf_uninstall_selected_versions.bash nodejs python ruby terraform
 	@asdf reshim
 
 # ----------
@@ -117,17 +109,7 @@ OP_CLI_GPG_KEY := 3FEF9748469ADBE15DA7CA80AC2D62742012EA22
 
 # Install 1Password CLI with GPG signature verification
 install-op-cli:
-	@echo "Installing 1Password CLI v$(USEVER_OP_CLI)..."
-	@TEMP_DIR=$$(mktemp -d) && \
-	trap 'rm -rf "$$TEMP_DIR"' EXIT && \
-	curl -sSfL "https://cache.agilebits.com/dist/1P/op2/pkg/v$(USEVER_OP_CLI)/op_darwin_arm64_v$(USEVER_OP_CLI).zip" -o "$$TEMP_DIR/op.zip" && \
-	unzip -q "$$TEMP_DIR/op.zip" -d "$$TEMP_DIR" && \
-	gpg --keyserver hkps://keyserver.ubuntu.com --receive-keys $(OP_CLI_GPG_KEY) && \
-	gpg --verify "$$TEMP_DIR/op.sig" "$$TEMP_DIR/op" && \
-	mkdir -p $(HOME)/bin && \
-	mv "$$TEMP_DIR/op" $(HOME)/bin/op && \
-	test -x $(HOME)/bin/op || chmod 755 $(HOME)/bin/op && \
-	echo "1Password CLI v$(USEVER_OP_CLI) installed successfully at $(HOME)/bin/op"
+	@./scripts/install_op_cli.bash $(USEVER_OP_CLI) $(OP_CLI_GPG_KEY)
 endif
 
 # ----------
@@ -136,16 +118,15 @@ endif
 # watch repos control
 WATCH_REPO_ORG_DIR := $(HOME)/github/practice-goldeneggg
 WATCHES := ai aws browser docker go react ruby wasm zig
-watch-repos-recursive = $(foreach wr,$(WATCHES),cd $(WATCH_REPO_ORG_DIR)/watch-$(wr) && echo "---------- $(wr)" && $1 || { echo "NG!"; true; };)
 
 watches-sync:
-	@$(call watch-repos-recursive,make sync)
+	@./scripts/watch_repos_exec.bash $(WATCH_REPO_ORG_DIR) "make sync" $(WATCHES)
 
 watches-update-and-sync:
-	@$(call watch-repos-recursive,make update-and-sync)
+	@./scripts/watch_repos_exec.bash $(WATCH_REPO_ORG_DIR) "make update-and-sync" $(WATCHES)
 
 watches-git-diff-check:
-	@$(call watch-repos-recursive,git diff --exit-code --quiet)
+	@./scripts/watch_repos_exec.bash $(WATCH_REPO_ORG_DIR) "git diff --exit-code --quiet" $(WATCHES)
 
 # ----------
 # for AI skills management
@@ -158,40 +139,13 @@ AI_SKILLS_DIR := ./ai-linux/.claude/skills
 EXTERNAL_SKILL_REPOS := \
 	1Password/SCAM|skills|security-awareness
 
-# Helper functions to extract fields from pipe-separated tuples
-skill-repo-of = $(word 1,$(subst |, ,$1))
-skill-dir-of = $(word 2,$(subst |, ,$1))
-skill-name-of = $(word 3,$(subst |, ,$1))
-
-# Sparse checkout a skill from a github repo into a temp dir, then copy to AI_SKILLS_DIR
-# Args: $1=repo, $2=repo_dir, $3=skill_name
-define skill-sparse-checkout
-	TEMP_DIR=$$(mktemp -d) && \
-	git clone --depth 1 --filter=blob:none --sparse https://github.com/$1.git "$$TEMP_DIR" && \
-	cd "$$TEMP_DIR" && \
-	git sparse-checkout set $2/$3 && \
-	cd - > /dev/null && \
-	mkdir -p $(AI_SKILLS_DIR) && \
-	cp -r "$$TEMP_DIR/$2/$3" $(AI_SKILLS_DIR)/ && \
-	rm -rf "$$TEMP_DIR"
-endef
-
 # Batch add all skills in EXTERNAL_SKILL_REPOS (skips already-added skills, no auto-commit)
 skill-repo-add-all:
-	@$(foreach item,$(EXTERNAL_SKILL_REPOS), \
-		if [ -d "$(AI_SKILLS_DIR)/$(call skill-name-of,$(item))" ]; then \
-			echo "SKIP: $(call skill-name-of,$(item)) already exists"; \
-		else \
-			echo "ADD: $(call skill-name-of,$(item)) from $(call skill-repo-of,$(item))..." && \
-			$(call skill-sparse-checkout,$(call skill-repo-of,$(item)),$(call skill-dir-of,$(item)),$(call skill-name-of,$(item))); \
-		fi ;)
+	@./scripts/skill_repo_manage.bash add-all $(AI_SKILLS_DIR) $(EXTERNAL_SKILL_REPOS)
 
 # Batch update all skills in EXTERNAL_SKILL_REPOS
 skill-repo-update-all:
-	@$(foreach item,$(EXTERNAL_SKILL_REPOS), \
-		echo "UPDATE: $(call skill-name-of,$(item)) from $(call skill-repo-of,$(item))..." && \
-		rm -rf $(AI_SKILLS_DIR)/$(call skill-name-of,$(item)) && \
-		$(call skill-sparse-checkout,$(call skill-repo-of,$(item)),$(call skill-dir-of,$(item)),$(call skill-name-of,$(item))) ;)
+	@./scripts/skill_repo_manage.bash update-all $(AI_SKILLS_DIR) $(EXTERNAL_SKILL_REPOS)
 
 #------------------------------
 # for AI coding
@@ -235,13 +189,12 @@ copilot-cli:
 		--deny-tool 'shell(git push)' \
 		--allow-url github.com
 
+# ----------
+# AI tools context sync
+# ----------
 .PHONY: sync-claudemd-to-agentsmd
 sync-claudemd-to-agentsmd: ## CLAUDE.md を再帰的に探索し、同ディレクトリに AGENTS.md symlink を作成する
-	@find . -name "CLAUDE.md" -not -path "*/.git/*" -not -path "*/node_modules/*" | while read f; do \
-		dir=$$(dirname "$$f"); \
-		ln -sf CLAUDE.md "$$dir/AGENTS.md"; \
-		echo "Created: $$dir/AGENTS.md -> CLAUDE.md"; \
-	done
+	@./scripts/sync_claudemd_to_agentsmd.bash
 
 # ----------
 # AI tools MCP configuration sync
@@ -250,57 +203,11 @@ CLAUDE_MCP_JSON := ./.mcp.json
 CODEX_CONFIG_DIR := ./.codex
 CODEX_CONFIG_FILE := $(CODEX_CONFIG_DIR)/config.toml
 
-define SYNC_MCP_TO_CODEX_SCRIPT
-import json, os, re
-
-src = "$(CLAUDE_MCP_JSON)"
-dst = "$(CODEX_CONFIG_FILE)"
-
-with open(src) as f:
-    cfg = json.load(f)
-
-servers = cfg.get("mcpServers", {})
-lines = []
-for name, srv in servers.items():
-    lines.append("[mcp_servers.{}]".format(name))
-    cmd_expanded = os.path.expandvars(srv.get("command", ""))
-    cmd = os.path.basename(cmd_expanded) if cmd_expanded else srv.get("command", "")
-    lines.append('command = "{}"'.format(cmd))
-    args = srv.get("args", [])
-    if args:
-        args_toml = ", ".join('"{}"'.format(a) for a in args)
-        lines.append("args = [{}]".format(args_toml))
-    lines.append('env_vars = ["PATH"]')
-    env = srv.get("env", {})
-    if env:
-        lines.append("[mcp_servers.{}.env]".format(name))
-        for k, v in env.items():
-            lines.append('{} = "{}"'.format(k, v))
-    lines.append("")
-
-new_section = "\n".join(lines)
-marker_begin = "# sync-mcp-begin\n"
-marker_end = "# sync-mcp-end\n"
-
-existing = open(dst).read() if os.path.exists(dst) else ""
-cleaned = re.sub(r"\n*# sync-mcp-begin\n.*?# sync-mcp-end\n?", "", existing, flags=re.DOTALL).strip()
-content = (cleaned + "\n\n" if cleaned else "") + marker_begin + new_section + marker_end
-
-with open(dst, "w") as f:
-    f.write(content)
-
-print("Synced {} MCP servers to {}".format(len(servers), dst))
-for name in servers:
-    print("  - " + name)
-endef
-export SYNC_MCP_TO_CODEX_SCRIPT
-
 .PHONY: sync-claude-mcpconf-to-codex
 sync-claude-mcpconf-to-codex: ## Claude Code の .mcp.json を Codex の ~/.codex/config.toml の mcp_servers セクションに同期する
 	@[ -f "$(CLAUDE_MCP_JSON)" ] || { echo "Error: $(CLAUDE_MCP_JSON) not found"; exit 1; }
 	@mkdir -p "$(CODEX_CONFIG_DIR)"
-	@echo "$$SYNC_MCP_TO_CODEX_SCRIPT" | python3
-
+	@python3 ./scripts/sync_mcp_to_codex.py $(CLAUDE_MCP_JSON) $(CODEX_CONFIG_FILE)
 
 # ----------
 # AI tools subagents configuration sync
@@ -308,112 +215,8 @@ sync-claude-mcpconf-to-codex: ## Claude Code の .mcp.json を Codex の ~/.code
 CLAUDE_AGENTS_DIR := ./ai-linux/.claude/agents
 CODEX_AGENTS_DIR := ./ai-linux/.codex/agents
 
-define SYNC_SUBAGENTS_TO_CODEX_SCRIPT
-import os, glob, re
-
-src_dir = "$(CLAUDE_AGENTS_DIR)"
-dst_dir = "$(CODEX_AGENTS_DIR)"
-
-# 再生成のたびに孤児(.toml)が残らないよう、出力先の .toml を一旦すべて削除する
-for old in glob.glob(os.path.join(dst_dir, "*.toml")):
-    os.remove(old)
-
-
-def parse_frontmatter(text):
-    # 先頭の --- ... --- を frontmatter、それ以降を本文として分離する
-    m = re.match(r"^---\n(.*?)\n---\n?(.*)\Z", text, re.DOTALL)
-    if not m:
-        return None, ""
-    return m.group(1), m.group(2)
-
-
-def parse_fields(fm):
-    # PyYAML 非依存の簡易パーサ。トップレベルの key: value と
-    # ブロックスカラー(| / >)のみを対象とする(tools 等のリストは無視)
-    lines = fm.split("\n")
-    data = {}
-    i = 0
-    n = len(lines)
-    while i < n:
-        line = lines[i]
-        m = re.match(r"^([A-Za-z_]+):\s?(.*)\Z", line)
-        if not m or line[:1] == " ":
-            i += 1
-            continue
-        key = m.group(1)
-        val = m.group(2).strip()
-        if val in ("|", "|-", "|+", ">", ">-", ">+"):
-            # ブロックスカラー: 後続のインデント行を集めて共通インデントを除去する
-            i += 1
-            raw = []
-            while i < n:
-                bl = lines[i]
-                if bl.strip() == "":
-                    raw.append("")
-                    i += 1
-                    continue
-                if bl[:1] == " ":
-                    raw.append(bl)
-                    i += 1
-                else:
-                    break
-            indents = [len(x) - len(x.lstrip(" ")) for x in raw if x.strip()]
-            ind = min(indents) if indents else 0
-            block = [(x[ind:] if len(x) >= ind else x) for x in raw]
-            while block and block[-1] == "":
-                block.pop()
-            data[key] = "\n".join(block)
-        else:
-            # インラインのクオートを除去する
-            if len(val) >= 2 and ((val[0] == '"' and val[-1] == '"') or (val[0] == "'" and val[-1] == "'")):
-                val = val[1:-1]
-            data[key] = val
-            i += 1
-    return data
-
-
-files = sorted(glob.glob(os.path.join(src_dir, "*.md")))
-count = 0
-for path in files:
-    fname = os.path.basename(path)
-    with open(path) as f:
-        text = f.read()
-    fm, body = parse_frontmatter(text)
-    if fm is None:
-        print("  ! skip {}: frontmatter not found".format(fname))
-        continue
-    fields = parse_fields(fm)
-    name = fields.get("name", "").strip()
-    desc = fields.get("description", "").strip()
-    body = body.strip()
-    # Codex の必須3項目(name/description/developer_instructions)を担保する
-    if not name:
-        print("  ! skip {}: missing name".format(fname))
-        continue
-    if not body:
-        print("  ! skip {}: empty body (developer_instructions)".format(fname))
-        continue
-    # TOML 複数行 literal string は ''' を内包できないため、含む場合は手動対応に回す
-    if ("'''" in desc) or ("'''" in body):
-        print("  ! skip {}: contains triple single-quote, needs manual handling".format(fname))
-        continue
-    out = []
-    out.append('name = "{}"'.format(name))
-    out.append("description = '''\n{}\n'''".format(desc))
-    out.append("developer_instructions = '''\n{}\n'''".format(body))
-    content = "\n".join(out) + "\n"
-    dst = os.path.join(dst_dir, name + ".toml")
-    with open(dst, "w") as f:
-        f.write(content)
-    print("  - {} -> {}".format(fname, dst))
-    count += 1
-
-print("Synced {} subagents to {}".format(count, dst_dir))
-endef
-export SYNC_SUBAGENTS_TO_CODEX_SCRIPT
-
 .PHONY: sync-claude-subagents-to-codex
 sync-claude-subagents-to-codex: ## Claude Code の .claude/agents/*.md を Codex の .codex/agents/*.toml に変換同期する
 	@[ -d "$(CLAUDE_AGENTS_DIR)" ] || { echo "Error: $(CLAUDE_AGENTS_DIR) not found"; exit 1; }
 	@mkdir -p "$(CODEX_AGENTS_DIR)"
-	@echo "$$SYNC_SUBAGENTS_TO_CODEX_SCRIPT" | python3
+	@python3 ./scripts/sync_subagents_to_codex.py $(CLAUDE_AGENTS_DIR) $(CODEX_AGENTS_DIR)
