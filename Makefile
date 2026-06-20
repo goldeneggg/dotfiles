@@ -190,14 +190,20 @@ copilot-cli:
 		--allow-url github.com
 
 # ----------
-# AI tools context sync
+#
+# Sync settings from Claude to Codex
+#
+# ----------
+
+# ----------
+# sync Contexts
 # ----------
 .PHONY: sync-claudemd-to-agentsmd
 sync-claudemd-to-agentsmd: ## CLAUDE.md を再帰的に探索し、同ディレクトリに AGENTS.md symlink を作成する
 	@./scripts/sync_claudemd_to_agentsmd.bash
 
 # ----------
-# AI tools MCP configuration sync
+# sync MCP configurations
 # ----------
 CLAUDE_MCP_JSON := ./.mcp.json
 CODEX_CONFIG_DIR := ./.codex
@@ -210,7 +216,7 @@ sync-claude-mcpconf-to-codex: ## Claude Code の .mcp.json を Codex の ~/.code
 	@python3 ./scripts/sync_mcp_to_codex.py $(CLAUDE_MCP_JSON) $(CODEX_CONFIG_FILE)
 
 # ----------
-# AI tools subagents configuration sync
+# sync Subagents
 # ----------
 CLAUDE_AGENTS_DIR := ./ai-linux/.claude/agents
 CODEX_AGENTS_DIR := ./ai-linux/.codex/agents
