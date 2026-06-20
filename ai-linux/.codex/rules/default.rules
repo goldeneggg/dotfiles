@@ -1,0 +1,321 @@
+# sync-claude-permissions-begin
+# Generated from Claude Code Bash permissions.
+
+prefix_rule(
+    pattern = ["sudo"],
+    decision = "forbidden",
+    justification = "Synced from Claude permissions.deny: Bash(sudo *)",
+)
+
+prefix_rule(
+    pattern = ["chmod"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(chmod *)",
+)
+
+prefix_rule(
+    pattern = ["chown"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(chown *)",
+)
+
+prefix_rule(
+    pattern = ["cp"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(cp *)",
+)
+
+prefix_rule(
+    pattern = ["curl"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(curl *)",
+)
+
+prefix_rule(
+    pattern = ["kill"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(kill *)",
+)
+
+prefix_rule(
+    pattern = ["mv"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(mv *)",
+)
+
+prefix_rule(
+    pattern = ["rm"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(rm *)",
+)
+
+prefix_rule(
+    pattern = ["rmdir"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(rmdir *)",
+)
+
+prefix_rule(
+    pattern = ["touch"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(touch *)",
+)
+
+prefix_rule(
+    pattern = ["wget"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(wget *)",
+)
+
+prefix_rule(
+    pattern = ["fd"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(fd *)",
+)
+
+prefix_rule(
+    pattern = ["rg"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(rg *)",
+)
+
+prefix_rule(
+    pattern = ["rga"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(rga *)",
+)
+
+prefix_rule(
+    pattern = ["cat"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(cat *)",
+)
+
+prefix_rule(
+    pattern = ["head"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(head *)",
+)
+
+prefix_rule(
+    pattern = ["tail"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(tail *)",
+)
+
+prefix_rule(
+    pattern = ["sort"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(sort *)",
+)
+
+prefix_rule(
+    pattern = ["uniq"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(uniq *)",
+)
+
+prefix_rule(
+    pattern = ["find"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(find *)",
+)
+
+prefix_rule(
+    pattern = ["grep"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(grep *)",
+)
+
+prefix_rule(
+    pattern = ["pwd"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(pwd *)",
+)
+
+prefix_rule(
+    pattern = ["ls"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(ls *)",
+)
+
+prefix_rule(
+    pattern = ["tree"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(tree *)",
+)
+
+prefix_rule(
+    pattern = ["wc"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(wc *)",
+)
+
+prefix_rule(
+    pattern = ["stat"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(stat *)",
+)
+
+prefix_rule(
+    pattern = ["file"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(file *)",
+)
+
+prefix_rule(
+    pattern = ["cd"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(cd *)",
+)
+
+prefix_rule(
+    pattern = ["date"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(date *)",
+)
+
+prefix_rule(
+    pattern = ["whoami"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(whoami *)",
+)
+
+prefix_rule(
+    pattern = ["hostname"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(hostname *)",
+)
+
+prefix_rule(
+    pattern = ["uname"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(uname *)",
+)
+
+prefix_rule(
+    pattern = ["id"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(id *)",
+)
+
+prefix_rule(
+    pattern = ["bash", "-n"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(bash -n *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "issue", "list"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh issue list *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "issue", "view"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh issue view *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "issue", "status"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh issue status *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "pr", "list"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh pr list *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "pr", "view"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh pr view *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "pr", "status"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh pr status *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "pr", "diff"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh pr diff *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "run", "list"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh run list *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "run", "view"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh run view *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "workflow", "list"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh workflow list *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "workflow", "view"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh workflow view *)",
+)
+
+prefix_rule(
+    pattern = ["gh", "search"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(gh search *)",
+)
+
+prefix_rule(
+    pattern = ["git", "branch"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(git branch *)",
+)
+
+prefix_rule(
+    pattern = ["git", "diff"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(git diff *)",
+)
+
+prefix_rule(
+    pattern = ["git", "show"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(git show *)",
+)
+
+prefix_rule(
+    pattern = ["git", "log"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(git log *)",
+)
+
+prefix_rule(
+    pattern = ["git", "status"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(git status *)",
+)
+
+prefix_rule(
+    pattern = ["git", "add"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(git add *)",
+)
+
+prefix_rule(
+    pattern = ["git", "fetch"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(git fetch *)",
+)
+# sync-claude-permissions-end

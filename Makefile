@@ -221,6 +221,25 @@ sync-claude-mcpconf-to-codex: ## Claude Code の .mcp.json を Codex の config.
 	@python3 ./scripts/sync_mcp_to_codex.py "$(CLAUDE_MCP_JSON)" "$(CODEX_CONFIG_FILE)"
 
 # ----------
+# sync Permissions
+# ----------
+ifdef DIR
+CLAUDE_PERMISSIONS_SETTINGS_JSON := $(DIR)/.claude/settings.json
+CODEX_PERMISSIONS_DIR           := $(DIR)/.codex
+else
+CLAUDE_PERMISSIONS_SETTINGS_JSON := ./ai-linux/.claude/settings.json
+CODEX_PERMISSIONS_DIR           := ./ai-linux/.codex
+endif
+CODEX_PERMISSIONS_CONFIG_FILE := $(CODEX_PERMISSIONS_DIR)/config.toml
+CODEX_PERMISSIONS_RULES_FILE  := $(CODEX_PERMISSIONS_DIR)/rules/default.rules
+
+.PHONY: sync-claude-permissions-to-codex
+sync-claude-permissions-to-codex: ## Claude Code の permissions を Codex の config.toml と rules/default.rules に同期する
+	@[ -f "$(CLAUDE_PERMISSIONS_SETTINGS_JSON)" ] || { echo "Error: $(CLAUDE_PERMISSIONS_SETTINGS_JSON) not found"; exit 1; }
+	@mkdir -p "$(CODEX_PERMISSIONS_DIR)" "$(CODEX_PERMISSIONS_DIR)/rules"
+	@python3 ./scripts/sync_claude_permissions_to_codex.py "$(CLAUDE_PERMISSIONS_SETTINGS_JSON)" "$(CODEX_PERMISSIONS_CONFIG_FILE)" "$(CODEX_PERMISSIONS_RULES_FILE)"
+
+# ----------
 # sync Subagents
 # ----------
 ifdef DIR
