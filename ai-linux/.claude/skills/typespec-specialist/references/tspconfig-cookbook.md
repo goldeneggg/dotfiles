@@ -27,6 +27,37 @@ linter:
 
 `{output-dir}` などの組み込み変数を活用すると、出力先をエミッター単位で切り替えやすい。
 
+### 1.1 プロジェクト設定（1.13.0 以降）
+
+`kind: project` と `entrypoint` でプロジェクト境界とエントリポイントを明示できる:
+
+```yaml
+kind: project
+entrypoint: src/service.tsp
+emit:
+  - "@typespec/openapi3"
+options:
+  "@typespec/openapi3":
+    emitter-output-dir: "{output-dir}/schema"
+```
+
+- `kind: project`: このディレクトリが TypeSpec プロジェクトの境界であることを宣言
+- `entrypoint`: コンパイルのエントリポイントファイルを明示指定
+
+モノレポや複数サービスの構成で、コンパイラがどのファイルを起点にするかを一意に決定したい場合に有効。省略した場合は従来通りの解決ロジック。
+
+### 1.2 Feature Flags（1.13.0 以降）
+
+プロジェクトスコープのコンパイラ機能フラグを有効化できる:
+
+```yaml
+kind: project
+features:
+  - function-declarations
+```
+
+利用可能なフラグ一覧は `tsp info features` で確認できる。
+
 ---
 
 ## 2. エミッター設定の典型レシピ
@@ -103,7 +134,21 @@ linter:
 
 `disable` には必ず除外理由を文字列で添える。後続のメンテナーが判断しやすい。
 
-### 3.2 カスタムルールセットの拡張
+### 3.2 ルールオプションの設定（1.12.0 以降）
+
+Linter ルールが型付きオプションを受け付けるようになった。ルール作者が `defaultOptions` を定義し、利用側はオプション値を渡せる:
+
+```yaml
+linter:
+  enable:
+    # デフォルトオプションで有効化
+    "@typespec/my-lib/no-model-with-name": true
+    # カスタムオプション付きで有効化
+    "@typespec/my-lib/no-model-with-name":
+      bannedName: "Bar"
+```
+
+### 3.3 カスタムルールセットの拡張
 
 組織独自のガイドライン（例: `displayName` フィールド必須化）は、社内パッケージとして Linter プラグインを公開し `extends` で読み込ませると複数リポジトリで再利用できる。
 

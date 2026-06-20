@@ -199,6 +199,7 @@ npx tsp compile .
 | `$ref` の循環参照 | TypeSpec は名前空間で解決するが、深い循環は警告対象 | フラットな共通モデル層を作って解消 |
 | `allOf` の継承 | TypeSpec では `extends` または `is` で表現 | 多重継承相当が必要なら spread 演算子の併用 |
 | `examples` の脱落 | `@example` デコレータで明示的に書き戻す必要がある | 重要な API は手動で例を再追加 |
+| `@defaultResponse` の誤用 | `@statusCode` 付きモデルや `@error` モデルに `@defaultResponse` を付けると 1.13.0 で警告 | `@error` モデルは用途に応じて使い分ける |
 
 ---
 

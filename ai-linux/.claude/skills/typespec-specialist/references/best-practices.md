@@ -1,18 +1,18 @@
 # TypeSpec による API スキーマ設計のベストプラクティス
 
-> **バージョン情報（執筆時点）**
+> **バージョン情報（執筆時点: 1.13.0）**
 >
 > TypeSpec は 2025-05-06 に 1.0 GA。コアおよび主要拡張は 1.x 系で進化中で、プロダクション利用が公式にサポートされている。具体的な最新版は `npm view @typespec/<pkg> version` で確認すること。
 >
 > **パッケージ番号体系の注意**: TypeSpec は「コア / 安定拡張」と「プレビュー拡張」で番号体系が分かれている。`package.json` を書く際はこの違いを意識する。
 >
-> | カテゴリ | パッケージ | 番号体系 | ステータス |
-> |---|---|---|---|
-> | コア | `@typespec/compiler` | 1.x | 安定（Stable） |
-> | 安定拡張 | `@typespec/openapi`, `@typespec/openapi3`, `@typespec/json-schema` | 1.x | 安定（Stable） |
-> | HTTP プロトコル | `@typespec/http` | 1.x | 安定（1.0 はコア 1.0 GA と同時に到達） |
-> | プレビュー拡張 | `@typespec/versioning`, `@typespec/rest`, `@typespec/xml`, `@typespec/streams`, `@typespec/sse`, `@typespec/protobuf` | 0.x | プレビュー（API 変更の可能性あり） |
-> | コード生成 | `@typespec/http-client-*`, `@typespec/http-server-*`（.NET / JS / Java / Python） | 0.x | プレビュー |
+> | カテゴリ | パッケージ | 番号体系 | 1.13.0 時点の版 | ステータス |
+> |---|---|---|---|---|
+> | コア | `@typespec/compiler` | 1.x | 1.13.0 | 安定（Stable） |
+> | 安定拡張 | `@typespec/openapi`, `@typespec/openapi3`, `@typespec/json-schema` | 1.x | 1.13.0 | 安定（Stable） |
+> | HTTP プロトコル | `@typespec/http` | 1.x | 1.13.0 | 安定（1.0 はコア 1.0 GA と同時に到達） |
+> | プレビュー拡張 | `@typespec/versioning`, `@typespec/rest`, `@typespec/xml`, `@typespec/streams`, `@typespec/sse`, `@typespec/protobuf` | 0.x | 0.83.0 | プレビュー（API 変更の可能性あり） |
+> | コード生成 | `@typespec/http-client-*`, `@typespec/http-server-*`（.NET / JS / Java / Python） | 0.x | — | プレビュー |
 >
 > 各パッケージの最新バージョンは `npm view <pkg> version` で確認すること。プレビュー拡張は独自の 0.x サイクルでリリースされるため、`package.json` に書く際は実バージョンを必ず確認する。
 
@@ -47,6 +47,24 @@ interface SearchRoutes {
 ```
 
 特定の op のみ別タグを当てたい場合は op 単位で `@tag` を併記すれば上書きできる。
+
+### `@tagMetadata` によるタグの順序・メタデータ制御（1.13.0 以降）
+
+`@tagMetadata` デコレータで OpenAPI ドキュメント上のタグ出現順序やメタ情報を制御できる。1.13.0 で **配列形式** と `summary`/`kind` フィールドが追加された。
+
+```typespec
+// 配列形式: タグの宣言順序を明示的に制御
+@service(#{ title: "Pet Store" })
+@tagMetadata(#[
+  #{ name: "Pets", description: "Pet management", summary: "All pet operations" },
+  #{ name: "Orders", description: "Order management", kind: "OrderGroup" },
+])
+namespace PetStore;
+```
+
+- `summary`: タグの短い要約。OpenAPI 3.2 ではネイティブフィールド、3.0/3.1 では `x-oai-summary` 拡張
+- `kind`: タグの種類。OpenAPI 3.2 ではネイティブフィールド、3.0/3.1 では `x-oai-kind` 拡張
+- 配列形式 `@tagMetadata(#[...])` と名前指定形式 `@tagMetadata("name", #{...})` の混在は診断エラー
 
 ---
 
@@ -111,11 +129,18 @@ using TypeSpec.Http;
 // 推奨: JSON Merge-Patch による部分更新
 @patch op update(@body pet: MergePatchUpdate<Pet>): void;
 
-// 旧来の挙動を維持したい場合（非推奨・段階的移行用）
-@patch(#{ implicitOptionality: true }) op updateLegacy(@body pet: Pet): void;
+// 推奨: 作成または更新（upsert）セマンティクス
+@patch op createOrUpdate(@body pet: MergePatchCreateOrUpdate<Pet>): void;
 ```
 
-`MergePatchUpdate<T>` は `T` のすべてのプロパティを optional にしつつ、merge-patch のセマンティクス（明示的 `null` で削除、未指定で据え置き）を型レベルで表現する。`import "@typespec/http"` と `using TypeSpec.Http` の宣言が必要なことに注意。
+- `MergePatchUpdate<T>`: `T` のすべてのプロパティを optional にしつつ、merge-patch のセマンティクス（明示的 `null` で削除、未指定で据え置き）を型レベルで表現する
+- `MergePatchCreateOrUpdate<T>`: upsert（存在すれば更新、なければ作成）操作向け。`MergePatchUpdate<T>` と同様だが、作成が含まれる点が異なる
+- いずれも `import "@typespec/http"` と `using TypeSpec.Http` の宣言が必要
+
+**`@patch(#{ implicitOptionality: true })` は 1.12.0 で正式に deprecated。** 以下のいずれかに移行する:
+
+1. 明示的な patch モデルを定義（optional プロパティを手動で書く）
+2. `MergePatchUpdate<T>` を使用（推奨）
 
 ---
 
@@ -162,9 +187,9 @@ model TodoQueryParams {
 
 これにより POST 用・GET 用といった似たようなモデルを複数作成する（型の増殖）必要がなくなり、単一の論理モデルを維持したままシンプルに管理できる。
 
-### `FilterVisibility` の活用（1.11.0 以降推奨）
+### `FilterVisibility` の活用（1.11.0 以降推奨、1.13.0 でも継続）
 
-TypeSpec 1.11.0 から、`@withVisibilityFilter` デコレータは **非推奨** となった。代わりに `FilterVisibility` テンプレートを使用する。`FilterVisibility` はデコレータメタデータの保持に関するバグが修正されており、より正確なビジビリティ変換を提供する。
+`@withVisibilityFilter` デコレータは 1.11.0 で **非推奨** となった。代わりに `FilterVisibility` テンプレートを使用する。`FilterVisibility` はデコレータメタデータの保持に関するバグが修正されており、より正確なビジビリティ変換を提供する。
 
 ```typespec
 // 推奨（1.11.0 以降）
@@ -271,6 +296,21 @@ model User {
 
 `/** */` と `@doc` は等価だが、コメント形式の方が IDE 表示で扱いやすい場合が多い。
 
+### `internal` 修飾子（1.13.0 で安定化）
+
+`internal` 修飾子は 1.13.0 で実験的ステータスから安定に昇格した。`#suppress "experimental-feature"` ディレクティブはもはや不要:
+
+```typespec
+// 外部に公開しない内部用モデル
+internal model InternalConfig {
+  debugMode: boolean;
+}
+```
+
+### 重複インポート・自己インポートの警告（1.12.0 以降）
+
+コンパイラはファイルの自己インポートや同一モジュールの重複インポートを検出して警告する。意図しないコピー&ペーストミスの早期発見に役立つ。
+
 ### 開発環境のセットアップ
 
 - **VS Code 拡張（TypeSpec for VS Code）**: シンタックスハイライト、バリデーション、オートコンプリート、ナビゲーションを提供。Visual Studio Marketplace から導入可能
@@ -311,6 +351,19 @@ namespace MyApi;
 
 `@service` の引数は **object value literal `#{ ... }`**（TypeSpec 1.0 以降の正規構文）。旧来の object literal `({ ... })` は非推奨。
 
+### `kind: project` と `entrypoint`（1.13.0 以降）
+
+`tspconfig.yaml` に `kind: project` と `entrypoint` を指定することで、プロジェクト境界とエントリポイントを明示できる:
+
+```yaml
+kind: project
+entrypoint: src/service.tsp
+emit:
+  - "@typespec/openapi3"
+```
+
+モノレポや複雑なプロジェクト構成で、コンパイラがどのファイルを起点にするかを明確にしたい場合に有効。省略した場合は従来通りの解決ロジックが使われる。
+
 この構成により得られるメリット:
 
 - **スケーラビリティ**: 新しいリソース追加時の既存ファイルへの影響を最小化
@@ -339,6 +392,30 @@ linter:
 |---|---|
 | `@typespec/http/all` | 新規プロジェクト・厳しめの規約 |
 | `@typespec/http/recommended` | 既存プロジェクトの段階導入 |
+
+### Linter ルールのオプション設定（1.12.0 以降）
+
+個別ルールにオプションを渡せるようになった。ルール作者が `defaultOptions` を定義し、利用側は `tspconfig.yaml` でカスタム値を渡す:
+
+```yaml
+linter:
+  enable:
+    # デフォルトオプションで有効化
+    "@typespec/my-lib/no-model-with-name": true
+    # カスタムオプション付きで有効化
+    "@typespec/my-lib/no-model-with-name":
+      bannedName: "Bar"
+```
+
+### コンパイラ Feature Flags（1.13.0 以降）
+
+`tspconfig.yaml` でプロジェクトスコープのコンパイラ機能フラグを設定できる。`tsp info features` で利用可能なフラグ一覧を確認可能:
+
+```yaml
+kind: project
+features:
+  - function-declarations
+```
 
 詳細は [`tspconfig-cookbook.md`](./tspconfig-cookbook.md) を参照。
 
@@ -393,6 +470,7 @@ OpenAPI/JSON Schema からの移行については [`migration-openapi.md`](./mi
 >
 > - [TypeSpec 公式ドキュメント](https://typespec.io/docs/)
 > - [TypeSpec 1.0 GA リリースブログ](https://typespec.io/blog/typespec-1-0-GA-release/)（2025 年 5 月）
+> - [TypeSpec リリースノート](https://typespec.io/release-notes/)（バージョンごとの変更履歴）
 > - [TypeSpec リリース一覧（GitHub）](https://github.com/microsoft/typespec/releases)（最新版は実環境で `npm view @typespec/compiler version` を確認）
 > - [Microsoft Learn — TypeSpec Overview](https://learn.microsoft.com/en-us/azure/developer/typespec/overview)
 > - [microsoft/typespec リポジトリ](https://github.com/microsoft/typespec)
