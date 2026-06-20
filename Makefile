@@ -194,6 +194,9 @@ copilot-cli:
 # Sync settings from Claude to Codex
 #
 # ----------
+.PHONY: sync-claude-to-codex
+sync-claude-to-codex: sync-claudemd-to-agentsmd sync-claude-permissions-to-codex sync-claude-mcpconf-to-codex sync-claude-subagents-to-codex
+	@echo "Sync from Claude to Codex completed."
 
 # ----------
 # sync Contexts
