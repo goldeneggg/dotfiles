@@ -200,29 +200,39 @@ copilot-cli:
 # ----------
 .PHONY: sync-claudemd-to-agentsmd
 sync-claudemd-to-agentsmd: ## CLAUDE.md を再帰的に探索し、同ディレクトリに AGENTS.md symlink を作成する
-	@./scripts/sync_claudemd_to_agentsmd.bash
+	@./scripts/sync_claudemd_to_agentsmd.bash "$(or $(DIR),.)"
 
 # ----------
 # sync MCP configurations
 # ----------
-CLAUDE_MCP_JSON := ./.mcp.json
+ifdef DIR
+CLAUDE_MCP_JSON  := $(DIR)/.mcp.json
+CODEX_CONFIG_DIR := $(DIR)/.codex
+else
+CLAUDE_MCP_JSON  := ./.mcp.json
 CODEX_CONFIG_DIR := ./.codex
+endif
 CODEX_CONFIG_FILE := $(CODEX_CONFIG_DIR)/config.toml
 
 .PHONY: sync-claude-mcpconf-to-codex
-sync-claude-mcpconf-to-codex: ## Claude Code の .mcp.json を Codex の ~/.codex/config.toml の mcp_servers セクションに同期する
+sync-claude-mcpconf-to-codex: ## Claude Code の .mcp.json を Codex の config.toml の mcp_servers セクションに同期する
 	@[ -f "$(CLAUDE_MCP_JSON)" ] || { echo "Error: $(CLAUDE_MCP_JSON) not found"; exit 1; }
 	@mkdir -p "$(CODEX_CONFIG_DIR)"
-	@python3 ./scripts/sync_mcp_to_codex.py $(CLAUDE_MCP_JSON) $(CODEX_CONFIG_FILE)
+	@python3 ./scripts/sync_mcp_to_codex.py "$(CLAUDE_MCP_JSON)" "$(CODEX_CONFIG_FILE)"
 
 # ----------
 # sync Subagents
 # ----------
+ifdef DIR
+CLAUDE_AGENTS_DIR := $(DIR)/.claude/agents
+CODEX_AGENTS_DIR  := $(DIR)/.codex/agents
+else
 CLAUDE_AGENTS_DIR := ./ai-linux/.claude/agents
-CODEX_AGENTS_DIR := ./ai-linux/.codex/agents
+CODEX_AGENTS_DIR  := ./ai-linux/.codex/agents
+endif
 
 .PHONY: sync-claude-subagents-to-codex
 sync-claude-subagents-to-codex: ## Claude Code の .claude/agents/*.md を Codex の .codex/agents/*.toml に変換同期する
 	@[ -d "$(CLAUDE_AGENTS_DIR)" ] || { echo "Error: $(CLAUDE_AGENTS_DIR) not found"; exit 1; }
 	@mkdir -p "$(CODEX_AGENTS_DIR)"
-	@python3 ./scripts/sync_subagents_to_codex.py $(CLAUDE_AGENTS_DIR) $(CODEX_AGENTS_DIR)
+	@python3 ./scripts/sync_subagents_to_codex.py "$(CLAUDE_AGENTS_DIR)" "$(CODEX_AGENTS_DIR)"
