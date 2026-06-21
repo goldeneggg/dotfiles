@@ -195,7 +195,7 @@ copilot-cli:
 #
 # ----------
 .PHONY: sync-claude-to-codex
-sync-claude-to-codex: sync-claudemd-to-agentsmd sync-claude-permissions-to-codex sync-claude-mcpconf-to-codex sync-claude-subagents-to-codex
+sync-claude-to-codex: sync-claudemd-to-agentsmd sync-claude-permissions-to-codex sync-claude-mcpconf-to-codex sync-claude-subagents-to-codex sync-claude-skills-to-codex
 	@echo "Sync from Claude to Codex completed."
 
 # ----------
@@ -258,3 +258,27 @@ sync-claude-subagents-to-codex: ## Claude Code の .claude/agents/*.md を Codex
 	@[ -d "$(CLAUDE_AGENTS_DIR)" ] || { echo "WARNING: $(CLAUDE_AGENTS_DIR) not found, skipping"; exit 0; }
 	@mkdir -p "$(CODEX_AGENTS_DIR)"
 	@python3 ./scripts/sync_subagents_to_codex.py "$(CLAUDE_AGENTS_DIR)" "$(CODEX_AGENTS_DIR)"
+
+# ----------
+# sync Skills
+# ----------
+ifdef DIR
+CLAUDE_SKILLS_DIR := $(DIR)/.claude/skills
+CODEX_SKILLS_DIR  := $(DIR)/.agents/skills
+else
+CLAUDE_SKILLS_DIR := ./ai-linux/.claude/skills
+CODEX_SKILLS_DIR  := ./ai-linux/.agents/skills
+endif
+
+.PHONY: sync-claude-skills-to-codex
+sync-claude-skills-to-codex: ## Claude Code の .claude/skills を .agents/skills symlink として追加する
+	@[ -d "$(CLAUDE_SKILLS_DIR)" ] || { echo "WARNING: $(CLAUDE_SKILLS_DIR) not found, skipping"; exit 0; }
+	@mkdir -p "$(dir $(CODEX_SKILLS_DIR))"
+	@if [ -L "$(CODEX_SKILLS_DIR)" ]; then \
+		echo "$(CODEX_SKILLS_DIR) already exists as symlink, skipping"; \
+	elif [ -e "$(CODEX_SKILLS_DIR)" ]; then \
+		echo "WARNING: $(CODEX_SKILLS_DIR) exists but is not a symlink, skipping"; \
+	else \
+		ln -s "$(CLAUDE_SKILLS_DIR)" "$(CODEX_SKILLS_DIR)"; \
+		echo "Created symlink: $(CODEX_SKILLS_DIR) -> $(CLAUDE_SKILLS_DIR)"; \
+	fi
