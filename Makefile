@@ -219,7 +219,7 @@ CODEX_CONFIG_FILE := $(CODEX_CONFIG_DIR)/config.toml
 
 .PHONY: sync-claude-mcpconf-to-codex
 sync-claude-mcpconf-to-codex: ## Claude Code の .mcp.json を Codex の config.toml の mcp_servers セクションに同期する
-	@[ -f "$(CLAUDE_MCP_JSON)" ] || { echo "Error: $(CLAUDE_MCP_JSON) not found"; exit 1; }
+	@[ -f "$(CLAUDE_MCP_JSON)" ] || { echo "WARNING: $(CLAUDE_MCP_JSON) not found, skipping"; exit 0; }
 	@mkdir -p "$(CODEX_CONFIG_DIR)"
 	@python3 ./scripts/sync_mcp_to_codex.py "$(CLAUDE_MCP_JSON)" "$(CODEX_CONFIG_FILE)"
 
@@ -238,7 +238,7 @@ CODEX_PERMISSIONS_RULES_FILE  := $(CODEX_PERMISSIONS_DIR)/rules/default.rules
 
 .PHONY: sync-claude-permissions-to-codex
 sync-claude-permissions-to-codex: ## Claude Code の permissions を Codex の config.toml と rules/default.rules に同期する
-	@[ -f "$(CLAUDE_PERMISSIONS_SETTINGS_JSON)" ] || { echo "Error: $(CLAUDE_PERMISSIONS_SETTINGS_JSON) not found"; exit 1; }
+	@[ -f "$(CLAUDE_PERMISSIONS_SETTINGS_JSON)" ] || { echo "WARNING: $(CLAUDE_PERMISSIONS_SETTINGS_JSON) not found, skipping"; exit 0; }
 	@mkdir -p "$(CODEX_PERMISSIONS_DIR)" "$(CODEX_PERMISSIONS_DIR)/rules"
 	@python3 ./scripts/sync_claude_permissions_to_codex.py "$(CLAUDE_PERMISSIONS_SETTINGS_JSON)" "$(CODEX_PERMISSIONS_CONFIG_FILE)" "$(CODEX_PERMISSIONS_RULES_FILE)"
 
@@ -255,6 +255,6 @@ endif
 
 .PHONY: sync-claude-subagents-to-codex
 sync-claude-subagents-to-codex: ## Claude Code の .claude/agents/*.md を Codex の .codex/agents/*.toml に変換同期する
-	@[ -d "$(CLAUDE_AGENTS_DIR)" ] || { echo "Error: $(CLAUDE_AGENTS_DIR) not found"; exit 1; }
+	@[ -d "$(CLAUDE_AGENTS_DIR)" ] || { echo "WARNING: $(CLAUDE_AGENTS_DIR) not found, skipping"; exit 0; }
 	@mkdir -p "$(CODEX_AGENTS_DIR)"
 	@python3 ./scripts/sync_subagents_to_codex.py "$(CLAUDE_AGENTS_DIR)" "$(CODEX_AGENTS_DIR)"
