@@ -206,9 +206,12 @@ def write_config(path, web_search, permissions_section):
     """config.toml を既存設定を壊さず更新する。
 
     Returns:
-        mode description string for user output
+        (mode, has_error)
+        - mode: description string for user output
+        - has_error: True if the sync could not fully complete (e.g. extends conflict)
     """
     existing = open(path).read() if os.path.exists(path) else ""
+    has_error = False
 
     cleaned = remove_marker_section(existing, CONFIG_SETTINGS_MARKER_BEGIN, CONFIG_SETTINGS_MARKER_END)
     cleaned = remove_marker_section(cleaned, CONFIG_MARKER_BEGIN, CONFIG_MARKER_END)
@@ -231,7 +234,8 @@ def write_config(path, web_search, permissions_section):
             elif extends_status == "already-extends-claude-synced":
                 mode = 'profile "{}" already extends {}'.format(existing_profile, PROFILE_NAME)
             else:
-                mode = 'WARNING: profile "{}" already extends "{}"; {} rules added but not auto-linked'.format(
+                has_error = True
+                mode = 'ERROR: profile "{}" already extends "{}"; {} rules written but not linked — manually update extends or resolve the conflict'.format(
                     existing_profile, profile_has_extends(cleaned, existing_profile), PROFILE_NAME
                 )
     elif has_sandbox_mode:
@@ -267,7 +271,7 @@ def write_config(path, web_search, permissions_section):
     with open(path, "w") as f:
         f.write(content)
 
-    return mode
+    return mode, has_error
 
 
 def collect_permissions(cfg):
@@ -431,7 +435,7 @@ def main():
     os.makedirs(os.path.dirname(dst_config), exist_ok=True)
     os.makedirs(os.path.dirname(dst_rules), exist_ok=True)
 
-    mode = write_config(dst_config, web_search, permissions_section)
+    mode, has_error = write_config(dst_config, web_search, permissions_section)
     append_marker_section(dst_rules, RULES_MARKER_BEGIN, RULES_MARKER_END, rules_section)
 
     read_deny_count = sum(
@@ -452,6 +456,9 @@ def main():
     print("  Read deny rules: {}".format(read_deny_count))
     print("  Web rules: {}".format(web_count))
     print_unsupported(unsupported)
+
+    if has_error:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
