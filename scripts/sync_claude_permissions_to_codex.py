@@ -11,6 +11,8 @@ CONFIG_SETTINGS_MARKER_BEGIN = "# sync-claude-permissions-settings-begin\n"
 CONFIG_SETTINGS_MARKER_END = "# sync-claude-permissions-settings-end\n"
 CONFIG_MARKER_BEGIN = "# sync-claude-permissions-begin\n"
 CONFIG_MARKER_END = "# sync-claude-permissions-end\n"
+EXTENDS_MARKER_BEGIN = "# sync-claude-permissions-extends-begin\n"
+EXTENDS_MARKER_END = "# sync-claude-permissions-extends-end\n"
 RULES_MARKER_BEGIN = "# sync-claude-permissions-begin\n"
 RULES_MARKER_END = "# sync-claude-permissions-end\n"
 
@@ -81,21 +83,195 @@ def remove_marker_section(text, marker_begin, marker_end):
     return re.sub(pattern, "", text, flags=re.DOTALL).strip()
 
 
-def write_config(path, settings_section, permissions_section):
+def remove_profile_toml_sections(text, profile_name):
+    """テキストから [permissions.X] および [permissions.X.*] セクションを除去する。
+
+    マーカー外に残った同名プロファイル定義がマーカー内の定義と重複するのを防ぐ。
+    """
+    lines = text.split("\n")
+    result = []
+    skipping = False
+    section_pattern = re.compile(
+        r"^\s*\[permissions\.{}(?:\..*)?\]".format(re.escape(profile_name))
+    )
+    next_section_pattern = re.compile(r"^\s*\[(?!permissions\.{}[\]\.])".format(re.escape(profile_name)))
+
+    for line in lines:
+        if not skipping:
+            if section_pattern.match(line):
+                skipping = True
+                continue
+            result.append(line)
+        else:
+            if next_section_pattern.match(line):
+                skipping = False
+                result.append(line)
+
+    cleaned = "\n".join(result)
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+    return cleaned.strip()
+
+
+def detect_existing_permissions(text):
+    """既存config.tomlのpermission関連設定を検出する。
+
+    Returns:
+        (default_perms_match, has_sandbox_mode)
+        - default_perms_match: re.Match or None (グループ1にプロファイル名)
+        - has_sandbox_mode: bool
+    """
+    default_perms = re.search(
+        r'^\s*default_permissions\s*=\s*"([^"]*)"', text, re.MULTILINE
+    )
+    has_sandbox_mode = bool(
+        re.search(r"^\s*sandbox_mode\s*=", text, re.MULTILINE)
+    )
+    return default_perms, has_sandbox_mode
+
+
+def find_profile_section(text, profile_name):
+    """[permissions.X] or [permissions.X.*] セクションの存在を確認する。"""
+    pattern = r"^\s*\[permissions\.{}(?:\.\w+)?\]".format(re.escape(profile_name))
+    return re.search(pattern, text, re.MULTILINE)
+
+
+def profile_has_extends(text, profile_name):
+    """プロファイルが既に extends を持っているか確認する。
+
+    [permissions.X] セクション内の extends = "..." を探す。
+    マーカー内の extends も含めて検索する。
+    """
+    section_pattern = r'\[permissions\.{}\]'.format(re.escape(profile_name))
+    section_match = re.search(section_pattern, text, re.MULTILINE)
+    if not section_match:
+        return None
+
+    after_section = text[section_match.end():]
+    next_section = re.search(r"^\s*\[", after_section, re.MULTILINE)
+    section_body = after_section[:next_section.start()] if next_section else after_section
+
+    extends_match = re.search(r'^\s*extends\s*=\s*"([^"]*)"', section_body, re.MULTILINE)
+    if extends_match:
+        return extends_match.group(1)
+    return None
+
+
+def remove_extends_marker(text):
+    """extends マーカーを除去する（インライン対応: 改行を1つ保持）。"""
+    pattern = r"{}.*?{}".format(re.escape(EXTENDS_MARKER_BEGIN), re.escape(EXTENDS_MARKER_END))
+    return re.sub(pattern, "", text, flags=re.DOTALL)
+
+
+def add_extends_to_profile(text, profile_name):
+    """既存プロファイルに extends = "claude-synced" を付与する。
+
+    Returns:
+        (modified_text, status)
+        status: "added" | "already-extends-claude-synced" | "has-other-extends" | "created"
+    """
+    # マーカー除去前に、既に正しい extends が設定されているか確認
+    existing_extends = profile_has_extends(text, profile_name)
+    if existing_extends == PROFILE_NAME:
+        return text, "already-extends-claude-synced"
+    if existing_extends is not None:
+        return text, "has-other-extends"
+
+    text = remove_extends_marker(text)
+
+    extends_content = 'extends = "{}"\n'.format(PROFILE_NAME)
+    extends_block = EXTENDS_MARKER_BEGIN + extends_content + EXTENDS_MARKER_END
+
+    bare_section_pattern = r'^(\s*\[permissions\.{}\]\s*\n)'.format(re.escape(profile_name))
+    bare_match = re.search(bare_section_pattern, text, re.MULTILINE)
+    if bare_match:
+        insert_pos = bare_match.end()
+        text = text[:insert_pos] + extends_block + text[insert_pos:]
+        return text, "added"
+
+    sub_section_pattern = r'^(\s*\[permissions\.{}\.(\w+)\])'.format(re.escape(profile_name))
+    sub_match = re.search(sub_section_pattern, text, re.MULTILINE)
+    if sub_match:
+        insert_pos = sub_match.start()
+        new_section = "[permissions.{}]\n".format(profile_name) + extends_block + "\n"
+        text = text[:insert_pos] + new_section + text[insert_pos:]
+        return text, "added"
+
+    new_section = "[permissions.{}]\n".format(profile_name) + extends_content
+    extends_block_full = EXTENDS_MARKER_BEGIN + new_section + EXTENDS_MARKER_END
+    text = text.rstrip() + "\n\n" + extends_block_full if text.strip() else extends_block_full
+    return text, "created"
+
+
+def write_config(path, web_search, permissions_section):
+    """config.toml を既存設定を壊さず更新する。
+
+    Returns:
+        (mode, has_error)
+        - mode: description string for user output
+        - has_error: True if the sync could not fully complete (e.g. extends conflict)
+    """
     existing = open(path).read() if os.path.exists(path) else ""
+    has_error = False
+
     cleaned = remove_marker_section(existing, CONFIG_SETTINGS_MARKER_BEGIN, CONFIG_SETTINGS_MARKER_END)
     cleaned = remove_marker_section(cleaned, CONFIG_MARKER_BEGIN, CONFIG_MARKER_END)
+    # マーカー外に残った claude-synced プロファイル定義を除去（TOML重複防止）
+    cleaned = remove_profile_toml_sections(cleaned, PROFILE_NAME)
 
-    settings_block = CONFIG_SETTINGS_MARKER_BEGIN + settings_section + CONFIG_SETTINGS_MARKER_END
+    default_perms_match, has_sandbox_mode = detect_existing_permissions(cleaned)
+
+    # ケース判定
+    if default_perms_match:
+        existing_profile = default_perms_match.group(1)
+        if existing_profile == PROFILE_NAME:
+            mode = "updated (default_permissions already points to {})".format(PROFILE_NAME)
+        else:
+            cleaned, extends_status = add_extends_to_profile(cleaned, existing_profile)
+            if extends_status == "added":
+                mode = 'extended profile "{}" with {} rules'.format(existing_profile, PROFILE_NAME)
+            elif extends_status == "created":
+                mode = 'created [permissions.{}] with extends = "{}"'.format(existing_profile, PROFILE_NAME)
+            elif extends_status == "already-extends-claude-synced":
+                mode = 'profile "{}" already extends {}'.format(existing_profile, PROFILE_NAME)
+            else:
+                has_error = True
+                mode = 'ERROR: profile "{}" already extends "{}"; {} rules written but not linked — manually update extends or resolve the conflict'.format(
+                    existing_profile, profile_has_extends(cleaned, existing_profile), PROFILE_NAME
+                )
+    elif has_sandbox_mode:
+        mode = "added profile definitions only (sandbox_mode detected; legacy mode)"
+    else:
+        mode = "set default_permissions = {}".format(PROFILE_NAME)
+
+    # settings セクション構築
+    settings_lines = []
+    need_default_permissions = (
+        not default_perms_match and not has_sandbox_mode
+    )
+    if need_default_permissions:
+        settings_lines.append('default_permissions = "{}"'.format(PROFILE_NAME))
+    if web_search and not re.search(r"^\s*web_search\s*=", cleaned, re.MULTILINE):
+        settings_lines.append('web_search = "{}"'.format(web_search))
+
+    # permissions プロファイル定義ブロック
     permissions_block = CONFIG_MARKER_BEGIN + permissions_section + CONFIG_MARKER_END
-    parts = [settings_block.strip()]
+
+    # 組み立て
+    parts = []
+    if settings_lines:
+        settings_section = "# Generated from Claude Code permissions.\n" + "\n".join(settings_lines) + "\n"
+        settings_block = CONFIG_SETTINGS_MARKER_BEGIN + settings_section + CONFIG_SETTINGS_MARKER_END
+        parts.append(settings_block.strip())
     if cleaned:
         parts.append(cleaned)
     parts.append(permissions_block.strip())
     content = "\n\n".join(parts) + "\n"
+    content = re.sub(r"\n{3,}", "\n\n", content)
 
     with open(path, "w") as f:
         f.write(content)
+
+    return mode, has_error
 
 
 def collect_permissions(cfg):
@@ -108,6 +284,13 @@ def collect_permissions(cfg):
 
 
 def build_config_sections(perms, unsupported):
+    """permissions プロファイル定義と web_search 設定を生成する。
+
+    Returns:
+        (web_search, permissions_section)
+        - web_search: str or None
+        - permissions_section: str (TOML profile definition)
+    """
     filesystem_denies = []
     workspace_denies = []
     domain_rules = {}
@@ -151,12 +334,6 @@ def build_config_sections(perms, unsupported):
                 elif decision == "allow" and web_search != "disabled":
                     web_search = "cached"
 
-    settings_lines = []
-    settings_lines.append("# Generated from Claude Code permissions.")
-    settings_lines.append('default_permissions = "{}"'.format(PROFILE_NAME))
-    if web_search:
-        settings_lines.append('web_search = "{}"'.format(web_search))
-
     lines = []
     lines.append("# Generated from Claude Code permissions.")
     lines.append("[permissions.{}.filesystem]".format(PROFILE_NAME))
@@ -181,7 +358,7 @@ def build_config_sections(perms, unsupported):
         for domain, decision in sorted(domain_rules.items()):
             lines.append("{} = {}".format(toml_quote(domain), toml_quote(decision)))
 
-    return "\n".join(settings_lines) + "\n", "\n".join(lines) + "\n"
+    return web_search, "\n".join(lines) + "\n"
 
 
 def build_rules_section(perms, unsupported):
@@ -252,13 +429,13 @@ def main():
 
     perms = collect_permissions(cfg)
     unsupported = []
-    settings_section, permissions_section = build_config_sections(perms, unsupported)
+    web_search, permissions_section = build_config_sections(perms, unsupported)
     rules_section, rules_count = build_rules_section(perms, unsupported)
 
     os.makedirs(os.path.dirname(dst_config), exist_ok=True)
     os.makedirs(os.path.dirname(dst_rules), exist_ok=True)
 
-    write_config(dst_config, settings_section, permissions_section)
+    mode, has_error = write_config(dst_config, web_search, permissions_section)
     append_marker_section(dst_rules, RULES_MARKER_BEGIN, RULES_MARKER_END, rules_section)
 
     read_deny_count = sum(
@@ -273,11 +450,15 @@ def main():
 
     print("Synced Claude permissions to Codex:")
     print("  config: {}".format(dst_config))
+    print("  mode: {}".format(mode))
     print("  rules: {}".format(dst_rules))
     print("  Bash rules: {}".format(rules_count))
     print("  Read deny rules: {}".format(read_deny_count))
     print("  Web rules: {}".format(web_count))
     print_unsupported(unsupported)
+
+    if has_error:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

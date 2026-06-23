@@ -68,6 +68,12 @@ prefix_rule(
 )
 
 prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(git push *)",
+)
+
+prefix_rule(
     pattern = ["fd"],
     decision = "allow",
     justification = "Synced from Claude permissions.allow: Bash(fd *)",
@@ -308,14 +314,20 @@ prefix_rule(
 )
 
 prefix_rule(
+    pattern = ["git", "fetch"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(git fetch *)",
+)
+
+prefix_rule(
     pattern = ["git", "add"],
     decision = "allow",
     justification = "Synced from Claude permissions.allow: Bash(git add *)",
 )
 
 prefix_rule(
-    pattern = ["git", "fetch"],
+    pattern = ["git", "commit"],
     decision = "allow",
-    justification = "Synced from Claude permissions.allow: Bash(git fetch *)",
+    justification = "Synced from Claude permissions.allow: Bash(git commit *)",
 )
 # sync-claude-permissions-end
