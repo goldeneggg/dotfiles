@@ -1,5 +1,18 @@
 {
   "cleanupPeriodDays": 30,
+  "workflowKeywordTriggerEnabled": false,
+  "outputStyle": "concise",
+  "language": "japanese",
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "high",
+  "autoMemoryEnabled": false,
+  "verbose": false,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "allow": [
       "Bash(fd *)",
@@ -498,7 +511,6 @@
       }
     ]
   },
-  "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
@@ -528,17 +540,5 @@
         "repo": "hashicorp/agent-skills"
       }
     }
-  },
-  "outputStyle": "concise",
-  "language": "japanese",
-  "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
-  "autoMemoryEnabled": false,
-  "verbose": false,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "attribution": {
-    "commit": "",
-    "pr": ""
   }
 }

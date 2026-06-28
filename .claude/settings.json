@@ -1,5 +1,7 @@
 {
-  "defaultMode": "auto",
   "model": "sonnet",
-  "effortLevel": "medium"
+  "effortLevel": "medium",
+  "permissions": {
+    "defaultMode": "auto"
+  }
 }
