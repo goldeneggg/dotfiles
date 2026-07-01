@@ -21,14 +21,10 @@ MY_BASE_INDEX=1
 
 GH_ACCOUNT=goldeneggg
 GH_ACCOUNT_PRA=practice-goldeneggg
-GH_ACCOUNT_PRACTA=practa-inc
 GH_DIR=~/github
 GH_MY=${GH_DIR}/${GH_ACCOUNT}
 GH_PRA=${GH_DIR}/${GH_ACCOUNT_PRA}
-GH_PRACTA=${GH_DIR}/${GH_ACCOUNT_PRACTA}
 DIR_DOTFILES=~/dotfiles
-DIR_BLOGEGGG=${GH_MY}/pages
-DIR_BLOGEGGGSITE=${GH_MY}/goldeneggg.github.io
 
 #- tmux session initialize function
 #-- 1st arg = session name
@@ -36,9 +32,9 @@ function tminit() {
   SESS=${1:-${DEFAULT_SESS_NAME}}
 
   WINDOWS=(
-    "home"
+    "dotfiles"
     "app"
-    "go"
+    "biz"
     "watch"
     "b-dev"
     "b-biz"
@@ -56,88 +52,83 @@ function tminit() {
     tmux neww -k -t ${SESS}:${IND} -n ${window} -c ${DIR_DOTFILES}
     # ペインに分割
     case ${window} in
-      wk)
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${DIR_DOTFILES}
-        # 垂直分割=50%
+      dotfiles)
+        # 垂直分割=50%（左右均等）
         tmux splitw -h -l 50% -c ${DIR_DOTFILES}
-        # 上ペインへ
-        tmux select-pane -U
-        tmux send-keys "cd ${HOME}" C-m
-        ;;
-      PARTNER-1)
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_DIR}
-        # 上ペインへ
-        tmux select-pane -U
-        tmux send-keys "cd ${GH_DIR}" C-m
-        ;;
-      PARTNER-2)
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_DIR}
-        # 上ペインへ
-        tmux select-pane -U
-        tmux send-keys "cd ${GH_DIR}" C-m
         ;;
       app)
-        # 垂直分割 下部=50%
-        tmux splitw -h -l 50% -c ${GH_MY}/biz/app
-        # 右ペインへ
-        tmux select-pane -R
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_MY}/biz/app
-        # 下ペインへ
-        tmux select-pane -D
-        tmux send-keys "cd ${GH_MY}/biz/app" C-m
-        ;;
-      go)
-        # 垂直分割=50%
-        tmux splitw -h -l 50% -c ${GH_MY}/biz
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${GH_PRA}/watch-go
+        # 垂直分割=50%（左右均等）
+        tmux splitw -h -l 50% -c ${GH_MY}/repodocs
+        # 右ペインで水平分割 上25%/下75%
+        tmux splitw -v -l 75% -c ${GH_MY}/repodocs
         # 左ペインへ
-        tmux select-pane -L
-        # cd goldeneggg.github.io
-        tmux send-keys "cd ${HOME}/goexample" C-m
-        # 水平分割 下部=70%
-        tmux splitw -v -l 70% -c ${HOME}/gotools
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c ${HOME}/goroot
+        tmux select-pane -t 0
+        # 左ペインで水平分割 上25%/下75%
+        tmux splitw -v -l 75% -c ${GH_MY}/browser-tools
+        # 左上ペイン(pane 0)はneww由来で~/dotfilesのままなのでcdで設定
+        tmux select-pane -t 0
+        tmux send-keys "cd ${GH_MY}/browser-tools" C-m
+        ;;
+      biz)
+        # 垂直分割=50%（左右均等）
+        tmux splitw -h -l 50% -c ${GH_MY}/biz/app/bizapi
+        # 右ペインで水平分割 上25%/下75%
+        tmux splitw -v -l 75% -c ${GH_MY}/biz
+        # 右上ペイン(pane 1)のディレクトリをsend-keysで確実に設定
+        tmux select-pane -t 1
+        tmux send-keys "cd ${GH_MY}/biz/app/bizapi" C-m
+        # 左ペインへ
+        tmux select-pane -t 0
+        # 左ペインで水平分割 上25%/下75%
+        tmux splitw -v -l 75% -c ${GH_MY}/biz
+        # 左上ペイン(pane 0)はneww由来で~/dotfilesのままなのでcdで設定
+        tmux select-pane -t 0
+        tmux send-keys "cd ${GH_MY}/biz/app/slacksocket" C-m
         ;;
       watch)
-        # 水平分割 下部=50%
+        # 垂直分割=50%（左右均等）
+        tmux splitw -h -l 50% -c ${GH_PRA}/watch-browser
+        # 右ペインで水平分割=50%
         tmux splitw -v -l 50% -c ${GH_PRA}/watch-ai
-        # 上ペインへ
-        tmux select-pane -U
-        tmux send-keys "cd ${GH_PRA}/watch-aws" C-m
+        # 左ペインへ
+        tmux select-pane -t 0
+        # 左ペインで水平分割=50%
+        tmux splitw -v -l 50% -c ${HOME}/goroot
+        # 左上ペインへ戻してcd
+        tmux select-pane -t 0
+        tmux send-keys "cd ${HOME}/gotools" C-m
         ;;
       b-dev)
-        # 垂直分割 50%
+        # 垂直分割=50%
         tmux splitw -h -l 50% -c "/Volumes"
-        # 水平分割 50%
+        # 右ペインで水平分割=50%
         tmux splitw -v -l 50% -c "/Volumes"
-        # 左部ペインへ
-        tmux select-pane -L
+        # 左ペインへ
+        tmux select-pane -t 0
+        # 左ペインで水平分割=50%
+        tmux splitw -v -l 50% -c "/Volumes"
+        # 左上ペイン(pane 0)はneww由来で~/dotfilesのままなのでcdで設定
+        tmux select-pane -t 0
         tmux send-keys "cd /Volumes" C-m
-        # 水平分割=50%
-        tmux splitw -v -l 50% -c "/Volumes"
         ;;
       b-biz)
-        # 垂直分割 50%
+        # 垂直分割=50%
         tmux splitw -h -l 50% -c "/Volumes"
-        # 水平分割 50%
+        # 右ペインで水平分割=50%
         tmux splitw -v -l 50% -c "/Volumes"
-        # 左部ペインへ
-        tmux select-pane -L
+        # 左ペインへ
+        tmux select-pane -t 0
+        # 左ペインで水平分割=50%
+        tmux splitw -v -l 50% -c "/Volumes"
+        # 左上ペイン(pane 0)はneww由来で~/dotfilesのままなのでcdで設定
+        tmux select-pane -t 0
         tmux send-keys "cd /Volumes" C-m
-        # 水平分割=50%
-        tmux splitw -v -l 50% -c "/Volumes"
         ;;
       x)
-        # 水平分割 下部=50%
-        tmux splitw -v -l 50% -c /Volumes
-        # 上ペインへ
-        tmux select-pane -U
+        # 水平分割=50%（上下均等）
+        tmux splitw -v -l 50% -c "/Volumes"
+        # 上ペイン(pane 0)はneww由来で~/dotfilesのままなのでcdで設定
+        tmux select-pane -t 0
         tmux send-keys "cd /Volumes" C-m
         ;;
       *)
