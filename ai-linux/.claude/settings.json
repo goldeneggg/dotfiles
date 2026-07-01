@@ -1,14 +1,5 @@
 {
   "cleanupPeriodDays": 30,
-  "workflowKeywordTriggerEnabled": false,
-  "outputStyle": "concise",
-  "language": "japanese",
-  "alwaysThinkingEnabled": true,
-  "effortLevel": "high",
-  "autoMemoryEnabled": false,
-  "verbose": false,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
   "attribution": {
     "commit": "",
     "pr": ""
@@ -101,6 +92,7 @@
     ],
     "defaultMode": "acceptEdits"
   },
+  "model": "sonnet",
   "hooks": {
     "SessionStart": [
       {
@@ -511,6 +503,7 @@
       }
     ]
   },
+  "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
@@ -540,5 +533,13 @@
         "repo": "hashicorp/agent-skills"
       }
     }
-  }
+  },
+  "outputStyle": "concise",
+  "language": "japanese",
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "medium",
+  "autoMemoryEnabled": false,
+  "verbose": false,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
