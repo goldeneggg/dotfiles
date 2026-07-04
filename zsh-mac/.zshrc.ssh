@@ -2,7 +2,7 @@ if [[ -n "${SSH_AUTH_SOCK}" ]]
 then
   if [[ "${IS_M1_MAC}" = "true" ]]
   then
-    ssh-add --apple-use-keychain
+    ssh-add --apple-use-keychain ~/.ssh/id_ed25519
   else
     ssh-add -K
   fi
