@@ -1149,6 +1149,8 @@ extends = ":workspace"
 "~/.ssh/known_hosts" = "read" # git push用
 "~/Documents" = "deny"
 "~/Documents/codex" = "write"
+"~/go/pkg/mod" = "write" # Go用 ($GOMODCACHE)
+"~/Library/Caches/go-build" = "write" # Go用 ($GOCACHE)
 glob_scan_max_depth = 6
 
 [permissions.user-scope-default.filesystem.":workspace_roots"]
