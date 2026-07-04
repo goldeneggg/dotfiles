@@ -1144,12 +1144,15 @@ extends = ":workspace"
 "~/.aws/**" = "deny"
 "~/.gnupg/**" = "deny"
 "~/.ssh/id_*" = "deny"
+"~/.ssh/$CODEX_CONFIG_PUBKEY_NAME" = "read" # git commit時の署名用公開鍵の読み込み用
 "~/Documents" = "deny"
 "~/Documents/codex" = "write"
 glob_scan_max_depth = 6
 
 [permissions.user-scope-default.filesystem.":workspace_roots"]
 "." = "write" # always allow write access to the current working directory (workspace root)
+".git" = "write" # git操作失敗回避用
+".git/**" = "write" # git操作失敗回避用
 ".devcontainer" = "read" # always allow read access to the .devcontainer directory (if it exists)
 "**/.env" = "deny"
 "**/.envrc" = "deny"
