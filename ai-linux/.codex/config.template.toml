@@ -1179,6 +1179,9 @@ enabled = true
 # ----------------------------------------
 # プロジェクト固有 Permission Profiles 設定例
 
+# default_permissions を上書き
+default_permissions = "project-A"
+
 # "user-scope-default" プロファイルをプロジェクトでextendして固有設定を適用
 [permissions.project-A]
 extends = "user-scope-default" # 継承元のプロファイルを指定
@@ -1201,6 +1204,3 @@ description = "project-A specific profile"
 [permissions.project-A.network.domains]
 "localhost" = "allow"
 "127.0.0.1" = "allow"
-
-# default_permissions を上書き
-default_permissions = "project-A"
