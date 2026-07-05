@@ -330,10 +330,10 @@ git diff {base_branch}..{target_branch}
 **対処:**
 - 解析できなかった引数の内容をユーザーに提示
 - 正しい形式の例を示して再入力を依頼:
-  - GitHub PR: `/pr-reviewer owner/repo 123`
-  - ローカルブランチ: `/pr-reviewer feature/xxx`
-  - オプション付き: `/pr-reviewer owner/repo 123 --outline 概要`
-  - 出力先指定: `/pr-reviewer owner/repo 123 --output file,pr-comment`
+  - GitHub PR: `pr-reviewer` スキル（例: `owner/repo 123` を指定）
+  - ローカルブランチ: `pr-reviewer` スキル（例: `feature/xxx` を指定）
+  - オプション付き: `pr-reviewer` スキル（例: `owner/repo 123 --outline 概要` を指定）
+  - 出力先指定: `pr-reviewer` スキル（例: `owner/repo 123 --output file,pr-comment` を指定）
 - 引数なしの場合はレビュー対象を質問
 
 ### diff取得失敗
@@ -405,7 +405,7 @@ git diff {base_branch}..{target_branch}
 
 **対処:**
 - 受け付ける値が `file` と `pr-comment`（カンマ区切りで併記可）のみであることを提示
-- 正しい形式の例を示して再入力を依頼: `/pr-reviewer owner/repo 123 --output file,pr-comment`
+- 正しい形式の例を示して再入力を依頼: `pr-reviewer` スキル（例: `owner/repo 123 --output file,pr-comment` を指定）
 
 ### ローカルブランチレビューで `pr-comment` が指定された
 

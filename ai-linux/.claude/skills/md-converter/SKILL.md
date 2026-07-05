@@ -5,7 +5,7 @@ description: |
   以下の状況で使用:
     (1) ユーザーが「このテキストをmarkdownに変換して」「HTMLをmdに変換して」と依頼した時
     (2) ユーザーが「このファイルをmarkdownにして」とファイルパスを提示した時
-    (3) ユーザーが明示的に「/md-converter」を実行した時
+    (3) ユーザーが明示的に「md-converter スキル」の実行を指示された時
     (4) RST, AsciiDoc, HTMLなどからmarkdownへの変換が必要な時
     (5) 形式が不明なテキストをmarkdownとして整形したい時
 argument-hint: "<ファイルパス or テキスト> [--from html|rst|asciidoc] [--output ファイルパス]"

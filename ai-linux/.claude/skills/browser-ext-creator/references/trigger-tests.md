@@ -6,7 +6,7 @@
 |---|-------------|----------|
 | 1 | 「YouTubeの動画速度を変更するChrome拡張を作って」 | 発火。対象サイト: youtube.com、content script中心 |
 | 2 | 「Gmailに返信テンプレートボタンを追加するFirefox拡張を開発して」 | 発火。対象サイト: mail.google.com、popup + content script |
-| 3 | 「/browser-ext-creator」 | 発火。明示的コマンド実行 |
+| 3 | 「browser-ext-creator スキル」の実行を指示 | 発火。明示的コマンド実行 |
 | 4 | 「特定のサイトの広告を非表示にするブラウザ拡張を実装して」 | 発火。content script + CSS注入 |
 | 5 | 「GitHub PRページにワンクリックでApproveするボタンを追加したい」 | 発火。特定サイトの機能拡張 |
 | 6 | 「Chrome拡張でページ内のテキストを選択したら翻訳APIに投げるやつ作って」 | 発火。context menu / content script + 外部API連携 |
