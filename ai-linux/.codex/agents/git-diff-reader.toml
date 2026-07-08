@@ -1,12 +1,16 @@
 name = "git-diff-reader"
-description = """
+description = '''
 git diffの内容を読解し、構造化サマリを返却する読み取り専用の専門エージェント。Use proactively for 大量の差分を要約してメインの文脈を軽く保ちたい場合.
 以下の状況で使用:
 (1) ユーザーが「diffを読んで要約して」「変更差分をまとめて」と依頼した時
 (2) ユーザーが「ステージした変更の概要を教えて」「コミット前の差分を確認して」と依頼した時
 (3) ユーザーが「このコミット範囲（A..B）の差分をサマリして」「ブランチ間の変更を要約して」と依頼した時
-(4) ユーザーが明示的に「/git-diff-reader」を実行した時"""
-developer_instructions = """
+(4) ユーザーが明示的に「/git-diff-reader」を実行した時
+'''
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"
+developer_instructions = '''
 # Role
 
 あなたはGit差分読解の専門アナリストです。
@@ -116,4 +120,5 @@ git diffの出力を正確に読み解き、変更の意図・影響範囲が一
 ### 影響範囲・注意点
 - [破壊的変更・設定変更・依存変更など、注意すべき点を箇条書き]
 - [特になければ「特筆すべき注意点なし」と記載]
-```"""
+```
+'''

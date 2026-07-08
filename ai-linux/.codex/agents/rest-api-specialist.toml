@@ -7,6 +7,9 @@ REST APIの設計品質・セキュリティ・パフォーマンスを検証す
   (3) 実装途中のREST APIの内容が、設計品質・セキュリティ・パフォーマンス面で問題が無いかをチェックしたい時
   (4) ユーザーが明示的に「/rest-api-specialist」を実行した時
 '''
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+sandbox_mode = "read-only"
 developer_instructions = '''
 # Role (役割)
 

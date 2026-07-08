@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 import glob, os, re, sys
 
+MODEL_REASONING_MAP = {
+    "sonnet": ("gpt-5.4", "medium"),
+    "haiku": ("gpt-5.4-mini", "low"),
+    "opus": ("gpt-5.5", "medium"),
+    "fable": ("gpt-5.5", "high"),
+}
+SANDBOX_MODE = "read-only"
+
 
 def parse_frontmatter(text):
     m = re.match(r"^---\n(.*?)\n---\n?(.*)\Z", text, re.DOTALL)
@@ -88,9 +96,22 @@ def main():
                 "  ! skip {}: contains triple single-quote, needs manual handling".format(fname)
             )
             continue
+        claude_model = fields.get("model", "").strip()
+        codex_model_reasoning = MODEL_REASONING_MAP.get(claude_model)
+        if codex_model_reasoning is None:
+            print(
+                '  ! warn {}: unknown model "{}", skip model/model_reasoning_effort'.format(
+                    fname, claude_model
+                )
+            )
         out = []
         out.append('name = "{}"'.format(name))
         out.append("description = '''\n{}\n'''".format(desc))
+        if codex_model_reasoning is not None:
+            codex_model, reasoning_effort = codex_model_reasoning
+            out.append('model = "{}"'.format(codex_model))
+            out.append('model_reasoning_effort = "{}"'.format(reasoning_effort))
+        out.append('sandbox_mode = "{}"'.format(SANDBOX_MODE))
         out.append("developer_instructions = '''\n{}\n'''".format(body))
         content = "\n".join(out) + "\n"
         dst = os.path.join(dst_dir, name + ".toml")
