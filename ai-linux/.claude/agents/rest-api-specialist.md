@@ -6,7 +6,7 @@ description: |
     (1) ユーザーが「REST APIをレビューして」「OpenAPI定義をチェックして」「APIのセキュリティを確認して」「APIの設計品質を検証して」と依頼した時
     (2) ユーザーが「REST APIの設計案をレビューして」「OpenAPI仕様をレビューして」と依頼した時
     (3) 実装途中のREST APIの内容が、設計品質・セキュリティ・パフォーマンス面で問題が無いかをチェックしたい時
-    (4) ユーザーが明示的に「/rest-api-specialist」を実行した時
+    (4) ユーザーが明示的に「rest-api-specialistに委譲して」「rest-api-specialistをspawnして」と依頼した時
 model: sonnet
 tools:
   - Read

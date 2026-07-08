@@ -6,7 +6,7 @@ description: |
   (1) ユーザーが「ブランチを比較して」「ブランチ間の差分をレポートして」と依頼した時
   (2) ユーザーが「masterとfeature/xxxの違いを教えて」と依頼した時
   (3) ユーザーが「リモートブランチと比較して」と依頼した時
-  (4) ユーザーが明示的に「/branch-compare-reporter」を実行した時
+  (4) ユーザーが明示的に「branch-compare-reporterに委譲して」「branch-compare-reporterをspawnして」と依頼した時
 model: sonnet
 tools:
   - Read
