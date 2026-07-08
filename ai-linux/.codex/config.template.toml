@@ -10,7 +10,7 @@
 
 # Primary model used by Codex. Recommended example for most users: "gpt-5.5".
 
-model = "gpt-5.5"
+model = "gpt-5.4"
 
 # Communication style for supported models. Allowed values: none | friendly | pragmatic
 
@@ -56,7 +56,7 @@ service_tier = "flex"
 
 # Reasoning effort: minimal | low | medium | high | xhigh
 
-model_reasoning_effort = "high"
+model_reasoning_effort = "medium"
 
 # Optional override used when Codex runs in plan mode: none | minimal | low | medium | high | xhigh
 
