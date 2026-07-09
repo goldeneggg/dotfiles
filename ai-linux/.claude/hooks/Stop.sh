@@ -9,7 +9,7 @@ input="$(cat)"
 
 # output history log
 THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-"${THIS_DIR}/history-logger.sh" "Stopped" "${input}"
+# "${THIS_DIR}/history-logger.sh" "Stopped" "${input}"
 
 # terminal-notifier の存在チェック
 if ! command -v terminal-notifier >/dev/null 2>&1; then
@@ -25,4 +25,4 @@ fi
 terminal-notifier \
   -title 'Claude Code' \
   -subtitle "✅️ Stop: ${pjt}" \
-  -message '終了や！！'
+  -message '終了や！！' >/dev/null 2>&1 || true

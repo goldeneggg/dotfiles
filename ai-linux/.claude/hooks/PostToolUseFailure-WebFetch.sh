@@ -8,7 +8,7 @@ input="$(cat)"
 THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # output history log
-"${THIS_DIR}/history-logger.sh" "WebFetch failure" "${input}"
+# "${THIS_DIR}/history-logger.sh" "WebFetch failure" "${input}"
 
 # output error log
 "${THIS_DIR}/error-logger.sh" "WebFetch failure" "${input}"
