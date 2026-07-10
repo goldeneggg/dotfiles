@@ -10,7 +10,7 @@
 
 # Primary model used by Codex. Recommended example for most users: "gpt-5.5".
 
-model = "gpt-5.4"
+model = "gpt-5.6-sol"
 
 # Communication style for supported models. Allowed values: none | friendly | pragmatic
 
@@ -168,7 +168,12 @@ allow_login_shell = true
 
 # - danger-full-access (no sandbox; extremely risky)
 
-# sandbox_mode = "read-only"
+sandbox_mode = "workspace-write"
+
+# FIXME: 20260710 以下理由でpermission profileは無効化し、sandbox_modeで制御する方針に変更中
+# - codex cli だと正常機能するdeny, read, write の権限設定が、codex appだと期待通り機能しない
+# - コマンド実行の度に ~/.xxx とか ./.xxx みたいなdotディレクトリの権限エラーで引っ掛かり作業効率が悪い
+#   - エラーになる度に都度設定を増やして回避するという作業も非効率（git, docker, npm, gradle, 等々）
 
 # Named permissions profile to apply by default. Built-ins:
 
@@ -177,7 +182,66 @@ allow_login_shell = true
 # Use a custom name such as "workspace" only when you also define [permissions.workspace].
 
 # default_permissions = ":workspace"
-default_permissions = "user-scope-default"
+# default_permissions = "user-scope-default"
+
+# ----------
+# My Permission Profiles
+# ----------
+
+# # "user-scope-default"
+# [permissions.user-scope-default]
+# description = "default profile for user-scope local development"
+# extends = ":workspace"
+
+# # filesystem
+# [permissions.user-scope-default.filesystem]
+# ":root" = "read"
+# ":minimal" = "read"
+# ":tmpdir" = "write"
+# ":slash_tmp" = "write"
+# "~/.agents/skills" = "read"
+# "~/dotfiles/ai-linux/.claude/skills" = "read"
+# "~/.codex/skills" = "read"
+# "~/.codex/plugins/cache" = "read"
+# "~/.gitconfig" = "read"
+# "~/.config/git/config" = "read"
+# "~/.config/git/ignore" = "read"
+# "~/.aws/**" = "deny"
+# "~/.gnupg/**" = "deny"
+# "~/.ssh" = "deny"
+# "~/.ssh/$CODEX_CONFIG_PUBKEY_NAME" = "read" # git commit時の署名用公開鍵read用。このペア秘密鍵がssh-addされてる必要あり
+# #"~/.ssh/$CODEX_CONFIG_PRIVATEKEY_NAME" = "read" # ペア秘密鍵がssh-addされていないと、こっちも有効化する必要あり
+# "~/.ssh/known_hosts" = "read" # git push用
+# "~/Documents" = "deny"
+# "~/Documents/codex" = "write"
+# "~/go/pkg/mod" = "write" # Go用 ($GOMODCACHE)
+# "~/Library/Caches/go-build" = "write" # Go用 ($GOCACHE)
+# "~/.npm" = "write"
+# "~/.docker" = "write"
+# glob_scan_max_depth = 6
+
+# [permissions.user-scope-default.filesystem.":workspace_roots"]
+# "." = "write" # always allow write access to the current working directory (workspace root)
+# ".git" = "write" # git操作失敗回避用
+# ".git/**" = "write" # git操作失敗回避用
+# ".devcontainer" = "read" # always allow read access to the .devcontainer directory (if it exists)
+# "**/.env" = "deny"
+# "**/.envrc" = "deny"
+# "**/*.key" = "deny"
+# "**/*.pem" = "deny"
+# "**/.git/credentials" = "deny"
+# "**/credentials.json" = "deny"
+# "**/service-account*.json" = "deny"
+# "secrets/**" = "deny"
+
+# # network
+# [permissions.user-scope-default.network]
+# enabled = true
+
+# [permissions.user-scope-default.network.domains]
+# "api.openai.com" = "allow"
+# "github.com" = "allow"
+#"*" = "allow"
 
 ################################################################################
 
@@ -738,15 +802,15 @@ codex_git_commit = false
 ################################################################################
 
 [mcp_servers.context7]
-command = "$CODEX_CONFIG_DOCKER_PATH"
+command = "docker"
 args = ["run", "-i", "--rm", "--init", "-e", "MCP_TRANSPORT=stdio", "mcp/context7:latest"]
 
 [mcp_servers.drawio]
-command = "$CODEX_CONFIG_NPX_PATH"
+command = "npx"
 args = ["-y", "@drawio/mcp"]
 
 # [mcp_servers.chrome-devtools]
-# command = "$CODEX_CONFIG_NPX_PATH"
+# command = "npx"
 # args = ["-y", "chrome-devtools-mcp@latest"]
 
 # [mcp_servers]
@@ -1118,64 +1182,6 @@ metrics_exporter = "statsig"
 ################################################################################
 [desktop]
 followUpQueueMode = "queue"
-
-# ----------
-# Permission Profiles
-# ----------
-
-# "user-scope-default"
-[permissions.user-scope-default]
-description = "default profile for user-scope local development"
-extends = ":workspace"
-
-# filesystem
-[permissions.user-scope-default.filesystem]
-":root" = "read"
-":minimal" = "read"
-":tmpdir" = "write"
-":slash_tmp" = "write"
-"~/.agents/skills" = "read"
-"~/dotfiles/ai-linux/.claude/skills" = "read"
-"~/.codex/skills" = "read"
-"~/.codex/plugins/cache" = "read"
-"~/.gitconfig" = "read"
-"~/.config/git/config" = "read"
-"~/.config/git/ignore" = "read"
-"~/.aws/**" = "deny"
-"~/.gnupg/**" = "deny"
-"~/.ssh" = "deny"
-"~/.ssh/$CODEX_CONFIG_PUBKEY_NAME" = "read" # git commit時の署名用公開鍵read用。このペア秘密鍵がssh-addされてる必要あり
-#"~/.ssh/$CODEX_CONFIG_PRIVATEKEY_NAME" = "read" # ペア秘密鍵がssh-addされていないと、こっちも有効化する必要あり
-"~/.ssh/known_hosts" = "read" # git push用
-"~/Documents" = "deny"
-"~/Documents/codex" = "write"
-"~/go/pkg/mod" = "write" # Go用 ($GOMODCACHE)
-"~/Library/Caches/go-build" = "write" # Go用 ($GOCACHE)
-"~/.npm" = "write"
-glob_scan_max_depth = 6
-
-[permissions.user-scope-default.filesystem.":workspace_roots"]
-"." = "write" # always allow write access to the current working directory (workspace root)
-".git" = "write" # git操作失敗回避用
-".git/**" = "write" # git操作失敗回避用
-".devcontainer" = "read" # always allow read access to the .devcontainer directory (if it exists)
-"**/.env" = "deny"
-"**/.envrc" = "deny"
-"**/*.key" = "deny"
-"**/*.pem" = "deny"
-"**/.git/credentials" = "deny"
-"**/credentials.json" = "deny"
-"**/service-account*.json" = "deny"
-"secrets/**" = "deny"
-
-# network
-[permissions.user-scope-default.network]
-enabled = true
-
-[permissions.user-scope-default.network.domains]
-"api.openai.com" = "allow"
-"github.com" = "allow"
-#"*" = "allow"
 
 #####-TEMPLATE-END
 
