@@ -170,6 +170,18 @@ allow_login_shell = true
 
 sandbox_mode = "workspace-write"
 
+# この設定ではHOMEを `~` とは書けないようなので、templateには変数で書いておき、実ファイルをHOMEの実パスに置換する
+[sandbox_workspace_write]
+writable_roots = [
+  "$CODEX_CONFIG_YOUR_HOME_DIR/Documents/codex",
+  "$CODEX_CONFIG_YOUR_HOME_DIR/go/pkg/mod",
+  "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/go-build",
+  "$CODEX_CONFIG_YOUR_HOME_DIR/.npm",
+  "$CODEX_CONFIG_YOUR_HOME_DIR/.docker",
+  "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/ms-playwright"
+]
+network_access = true
+
 # FIXME: 20260710 以下理由でpermission profileは無効化し、sandbox_modeで制御する方針に変更中
 # - codex cli だと正常機能するdeny, read, write の権限設定が、codex appだと期待通り機能しない
 # - コマンド実行の度に ~/.xxx とか ./.xxx みたいなdotディレクトリの権限エラーで引っ掛かり作業効率が悪い
@@ -216,8 +228,8 @@ sandbox_mode = "workspace-write"
 # "~/Documents/codex" = "write"
 # "~/go/pkg/mod" = "write" # Go用 ($GOMODCACHE)
 # "~/Library/Caches/go-build" = "write" # Go用 ($GOCACHE)
-# "~/.npm" = "write"
-# "~/.docker" = "write"
+# "~/.npm" = "write" # npm用
+# "~/.docker" = "write" # docker用
 # glob_scan_max_depth = 6
 
 # [permissions.user-scope-default.filesystem.":workspace_roots"]
@@ -473,9 +485,9 @@ experimental_use_profile = false
 
 # Enable the feature before configuring sandboxed networking rules.
 
-# [features.network_proxy]
+[features.network_proxy]
 
-# enabled = true
+enabled = true
 
 # domains = { "api.openai.com" = "allow", "example.com" = "deny" }
 
@@ -490,6 +502,9 @@ experimental_use_profile = false
 # `allow_local_binding = false` blocks loopback and private destinations by default.
 
 # Add an exact local IP literal or `localhost` allow rule for one target, or set it to true only when broader local access is required.
+
+[features.network_proxy.unix_sockets]
+"$CODEX_CONFIG_YOUR_HOME_DIR/.docker/run/docker.sock" = "allow" # docker for mac用
 
 #
 
