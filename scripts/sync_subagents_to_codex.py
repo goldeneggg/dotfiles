@@ -2,10 +2,10 @@
 import glob, os, re, sys
 
 MODEL_REASONING_MAP = {
-    "sonnet": ("gpt-5.4", "medium"),
-    "haiku": ("gpt-5.4-mini", "low"),
-    "opus": ("gpt-5.5", "medium"),
-    "fable": ("gpt-5.5", "high"),
+    "sonnet": ("gpt-5.6-terra", "medium"),
+    "haiku": ("gpt-5.6-luna", "low"),
+    "opus": ("gpt-5.6-sol", "medium"),
+    "fable": ("gpt-5.6-sol", "high"),
 }
 SANDBOX_MODE = "read-only"
 
