@@ -113,8 +113,7 @@ model_reasoning_summary = "auto"
 # External notifier program (argv array). When unset: disabled.
 
 # notify = ["notify-send", "Codex"]=
-# FIXME: この設定内で `~` が使えるかどうか？
-#notify = [ "~/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended" ]
+notify = [ "$CODEX_CONFIG_YOUR_HOME_DIR/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended" ]
 
 ################################################################################
 
@@ -485,9 +484,9 @@ experimental_use_profile = false
 
 # Enable the feature before configuring sandboxed networking rules.
 
-[features.network_proxy]
+# [features.network_proxy]
 
-enabled = true
+# enabled = true
 
 # domains = { "api.openai.com" = "allow", "example.com" = "deny" }
 

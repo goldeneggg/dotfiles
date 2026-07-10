@@ -32,6 +32,18 @@ prefix_rule(
 )
 
 prefix_rule(
+    pattern = ["ps"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(ps *)",
+)
+
+prefix_rule(
+    pattern = ["pgrep"],
+    decision = "prompt",
+    justification = "Synced from Claude permissions.ask: Bash(pgrep *)",
+)
+
+prefix_rule(
     pattern = ["kill"],
     decision = "prompt",
     justification = "Synced from Claude permissions.ask: Bash(kill *)",
