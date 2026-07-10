@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Config Doctor"
+  short_description: "プロジェクトとCodex設定の整合性・権限制約を診断"
+  default_prompt: "$codex-config-doctor を使って、このプロジェクトのCodex設定を診断してください。"
