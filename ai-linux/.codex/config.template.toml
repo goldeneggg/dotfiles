@@ -30,7 +30,7 @@ model_provider = "openai"
 
 # Preferred service tier. Built-in examples: fast | flex; model catalogs can add more.
 
-service_tier = "flex"
+# service_tier = "flex"
 
 # Optional manual model metadata. When unset, Codex uses model or preset defaults.
 
