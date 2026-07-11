@@ -28,6 +28,32 @@
     "button": true,
     "favorite_models": [],
     "model_parameters": [],
+    "tool_permissions": {
+      "default": "confirm",
+      "tools": {
+        "terminal": {
+          "default": "confirm",
+          "always_allow": [
+            { "pattern": "^go\\s+test(?:\\s|$)" },
+            { "pattern": "^bundle\\s+exec\\s+rspec(?:\\s|$)" },
+            { "pattern": "^terraform\\s+init(?:\\s|$)" },
+            { "pattern": "^terraform\\s+validate(?:\\s|$)" },
+          ],
+          "always_confirm": [
+            { "pattern": "^rmdir\\b" },
+            { "pattern": "^mv\\b" },
+            { "pattern": "^cp\\b" },
+            { "pattern": "^touch\\b" },
+            { "pattern": "^chmod\\b" },
+            { "pattern": "^chown\\b" },
+            { "pattern": "^kill\\b" },
+            { "pattern": "^curl\\b" },
+            { "pattern": "^wget\\b" },
+            { "pattern": "^sudo\\b" },
+          ],
+        },
+      },
+    },
   },
   "multi_cursor_modifier": "cmd_or_ctrl",
   "minimap": {
@@ -36,10 +62,136 @@
   "buffer_font_fallbacks": ["Monaco", "Menlo", "Courier New"],
   "buffer_font_family": "Ubuntu Mono derivative Powerline",
   "file_types": {
-    "terraform": ["*.hcl"],
-    "makefile": ["*.Makefile"],
-    "plaintext": ["*.cnf"],
-    "jsonc": ["*.hujson"],
+    "Terraform": ["*.hcl"],
+    "Make": ["*.Makefile"],
+    "Plain Text": ["*.cnf"],
+    "JSONC": ["*.hujson"],
+  },
+  "languages": {
+    "Go": {
+      "hard_tabs": true,
+    },
+    "Make": {
+      "hard_tabs": true,
+    },
+    "Python": {
+      "tab_size": 4,
+      "formatter": "language_server",
+      "format_on_save": "on",
+    },
+    "Proto": {
+      "format_on_save": "on",
+    },
+    "Terraform": {
+      "formatter": "language_server",
+      "format_on_save": "on",
+    },
+    "YAML": {
+      "formatter": "language_server",
+    },
+  },
+  "lsp": {
+    "gopls": {
+      "binary": {
+        "env": {
+          "GO111MODULE": "on",
+          "GOPROXY": "https://proxy.golang.org",
+        },
+      },
+      "settings": {
+        "codelenses": {
+          "run_govulncheck": true,
+        },
+        "analyses": {
+          "shadow": true,
+          "nilness": true,
+        },
+        "staticcheck": true,
+        "vulncheck": "Imports",
+      },
+    },
+    "json-language-server": {
+      "settings": {
+        "json": {
+          "schemas": [
+            {
+              "fileMatch": ["appsscript.json"],
+              "url": "http://json.schemastore.org/appsscript",
+            },
+            {
+              "fileMatch": [".clasp.json"],
+              "url": "http://json.schemastore.org/clasp",
+            },
+            {
+              "fileMatch": ["*.hujson"],
+              "schema": {
+                "allowTrailingCommas": true,
+              },
+            },
+          ],
+        },
+      },
+    },
+    "yaml-language-server": {
+      "settings": {
+        "yaml": {
+          "schemas": {
+            "https://d33vqc0rt9ld30.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json": [
+              "*.cf.yaml",
+              "*.cf.yml",
+              "template.yaml",
+              "template.yml",
+              "packaged.yaml",
+              "packaged.yml",
+            ],
+          },
+          "schemaStore": {
+            "enable": false,
+          },
+          "format": {
+            "enable": true,
+            "singleQuote": true,
+            "bracketSpacing": true,
+            "proseWrap": "preserve",
+            "printWidth": 140,
+          },
+          "validate": false,
+          "hover": true,
+          "completion": true,
+          "customTags": [
+            "!And sequence",
+            "!And",
+            "!Base64",
+            "!Cidr",
+            "!Condition sequence",
+            "!Condition",
+            "!Equals sequence",
+            "!Equals",
+            "!FindInMap sequence",
+            "!FindInMap",
+            "!GetAtt",
+            "!GetAZs",
+            "!If sequence",
+            "!If",
+            "!ImportValue sequence",
+            "!ImportValue",
+            "!Join sequence",
+            "!Join",
+            "!Not sequence",
+            "!Not",
+            "!Or sequence",
+            "!Or",
+            "!Ref",
+            "!Select sequence",
+            "!Select",
+            "!Split sequence",
+            "!Split",
+            "!Sub sequence",
+            "!Sub",
+          ],
+        },
+      },
+    },
   },
   "colorize_brackets": true,
   "auto_indent_on_paste": false,
@@ -51,11 +203,31 @@
   "remove_trailing_whitespace_on_save": true,
   "soft_wrap": "editor_width",
   "tab_size": 2,
+  "format_on_save": "off",
   "ui_font_size": 16,
   "buffer_font_size": 16.0,
   "theme": {
     "mode": "dark",
     "light": "Gruvbox Light Hard",
     "dark": "Tokyo Night",
+  },
+  "theme_overrides": {
+    "Tokyo Night": {
+      "tab.active_background": "#d873003d",
+      "element.selected": "#ff86e559",
+      "editor.document_highlight.read_background": "#ff000028",
+      "search.active_match_background": "#f8fa7e59",
+      "search.match_background": "#ff91002d",
+      "editor.active_line.background": "#600000aa",
+      "version_control.added": "#00ff00",
+      "version_control.modified": "#00ff00",
+      "version_control.deleted": "#ff0000",
+      "ignored": "#6A7D8B",
+      "syntax": {
+        "comment": {
+          "color": "#6A7D8B",
+        },
+      },
+    },
   },
 }
