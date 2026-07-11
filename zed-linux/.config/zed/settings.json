@@ -54,8 +54,8 @@
   "ui_font_size": 16,
   "buffer_font_size": 16.0,
   "theme": {
-    "mode": "light",
+    "mode": "dark",
     "light": "Gruvbox Light Hard",
-    "dark": "Gruvbox Dark Soft",
+    "dark": "Tokyo Night",
   },
 }
