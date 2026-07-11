@@ -674,8 +674,8 @@ show_tooltips = true
 # Internal tooltip state keyed by model slug. Usually managed by Codex.
 
 [tui.model_availability_nux]
-
 "gpt-5.5" = 4
+"gpt-5.6-sol" = 4
 
 # Enable or disable analytics for this machine. When unset, Codex uses its default behavior.
 
@@ -717,9 +717,10 @@ model_migrations = { "gpt-5.4" = "gpt-5.5" }
 
 # apps = false
 
-# hooks = false
+hooks = true
 
 codex_git_commit = false
+js_repl = false
 
 # unified_exec = true
 
