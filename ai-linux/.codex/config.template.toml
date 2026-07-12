@@ -173,11 +173,11 @@ sandbox_mode = "workspace-write"
 [sandbox_workspace_write]
 writable_roots = [
   "$CODEX_CONFIG_YOUR_HOME_DIR/Documents/codex",
-  "$CODEX_CONFIG_YOUR_HOME_DIR/go/pkg/mod",
-  "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/go-build",
+  # "$CODEX_CONFIG_YOUR_HOME_DIR/go/pkg/mod", # ユーザースコープではなくプロジェクトに委ねる
+  # "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/go-build", # ユーザースコープではなくプロジェクトに委ねる
   "$CODEX_CONFIG_YOUR_HOME_DIR/.npm",
-  "$CODEX_CONFIG_YOUR_HOME_DIR/.docker",
-  "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/ms-playwright"
+  # "$CODEX_CONFIG_YOUR_HOME_DIR/.docker", # ユーザースコープではなくプロジェクトに委ねる
+  # "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/ms-playwright" # ユーザースコープではなくプロジェクトに委ねる
 ]
 network_access = true
 
