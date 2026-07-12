@@ -8,7 +8,7 @@ git diffの内容を読解し、構造化サマリを返却する読み取り専
 (4) ユーザーが明示的に「git-diff-readerに委譲して」「git-diff-readerをspawnして」と依頼した時
 '''
 model = "gpt-5.6-luna"
-model_reasoning_effort = "high"
+model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 developer_instructions = '''
 # Role
