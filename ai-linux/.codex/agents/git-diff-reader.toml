@@ -7,8 +7,8 @@ git diffの内容を読解し、構造化サマリを返却する読み取り専
 (3) ユーザーが「このコミット範囲（A..B）の差分をサマリして」「ブランチ間の変更を要約して」と依頼した時
 (4) ユーザーが明示的に「git-diff-readerに委譲して」「git-diff-readerをspawnして」と依頼した時
 '''
-model = "gpt-5.6-terra"
-model_reasoning_effort = "medium"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = '''
 # Role

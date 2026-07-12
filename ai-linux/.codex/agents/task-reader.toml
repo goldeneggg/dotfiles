@@ -9,8 +9,8 @@ task-performerスキルからの委譲を主用途とする。
   (3) task-performer がタスク実行のためにプロジェクトコンテキストを必要とした時（委譲先として）
   (4) ユーザーが明示的に「タスクの背景資料を集めて」「specs/references を読んで要約して」と依頼した時
 '''
-model = "gpt-5.6-terra"
-model_reasoning_effort = "medium"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = '''
 # Role
