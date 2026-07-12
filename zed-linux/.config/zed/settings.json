@@ -7,22 +7,81 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  // Appearance
   "icon_theme": "Zed (Default)",
-  "terminal": {
-    "font_size": 14.0
+  "theme": {
+    "mode": "dark",
+    "light": "Gruvbox Light Hard",
+    "dark": "Tokyo Night"
   },
+  "theme_overrides": {
+    "Tokyo Night": {
+      "tab.active_background": "#d873003d",
+      "element.selected": "#ff86e559",
+      "editor.document_highlight.read_background": "#ff000028",
+      "search.active_match_background": "#f8fa7e59",
+      "search.match_background": "#ff91002d",
+      "editor.active_line.background": "#600000aa",
+      "version_control.added": "#00ff00",
+      "version_control.modified": "#00ff00",
+      "version_control.deleted": "#ff0000",
+      "ignored": "#6A7D8B",
+      "syntax": {
+        "comment": {
+          "color": "#6A7D8B"
+        }
+      }
+    }
+  },
+
+  // Fonts
+  "ui_font_family": "Fira Code",
+  "buffer_font_fallbacks": ["Monaco", "Menlo", "Courier New"],
+  "buffer_font_family": "Fira Code",
+  "ui_font_size": 15.0,
+  "buffer_font_size": 15.0,
+
+  // Editor behavior
+  "multi_cursor_modifier": "cmd_or_ctrl",
+  "minimap": {
+    "show": "never"
+  },
+  "colorize_brackets": true,
+  "auto_indent_on_paste": false,
+  "use_on_type_format": false,
+  "show_whitespaces": "all",
+  "show_edit_predictions": true,
+  "line_ending": "prefer_lf",
+  "ensure_final_newline_on_save": true,
+  "remove_trailing_whitespace_on_save": true,
+  "soft_wrap": "editor_width",
+  "tab_size": 2,
+  "format_on_save": "off",
+
+  // Panels
   "project_panel": {
     "dock": "left",
     "scrollbar": {
       "horizontal_scroll": true
     }
   },
+
+  // Terminal
+  "terminal": {
+    "font_size": 14.0
+  },
+
+  // Version control
   "git": {
     "inline_blame": {
       "enabled": true
     }
   },
+
+  // Keymap
   "base_keymap": "VSCode",
+
+  // Agent
   "agent": {
     "enabled": true,
     "button": true,
@@ -55,18 +114,16 @@
       }
     }
   },
-  "multi_cursor_modifier": "cmd_or_ctrl",
-  "minimap": {
-    "show": "never"
-  },
-  "buffer_font_fallbacks": ["Monaco", "Menlo", "Courier New"],
-  "buffer_font_family": "Ubuntu Mono derivative Powerline",
+
+  // File types
   "file_types": {
     "Terraform": ["*.hcl"],
     "Make": ["*.Makefile"],
     "Plain Text": ["*.cnf"],
     "JSONC": ["*.hujson"]
   },
+
+  // Language settings
   "languages": {
     "Go": {
       "hard_tabs": true
@@ -90,6 +147,8 @@
       "formatter": "language_server"
     }
   },
+
+  // Language servers
   "lsp": {
     "gopls": {
       "binary": {
@@ -189,43 +248,6 @@
             "!Sub sequence",
             "!Sub"
           ]
-        }
-      }
-    }
-  },
-  "colorize_brackets": true,
-  "auto_indent_on_paste": false,
-  "use_on_type_format": false,
-  "show_whitespaces": "all",
-  "show_edit_predictions": true,
-  "line_ending": "prefer_lf",
-  "ensure_final_newline_on_save": true,
-  "remove_trailing_whitespace_on_save": true,
-  "soft_wrap": "editor_width",
-  "tab_size": 2,
-  "format_on_save": "off",
-  "ui_font_size": 16,
-  "buffer_font_size": 16.0,
-  "theme": {
-    "mode": "dark",
-    "light": "Gruvbox Light Hard",
-    "dark": "Tokyo Night"
-  },
-  "theme_overrides": {
-    "Tokyo Night": {
-      "tab.active_background": "#d873003d",
-      "element.selected": "#ff86e559",
-      "editor.document_highlight.read_background": "#ff000028",
-      "search.active_match_background": "#f8fa7e59",
-      "search.match_background": "#ff91002d",
-      "editor.active_line.background": "#600000aa",
-      "version_control.added": "#00ff00",
-      "version_control.modified": "#00ff00",
-      "version_control.deleted": "#ff0000",
-      "ignored": "#6A7D8B",
-      "syntax": {
-        "comment": {
-          "color": "#6A7D8B"
         }
       }
     }
