@@ -9,18 +9,18 @@
 {
   "icon_theme": "Zed (Default)",
   "terminal": {
-    "font_size": 14.0,
+    "font_size": 14.0
   },
   "project_panel": {
     "dock": "left",
     "scrollbar": {
-      "horizontal_scroll": true,
-    },
+      "horizontal_scroll": true
+    }
   },
   "git": {
     "inline_blame": {
-      "enabled": true,
-    },
+      "enabled": true
+    }
   },
   "base_keymap": "VSCode",
   "agent": {
@@ -37,7 +37,7 @@
             { "pattern": "^go\\s+test(?:\\s|$)" },
             { "pattern": "^bundle\\s+exec\\s+rspec(?:\\s|$)" },
             { "pattern": "^terraform\\s+init(?:\\s|$)" },
-            { "pattern": "^terraform\\s+validate(?:\\s|$)" },
+            { "pattern": "^terraform\\s+validate(?:\\s|$)" }
           ],
           "always_confirm": [
             { "pattern": "^rmdir\\b" },
@@ -49,15 +49,15 @@
             { "pattern": "^kill\\b" },
             { "pattern": "^curl\\b" },
             { "pattern": "^wget\\b" },
-            { "pattern": "^sudo\\b" },
-          ],
-        },
-      },
-    },
+            { "pattern": "^sudo\\b" }
+          ]
+        }
+      }
+    }
   },
   "multi_cursor_modifier": "cmd_or_ctrl",
   "minimap": {
-    "show": "never",
+    "show": "never"
   },
   "buffer_font_fallbacks": ["Monaco", "Menlo", "Courier New"],
   "buffer_font_family": "Ubuntu Mono derivative Powerline",
@@ -65,50 +65,50 @@
     "Terraform": ["*.hcl"],
     "Make": ["*.Makefile"],
     "Plain Text": ["*.cnf"],
-    "JSONC": ["*.hujson"],
+    "JSONC": ["*.hujson"]
   },
   "languages": {
     "Go": {
-      "hard_tabs": true,
+      "hard_tabs": true
     },
     "Make": {
-      "hard_tabs": true,
+      "hard_tabs": true
     },
     "Python": {
       "tab_size": 4,
       "formatter": "language_server",
-      "format_on_save": "on",
+      "format_on_save": "on"
     },
     "Proto": {
-      "format_on_save": "on",
+      "format_on_save": "on"
     },
     "Terraform": {
       "formatter": "language_server",
-      "format_on_save": "on",
+      "format_on_save": "on"
     },
     "YAML": {
-      "formatter": "language_server",
-    },
+      "formatter": "language_server"
+    }
   },
   "lsp": {
     "gopls": {
       "binary": {
         "env": {
           "GO111MODULE": "on",
-          "GOPROXY": "https://proxy.golang.org",
-        },
+          "GOPROXY": "https://proxy.golang.org"
+        }
       },
       "settings": {
         "codelenses": {
-          "run_govulncheck": true,
+          "run_govulncheck": true
         },
         "analyses": {
           "shadow": true,
-          "nilness": true,
+          "nilness": true
         },
         "staticcheck": true,
-        "vulncheck": "Imports",
-      },
+        "vulncheck": "Imports"
+      }
     },
     "json-language-server": {
       "settings": {
@@ -116,21 +116,21 @@
           "schemas": [
             {
               "fileMatch": ["appsscript.json"],
-              "url": "http://json.schemastore.org/appsscript",
+              "url": "http://json.schemastore.org/appsscript"
             },
             {
               "fileMatch": [".clasp.json"],
-              "url": "http://json.schemastore.org/clasp",
+              "url": "http://json.schemastore.org/clasp"
             },
             {
               "fileMatch": ["*.hujson"],
               "schema": {
-                "allowTrailingCommas": true,
-              },
-            },
-          ],
-        },
-      },
+                "allowTrailingCommas": true
+              }
+            }
+          ]
+        }
+      }
     },
     "yaml-language-server": {
       "settings": {
@@ -142,18 +142,18 @@
               "template.yaml",
               "template.yml",
               "packaged.yaml",
-              "packaged.yml",
-            ],
+              "packaged.yml"
+            ]
           },
           "schemaStore": {
-            "enable": false,
+            "enable": false
           },
           "format": {
             "enable": true,
             "singleQuote": true,
             "bracketSpacing": true,
             "proseWrap": "preserve",
-            "printWidth": 140,
+            "printWidth": 140
           },
           "validate": false,
           "hover": true,
@@ -187,11 +187,11 @@
             "!Split sequence",
             "!Split",
             "!Sub sequence",
-            "!Sub",
-          ],
-        },
-      },
-    },
+            "!Sub"
+          ]
+        }
+      }
+    }
   },
   "colorize_brackets": true,
   "auto_indent_on_paste": false,
@@ -209,7 +209,7 @@
   "theme": {
     "mode": "dark",
     "light": "Gruvbox Light Hard",
-    "dark": "Tokyo Night",
+    "dark": "Tokyo Night"
   },
   "theme_overrides": {
     "Tokyo Night": {
@@ -225,9 +225,9 @@
       "ignored": "#6A7D8B",
       "syntax": {
         "comment": {
-          "color": "#6A7D8B",
-        },
-      },
-    },
-  },
+          "color": "#6A7D8B"
+        }
+      }
+    }
+  }
 }
