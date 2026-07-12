@@ -1,6 +1,4 @@
-# sync-claude-permissions-begin
-# Generated from Claude Code Bash permissions.
-
+# >>>>>>>>>> common global rules
 prefix_rule(
     pattern = ["sudo"],
     decision = "forbidden",
@@ -33,13 +31,13 @@ prefix_rule(
 
 prefix_rule(
     pattern = ["ps"],
-    decision = "prompt",
+    decision = "allow",
     justification = "Synced from Claude permissions.ask: Bash(ps *)",
 )
 
 prefix_rule(
     pattern = ["pgrep"],
-    decision = "prompt",
+    decision = "allow",
     justification = "Synced from Claude permissions.ask: Bash(pgrep *)",
 )
 
@@ -69,7 +67,7 @@ prefix_rule(
 
 prefix_rule(
     pattern = ["touch"],
-    decision = "prompt",
+    decision = "allow",
     justification = "Synced from Claude permissions.ask: Bash(touch *)",
 )
 
@@ -122,6 +120,12 @@ prefix_rule(
 )
 
 prefix_rule(
+    pattern = ["less"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(less *)",
+)
+
+prefix_rule(
     pattern = ["sort"],
     decision = "allow",
     justification = "Synced from Claude permissions.allow: Bash(sort *)",
@@ -131,6 +135,18 @@ prefix_rule(
     pattern = ["uniq"],
     decision = "allow",
     justification = "Synced from Claude permissions.allow: Bash(uniq *)",
+)
+
+prefix_rule(
+    pattern = ["awk"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(awk *)",
+)
+
+prefix_rule(
+    pattern = ["sed"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(sed *)",
 )
 
 prefix_rule(
@@ -179,6 +195,24 @@ prefix_rule(
     pattern = ["file"],
     decision = "allow",
     justification = "Synced from Claude permissions.allow: Bash(file *)",
+)
+
+prefix_rule(
+    pattern = ["printf"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(printf:*)",
+)
+
+prefix_rule(
+    pattern = ["history"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(history:*)",
+)
+
+prefix_rule(
+    pattern = ["diff"],
+    decision = "allow",
+    justification = "Synced from Claude permissions.allow: Bash(diff:*)",
 )
 
 prefix_rule(
@@ -342,4 +376,4 @@ prefix_rule(
     decision = "allow",
     justification = "Synced from Claude permissions.allow: Bash(git commit *)",
 )
-# sync-claude-permissions-end
+# <<<<<<<<<< common global rules
