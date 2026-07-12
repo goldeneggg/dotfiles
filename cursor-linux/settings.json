@@ -1,0 +1,501 @@
+{
+  "update.mode": "manual",
+  "window.nativeFullScreen": false,
+  "window.openFoldersInNewWindow": "on",
+  "window.commandCenter": false,
+  "workbench.colorTheme": "Tokyo Night",
+  "workbench.preferredLightColorTheme": "Tokyo Night",
+  "workbench.editor.tabSizing": "shrink",
+  "workbench.tree.indent": 17,
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter-notebook"
+  },
+  "workbench.list.horizontalScrolling": true,
+  "workbench.commandPalette.experimental.askChatLocation": "chatView",
+  "workbench.colorCustomizations": {
+    "tab.activeBorder": "#FFFFFF",
+    "tab.activeBorderTop": "#FF0000",
+    "tab.activeBackground": "#d873003d",
+    "editor.selectionBackground": "#ff86e559",
+    "editor.selectionHighlightBackground": "#ff000028",
+    "editor.selectionHighlightBorder": "#999797aa",
+    "editor.findMatchBackground": "#f8fa7e59",
+    "editor.findMatchHighlightBackground": "#ff91002d",
+    "editor.findMatchHighlightBorder": "#999797aa",
+    "editor.lineHighlightBackground": "#600000aa",
+    "editorGutter.addedSecondaryBackground": "#00ff00",
+    "editorGutter.modifiedSecondaryBackground": "#00ff00",
+    "editorGutter.deletedSecondaryBackground": "#ff0000",
+    "[Tokyo Night]": {
+      "sideBar.foreground": "#E8E8E8",
+      "gitDecoration.ignoredResourceForeground": "#6A7D8B"
+    }
+  },
+  "editor.fontSize": 16,
+  "editor.fontFamily": "'Ubuntu Mono derivative Powerline', Monaco, Menlo, 'Courier New', monospace",
+  "editor.tabSize": 2,
+  "editor.wordWrap": "on",
+  "editor.wrappingIndent": "none",
+  "editor.detectIndentation": false,
+  "editor.multiCursorModifier": "ctrlCmd",
+  "editor.minimap.enabled": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.renderControlCharacters": true,
+  "editor.renderWhitespace": "all",
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false,
+  "editor.foldingStrategy": "auto",
+  "editor.suggestSelection": "first",
+  "editor.suggest.showMethods": true,
+  "editor.suggest.preview": true,
+  "editor.acceptSuggestionOnEnter": "on",
+  "editor.snippetSuggestions": "top",
+  "editor.trimAutoWhitespace": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.tokenColorCustomizations": {
+    "[Tokyo Night]": {
+      "textMateRules": [
+        {
+          "name": "Tokyo Night - Lighter Comments",
+          "scope": "comment",
+          "settings": {
+            "foreground": "#6A7D8B"
+          }
+        }
+      ]
+    },
+    "[Monokai]": {
+      "textMateRules": [
+        {
+          "name": "Monokai - No Itarics for JSON, TOML",
+          "scope": [
+            "support.type.property-name.json",
+            "support.type.property-name.toml"
+          ],
+          "settings": {
+            "fontStyle": ""
+          }
+        }
+      ]
+    }
+  },
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.enableMultiLinePasteWarning": "never",
+  "accessibility.signals.chatRequestSent": {
+    "sound": "auto",
+    "announcement": "auto"
+  },
+  "accessibility.signals.chatResponseReceived": {
+    "sound": "auto"
+  },
+  "accessibility.verbosity.inlineCompletions": true,
+  "accessibility.verbosity.panelChat": true,
+  "accessibility.dimUnfocused.enabled": true,
+  "accessibility.dimUnfocused.opacity": 0.5,
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "files.associations": {
+    "*.Makefile": "makefile",
+    "*.hcl": "terraform",
+    "*.hujson": "jsonc",
+    "*.cnf": "plaintext"
+  },
+  "files.watcherExclude": {
+    "**/.git/**": true,
+    "**/node_modules/**": true,
+    "**/.terraform/**": true,
+    "**/build/**": true,
+    "**/dist/**": true,
+    "**/.test/**": true,
+    "**/tmp/**": true,
+    "**/log*/**": true,
+    "**/*.log": true
+  },
+  "code-eol.color": "",
+  "debug.console.wordWrap": false,
+  "search.mode": "reuseEditor",
+  "search.searchEditor.doubleClickBehaviour": "openLocationToSide",
+  "search.useIgnoreFiles": true,
+  "search.exclude": {
+    "**/.git/**": true,
+    "**/node_modules/**": true,
+    "**/.terraform/**": true,
+    "**/build/**": true,
+    "**/dist/**": true,
+    "**/.test/**": true,
+    "**/tmp/**": true,
+    "**/log*/**": true,
+    "**/*.log": true
+  },
+  "git.confirmSync": false,
+  "git.branchProtection": [
+    "main",
+    "master"
+  ],
+  "git.branchProtectionPrompt": "alwaysCommit",
+  "git.openRepositoryInParentFolders": "never",
+  "git.blame.editorDecoration.enabled": true,
+  "git.autofetch": true,
+  "git.blame.statusBarItem.enabled": false,
+  "githubPullRequests.pullBranch": "never",
+  "githubPullRequests.createOnPublishBranch": "never",
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  },
+  "github.copilot.editor.enableCodeActions": true,
+  "github.copilot.renameSuggestions.triggerAutomatically": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.nextEditSuggestions.fixes": true,
+  "github.copilot.chat.localeOverride": "ja",
+  "github.copilot.chat.useProjectTemplates": true,
+  "github.copilot.chat.scopeSelection": false,
+  "github.copilot.chat.terminalChatLocation": "chatView",
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Please write in English."
+    },
+    {
+      "text": "First, write the commit message according to Conventional Commits."
+    },
+    {
+      "text": "Then, write the detailed changes for each file."
+    }
+  ],
+  "github.copilot.chat.setupTests.enabled": true,
+  "chat.detectParticipant.enabled": false,
+  "chat.notifyWindowOnConfirmation": "windowNotFocused",
+  "chat.editing.confirmEditRequestRemoval": true,
+  "chat.editing.confirmEditRequestRetry": true,
+  "chat.agent.enabled": true,
+  "chat.tools.terminal.autoApprove": {
+    "go test": {
+      "approve": true,
+      "matchCommandLine": false
+    },
+    "bundle exec rspec": {
+      "approve": true,
+      "matchCommandLine": false
+    },
+    "terraform init": {
+      "approve": true,
+      "matchCommandLine": false
+    },
+    "terraform validate": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "rm": null,
+    "rmdir": {
+      "approve": false,
+      "matchCommandLine": false
+    },
+    "mv": {
+      "approve": false,
+      "matchCommandLine": false
+    },
+    "cp": {
+      "approve": false,
+      "matchCommandLine": false
+    },
+    "touch": {
+      "approve": false,
+      "matchCommandLine": false
+    },
+    "chmod": {
+      "approve": false,
+      "matchCommandLine": false
+    },
+    "chown": {
+      "approve": false,
+      "matchCommandLine": false
+    },
+    "kill": {
+      "approve": false,
+      "matchCommandLine": false
+    },
+    "curl": {
+      "approve": false,
+      "matchCommandLine": false
+    },
+    "wget": {
+      "approve": false,
+      "matchCommandLine": false
+    },
+    "sudo": {
+      "approve": false,
+      "matchCommandLine": false
+    }
+  },
+  "chat.mcp.access": "all",
+  "inlineChat.finishOnType": false,
+  "inlineChat.holdToSpeech": true,
+  "chat.checkpoints.enabled": true,
+  "chat.implicitContext.enabled": {
+    "panel": "always",
+    "editing-session": "first"
+  },
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    ".vscode/instructions": true
+  },
+  "chat.promptFilesLocations": {
+    ".github/prompts": true,
+    ".vscode/prompts": true
+  },
+  "chat.useAgentSkills": true,
+  "notebook.experimental.generate": true,
+  "inlineChat.accessibleDiffView": "auto",
+  "claudeCode.preferredLocation": "panel",
+  "geminicodeassist.displayInlineContextHint": false,
+  "go.toolsEnvVars": {
+    "GO111MODULE": "on",
+    "GOPROXY": "https://proxy.golang.org"
+  },
+  "go.toolsManagement.autoUpdate": true,
+  "go.coverOnSave": false,
+  "go.testTimeout": "30s",
+  "go.testEnvFile": "${workspaceFolder}/.env",
+  "go.useLanguageServer": true,
+  "go.formatTool": "default",
+  "go.lintTool": "staticcheck",
+  "go.lintOnSave": "package",
+  "go.diagnostic.vulncheck": "Imports",
+  "gopls": {
+    "ui.codelenses": {
+      "run_govulncheck": true
+    },
+    "ui.diagnostic.analyses": {
+      "shadow": true,
+      "nilness": true
+    },
+    "ui.diagnostic.staticcheck": true
+  },
+  "[go]": {
+    "editor.insertSpaces": false,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll": "explicit"
+    },
+    "editor.foldingStrategy": "indentation"
+  },
+  "python.languageServer": "Default",
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true
+  },
+  "notebook.cellToolbarLocation": {
+    "default": "right",
+    "jupyter-notebook": "left"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[sql]": {
+    "editor.formatOnSave": false
+  },
+  "shellcheck.enable": true,
+  "shellcheck.enableQuickFix": true,
+  "shellcheck.run": "onType",
+  "shellcheck.exclude": [],
+  "shellcheck.customArgs": [],
+  "shellcheck.ignoreFileSchemes": [
+    "git",
+    "gitfs"
+  ],
+  "[makefile]": {
+    "editor.insertSpaces": false
+  },
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "appsscript.json"
+      ],
+      "url": "http://json.schemastore.org/appsscript"
+    },
+    {
+      "fileMatch": [
+        ".clasp.json"
+      ],
+      "url": "http://json.schemastore.org/clasp"
+    },
+    {
+      "fileMatch": [
+        "*.hujson"
+      ],
+      "schema": {
+        "allowTrailingCommas": true
+      }
+    }
+  ],
+  "json.schemaDownload.trustedDomains": {
+    "https://schemastore.azurewebsites.net/": true,
+    "https://raw.githubusercontent.com/": true,
+    "https://www.schemastore.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://json-schema.org/": true,
+    "https://biomejs.dev": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[hujson]": {
+    "editor.insertSpaces": false
+  },
+  "yaml.schemas": {
+    "https://d33vqc0rt9ld30.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json": [
+      "*.cf.yaml",
+      "*.cf.yml",
+      "template.yaml",
+      "template.yml",
+      "packaged.yaml",
+      "packaged.yml"
+    ]
+  },
+  "yaml.schemaStore.enable": false,
+  "yaml.format.enable": true,
+  "yaml.format.singleQuote": true,
+  "yaml.format.bracketSpacing": true,
+  "yaml.format.proseWrap": "preserve",
+  "yaml.format.printWidth": 140,
+  "yaml.validate": false,
+  "yaml.hover": true,
+  "yaml.completion": true,
+  "yaml.customTags": [
+    "!And sequence",
+    "!And",
+    "!Base64",
+    "!Cidr",
+    "!Condition sequence",
+    "!Condition",
+    "!Equals sequence",
+    "!Equals",
+    "!FindInMap sequence",
+    "!FindInMap",
+    "!GetAtt",
+    "!GetAZs",
+    "!If sequence",
+    "!If",
+    "!ImportValue sequence",
+    "!ImportValue",
+    "!Join sequence",
+    "!Join",
+    "!Not sequence",
+    "!Not",
+    "!Or sequence",
+    "!Or",
+    "!Ref",
+    "!Select sequence",
+    "!Select",
+    "!Split sequence",
+    "!Split",
+    "!Sub sequence",
+    "!Sub"
+  ],
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "protoc": {
+    "path": "/opt/homebrew/bin/protoc",
+    "options": [
+      "--proto_path=protos/v3",
+      "--proto_path=protos/v2"
+    ]
+  },
+  "[proto]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "xaver.clang-format"
+  },
+  "[proto3]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "xaver.clang-format"
+  },
+  "clang-format.style": "{ BasedOnStyle: google, AlignConsecutiveAssignments: true, AlignConsecutiveDeclarations: true }",
+  "docker.extension.enableComposeLanguageServer": false,
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    },
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "remote.autoForwardPortsSource": "hybrid",
+  "terraform.experimentalFeatures.prefillRequiredFields": true,
+  "terraform.codelens.referenceCount": true,
+  "terraform.languageServer.terraform.path": "/Users/fskmt/.asdf/shims/terraform",
+  "[terraform]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file"
+  },
+  "[terraform-vars]": {
+    "editor.defaultFormatter": "hashicorp.terraform",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file"
+  },
+
+  "aws.resources.enabledResources": [
+    "AWS::EC2::VPC",
+    "AWS::IAM::Role",
+    "AWS::Lambda::Function",
+    "AWS::Logs::LogGroup",
+    "AWS::Route53::HostedZone",
+    "AWS::S3::Bucket"
+  ],
+  "aws.samcli.location": "/opt/homebrew/bin/sam",
+  "aws.telemetry": false,
+  "aws.cloudformation.telemetry.enabled": false,
+  "cfnLint.path": "${userHome}/.local/bin/cfn-lint",
+
+  "markdown.preview.fontSize": 16,
+  "markdown-preview-enhanced.enableExtendedTableSyntax": true,
+  "markdown.extension.toc.updateOnSave": true,
+  "[markdown]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+
+  "gremlins.characters": {
+    "000c": {
+      "zeroWidth": true,
+      "description": "FORM FEED (FF)",
+      "level": "error"
+    }
+  },
+  "gremlins.showInProblemPane": true,
+
+  "hediet.vscode-drawio.theme": "kennedy",
+  "hediet.vscode-drawio.resizeImages": null,
+  "vsicons.dontShowNewVersionMessage": true,
+  "yaml.disableSchemaDetection": [
+    "**/.github/workflows/*.yml",
+    "**/.github/workflows/*.yaml",
+    "**/.gitea/workflows/*.yml",
+    "**/.gitea/workflows/*.yaml",
+    "**/.forgejo/workflows/*.yml",
+    "**/.forgejo/workflows/*.yaml"
+  ]
+}
