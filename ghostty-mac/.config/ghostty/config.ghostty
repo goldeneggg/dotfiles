@@ -1,0 +1,8 @@
+theme = TokyoNight Storm
+# 参考: 背景が緑系のテーマ
+# theme = Django Smooth
+
+foreground = #ffffff
+
+font-family = Ubuntu Mono derivative Powerline
+font-size = 15
