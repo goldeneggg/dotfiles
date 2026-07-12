@@ -1,0 +1,7 @@
+onboarding = false
+[keys]
+prefix = "ctrl+t"
+
+[theme]
+name = "tokyo-night"
+auto_switch = false
