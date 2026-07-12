@@ -3,5 +3,7 @@ onboarding = false
 prefix = "ctrl+t"
 
 [theme]
-name = "tokyo-night"
+# "Herdr の UI 色をホストターミナルの ANSI パレットに従わせたいときは terminal を使ってください"
+name = "terminal"
+#name = "tokyo-night"
 auto_switch = false
