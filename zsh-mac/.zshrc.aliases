@@ -29,6 +29,9 @@ alias vimdiff='nvim -d'
 eval "$(hub alias -s)"
 alias h='hub'
 
+#-- herdr
+alias hd='herdr'
+
 #-- global alias
 alias -g V="| vim -R -"
 alias -g NV="| nvim -R -"
@@ -36,7 +39,6 @@ alias -g M="| more"
 alias -g L="| less"
 alias -g W="| wc -l"
 alias -g B="| col -bx"
-
 
 #- [mac]エイリアス
 alias ll='ls -lFG'
