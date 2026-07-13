@@ -1,5 +1,5 @@
 ---
-name: gpt56-prompt-teacher
+name: gpt56-prompt-optimizer
 description: GPT-5.6 向けの入力プロンプトをレビューし、gpt-5.6-sol・gpt-5.6-terra・gpt-5.6-luna の最適なモデル、none〜max の最適な推論努力、改善版プロンプトを提案・解説する。GPT-5.6 のプロンプト設計、モデル選定、reasoning.effort の選定、既存プロンプトの改善や移行、Codex の `/goal` コマンドや自律反復向け目標プロンプトの設計・レビューを依頼されたときに使用する。
 ---
 
