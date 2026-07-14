@@ -203,6 +203,7 @@ def create_directories(project_path: Path) -> None:
         "files",
         "specs",
         "todos",
+        "progresses",
         "logs",
     ]
     for dir_name in dirs:

@@ -7,6 +7,7 @@
 集めるシグナル（複数シグナル統合の材料）:
 - frontmatter: id / estimated_time / depends_on / parallel_group / priority / parallelizable
 - 受け入れ条件・作業内容のチェックボックス進捗（checked / total）
+- progresses/NNN-{task}/ 配下の進捗管理ドキュメント・成果ドキュメント有無
 - logs/NNN-{task}/ 配下の commit ログ有無・その他ファイル有無
 - 上記から導出した暫定ステータス（done / in_progress / not_started）と、シグナル矛盾フラグ
 
@@ -28,6 +29,9 @@ CHECKBOX_RE = re.compile(r"^\s*[-*]\s+\[( |x|X)\]")
 SECTION_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$")
 # logs 配下のコミットログ命名: commit-YYYYmmddHHMMSS-title.txt
 COMMIT_LOG_RE = re.compile(r"^commit-.*\.txt$")
+# progresses 配下の進捗管理ドキュメント命名: PROGRESS.md など
+PROGRESS_DOC_RE = re.compile(r"^progress(?:[-_.].*)?\.(?:md|html)$", re.IGNORECASE)
+IGNORED_TRACKING_FILES = {".gitkeep"}
 
 
 def find_todos_dir(start: Path) -> Path | None:
@@ -142,7 +146,7 @@ def scan_logs(logs_dir: Path, task_id: str) -> dict:
         return info
     info["exists"] = True
     for f in task_log_dir.iterdir():
-        if not f.is_file():
+        if not f.is_file() or f.name in IGNORED_TRACKING_FILES:
             continue
         if COMMIT_LOG_RE.match(f.name):
             info["commit_log_count"] += 1
@@ -151,18 +155,47 @@ def scan_logs(logs_dir: Path, task_id: str) -> dict:
     return info
 
 
-def derive_status(accept: tuple[int, int], work: tuple[int, int], logs: dict) -> tuple[str, list[str]]:
+def scan_progresses(progresses_dir: Path, task_id: str) -> dict:
+    """progresses/NNN-{task}/ の進捗管理・成果ドキュメント数を返す。"""
+    info = {"progress_doc_count": 0, "artifact_doc_count": 0, "exists": False}
+    if not progresses_dir or not progresses_dir.is_dir():
+        return info
+    task_progress_dir = progresses_dir / task_id
+    if not task_progress_dir.is_dir():
+        return info
+    info["exists"] = True
+    for file_path in task_progress_dir.iterdir():
+        if not file_path.is_file() or file_path.name in IGNORED_TRACKING_FILES:
+            continue
+        if PROGRESS_DOC_RE.match(file_path.name):
+            info["progress_doc_count"] += 1
+        else:
+            info["artifact_doc_count"] += 1
+    return info
+
+
+def derive_status(
+    accept: tuple[int, int],
+    work: tuple[int, int],
+    progresses: dict,
+    logs: dict,
+) -> tuple[str, list[str]]:
     """複数シグナルを統合して暫定ステータスと注記（矛盾等）を導出する。
 
     判定ルール（堅牢性のため受け入れ条件を主、コミットログを補強シグナルとして扱う）:
     - done:        受け入れ条件が全て[x]、または（コミットログあり and 受け入れに未チェックが無い）
-    - not_started: いかなる完了痕跡も無い（チェック0・コミットログ無し・ログdir空/不在）
-    - in_progress: 上記以外（一部チェック済み、ログはあるが受け入れ未充足 等）
+    - not_started: いかなる着手痕跡も無い（チェック0・progresses/logs が空または不在）
+    - in_progress: 上記以外（一部チェック済み、成果・進捗文書またはログはあるが受け入れ未充足 等）
     """
     a_checked, a_total = accept
     w_checked, w_total = work
     has_commit = logs["commit_log_count"] > 0
+    has_progress_activity = progresses["exists"] and (
+        progresses["progress_doc_count"] > 0
+        or progresses["artifact_doc_count"] > 0
+    )
     has_log_activity = logs["exists"] and (has_commit or logs["other_file_count"] > 0)
+    has_activity = has_progress_activity or has_log_activity
     notes: list[str] = []
 
     accept_complete = a_total > 0 and a_checked == a_total
@@ -172,7 +205,7 @@ def derive_status(accept: tuple[int, int], work: tuple[int, int], logs: dict) ->
         status = "done"
         if has_commit and a_total == 0:
             notes.append("受け入れ条件の記載が無いためコミットログを根拠に完了と推定")
-    elif a_checked == 0 and w_checked == 0 and not has_log_activity:
+    elif a_checked == 0 and w_checked == 0 and not has_activity:
         status = "not_started"
     else:
         status = "in_progress"
@@ -186,7 +219,7 @@ def derive_status(accept: tuple[int, int], work: tuple[int, int], logs: dict) ->
     return status, notes
 
 
-def scan_task(task_dir: Path, logs_dir: Path) -> dict | None:
+def scan_task(task_dir: Path, progresses_dir: Path, logs_dir: Path) -> dict | None:
     m = TASK_DIR_RE.match(task_dir.name)
     if not m:
         return None
@@ -219,8 +252,9 @@ def scan_task(task_dir: Path, logs_dir: Path) -> dict | None:
         result["notes"].append("README.md/README.html が見つからない")
         meta, accept, work = {}, (0, 0), (0, 0)
 
+    progresses = scan_progresses(progresses_dir, task_dir.name)
     logs = scan_logs(logs_dir, task_dir.name)
-    status, status_notes = derive_status(accept, work, logs)
+    status, status_notes = derive_status(accept, work, progresses, logs)
     result["notes"].extend(status_notes)
 
     result.update(
@@ -233,6 +267,7 @@ def scan_task(task_dir: Path, logs_dir: Path) -> dict | None:
             "parallelizable": meta.get("parallelizable"),
             "acceptance": {"checked": accept[0], "total": accept[1]},
             "work_items": {"checked": work[0], "total": work[1]},
+            "progresses": progresses,
             "logs": logs,
             "status": status if not result["needs_manual_review"] else "unknown",
         }
@@ -266,13 +301,14 @@ def main() -> int:
         return 1
 
     project_root = todos_dir.parent
+    progresses_dir = project_root / "progresses"
     logs_dir = project_root / "logs"
 
     tasks = []
     for child in sorted(todos_dir.iterdir(), key=lambda p: p.name):
         if not child.is_dir():
             continue
-        task = scan_task(child, logs_dir)
+        task = scan_task(child, progresses_dir, logs_dir)
         if task:
             tasks.append(task)
 
@@ -288,6 +324,7 @@ def main() -> int:
     output = {
         "project_root": str(project_root),
         "todos_dir": str(todos_dir),
+        "progresses_dir": str(progresses_dir) if progresses_dir.is_dir() else None,
         "logs_dir": str(logs_dir) if logs_dir.is_dir() else None,
         "roadmap_file": _detect_roadmap(todos_dir),
         "summary": summary,

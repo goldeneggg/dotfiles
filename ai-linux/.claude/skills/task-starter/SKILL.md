@@ -62,6 +62,7 @@ argument-hint: "[プロジェクト名]"
 - 指定ディレクトリに `YYYYMMDD-{name}/` フォルダ構造が生成されている
 - `specs/` に要件・技術仕様を含む仕様書が作成され、非機能要件にセキュリティ・耐障害性・高可用性・スケーラビリティの方針が記載されている
 - `todos/` に1-2時間粒度のタスクが**`0xx` 番台（`001`〜`099`）**で依存順に配置され、各TODOに依存メタ（`depends_on` / `parallel_group`）が明記されている（Markdownはフロントマター、HTMLは `<script type="application/x-task-meta">`。`1xx` 番台は予約のため未使用）
+- `progresses/` と `logs/` が生成され、成果・進捗管理ドキュメントとその他の作業ログの出力先が分離されている
 - 各TODOに「開発原則チェック」（4原則の該当 or N/A理由）が記載されている
 - ロードマップ（`todos/README.*`）に Mermaid DAG・タスク表・クリティカルパス・並行可能タスク群・推奨ワークロードが記載されている（HTML時は Mermaid が `<pre class="mermaid">` で描画される）
 - ユーザーが Phase 5 のレビューで承認している
@@ -109,9 +110,13 @@ argument-hint: "[プロジェクト名]"
    ├── todos/              # タスクドキュメント（新規は 0xx 番台。1xx は実行中追加用に予約）
    │   ├── README.md       # タスクロードマップ（Phase 4で内容を埋める。HTML選択時は README.html）
    │   └── 001-{task-name}/
-   └── logs/               # タスク作業ログ置き場（todos/ と対応する NNN-{task}/ サブディレクトリを作成）
+   ├── progresses/         # タスク成果・進捗管理ドキュメント置き場
+   │   └── 001-{task-name}/
+   └── logs/               # 上記以外の作業ログ置き場
        └── 001-{task-name}/
    ```
+
+   `progresses/NNN-{task}/` には、タスクの成果ドキュメントと `PROGRESS.md` 等の進捗管理ドキュメントだけを置く。コミットログ・調査メモ・コマンド出力・試行記録など、それ以外はすべて `logs/NNN-{task}/` に置く。
 
 2. **参考ファイルの有無を確認**
    - ユーザーに参考データ・ファイルがあるか選択肢を提示して確認
@@ -193,6 +198,9 @@ argument-hint: "[プロジェクト名]"
    │   │   └── 📄 README.md      ← フロントマター付き
    │   └── 📁 002-implement/
    │       └── 📄 README.md
+   ├── 📁 progresses/
+   │   ├── 📁 001-setup/
+   │   └── 📁 002-implement/
    └── 📁 logs/
        ├── 📁 001-setup/
        └── 📁 002-implement/
