@@ -20,8 +20,8 @@ description: |
 
   ただし、以下のケースでは別スキルを優先する:
   - PR単体のコードレビュー → pr-reviewer
-  - コミットメッセージの提案 → commit-message-suggester
-  - GitHub Actions実行ログの分析 → gh-action-run-validator
+  - コミットメッセージの提案 → `commiter` の `--suggest` モード
+  - GitHub Actions実行ログの分析 → `gh run view --log-failed` 等を使った個別分析
 argument-hint: "<author> [owner/repo ...] [--since YYYY-MM-DD] [--until YYYY-MM-DD]"
 context: fork
 ---
@@ -186,8 +186,11 @@ gh api users/<author> > "${WORKDIR}/profile.json"
 python3 "${SKILL_DIR}/scripts/aggregate.py" \
   --workdir "${WORKDIR}" \
   --author "<author>" \
-  --output "${WORKDIR}/aggregate.json"
+  --output "${WORKDIR}/aggregate.json" \
+  [--since "${SINCE}"] [--until "${UNTIL}"]
 ```
+
+`--since` / `--until` を指定した場合は、コミットだけでなくPR・Issue・レビュー参加の集計にも同じ期間フィルタを適用する。期間外のAPIレコードを混ぜると、期間指定レポートの評価根拠が崩れるためである。
 
 `SKILL_DIR` はこの SKILL.md が置かれたディレクトリの絶対パス。
 スキル発動時は当該パスを把握できるよう、最初に `SKILL_DIR=$(dirname <SKILL.md の絶対パス>)` を解決してから使うこと。スクリプトは以下を出力する:

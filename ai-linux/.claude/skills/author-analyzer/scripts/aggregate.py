@@ -24,6 +24,7 @@ import os
 import re
 import sys
 from collections import Counter
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -112,6 +113,36 @@ def load_json_array(path: Path) -> list[dict[str, Any]]:
     return data
 
 
+def parse_date(value: str | None) -> date | None:
+    """Parse an ISO date or timestamp used by git/GitHub responses."""
+    if not value:
+        return None
+    try:
+        return date.fromisoformat(value[:10])
+    except ValueError:
+        return None
+
+
+def in_date_range(
+    item: dict[str, Any], since: date | None, until: date | None
+) -> bool:
+    """Keep records within the requested range; retain records without dates."""
+    item_date = parse_date(item.get("createdAt") or item.get("created_at"))
+    if item_date is None:
+        return True
+    if since and item_date < since:
+        return False
+    if until and item_date > until:
+        return False
+    return True
+
+
+def filter_by_date(
+    items: list[dict[str, Any]], since: date | None, until: date | None
+) -> list[dict[str, Any]]:
+    return [item for item in items if in_date_range(item, since, until)]
+
+
 def classify_extension(path: str) -> str:
     base = os.path.basename(path)
     if base.startswith(".") and "." not in base[1:]:
@@ -142,7 +173,9 @@ def parse_conventional(subject: str) -> dict[str, str] | None:
     }
 
 
-def aggregate_repo(repo_dir: Path) -> dict[str, Any]:
+def aggregate_repo(
+    repo_dir: Path, since: date | None = None, until: date | None = None
+) -> dict[str, Any]:
     commits = parse_commits_txt(repo_dir / "commits.txt")
 
     ext_changes: Counter[str] = Counter()
@@ -172,11 +205,21 @@ def aggregate_repo(repo_dir: Path) -> dict[str, Any]:
             ext_changes[classify_extension(p)] += a + d
             dir_changes[top_dir(p)] += a + d
 
-    pr_authored = load_json_array(repo_dir / "pr_authored.json")
-    pr_reviewed = load_json_array(repo_dir / "pr_reviewed.json")
-    pr_commented = load_json_array(repo_dir / "pr_commented.json")
-    issues_authored = load_json_array(repo_dir / "issues_authored.json")
-    issues_commented = load_json_array(repo_dir / "issues_commented.json")
+    pr_authored = filter_by_date(
+        load_json_array(repo_dir / "pr_authored.json"), since, until
+    )
+    pr_reviewed = filter_by_date(
+        load_json_array(repo_dir / "pr_reviewed.json"), since, until
+    )
+    pr_commented = filter_by_date(
+        load_json_array(repo_dir / "pr_commented.json"), since, until
+    )
+    issues_authored = filter_by_date(
+        load_json_array(repo_dir / "issues_authored.json"), since, until
+    )
+    issues_commented = filter_by_date(
+        load_json_array(repo_dir / "issues_commented.json"), since, until
+    )
 
     pr_merged = sum(1 for p in pr_authored if p.get("mergedAt"))
     pr_closed = sum(1 for p in pr_authored if p.get("state") == "CLOSED")
@@ -271,7 +314,18 @@ def main() -> int:
     parser.add_argument("--workdir", required=True)
     parser.add_argument("--author", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--since")
+    parser.add_argument("--until")
     args = parser.parse_args()
+
+    since = parse_date(args.since)
+    until = parse_date(args.until)
+    if args.since and since is None:
+        parser.error("--since は YYYY-MM-DD 形式で指定してください")
+    if args.until and until is None:
+        parser.error("--until は YYYY-MM-DD 形式で指定してください")
+    if since and until and since > until:
+        parser.error("--since は --until 以前の日付にしてください")
 
     workdir = Path(args.workdir)
     if not workdir.is_dir():
@@ -284,7 +338,9 @@ def main() -> int:
             continue
         if "__" not in sub.name:
             continue
-        repo_aggs[sub.name.replace("__", "/", 1)] = aggregate_repo(sub)
+        repo_aggs[sub.name.replace("__", "/", 1)] = aggregate_repo(
+            sub, since=since, until=until
+        )
 
     out = {
         "author": args.author,

@@ -7,7 +7,7 @@
       "prompt": "goldeneggg/dotfiles における goldeneggg のコミット・PR・Issueを横断分析して、実績・評価ポイント・得意分野を含むレポートを Markdown ファイルとして出力して。",
       "expected_output": "./author-analysis-goldeneggg-<YYYYMMDD>.md が作成され、(1) 実績データセクション（コミット数、変更行数、PR/Issue件数）、(2) 評価ポイントセクション（数値根拠付き）、(3) 得意分野セクション（拡張子・パスベースの推定）を含むこと。会話内に要約も出力されること。",
       "assertions": [
-        {"id": "report-file-exists", "text": "outputs/ ディレクトリに author-analysis-goldeneggg-<YYYYMMDD>.md 形式の Markdown ファイルが存在する"},
+        {"id": "report-file-exists", "text": "プロジェクトルートに author-analysis-goldeneggg-<YYYYMMDD>.md 形式の Markdown ファイルが存在する"},
         {"id": "has-data-section", "text": "レポートに事実ベースの「データセクション」（コミット数・変更行数・PR/Issue件数）が含まれている"},
         {"id": "has-evaluation-section", "text": "レポートに「評価ポイント / セールスポイント」セクションが含まれており、数値根拠が紐づいている"},
         {"id": "has-strength-section", "text": "レポートに「得意分野」セクションが含まれており、拡張子別行数や上位ディレクトリ等のシグナルから推定されている"},
@@ -24,7 +24,7 @@
       "prompt": "goldeneggg/dotfiles における goldeneggg の 2025-01-01 以降の活動を分析してレポートを作って。",
       "expected_output": "--since 2025-01-01 が解釈され、その期間のコミット/PR/Issue のみが集計対象となる。レポート冒頭で対象期間が明示される。",
       "assertions": [
-        {"id": "report-file-exists", "text": "outputs/ ディレクトリに Markdown レポートが存在する"},
+        {"id": "report-file-exists", "text": "プロジェクトルートに Markdown レポートが存在する"},
         {"id": "period-applied", "text": "コミット集計の対象期間が 2025-01-01 以降に絞られている"},
         {"id": "period-stated-in-report", "text": "レポート冒頭または概要セクションで「対象期間: 2025-01-01 以降」が明示されている"},
         {"id": "has-data-section", "text": "実績データセクションが含まれている"},
@@ -39,7 +39,7 @@
       "prompt": "@goldeneggg のセールスポイントを goldeneggg/dotfiles でのアウトプット見て教えて欲しい。得意な領域も知りたい。",
       "expected_output": "@ プレフィクスが除去されて goldeneggg として処理される。レポートには「評価ポイント」と「得意分野」セクションが含まれ、それぞれに数値根拠が紐づいている。",
       "assertions": [
-        {"id": "report-file-exists", "text": "outputs/ ディレクトリに Markdown レポートが存在する"},
+        {"id": "report-file-exists", "text": "プロジェクトルートに Markdown レポートが存在する"},
         {"id": "at-prefix-stripped", "text": "@goldeneggg の @ プレフィクスが除去され、author として goldeneggg が処理されている"},
         {"id": "has-evaluation-section", "text": "「評価ポイント / セールスポイント」セクションが含まれている"},
         {"id": "has-strength-section", "text": "「得意分野」セクションが含まれている"},

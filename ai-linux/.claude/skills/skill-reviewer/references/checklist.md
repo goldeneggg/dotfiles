@@ -110,9 +110,9 @@ skill-creator のベストプラクティスに基づく検証項目一覧。
 - **根拠**: 不要ファイルはメンテナンスコストを増やし、スキルの理解を妨げる
 
 ### 4-03: references/ の大規模ファイル
-- **基準**: 300行を超える reference ファイルには目次（TOC）があること
+- **基準**: 100行を超える reference ファイルには目次（TOC）があること
 - **Warn**: 大規模ファイルに TOC がない
-- **根拠**: skill-creator の推奨 — "For large reference files (>300 lines), include a table of contents"
+- **根拠**: skill-creator の推奨 — 100行を超える reference ファイルは冒頭に目次を置き、必要な章だけを選択的に読めるようにする
 
 ### 4-04: scripts/ の実行可能性
 - **基準**: scripts/ 内のファイルに適切な shebang やファイル拡張子があること

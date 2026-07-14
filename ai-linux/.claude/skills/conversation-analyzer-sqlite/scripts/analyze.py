@@ -12,14 +12,16 @@ Options:
                      (default: summary)
     --project FILTER プロジェクトパスのフィルタ (部分一致)
     --days N         直近N日間に限定
-    --format FORMAT  出力形式: markdown, csv, json (default: markdown)
+    --format FORMAT  出力形式: markdown, json (default: markdown)
 """
 
 import argparse
+import io
 import json
 import os
 import sqlite3
 import sys
+from contextlib import redirect_stdout
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -40,20 +42,31 @@ def connect(db_path):
 
 
 def date_filter(days=None):
-    """日付フィルタのWHERE句を生成
-    sessions.created_atが空の場合があるため、exported_atをフォールバックに使う
-    """
-    if days:
+    """日付フィルタのWHERE句を生成する。"""
+    if days is not None:
         cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
         return f"AND COALESCE(created_at, exported_at) >= '{cutoff}'"
     return ""
 
 
 def project_filter(project=None):
-    """プロジェクトフィルタのWHERE句を生成"""
-    if project:
-        return f"AND project_path LIKE '%{project}%'"
-    return ""
+    """SQL文字列リテラルとして安全にエスケープしたプロジェクトフィルタを返す。"""
+    if not project:
+        return ""
+    escaped = (
+        project.replace("\\", "\\\\")
+        .replace("'", "''")
+        .replace("%", "\\%")
+        .replace("_", "\\_")
+    )
+    return f"AND project_path LIKE '%{escaped}%' ESCAPE '\\'"
+
+
+def positive_days(value):
+    days = int(value)
+    if days <= 0:
+        raise argparse.ArgumentTypeError("--days は1以上の整数で指定してください")
+    return days
 
 
 def report_summary(conn, days=None, project=None):
@@ -427,7 +440,7 @@ def main():
                         choices=["summary", "tokens", "tools", "sessions", "files", "subagents", "trends", "all"],
                         help="レポート種別")
     parser.add_argument("--project", help="プロジェクトフィルタ (部分一致)")
-    parser.add_argument("--days", type=int, help="直近N日間に限定")
+    parser.add_argument("--days", type=positive_days, help="直近N日間に限定")
     parser.add_argument("--format", default="markdown", choices=["markdown", "json"],
                         help="出力形式")
     args = parser.parse_args()
@@ -445,12 +458,26 @@ def main():
         "trends": report_trends,
     }
 
-    if args.report == "all":
-        for name, func in reports.items():
-            func(conn, days=args.days, project=args.project)
-            print("\n---\n")
+    def render_reports():
+        if args.report == "all":
+            for name, func in reports.items():
+                func(conn, days=args.days, project=args.project)
+                print("\n---\n")
+        else:
+            reports[args.report](conn, days=args.days, project=args.project)
+
+    if args.format == "json":
+        buffer = io.StringIO()
+        with redirect_stdout(buffer):
+            render_reports()
+        print(json.dumps({
+            "report": args.report,
+            "days": args.days,
+            "project": args.project,
+            "content": buffer.getvalue(),
+        }, ensure_ascii=False))
     else:
-        reports[args.report](conn, days=args.days, project=args.project)
+        render_reports()
 
     conn.close()
 

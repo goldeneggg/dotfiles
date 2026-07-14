@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # repo-snapshot.sh — リポジトリの構造スナップショットを取得する
 # 使い方: bash repo-snapshot.sh /path/to/repo
 #

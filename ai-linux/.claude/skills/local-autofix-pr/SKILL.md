@@ -12,7 +12,7 @@ description: |
   - "built-in /autofix-prじゃなくてローカル対話型でCI直して"
   - "/loopと組み合わせてノーオペ早期終了で回したい"
 
-  別スキル優先: PRレビュー→pr-reviewer / PR説明文→pr-description / Actions分析→gh-action-run-validator
+  別スキル優先: PRレビュー→pr-reviewer / PR説明文→pr-description / Actionsログの単独分析→`gh run view --log-failed`
 argument-hint: "[prompt] [--pr <番号>] [--ci-only] [--reviews-only] [--no-push]"
 ---
 
@@ -265,7 +265,7 @@ git diff
 1. このdiffでコミット・pushしてよいか
 2. コミットメッセージはこちらで提案してよいか / ユーザーが指定するか
 
-承認後、コミットメッセージを生成（**commit-message-suggester スキルの流儀に準拠したConventional Commits形式**を推奨）。
+承認後、コミットメッセージを生成（**`commiter` の `--suggest` モードの流儀に準拠したConventional Commits形式**を推奨）。
 代表例:
 
 ```

@@ -110,11 +110,17 @@ def count_section_checkboxes(text: str, section_names: list[str]) -> tuple[int, 
     lines = text.splitlines()
     checked = total = 0
     active = False
+    section_level = 0
     for line in lines:
         m = SECTION_RE.match(line)
         if m:
+            level = len(m.group(0)) - len(m.group(0).lstrip("#"))
             heading = m.group(1)
-            active = any(name in heading for name in section_names)
+            if active and level <= section_level:
+                active = False
+            if any(name in heading for name in section_names):
+                active = True
+                section_level = level
             continue
         if not active:
             continue

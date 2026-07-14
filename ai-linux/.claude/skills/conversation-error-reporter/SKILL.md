@@ -22,10 +22,10 @@ description: |
   - コード内のエラーハンドリング実装（コーディングタスク）
   - テスト失敗の修正（コーディングタスク）
   - 外部システムのエラーログ分析（Sentry等）
-  - GitHub Actionsの失敗分析（gh-action-run-validatorの領域）
+  - GitHub Actionsの失敗分析（専用のCIログ分析手順の領域）
   - 過去セッションの統計分析（conversation-analyzer-sqliteの領域）
   - PRレビュー（pr-reviewerの領域）
-  - CLAUDE.md改善（ai-context-optimizerの領域）
+  - CLAUDE.mdやプロジェクトルールの改善（設定・コンテキスト設計の領域）
 
   「エラー」「失敗」「うまくいかない」「問題」「振り返り」「やり直し」「レポート」
   といったキーワードが「この会話」「このセッション」「さっきの」という文脈と

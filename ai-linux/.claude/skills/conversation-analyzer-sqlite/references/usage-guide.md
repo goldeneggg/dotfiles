@@ -126,7 +126,7 @@ GROUP BY attribution_skill
 ORDER BY fires DESC;
 ```
 
-→ アクション例: 「`pr-reviewer` は10回中9回別エージェント追加実行 → スキル単体で完結しないので統合検討」「`commit-message-suggester` は1回呼ばれて即解決 → 優秀、description をもう少し pushy にして発火増を狙う」
+→ アクション例: 「`pr-reviewer` は10回中9回別エージェント追加実行 → スキル単体で完結しないので統合検討」「`commiter --suggest` は1回呼ばれて即解決 → 優秀、description をもう少し pushy にして発火増を狙う」
 
 自作スキル多数の場合に最も刺さる分析。
 
