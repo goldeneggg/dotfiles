@@ -722,6 +722,9 @@ hooks = true
 codex_git_commit = false
 js_repl = false
 
+# See: https://github.com/openai/codex/issues/24750
+default_mode_request_user_input = true
+
 # unified_exec = true
 
 # shell_snapshot = true
