@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Actions Error Fixer"
+  short_description: "GitHub Actionsの失敗原因を調査し、安全に修正する"
+  default_prompt: "$gh-action-error-fixer を使って、この GitHub Actions の失敗を調査・修正してください。"
