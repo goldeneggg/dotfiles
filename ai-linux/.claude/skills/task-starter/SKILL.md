@@ -63,7 +63,7 @@ argument-hint: "[プロジェクト名]"
 - 指定ディレクトリに `YYYYMMDD-{name}/` フォルダ構造が生成されている
 - `specs/` に要件・技術仕様を含む仕様書が作成され、非機能要件にセキュリティ・耐障害性・高可用性・スケーラビリティの方針が記載されている
 - `todos/` に1-2時間粒度のタスクが**`0xx` 番台（`001`〜`099`）**で依存順に配置され、各TODOに依存メタ（`depends_on` / `parallel_group`）が明記されている（Markdownはフロントマター、HTMLは `<script type="application/x-task-meta">`。`1xx` 番台は予約のため未使用）
-- `progresses/` と `logs/` が生成され、成果・進捗管理ドキュメントとその他の作業ログの出力先が分離されている
+- 各TODOに対応する `progresses/{ID}/PROGRESS.md` と `logs/{ID}/` が生成され、進捗正本とその他の作業成果物が分離されている
 - 各TODOに「開発原則チェック」（4原則の該当 or N/A理由）が記載されている
 - ロードマップ（`todos/README.*`）に Mermaid DAG・タスク表・クリティカルパス・並行可能タスク群・推奨ワークロードが記載されている（HTML時は Mermaid が `<pre class="mermaid">` で描画される）
 - ユーザーが Phase 5 のレビューで承認している
@@ -74,6 +74,7 @@ argument-hint: "[プロジェクト名]"
 
 1. **入力テンプレートを読み、既知情報を整理**
    - Phase 1 の開始時に必ず `references/prompt-template.md` を読む
+   - `../_shared/references/task-management-contract.md` を読み、進捗正本とログの保存契約を以降の生成へ適用する
    - ユーザーの依頼と `$ARGUMENTS` をテンプレートの項目へ対応付ける。`$ARGUMENTS` が指定されている場合はプロジェクト名として扱う
    - テンプレートが未記入でも実行を止めず、「生成開始条件」と照合して不足項目を特定する
    - 回答済みの情報や、対象コードから確認できる情報を再質問しない
@@ -117,13 +118,14 @@ argument-hint: "[プロジェクト名]"
    ├── todos/              # タスクドキュメント（新規は 0xx 番台。1xx は実行中追加用に予約）
    │   ├── README.md       # タスクロードマップ（Phase 4で内容を埋める。HTML選択時は README.html）
    │   └── 001-{task-name}/
-   ├── progresses/         # タスク成果・進捗管理ドキュメント置き場
+   ├── progresses/         # タスク進捗の正本置き場
    │   └── 001-{task-name}/
-   └── logs/               # 上記以外の作業ログ置き場
+   │       └── PROGRESS.md # HTMLプロジェクトでもMarkdown固定
+   └── logs/               # 進捗正本以外の作業成果物置き場
        └── 001-{task-name}/
    ```
 
-   `progresses/NNN-{task}/` には、タスクの成果ドキュメントと `PROGRESS.md` 等の進捗管理ドキュメントだけを置く。コミットログ・調査メモ・コマンド出力・試行記録など、それ以外はすべて `logs/NNN-{task}/` に置く。
+   保存先の分類と `PROGRESS.md` の必須形式は、Phase 1 で読んだ共有契約に従う。
 
 2. **参考ファイルを配置**
    - Phase 1 で確認した参考データ・ファイルがあれば `files/` にコピーまたはリンク
@@ -159,6 +161,7 @@ argument-hint: "[プロジェクト名]"
      - `parallel_group`: 並行可能なグループ名（無ければ `null`）
      - `parallelizable`: subagentで並行実行を推奨するか
    - **各タスクで「開発原則」（セキュリティ最優先・耐障害性・高可用性・スケーラビリティ）を点検**し、テンプレートの「開発原則チェック」セクションに該当原則の対応方針 or「N/A（理由）」を記載する。セキュリティ対応は分量が大きければ独立タスクとして起票する
+   - 各TODOの生成時に同じIDの `progresses/{ID}/PROGRESS.md` と `logs/{ID}/` を作成する。`PROGRESS.md` は共有契約のテンプレートを使用し、状態を `未着手`、残作業をTODOの作業内容、その他の空項目を `なし` で初期化する
    - 不明点は選択肢を提示して随時確認
 
 ### Phase 4: 依存分析とロードマップ生成（**新設**）
@@ -206,7 +209,9 @@ argument-hint: "[プロジェクト名]"
    │       └── 📄 README.md
    ├── 📁 progresses/
    │   ├── 📁 001-setup/
+   │   │   └── 📄 PROGRESS.md
    │   └── 📁 002-implement/
+   │       └── 📄 PROGRESS.md
    └── 📁 logs/
        ├── 📁 001-setup/
        └── 📁 002-implement/
@@ -331,6 +336,7 @@ argument-hint: "[プロジェクト名]"
 
 - `references/prompt-template.md` - **Phase 1で毎回参照する入力テンプレート**。生成開始条件、不足判定、段階的な質問順を定義
 - `references/html-output-guide.md` - **HTML形式選択時の生成ルール（Phase 1でHTMLを選んだら必ず参照）**。シェル使用法・Mermaid・依存メタ埋め込み・拡張子規約・task-performer互換注記
+- `../_shared/references/task-management-contract.md` - **Phase 1で毎回参照する共有保存契約**。`PROGRESS.md` の固定スキーマと `logs/` への振り分けを定義
 
 ### references/templates/
 

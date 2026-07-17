@@ -7,7 +7,7 @@
 集めるシグナル（複数シグナル統合の材料）:
 - frontmatter: id / estimated_time / depends_on / parallel_group / priority / parallelizable
 - 受け入れ条件・作業内容のチェックボックス進捗（checked / total）
-- progresses/NNN-{task}/ 配下の進捗管理ドキュメント・成果ドキュメント有無
+- progresses/NNN-{task}/PROGRESS.md のスキーマ・宣言状態・非標準ファイル
 - logs/NNN-{task}/ 配下の commit ログ有無・その他ファイル有無
 - 上記から導出した暫定ステータス（done / in_progress / not_started）と、シグナル矛盾フラグ
 
@@ -19,6 +19,7 @@ import argparse
 import json
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 
 # 番号帯の境界。0xx=メインタスク、1xx=申し送り（task-starter/performer の番号規約）
@@ -29,8 +30,22 @@ CHECKBOX_RE = re.compile(r"^\s*[-*]\s+\[( |x|X)\]")
 SECTION_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$")
 # logs 配下のコミットログ命名: commit-YYYYmmddHHMMSS-title.txt
 COMMIT_LOG_RE = re.compile(r"^commit-.*\.txt$")
-# progresses 配下の進捗管理ドキュメント命名: PROGRESS.md など
-PROGRESS_DOC_RE = re.compile(r"^progress(?:[-_.].*)?\.(?:md|html)$", re.IGNORECASE)
+PROGRESS_FILE_NAME = "PROGRESS.md"
+PROGRESS_SECTION_RE = re.compile(r"^##\s+進捗\s*$", re.MULTILINE)
+OUTCOME_SECTION_RE = re.compile(r"^##\s+成果\s*$", re.MULTILINE)
+PROGRESS_FIELD_NAMES = (
+    "状態",
+    "最終更新",
+    "完了した作業",
+    "残作業",
+    "ブロッカー",
+)
+PROGRESS_STATUS_MAP = {
+    "未着手": "not_started",
+    "進行中": "in_progress",
+    "ブロック中": "blocked",
+    "完了": "done",
+}
 IGNORED_TRACKING_FILES = {".gitkeep"}
 
 
@@ -145,7 +160,7 @@ def scan_logs(logs_dir: Path, task_id: str) -> dict:
     if not task_log_dir.is_dir():
         return info
     info["exists"] = True
-    for f in task_log_dir.iterdir():
+    for f in task_log_dir.rglob("*"):
         if not f.is_file() or f.name in IGNORED_TRACKING_FILES:
             continue
         if COMMIT_LOG_RE.match(f.name):
@@ -156,22 +171,86 @@ def scan_logs(logs_dir: Path, task_id: str) -> dict:
 
 
 def scan_progresses(progresses_dir: Path, task_id: str) -> dict:
-    """progresses/NNN-{task}/ の進捗管理・成果ドキュメント数を返す。"""
-    info = {"progress_doc_count": 0, "artifact_doc_count": 0, "exists": False}
+    """正本のPROGRESS.mdを検証し、非標準ファイルを進捗判定から分離する。"""
+    info = {
+        "exists": False,
+        "canonical_file": None,
+        "canonical_exists": False,
+        "schema_valid": False,
+        "declared_status": None,
+        "missing_fields": [],
+        "validation_errors": [],
+        "unexpected_files": [],
+    }
     if not progresses_dir or not progresses_dir.is_dir():
         return info
     task_progress_dir = progresses_dir / task_id
     if not task_progress_dir.is_dir():
         return info
     info["exists"] = True
-    for file_path in task_progress_dir.iterdir():
-        if not file_path.is_file() or file_path.name in IGNORED_TRACKING_FILES:
+    canonical_file = task_progress_dir / PROGRESS_FILE_NAME
+    for file_path in sorted(task_progress_dir.iterdir(), key=lambda path: path.name):
+        if file_path.name in IGNORED_TRACKING_FILES:
             continue
-        if PROGRESS_DOC_RE.match(file_path.name):
-            info["progress_doc_count"] += 1
+        if file_path == canonical_file and file_path.is_file():
+            continue
+        suffix = "/" if file_path.is_dir() else ""
+        info["unexpected_files"].append(f"{file_path.name}{suffix}")
+
+    if not canonical_file.is_file():
+        return info
+
+    info["canonical_file"] = str(canonical_file)
+    info["canonical_exists"] = True
+    text = canonical_file.read_text(encoding="utf-8", errors="replace")
+
+    missing_fields = []
+    if not PROGRESS_SECTION_RE.search(text):
+        missing_fields.append("進捗セクション")
+    if not OUTCOME_SECTION_RE.search(text):
+        missing_fields.append("成果セクション")
+
+    field_values = {}
+    for field_name in PROGRESS_FIELD_NAMES:
+        value = _extract_progress_field(text, field_name)
+        if value is None:
+            missing_fields.append(field_name)
         else:
-            info["artifact_doc_count"] += 1
+            field_values[field_name] = value
+
+    validation_errors = []
+    status_label = field_values.get("状態", "")
+    if status_label:
+        info["declared_status"] = PROGRESS_STATUS_MAP.get(status_label)
+        if info["declared_status"] is None:
+            validation_errors.append(f"未対応の状態値: {status_label}")
+    elif "状態" in field_values:
+        validation_errors.append("状態が空です")
+
+    updated_at = field_values.get("最終更新", "")
+    if updated_at:
+        try:
+            parsed_updated_at = datetime.fromisoformat(updated_at.replace("Z", "+00:00"))
+            if parsed_updated_at.tzinfo is None:
+                validation_errors.append("最終更新にタイムゾーンがありません")
+        except ValueError:
+            validation_errors.append(f"最終更新がISO 8601形式ではありません: {updated_at}")
+    elif "最終更新" in field_values:
+        validation_errors.append("最終更新が空です")
+
+    info["missing_fields"] = missing_fields
+    info["validation_errors"] = validation_errors
+    info["schema_valid"] = not missing_fields and not validation_errors
     return info
+
+
+def _extract_progress_field(text: str, field_name: str) -> str | None:
+    pattern = re.compile(
+        rf"^\s*[-*]\s+\*\*{re.escape(field_name)}\*\*:\s*(.*?)\s*$",
+        re.MULTILINE,
+    )
+    match = pattern.search(text)
+    return match.group(1).strip() if match else None
 
 
 def derive_status(
@@ -182,30 +261,46 @@ def derive_status(
 ) -> tuple[str, list[str]]:
     """複数シグナルを統合して暫定ステータスと注記（矛盾等）を導出する。
 
-    判定ルール（堅牢性のため受け入れ条件を主、コミットログを補強シグナルとして扱う）:
-    - done:        受け入れ条件が全て[x]、または（コミットログあり and 受け入れに未チェックが無い）
-    - not_started: いかなる着手痕跡も無い（チェック0・progresses/logs が空または不在）
-    - in_progress: 上記以外（一部チェック済み、成果・進捗文書またはログはあるが受け入れ未充足 等）
+    判定ルール:
+    - 有効なPROGRESS.mdと受け入れ条件が一致する場合は、その状態を採用する
+    - 両者が矛盾する場合は完了へ寄せず in_progress とする
+    - 正本が無効または欠落した場合だけ、チェックボックスとコミットログで補助判定する
+    - 一般ログとprogresses内の非標準ファイルは着手シグナルにしない
     """
     a_checked, a_total = accept
     w_checked, w_total = work
     has_commit = logs["commit_log_count"] > 0
-    has_progress_activity = progresses["exists"] and (
-        progresses["progress_doc_count"] > 0
-        or progresses["artifact_doc_count"] > 0
+    declared_status = (
+        progresses["declared_status"] if progresses["schema_valid"] else None
     )
-    has_log_activity = logs["exists"] and (has_commit or logs["other_file_count"] > 0)
-    has_activity = has_progress_activity or has_log_activity
     notes: list[str] = []
 
     accept_complete = a_total > 0 and a_checked == a_total
     accept_has_unchecked = a_total > 0 and a_checked < a_total
 
-    if accept_complete or (has_commit and not accept_has_unchecked):
+    if declared_status is not None:
+        if accept_complete and declared_status != "done":
+            status = "in_progress"
+            notes.append("受け入れ条件は全チェックだがPROGRESS.mdの状態が完了ではない（要確認）")
+        elif accept_has_unchecked and declared_status == "done":
+            status = "in_progress"
+            notes.append("PROGRESS.mdは完了だが受け入れ条件に未チェックあり（要確認）")
+        elif declared_status == "done":
+            status = "done"
+        elif declared_status in {"in_progress", "blocked"}:
+            status = "in_progress"
+            if declared_status == "blocked":
+                notes.append("PROGRESS.mdでブロック中と宣言")
+        elif a_checked > 0 or w_checked > 0 or has_commit:
+            status = "in_progress"
+            notes.append("PROGRESS.mdは未着手だが着手シグナルあり（要確認）")
+        else:
+            status = "not_started"
+    elif accept_complete or (has_commit and not accept_has_unchecked):
         status = "done"
         if has_commit and a_total == 0:
-            notes.append("受け入れ条件の記載が無いためコミットログを根拠に完了と推定")
-    elif a_checked == 0 and w_checked == 0 and not has_activity:
+            notes.append("進捗正本と受け入れ条件が無いためコミットログを根拠に完了と推定")
+    elif a_checked == 0 and w_checked == 0 and not has_commit:
         status = "not_started"
     else:
         status = "in_progress"
@@ -213,8 +308,16 @@ def derive_status(
     # シグナル矛盾の明示（レポートの備考に転記させる）
     if has_commit and accept_has_unchecked:
         notes.append("コミットログありだが受け入れ条件に未チェックあり（要確認）")
-    if accept_complete and not has_commit and logs["exists"] is False:
-        notes.append("受け入れ条件は全チェックだがコミットログ未検出")
+    if progresses["canonical_exists"] is False:
+        notes.append("PROGRESS.mdが見つからない")
+    elif progresses["schema_valid"] is False:
+        details = progresses["missing_fields"] + progresses["validation_errors"]
+        notes.append(f"PROGRESS.mdの必須形式が不正: {', '.join(details)}")
+    if progresses["unexpected_files"]:
+        notes.append(
+            "progresses内の非標準ファイル（進捗判定から除外）: "
+            + ", ".join(progresses["unexpected_files"])
+        )
 
     return status, notes
 
@@ -269,7 +372,11 @@ def scan_task(task_dir: Path, progresses_dir: Path, logs_dir: Path) -> dict | No
             "work_items": {"checked": work[0], "total": work[1]},
             "progresses": progresses,
             "logs": logs,
-            "status": status if not result["needs_manual_review"] else "unknown",
+            "status": (
+                status
+                if not result["needs_manual_review"] or progresses["schema_valid"]
+                else "unknown"
+            ),
         }
     )
     return result
