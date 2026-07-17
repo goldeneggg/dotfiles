@@ -2,14 +2,15 @@
 """task-starter プロジェクトの todos/ を走査し、各タスクの進捗シグナルをJSONで出力する。
 
 進捗の最終的な分類・グルーピング・推奨順序付けはモデル側の判断に委ねる。
-このスクリプトの役割は「判定に必要な生シグナルを、複数ソースから漏れなく機械的に集める」こと。
+このスクリプトの役割は「判定に必要な定義・状態・互換シグナルを機械的に集める」こと。
 
-集めるシグナル（複数シグナル統合の材料）:
+集める情報:
 - frontmatter: id / estimated_time / depends_on / parallel_group / priority / parallelizable
-- 受け入れ条件・作業内容のチェックボックス進捗（checked / total）
-- progresses/NNN-{task}/PROGRESS.md のスキーマ・宣言状態・非標準ファイル
+- TODOに定義された W-ID / AC-ID（新形式）
+- progresses/NNN-{task}/PROGRESS.md のスキーマ・宣言状態・AC検証状態・非標準ファイル
+- 受け入れ条件・作業内容のチェックボックス進捗（旧形式の読取互換だけ）
 - logs/NNN-{task}/ 配下の commit ログ有無・その他ファイル有無
-- 上記から導出した暫定ステータス（done / in_progress / not_started）と、シグナル矛盾フラグ
+- 上記から導出した暫定ステータス（done / in_progress / not_started / unknown）と注記
 
 Markdown(.md) タスクを主対象とする。HTML(.html) プロジェクトはベストエフォートで検出し、
 frontmatter 相当が取れない場合は needs_manual_review=true を立てて呼び出し側に直接確認を促す。
@@ -28,11 +29,16 @@ HANDOVER_BAND_START = 100
 TASK_DIR_RE = re.compile(r"^(\d{3})-(.+)$")
 CHECKBOX_RE = re.compile(r"^\s*[-*]\s+\[( |x|X)\]")
 SECTION_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$")
+DEFINITION_ID_RE = re.compile(r"^\s*[-*]\s+\*\*((?:W|AC)-\d+)\*\*\s*:")
+ACCEPTANCE_ID_RE = re.compile(r"^AC-\d+$")
 # logs 配下のコミットログ命名: commit-YYYYmmddHHMMSS-title.txt
 COMMIT_LOG_RE = re.compile(r"^commit-.*\.txt$")
 PROGRESS_FILE_NAME = "PROGRESS.md"
 PROGRESS_SECTION_RE = re.compile(r"^##\s+進捗\s*$", re.MULTILINE)
 OUTCOME_SECTION_RE = re.compile(r"^##\s+成果\s*$", re.MULTILINE)
+ACCEPTANCE_VERIFICATION_SECTION_RE = re.compile(
+    r"^##\s+受け入れ条件の検証\s*$", re.MULTILINE
+)
 PROGRESS_FIELD_NAMES = (
     "状態",
     "最終更新",
@@ -46,6 +52,7 @@ PROGRESS_STATUS_MAP = {
     "ブロック中": "blocked",
     "完了": "done",
 }
+ACCEPTANCE_STATUS_VALUES = {"未確認", "充足", "未充足"}
 IGNORED_TRACKING_FILES = {".gitkeep"}
 
 
@@ -151,6 +158,38 @@ def count_section_checkboxes(text: str, section_names: list[str]) -> tuple[int, 
     return checked, total
 
 
+def extract_definition_ids(
+    text: str,
+    section_names: list[str],
+    prefix: str,
+) -> tuple[list[str], list[str]]:
+    """指定セクションから順序を保ってIDを抽出し、重複IDも返す。"""
+    ids: list[str] = []
+    active = False
+    section_level = 0
+    for line in text.splitlines():
+        heading_match = SECTION_RE.match(line)
+        if heading_match:
+            level = len(heading_match.group(0)) - len(
+                heading_match.group(0).lstrip("#")
+            )
+            heading = heading_match.group(1)
+            if active and level <= section_level:
+                active = False
+            if any(name in heading for name in section_names):
+                active = True
+                section_level = level
+            continue
+        if not active:
+            continue
+        id_match = DEFINITION_ID_RE.match(line)
+        if id_match and id_match.group(1).startswith(f"{prefix}-"):
+            ids.append(id_match.group(1))
+
+    duplicates = sorted({item_id for item_id in ids if ids.count(item_id) > 1})
+    return ids, duplicates
+
+
 def scan_logs(logs_dir: Path, task_id: str) -> dict:
     """logs/NNN-{task}/ の中身を調べ、コミットログ有無と他ファイル有無を返す。"""
     info = {"commit_log_count": 0, "other_file_count": 0, "exists": False}
@@ -170,7 +209,12 @@ def scan_logs(logs_dir: Path, task_id: str) -> dict:
     return info
 
 
-def scan_progresses(progresses_dir: Path, task_id: str) -> dict:
+def scan_progresses(
+    progresses_dir: Path,
+    task_id: str,
+    expected_acceptance_ids: list[str] | None = None,
+    require_acceptance_verification: bool = False,
+) -> dict:
     """正本のPROGRESS.mdを検証し、非標準ファイルを進捗判定から分離する。"""
     info = {
         "exists": False,
@@ -181,6 +225,15 @@ def scan_progresses(progresses_dir: Path, task_id: str) -> dict:
         "missing_fields": [],
         "validation_errors": [],
         "unexpected_files": [],
+        "schema_version": None,
+        "acceptance_verification": {
+            "present": False,
+            "items": [],
+            "counts": {"未確認": 0, "充足": 0, "未充足": 0},
+            "missing_ids": [],
+            "unexpected_ids": [],
+            "duplicate_ids": [],
+        },
     }
     if not progresses_dir or not progresses_dir.is_dir():
         return info
@@ -210,6 +263,12 @@ def scan_progresses(progresses_dir: Path, task_id: str) -> dict:
     if not OUTCOME_SECTION_RE.search(text):
         missing_fields.append("成果セクション")
 
+    acceptance = _parse_acceptance_verification(text)
+    info["acceptance_verification"] = acceptance
+    if require_acceptance_verification and not acceptance["present"]:
+        missing_fields.append("受け入れ条件の検証セクション")
+    info["schema_version"] = "current" if acceptance["present"] else "legacy"
+
     field_values = {}
     for field_name in PROGRESS_FIELD_NAMES:
         value = _extract_progress_field(text, field_name)
@@ -238,10 +297,89 @@ def scan_progresses(progresses_dir: Path, task_id: str) -> dict:
     elif "最終更新" in field_values:
         validation_errors.append("最終更新が空です")
 
+    validation_errors.extend(acceptance["validation_errors"])
+    if acceptance["present"] and expected_acceptance_ids is not None:
+        actual_ids = [item["id"] for item in acceptance["items"]]
+        expected_set = set(expected_acceptance_ids)
+        actual_set = set(actual_ids)
+        acceptance["missing_ids"] = [
+            item_id for item_id in expected_acceptance_ids if item_id not in actual_set
+        ]
+        acceptance["unexpected_ids"] = [
+            item_id for item_id in actual_ids if item_id not in expected_set
+        ]
+        if acceptance["missing_ids"]:
+            validation_errors.append(
+                "AC-IDが欠落: " + ", ".join(acceptance["missing_ids"])
+            )
+        if acceptance["unexpected_ids"]:
+            validation_errors.append(
+                "TODOに存在しないAC-ID: "
+                + ", ".join(acceptance["unexpected_ids"])
+            )
+
     info["missing_fields"] = missing_fields
     info["validation_errors"] = validation_errors
     info["schema_valid"] = not missing_fields and not validation_errors
     return info
+
+
+def _parse_acceptance_verification(text: str) -> dict:
+    result = {
+        "present": False,
+        "items": [],
+        "counts": {"未確認": 0, "充足": 0, "未充足": 0},
+        "missing_ids": [],
+        "unexpected_ids": [],
+        "duplicate_ids": [],
+        "validation_errors": [],
+    }
+    section_match = ACCEPTANCE_VERIFICATION_SECTION_RE.search(text)
+    if not section_match:
+        return result
+
+    result["present"] = True
+    section_text = text[section_match.end() :]
+    next_section = re.search(r"^##\s+", section_text, re.MULTILINE)
+    if next_section:
+        section_text = section_text[: next_section.start()]
+
+    seen_ids: set[str] = set()
+    for line in section_text.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if len(cells) < 3 or cells[0] == "ID" or set(cells[0]) <= {"-", ":"}:
+            continue
+        acceptance_id, status, evidence = cells[:3]
+        if not ACCEPTANCE_ID_RE.fullmatch(acceptance_id):
+            result["validation_errors"].append(
+                f"不正なAC-ID: {acceptance_id or '(空)'}"
+            )
+            continue
+        if acceptance_id in seen_ids:
+            result["duplicate_ids"].append(acceptance_id)
+            continue
+        seen_ids.add(acceptance_id)
+        if status not in ACCEPTANCE_STATUS_VALUES:
+            result["validation_errors"].append(
+                f"{acceptance_id}の未対応の検証状態: {status or '(空)'}"
+            )
+            continue
+        result["items"].append(
+            {"id": acceptance_id, "status": status, "evidence": evidence}
+        )
+        result["counts"][status] += 1
+
+    if result["duplicate_ids"]:
+        result["duplicate_ids"] = sorted(set(result["duplicate_ids"]))
+        result["validation_errors"].append(
+            "重複AC-ID: " + ", ".join(result["duplicate_ids"])
+        )
+    if not result["items"]:
+        result["validation_errors"].append("AC検証行がありません")
+    return result
 
 
 def _extract_progress_field(text: str, field_name: str) -> str | None:
@@ -254,17 +392,17 @@ def _extract_progress_field(text: str, field_name: str) -> str | None:
 
 
 def derive_status(
+    definition_format: str,
     accept: tuple[int, int],
     work: tuple[int, int],
     progresses: dict,
     logs: dict,
 ) -> tuple[str, list[str]]:
-    """複数シグナルを統合して暫定ステータスと注記（矛盾等）を導出する。
+    """契約バージョンに応じて暫定ステータスと注記を導出する。
 
     判定ルール:
-    - 有効なPROGRESS.mdと受け入れ条件が一致する場合は、その状態を採用する
-    - 両者が矛盾する場合は完了へ寄せず in_progress とする
-    - 正本が無効または欠落した場合だけ、チェックボックスとコミットログで補助判定する
+    - 新形式はPROGRESS.mdの宣言状態とAC検証状態だけで判定する
+    - 旧形式は有効なPROGRESS.mdを優先し、正本が無効・欠落した場合だけチェックボックスとコミットログで補助判定する
     - 一般ログとprogresses内の非標準ファイルは着手シグナルにしない
     """
     a_checked, a_total = accept
@@ -275,39 +413,54 @@ def derive_status(
     )
     notes: list[str] = []
 
-    accept_complete = a_total > 0 and a_checked == a_total
-    accept_has_unchecked = a_total > 0 and a_checked < a_total
+    acceptance = progresses["acceptance_verification"]
+    acceptance_total = len(acceptance["items"])
+    acceptance_complete = (
+        acceptance_total > 0 and acceptance["counts"]["充足"] == acceptance_total
+    )
 
-    if declared_status is not None:
-        if accept_complete and declared_status != "done":
-            status = "in_progress"
-            notes.append("受け入れ条件は全チェックだがPROGRESS.mdの状態が完了ではない（要確認）")
-        elif accept_has_unchecked and declared_status == "done":
-            status = "in_progress"
-            notes.append("PROGRESS.mdは完了だが受け入れ条件に未チェックあり（要確認）")
-        elif declared_status == "done":
-            status = "done"
-        elif declared_status in {"in_progress", "blocked"}:
-            status = "in_progress"
-            if declared_status == "blocked":
-                notes.append("PROGRESS.mdでブロック中と宣言")
-        elif a_checked > 0 or w_checked > 0 or has_commit:
-            status = "in_progress"
-            notes.append("PROGRESS.mdは未着手だが着手シグナルあり（要確認）")
+    if definition_format == "current" or progresses["schema_version"] == "current":
+        if progresses["schema_valid"]:
+            if declared_status == "done" and not acceptance_complete:
+                status = "in_progress"
+                notes.append(
+                    "PROGRESS.mdは完了だが未確認または未充足のAC-IDあり（要確認）"
+                )
+            elif declared_status == "done":
+                status = "done"
+            elif acceptance_complete:
+                status = "in_progress"
+                notes.append(
+                    "全AC-IDは充足済みだがPROGRESS.mdの状態が完了ではない（要確認）"
+                )
+            elif declared_status in {"in_progress", "blocked"}:
+                status = "in_progress"
+                if declared_status == "blocked":
+                    notes.append("PROGRESS.mdでブロック中と宣言")
+            elif declared_status == "not_started":
+                status = "not_started"
+            else:
+                status = "unknown"
         else:
-            status = "not_started"
-    elif accept_complete or (has_commit and not accept_has_unchecked):
-        status = "done"
-        if has_commit and a_total == 0:
-            notes.append("進捗正本と受け入れ条件が無いためコミットログを根拠に完了と推定")
-    elif a_checked == 0 and w_checked == 0 and not has_commit:
-        status = "not_started"
+            status = "unknown"
+    elif declared_status is not None:
+        status = "in_progress" if declared_status == "blocked" else declared_status
+        notes.append("旧形式を読取互換モードで判定。新形式への移行を推奨")
+        if declared_status == "blocked":
+            notes.append("PROGRESS.mdでブロック中と宣言")
     else:
-        status = "in_progress"
+        accept_complete = a_total > 0 and a_checked == a_total
+        accept_has_unchecked = a_total > 0 and a_checked < a_total
+        if accept_complete or (has_commit and not accept_has_unchecked):
+            status = "done"
+            if has_commit and a_total == 0:
+                notes.append("旧形式の進捗正本と受け入れ条件が無いためコミットログを根拠に完了と推定")
+        elif a_checked == 0 and w_checked == 0 and not has_commit:
+            status = "not_started"
+        else:
+            status = "in_progress"
+        notes.append("旧形式のチェックボックスを読取専用の補助情報として判定。新形式への移行を推奨")
 
-    # シグナル矛盾の明示（レポートの備考に転記させる）
-    if has_commit and accept_has_unchecked:
-        notes.append("コミットログありだが受け入れ条件に未チェックあり（要確認）")
     if progresses["canonical_exists"] is False:
         notes.append("PROGRESS.mdが見つからない")
     elif progresses["schema_valid"] is False:
@@ -343,21 +496,65 @@ def scan_task(task_dir: Path, progresses_dir: Path, logs_dir: Path) -> dict | No
     if readme_md.is_file():
         text = readme_md.read_text(encoding="utf-8", errors="replace")
         meta = parse_frontmatter(text)
+        acceptance_ids, duplicate_acceptance_ids = extract_definition_ids(
+            text, ["受け入れ条件", "Acceptance"], "AC"
+        )
+        work_ids, duplicate_work_ids = extract_definition_ids(
+            text, ["作業内容", "Tasks", "Checklist"], "W"
+        )
         accept = count_section_checkboxes(text, ["受け入れ条件", "Acceptance"])
         work = count_section_checkboxes(text, ["作業内容", "Tasks", "Checklist"])
+        if acceptance_ids or work_ids:
+            definition_format = "current"
+        elif accept[1] > 0 or work[1] > 0:
+            definition_format = "legacy"
+        else:
+            definition_format = "unknown"
     elif readme_html.is_file():
-        # HTMLはベストエフォート。確実な機械判定が難しいので手動確認フラグを立てる
+        # HTMLはベストエフォート。確実な定義抽出が難しいので手動確認フラグを立てる
         result["needs_manual_review"] = True
-        result["notes"].append("HTML形式タスクのため frontmatter/チェックボックスは未解析。直接確認が必要")
+        result["notes"].append("HTML形式タスクのため frontmatter/W-ID/AC-IDは未解析。直接確認が必要")
         meta, accept, work = {}, (0, 0), (0, 0)
+        acceptance_ids, work_ids = [], []
+        duplicate_acceptance_ids, duplicate_work_ids = [], []
+        definition_format = "unknown"
     else:
         result["needs_manual_review"] = True
         result["notes"].append("README.md/README.html が見つからない")
         meta, accept, work = {}, (0, 0), (0, 0)
+        acceptance_ids, work_ids = [], []
+        duplicate_acceptance_ids, duplicate_work_ids = [], []
+        definition_format = "unknown"
 
-    progresses = scan_progresses(progresses_dir, task_dir.name)
+    if duplicate_acceptance_ids:
+        result["notes"].append(
+            "TODOの重複AC-ID: " + ", ".join(duplicate_acceptance_ids)
+        )
+        result["needs_manual_review"] = True
+    if duplicate_work_ids:
+        result["notes"].append(
+            "TODOの重複W-ID: " + ", ".join(duplicate_work_ids)
+        )
+        result["needs_manual_review"] = True
+    if definition_format == "current" and not acceptance_ids:
+        result["notes"].append("新形式のTODOにAC-IDがない")
+        result["needs_manual_review"] = True
+
+    progresses = scan_progresses(
+        progresses_dir,
+        task_dir.name,
+        acceptance_ids if definition_format == "current" else None,
+        require_acceptance_verification=definition_format == "current",
+    )
+    if duplicate_acceptance_ids:
+        progresses["validation_errors"].append(
+            "TODOの重複AC-ID: " + ", ".join(duplicate_acceptance_ids)
+        )
+        progresses["schema_valid"] = False
     logs = scan_logs(logs_dir, task_dir.name)
-    status, status_notes = derive_status(accept, work, progresses, logs)
+    status, status_notes = derive_status(
+        definition_format, accept, work, progresses, logs
+    )
     result["notes"].extend(status_notes)
 
     result.update(
@@ -368,8 +565,17 @@ def scan_task(task_dir: Path, progresses_dir: Path, logs_dir: Path) -> dict | No
             "parallel_group": meta.get("parallel_group"),
             "priority": meta.get("priority"),
             "parallelizable": meta.get("parallelizable"),
-            "acceptance": {"checked": accept[0], "total": accept[1]},
-            "work_items": {"checked": work[0], "total": work[1]},
+            "definition_format": definition_format,
+            "acceptance": {
+                "ids": acceptance_ids,
+                "checked": accept[0] if definition_format == "legacy" else None,
+                "total": len(acceptance_ids) if acceptance_ids else accept[1],
+            },
+            "work_items": {
+                "ids": work_ids,
+                "checked": work[0] if definition_format == "legacy" else None,
+                "total": len(work_ids) if work_ids else work[1],
+            },
             "progresses": progresses,
             "logs": logs,
             "status": (
