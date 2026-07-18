@@ -7,7 +7,7 @@ description = '''
 (3) ブラウザ拡張のPRレビュー時にクロスブラウザ互換性を確認したい時
 (4) manifest.jsonの変更を含むコミットを検証したい時
 '''
-model = "gpt-5.6-sol"
+model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 developer_instructions = '''
@@ -56,11 +56,11 @@ developer_instructions = '''
 ### 5. コード品質
 - `async/await` を使用しているか（コールバックスタイルでないか）
 - エラーハンドリングで空の `catch` ブロックがないか
-- プロジェクトの開発ルール（AGENTS.md等）に記載された規約に従っているか
+- プロジェクトのCLAUDE.mdに記載された規約に従っているか
 
 ## エラーハンドリング
 
-- **manifest.jsonが見つからない場合**: パスパターンで `**/manifest.json` を検索し、候補をユーザーに提示
+- **manifest.jsonが見つからない場合**: Globで `**/manifest.json` を検索し、候補をユーザーに提示
 - **レビュー対象ファイルが不明な場合**: ユーザーに対象ディレクトリまたはファイルパスを確認
 - **非ブラウザ拡張プロジェクトの場合**: manifest.jsonの内容からブラウザ拡張でないと判断した旨を報告し、レビューを中止
 
