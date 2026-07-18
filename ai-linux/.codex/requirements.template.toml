@@ -1,0 +1,31 @@
+# 管理者強制ポリシーテンプレート /etc/codex/requirements.toml
+
+# 危険なフルアクセスと自動実行を禁止
+allowed_sandbox_modes = ["workspace-write", "read-only"]
+allowed_approval_policies = ["on-request", "untrusted"]
+
+# ファイルシステムにおける絶対的な読み取り拒否
+[permissions.filesystem]
+deny_read = [
+  "~/.ssh",
+  "~/.aws",
+  "~/.gnupg/**",
+  "**/.env",
+  "**/.envrc",
+  "**/*.key",
+  "**/*.pem",
+  "**/.git/credentials",
+  "**/secrets.json",
+  "**/credentials.json",
+  "**/service-account*.json",
+  "**/secrets",
+]
+
+# 外部への漏洩経路を最小限にするための機能制限
+[features]
+# computer_use = false
+# browser_use = false
+# in_app_browser = false
+
+# ライブウェブ検索による情報漏洩・プロンプトインジェクションの防止
+allowed_web_search_modes = ["cached"]
