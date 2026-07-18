@@ -3,4 +3,5 @@ export MY_PIP_GLOBAL_PKGS=( \
   "setuptools" \
   "neovim" \
   "anthropic" \
+  "PyYAML" \
 )
