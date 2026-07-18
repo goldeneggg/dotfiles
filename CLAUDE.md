@@ -23,7 +23,7 @@ make setup
 ```sh
 make reset              # Update dotfiles (skip go install)
 make reset-with-goget   # Update dotfiles with go install
-make work               # Full upgrade: asdf + rust + gems + pips + npms + brew update
+make work               # Full upgrade: asdf + rust + gems + pips + npms
 ```
 
 ### Package Installation
@@ -94,10 +94,10 @@ make copilot-cli             # Launch Copilot CLI with MCP config
 
 ### Version Targets (in Makefile)
 
-- Node.js: v24
+- Node.js: v26
 - Python: v3.14
 - Ruby: v4.0
-- Terraform: v1.14
+- Terraform: v1.15
 
 ## Key Files
 
@@ -129,12 +129,8 @@ make copilot-cli             # Launch Copilot CLI with MCP config
 
 ## AI Implementation Rules
 
-### Basic Rules
-
 - **Language**: All communication must be in **Japanese**
-- **Confirmation First**: Always use AskUserQuestion tool to clarify uncertainties before proceeding
 - **Information Gathering**: Collect the latest and most accurate information when gathering from external sources
-- **Persistence**: Complete tasks thoroughly and persistently to the end
 
 ## Examples
 
