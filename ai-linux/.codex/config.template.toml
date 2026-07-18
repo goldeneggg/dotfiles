@@ -454,7 +454,9 @@ enabled = false
 
 # inherit: all (default) | core | none
 
-inherit = "all"
+# TODO: core に変えると作業にどのようなメリット・デメリットが発生するかを検証する（検証中）
+#inherit = "all"
+inherit = "core"
 
 # Skip default excludes for names containing KEY/SECRET/TOKEN (case-insensitive). Default: false
 
