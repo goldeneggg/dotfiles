@@ -101,6 +101,7 @@ export MY_BREW_PKGS=( \
   "mise" \
   "terminal-notifier" \
   "copilot-cli" \
+  "btop" \
 )
 
 export MY_BREW_CASKS=( \
