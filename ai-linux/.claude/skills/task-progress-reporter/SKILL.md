@@ -57,6 +57,7 @@ task-starter で生成したプロジェクト構造を走査し、完了/進行
 | 情報 | ソース | 用途 |
 | --- | --- | --- |
 | 作業・受け入れ条件の定義 | `todos/NNN-{task}/README.*` | `W-ID` / `AC-ID` の集合と順序を確定 |
+| 全体進捗一覧 | `progresses/README.md` | 全タスクの状態を一覧確認し、個別正本との同期状態を検証 |
 | 進捗正本 | `progresses/NNN-{task}/PROGRESS.md` | 状態、W-ID参照、AC-IDごとの検証状態と根拠を確定 |
 | コミットログ | `logs/NNN-{task}/commit-*.txt` | 旧形式で正本が欠落・不正な場合だけ補助判定 |
 | ロードマップ | `todos/README.*`（存在すれば） | 依存・並行性・概要の補強。完了状態の根拠にはしない |
@@ -88,6 +89,14 @@ task-starter で生成したプロジェクト構造を走査し、完了/進行
 
 ### Phase 2: 進捗シグナルの収集（スクリプト実行）
 
+最初に集約ビューを読み取り専用で検証する。`--check` を外すとファイルを変更するため、このスキルでは必ず付ける。
+
+```bash
+python3 ~/.claude/skills/_shared/scripts/sync_progress_index.py "{プロジェクトパス or todos/ のパス}" --check
+```
+
+終了コード1なら `progresses/README.md` の欠落または同期ずれとして記録し、個別 `PROGRESS.md` を正本として以降の判定を続ける。このスキルは読み取り専用なので修復しない。
+
 ```bash
 python3 scripts/scan_progress.py "{プロジェクトパス or todos/ のパス}"
 ```
@@ -104,7 +113,7 @@ python3 scripts/scan_progress.py "{プロジェクトパス or todos/ のパス}
 
 ### Phase 3: PROGRESS.md とロードマップの突き合わせ（補強）
 
-`progresses/NNN-{task}/PROGRESS.md` の状態・完了作業・残作業・ブロッカー・AC検証・成果を読み、暫定ステータスを確認する。TODOとのID不一致、必須形式の欠落、`progresses/` 内の非標準ファイルは備考に残す。非標準ファイルは内容を読まず、進捗判定にも使わない。
+`progresses/README.md` と `progresses/NNN-{task}/PROGRESS.md` の状態・最終更新を突き合わせる。続いて個別正本の完了作業・残作業・ブロッカー・AC検証・成果を読み、暫定ステータスを確認する。一覧の欠落・同期ずれ、TODOとのID不一致、必須形式の欠落、`progresses/` 内の非標準ファイルは備考に残す。非標準ファイルは内容を読まず、進捗判定にも使わない。
 
 `roadmap_file`（`todos/README.md`）が存在する場合は読み、以下を補強材料にする。
 
@@ -175,6 +184,7 @@ python3 scripts/scan_progress.py "{プロジェクトパス or todos/ のパス}
 | タスクが0件 | 「対象プロジェクトに 0xx/1xx タスクが無い」旨を報告し、パス誤りの可能性を提示 |
 | `needs_manual_review` タスクあり | 該当 README を直接読み込んで補完。HTML形式は本文・task-meta を読む |
 | 新形式の `PROGRESS.md` が欠落・不正 | 警告を備考へ記載し、完了とは推定せず判定不能として扱う |
+| `progresses/README.md` が欠落・同期ずれ | 個別 `PROGRESS.md` を正本として判定を続け、一覧の修復が必要と備考へ記載。読み取り専用のため自動修復しない |
 | 旧形式の `PROGRESS.md` が欠落・不正 | 警告を備考へ記載し、旧チェックボックスとコミットログによる補助判定および移行必要性を明示 |
 | TODOと `AC-ID` が不一致 | 欠落・重複・未知IDを備考へ記載し、完了とは判定しない |
 | `progresses/` に非標準ファイルあり | 内容を読まずファイル名を備考へ記載し、`logs/` への手動移動を案内 |
@@ -191,6 +201,7 @@ python3 scripts/scan_progress.py "{プロジェクトパス or todos/ のパス}
 
 ### scripts/
 - `scripts/scan_progress.py` — `todos/` を走査し各タスクの進捗シグナルと暫定ステータスをJSON出力（Phase 2で毎回実行）
+- `../_shared/scripts/sync_progress_index.py` — **Phase 2で `--check` 付きで実行する整合性検証スクリプト**。このスキルからは書き込みモードで実行しない
 
 ### references/
 - `references/template-and-example.md` — **レポートの出力テンプレートと記載例（Phase 5で必ず参照）**

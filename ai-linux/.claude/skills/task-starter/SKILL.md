@@ -64,7 +64,7 @@ argument-hint: "[プロジェクト名]"
 - `specs/` に要件・技術仕様を含む仕様書が作成され、非機能要件にセキュリティ・耐障害性・高可用性・スケーラビリティの方針が記載されている
 - `todos/` に1-2時間粒度のタスクが**`0xx` 番台（`001`〜`099`）**で依存順に配置され、各TODOに依存メタ（`depends_on` / `parallel_group`）が明記されている（Markdownはフロントマター、HTMLは `<script type="application/x-task-meta">`。`1xx` 番台は予約のため未使用）
 - 各TODOの作業項目と受け入れ条件が、チェックボックスを使わず `W-ID` / `AC-ID` 付きの静的定義として記載されている
-- 各TODOに対応する `progresses/{ID}/PROGRESS.md` と `logs/{ID}/` が生成され、進捗正本とその他の作業成果物が分離されている
+- `progresses/README.md` に全TODOの状態一覧があり、各TODOに対応する `progresses/{ID}/PROGRESS.md` と `logs/{ID}/` が生成され、進捗正本・集約ビュー・その他の作業成果物が分離されている
 - 各TODOに「開発原則チェック」（4原則の該当 or N/A理由）が記載されている
 - ロードマップ（`todos/README.*`）に Mermaid DAG・タスク表・クリティカルパス・並行可能タスク群・推奨ワークロードが記載されている（HTML時は Mermaid が `<pre class="mermaid">` で描画される）
 - ユーザーが Phase 5 のレビューで承認している
@@ -120,13 +120,14 @@ argument-hint: "[プロジェクト名]"
    │   ├── README.md       # タスクロードマップ（Phase 4で内容を埋める。HTML選択時は README.html）
    │   └── 001-{task-name}/
    ├── progresses/         # タスク進捗の正本置き場
+   │   ├── README.md       # 全タスクの進捗一覧（HTMLプロジェクトでもMarkdown固定）
    │   └── 001-{task-name}/
    │       └── PROGRESS.md # HTMLプロジェクトでもMarkdown固定
    └── logs/               # 進捗正本以外の作業成果物置き場
        └── 001-{task-name}/
    ```
 
-   保存先の分類と `PROGRESS.md` の必須形式は、Phase 1 で読んだ共有契約に従う。
+   保存先の分類、`PROGRESS.md` と `progresses/README.md` の必須形式は、Phase 1 で読んだ共有契約に従う。
 
 2. **参考ファイルを配置**
    - Phase 1 で確認した参考データ・ファイルがあれば `files/` にコピーまたはリンク
@@ -164,6 +165,7 @@ argument-hint: "[プロジェクト名]"
    - **各タスクで「開発原則」（セキュリティ最優先・耐障害性・高可用性・スケーラビリティ）を点検**し、テンプレートの「開発原則チェック」セクションに該当原則の対応方針 or「N/A（理由）」を記載する。セキュリティ対応は分量が大きければ独立タスクとして起票する
    - 作業項目には `W-01`、受け入れ条件には `AC-01` のようなタスク内で一意かつ安定したIDを付ける。TODOには進捗を表すチェックボックスを置かない
    - 各TODOの生成時に同じIDの `progresses/{ID}/PROGRESS.md` と `logs/{ID}/` を作成する。`PROGRESS.md` は共有契約のテンプレートを使用し、状態を `未着手`、残作業を全 `W-ID`、受け入れ条件の検証を全 `AC-ID: 未確認`、その他の空項目を `なし` で初期化する。条件本文は転記しない
+   - 全TODOと個別 `PROGRESS.md` の生成後、`python3 ~/.claude/skills/_shared/scripts/sync_progress_index.py "{project_root}"` を実行し、`progresses/README.md` に全タスクをID昇順で反映する。個別正本を一覧から上書きしない
    - 不明点は選択肢を提示して随時確認
 
 ### Phase 4: 依存分析とロードマップ生成（**新設**）
@@ -210,6 +212,7 @@ argument-hint: "[プロジェクト名]"
    │   └── 📁 002-implement/
    │       └── 📄 README.md
    ├── 📁 progresses/
+   │   ├── 📄 README.md          ← 全タスクの進捗一覧
    │   ├── 📁 001-setup/
    │   │   └── 📄 PROGRESS.md
    │   └── 📁 002-implement/
@@ -331,14 +334,15 @@ argument-hint: "[プロジェクト名]"
 
 - `scripts/init_project.py` - プロジェクトフォルダ構造を生成（Python 3必須）
   - 入力: プロジェクト名(必須), `--path`(出力先), `--description`(概要), `--format`(`md` / `html`、既定 `md`)
-  - 出力: `YYYYMMDD-{kebab-case-name}/` ディレクトリ + README + サブフォルダ群 + `todos/README` 雛形（拡張子は形式に従う）
+  - 出力: `YYYYMMDD-{kebab-case-name}/` ディレクトリ + README + サブフォルダ群 + `todos/README` 雛形（拡張子は形式に従う）+ `progresses/README.md` 雛形
   - 参照頻度: 毎回（Phase 2で必ず実行）
 
 ### references/
 
 - `references/prompt-template.md` - **Phase 1で毎回参照する入力テンプレート**。生成開始条件、不足判定、段階的な質問順を定義
 - `references/html-output-guide.md` - **HTML形式選択時の生成ルール（Phase 1でHTMLを選んだら必ず参照）**。シェル使用法・Mermaid・依存メタ埋め込み・拡張子規約・task-performer互換注記
-- `../_shared/references/task-management-contract.md` - **Phase 1で毎回参照する共有保存契約**。`PROGRESS.md` の固定スキーマと `logs/` への振り分けを定義
+- `../_shared/references/task-management-contract.md` - **Phase 1で毎回参照する共有保存契約**。`PROGRESS.md`、`progresses/README.md` の固定スキーマと `logs/` への振り分けを定義
+- `../_shared/scripts/sync_progress_index.py` - **Phase 3で全TODO生成後に実行する同期スクリプト**。個別 `PROGRESS.md` から全体進捗一覧を生成
 
 ### references/templates/
 

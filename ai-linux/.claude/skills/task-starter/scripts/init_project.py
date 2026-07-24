@@ -229,6 +229,21 @@ def create_todos_readme(project_path: Path, project_name: str, fmt: str) -> None
         )
 
 
+def create_progresses_readme(project_path: Path) -> None:
+    """Create the task progress index in Markdown for every document format."""
+    content = """# タスク進捗一覧
+
+> この一覧は各タスクの `PROGRESS.md` から生成する集約ビューです。
+> 状態判定では個別の `PROGRESS.md` を正本として参照してください。
+
+| タスク | 状態 | 最終更新 | 個別進捗 |
+|---|---|---|---|
+"""
+    (project_path / "progresses" / "README.md").write_text(
+        content, encoding="utf-8"
+    )
+
+
 def init_project(
     base_dir: str,
     project_name: str,
@@ -264,6 +279,7 @@ def init_project(
     create_directories(project_path)
     create_readme(project_path, project_name, description, fmt)
     create_todos_readme(project_path, project_name, fmt)
+    create_progresses_readme(project_path)
 
     return project_path
 
