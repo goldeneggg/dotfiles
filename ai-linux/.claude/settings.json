@@ -92,7 +92,7 @@
     ],
     "defaultMode": "acceptEdits"
   },
-  "model": "sonnet",
+  "model": "opus[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -537,7 +537,7 @@
   "outputStyle": "concise",
   "language": "japanese",
   "alwaysThinkingEnabled": true,
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "autoMemoryEnabled": false,
   "verbose": false,
   "agentPushNotifEnabled": true,
