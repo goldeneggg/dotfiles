@@ -22,6 +22,12 @@
 - **ripgrep** (`rg`) がインストールされている場合: シェル検索には `grep` よりも `rg` を推奨します。
   - `rg` はRust正規表現を使うため、OR検索は `\|` ではなく `|` を使うか、`-e` フラグで複数パターンを指定する。
 
+### Codex Code Mode のツール実行
+
+GPT-5.6 Solを含むCode Modeでは、以下のルールに従う。
+
+In Code Mode, within each bounded stage, run independent, functions.exec-available tool calls concurrently in one functions.exec call. Use await Promise.allSettled([...]) when partial results are useful, and inspect every result; use await Promise.all([...]) only when any failure should abort the batch. Keep dependencies, waits/resumes, approvals, conflicting or interdependent mutations, and adaptive investigations where each result may change the next step sequential. Do not split otherwise batchable inspections across outer tool calls.
+
 ### 変更は最小限に
 
 - 依頼された内容に集中
