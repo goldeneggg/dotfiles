@@ -31,8 +31,8 @@
       "gitDecoration.ignoredResourceForeground": "#6A7D8B"
     }
   },
-  "editor.fontSize": 16,
-  "editor.fontFamily": "'Ubuntu Mono derivative Powerline', Monaco, Menlo, 'Courier New', monospace",
+  "editor.fontSize": 15,
+  "editor.fontFamily": "'Fira Code', 'Ubuntu Mono derivative Powerline', Monaco, Menlo, 'Courier New', monospace",
   "editor.tabSize": 2,
   "editor.wordWrap": "on",
   "editor.wrappingIndent": "none",
