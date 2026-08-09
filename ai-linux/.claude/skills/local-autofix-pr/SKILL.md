@@ -1,18 +1,7 @@
 ---
 name: local-autofix-pr
 description: |
-  PRに紐づくCI失敗（lint/型/テスト失敗）と未解決レビューコメント（suggestion・CHANGES_REQUESTED）をローカルで対話的に修正・コミット・pushする日本語スキル。built-in /autofix-pr と異なりpush前のdiff確認・各ステップの選択肢提示確認・ブロッカー無し時の早期終了が特徴。
-
-  以下の状況で積極的にトリガーすること:
-  - "local-autofix-pr スキルを実行して" "local-autofix-pr 実行して"
-  - "PRのCI失敗を対話的に直してpush" "checks赤いとこ直してdiff見せて"
-  - "lint/型エラー/mypy/eslintの指摘を直してコミット・push"
-  - "レビューコメントへの対応コミット、push前にdiff確認"
-  - "suggestion/行コメント/unresolved threadに対応してpush前確認"
-  - "built-in /autofix-prじゃなくてローカル対話型でCI直して"
-  - "/loopと組み合わせてノーオペ早期終了で回したい"
-
-  別スキル優先: PRレビュー→pr-reviewer / PR説明文→pr-description / Actionsログの単独分析→`gh run view --log-failed`
+  PRのCI失敗と未解決レビューコメントをローカルで対話的に修正し、push前にdiffを確認してcommit・pushする。ブロッカーがなければ変更せず終了する。PRレビューはpr-reviewer、GitHub Actions失敗の単独調査・修正はgh-action-error-fixerを優先する。赤いchecks、lint・型・テスト失敗、suggestion、CHANGES_REQUESTEDへの対応で使用する。
 argument-hint: "[prompt] [--pr <番号>] [--ci-only] [--reviews-only] [--no-push]"
 ---
 

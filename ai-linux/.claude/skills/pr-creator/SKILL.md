@@ -1,24 +1,7 @@
 ---
 name: pr-creator
 description: |
-  現在のブランチからGitHub PRを作成するスキル。PR説明文の生成は pr-description スキルに委譲し、
-  タイトル選定・ブランチpush・gh pr createによるPR作成・ラベル/レビュアー設定までを一気通貫で行う。
-  ドラフトPR作成にも対応。
-
-  以下の状況で必ず使用すること:
-  (1) ユーザーが「PRを作成して」「PR作って」「pull request作って」「PRを出して」と依頼した時
-  (2) ユーザーが「このブランチでPR作成して」「PRを開いて」と依頼した時
-  (3) ユーザーが明示的に「pr-creator スキル」の実行を指示された時
-  (4) ユーザーが「PR作ってpushして」「PRを出しておいて」と依頼した時
-  (5) ユーザーが「ドラフトPR作って」「draft PRを出して」と依頼した時
-  (6) ユーザーが「PRを作成してレビュアーを設定して」と依頼した時
-  (7) ユーザーが「実装が終わったのでPRにしたい」「PRにまとめて」と依頼した時
-
-  別スキルを優先するケース:
-  - PR説明文だけ欲しい（PR作成不要） → pr-description
-  - PRのレビューをしたい → pr-reviewer
-  - 既存PRのCI失敗・レビュー指摘を修正したい → local-autofix-pr
-  - コミットだけしたい → commiter
+  現在のブランチをpushし、pr-descriptionで本文とタイトル候補を生成してGitHub PRを作成する。説明文だけならpr-description、レビューはpr-reviewer、既存PRの修正はlocal-autofix-pr、コミットだけならcommiterを優先する。PR作成、ドラフト、ラベル・レビュアー設定で使用する。
 argument-hint: "[--base ブランチ] [--draft] [--reviewer ユーザー] [--label ラベル] [--template テンプレートパス]"
 ---
 

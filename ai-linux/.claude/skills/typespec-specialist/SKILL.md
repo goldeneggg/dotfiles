@@ -1,19 +1,7 @@
 ---
 name: typespec-specialist
 description: |
-  TypeSpec専門家として、APIスキーマ設計・実装、.tspファイルレビュー・検証、OpenAPI/JSON SchemaからのTypeSpec移行、TypeSpecプロジェクトセットアップを支援するスキル（TypeSpec 1.x 系準拠、最新版に追随）。
-
-  以下の状況で積極的にトリガーすること:
-  - 「TypeSpecでAPIを設計して」「.tspを書いて」「APIスキーマを実装して」
-  - 「.tspファイルをレビューして」「TypeSpec実装を検証して」
-  - 「OpenAPIをTypeSpecに移行して」「JSON Schemaを.tspに変換して」
-  - 「TypeSpecプロジェクトをセットアップして」「tspconfig.yamlを整備して」
-  - 「typespec-specialist スキル」の明示実行
-  - TypeSpec関連のベストプラクティス・Visibility・Versioningの質問
-  - 「@typespec/openapi3」「tsp compile」「@service」「@route」などのキーワード
-  - 「スキーマファースト」「型安全なAPIクライアント生成」の文脈
-
-  トリガーしないケース: OpenAPIの直接編集のみ / TypeScript typeやZodなど非TypeSpec型システム / Swagger UIなどドキュメントツール設定のみ
+  TypeSpec 1.xによるAPIスキーマの設計・実装・レビュー、プロジェクト設定、OpenAPI・JSON Schemaからの移行を支援する。`.tsp`、tspconfig、Visibility、Versioning、`@typespec/openapi3`に関する依頼で使用する。OpenAPIの直接編集、TypeScript型・Zod、Swagger UI設定だけの依頼には使用しない。
 argument-hint: "[.tspファイルパス or OpenAPIファイルパス]"
 ---
 

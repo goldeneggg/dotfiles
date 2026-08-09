@@ -1,21 +1,7 @@
 ---
 name: typescript-specialist
 description: |
-  TypeScriptの設計・実装・レビューを担うスペシャリストスキル。
-  型安全で保守性の高いコードを `references/typescript-practices.md` の規約に準拠して生成する。
-
-  以下の状況で積極的にトリガーすること:
-  - 「TypeScriptで書いて」「TSのコードを実装して」「.ts/.tsxファイルを作って」
-  - 「このTSコードをレビューして」「型設計を見て」「TSの品質をチェックして」
-  - 「TSのリファクタ」「any撲滅」「型安全化」「JSからTS移行」
-  - 「ジェネリクスの使い方」「Union型の設計」などTS固有の技術質問
-  - 「CLIツール/APIサーバー/ReactコンポーネントをTSで作りたい」
-  - 「tsconfig.json設定」「Vitest/Jestのテスト」などTSプロジェクト相談
-  - 「typescript-specialist スキル」の明示実行
-
-  トリガーしないケース:
-  - 他言語（Bash/Go/Rust等）→ 各専門スキルへ
-  - TS型システムが関与しないJS/フレームワーク固有の話題
+  TypeScriptコードの設計・実装・レビュー・リファクタリングを、`references/typescript-practices.md`に基づいて支援する。`.ts`・`.tsx`、型設計、ジェネリクス、any排除、JSからTSへの移行、tsconfig、TypeScriptテストの依頼で使用する。他言語やTS型システムに関係しない話題には使用しない。
 argument-hint: "[ファイルパス or 要件の説明]"
 ---
 

@@ -1,20 +1,7 @@
 ---
 name: task-progress-reporter
 description: |
-  task-starter スキルで作成したプロジェクト（todos/NNN-{task}/ 構造）の現在の進捗を精査し、
-  「現状サマリ・未着手タスクの分類マトリクス・推奨対応順序・次の一手」を含む進捗レポートを
-  日本語で出力するスキル。新形式では progresses/ の PROGRESS.md を状態・検証証跡の唯一の正本として判定し、
-  todos/ の W-ID / AC-ID は定義の整合性確認に使う。旧チェックボックス形式は警告付きで読み取り互換する。
-  以下の状況で必ずトリガーすること:
-    (1) 「タスクの進捗を報告して」「進捗レポートを作って」「今どこまで進んでる？」「消化状況を教えて」
-    (2) 「未着手タスクを精査して」「残タスクを整理して」「残ってる作業をまとめて」
-    (3) 「task-starterで作ったプロジェクトの状況を見て」「todos/ の進み具合を確認して」
-    (4) 「次に何をやるべき？」「次の一手を提案して」（task-starterプロジェクトの文脈で）
-    (5) 明示的に「task-progress-reporter スキル」の実行を指示された時
-  task-starter / task-performer のタスク管理（todos/・progresses/・logs/ が存在する）文脈で、
-  「進捗」「残タスク」「未着手」「消化状況」「次の一手」「どこまで終わった」といった依頼なら積極的に発火する。
-  別スキル優先: 新規タスク分割・ロードマップ生成→task-starter / 個別タスクの実行→task-performer /
-  成果物（PR・コミット）の要件適合レビュー→task-artifact-reviewer。単なるPRレビュー→pr-reviewer。
+  task-starter形式のプロジェクトを読み取り専用で精査し、現状・残タスク・優先順位・次の一手を報告する。新規計画はtask-starter、実装はtask-performer、成果物レビューはtask-artifact-reviewerを優先する。todos・progresses・logsを含むプロジェクトの進捗、未着手、消化状況の確認で使用する。
 argument-hint: "[プロジェクトパス or todos/ のパス]"
 ---
 
