@@ -1,27 +1,7 @@
 ---
 name: author-analyzer
 description: |
-  指定したGitHubリポジトリにおける特定authorのコミット履歴・PR（作成分・レビュー参加分）・Issueを横断分析し、
-  「実績」「評価ポイント/セールスポイント」「得意分野」を構造化レポートとして出力するスキル。
-  実績データはgit logとgh CLIから取得し、ファイル拡張子・パスパターン・コミットメッセージ（Conventional Commits）から
-  得意分野を推定する。レポートは事実ベースの「データセクション」と前向き解釈の「評価セクション」を併記する。
-
-  以下の状況で必ずトリガーすべき:
-  (1) ユーザーが「<author>の実績を分析して」「<author>のセールスポイントを教えて」と依頼した時
-  (2) ユーザーが「このリポジトリでの<author>の貢献を可視化して」「<author>の得意分野は？」と依頼した時
-  (3) ユーザーが「<author>のコミット/PR/Issueをまとめて評価レポートを作って」と依頼した時
-  (4) ユーザーが明示的に「author-analyzer スキル」の実行を指示された時
-  (5) ユーザーが特定のGitHub username（@付き含む）と「分析」「評価」「貢献」「実績」「ポートフォリオ」を組み合わせて依頼した時
-  (6) ユーザーが「自分（あるいは同僚）のアウトプットを振り返りたい」「キャリア棚卸しをしたい」と依頼した時
-  (7) 採用・評価・1on1・キャリア相談などの文脈で「特定人物のGitHub上の働き」を要約する必要がある時
-
-  GitHub username（gh CLIクエリ用）と対象リポジトリ（デフォルト: cwd、オプションで複数owner/repo指定可）を入力とする。
-  期間はデフォルト全期間、--since/--untilで絞り込み可。出力はMarkdownファイル＋会話内サマリの両方。
-
-  ただし、以下のケースでは別スキルを優先する:
-  - PR単体のコードレビュー → pr-reviewer
-  - コミットメッセージの提案 → `commiter` の `--suggest` モード
-  - GitHub Actions実行ログの分析 → `gh run view --log-failed` 等を使った個別分析
+  GitHubリポジトリ内の特定authorのコミット・PR・Issueを横断分析し、実績・評価ポイント・得意分野を根拠付きMarkdownレポートにまとめる。GitHub usernameを指定した貢献分析、採用・評価・1on1、キャリア棚卸し、ポートフォリオ作成で使用する。単一PRレビューはpr-reviewer、コミットメッセージ提案はcommiterを優先する。
 argument-hint: "<author> [owner/repo ...] [--since YYYY-MM-DD] [--until YYYY-MM-DD]"
 context: fork
 ---

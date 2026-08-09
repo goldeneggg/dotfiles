@@ -1,14 +1,7 @@
 ---
 name: pr-description
 description: |
-  会話コンテキストとgit diffからPR説明文を生成しmarkdownファイルとして出力するとともに、
-  PRタイトルの推奨案（Conventional Commits形式・3案・72文字以内）を会話内に提示する。
-  テンプレート指定・インラインフォーマット指定・デフォルトフォーマットの3モードに対応。
-  トリガー例: "PR説明文を作成して" "PRの説明を書いて" "PR descriptionを出力して"
-  "実装内容をPR説明文にまとめて" "このブランチのPR説明文を出力して"
-  "pull request descriptionをテンプレートに沿って書いて" "PRの説明をファイルに保存して"
-  "PRタイトルも提案して" "タイトル案も出して"
-  "Generate PR description" "Write PR body" "Create pull request description"
+  会話コンテキストとgit差分からPR説明文をMarkdownファイルへ出力し、Conventional Commits形式のタイトル候補も提示する。PR作成そのものはpr-creator、コードレビューはpr-reviewerを優先する。PR本文・PRタイトル案・テンプレートに沿った説明文の作成で使用する。
 argument-hint: "<出力先パス> [--base ブランチ] [--template テンプレートパス] [--format フォーマット指示]"
 ---
 

@@ -1,22 +1,7 @@
 ---
 name: pr-reviewer
 description: |
-  Review code changes in GitHub pull requests or local git branches against main branch.
-
-  Use this skill when:
-  - "goldeneggg/dotfiles の PR #123 をレビューして"
-  - "https://github.com/goldeneggg/dotfiles/pull/123 をレビューして"
-  - "このPRのコード品質をチェックして"
-  - "feature/new-api ブランチをレビュー"
-  - "develop と比較してレビューして"
-  - "セキュリティの観点でレビューして"
-  - "この変更にバグがないか確認して"
-  - "コーディング規約に準拠しているか確認"
-  - "このブランチの変更を main と比較してレビュー"
-  - "Review this PR"
-  - "Check code quality of this branch"
-  - "PRレビュー結果をファイルに保存して"
-  - "レビュー結果をPRにコメントとして投稿して"
+  GitHub PRまたはローカルブランチをベースと比較し、コード品質・セキュリティ・規約準拠・退行リスクを静的レビューする。タスク要件との適合確認はtask-artifact-reviewerを優先する。PR URL・番号・ブランチのレビュー、結果のファイル保存・PRコメント投稿で使用する。
 argument-hint: "{owner/repo} {PR番号} or {PR URL} or {ブランチ名} [--base ベースブランチ] [--outline 概要] [--output file,pr-comment] [--rule ルールファイル,...]"
 context: fork
 ---

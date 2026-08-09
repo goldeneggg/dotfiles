@@ -1,17 +1,7 @@
 ---
 name: devcontainerizer
 description: |
-  対象プロジェクト/リポジトリの構成を読み解き、開発環境への Dev Containers 導入を「実施」または「導入計画の策定」まで行うスキル。
-  まず現状を2軸（①プロダクション/開発でのDocker使用有無 ②Docker/Docker Composeの配置パターン=モノレポか単一レポか・compose数）で判定し、最適な devcontainer 構成を設計してから、`.devcontainer/` 一式を生成（実施モード）するか、導入計画書を出力（計画モード）する。
-  以下の状況で積極的にトリガーすること:
-  (1) ユーザーが「Dev Containersを導入して」「devcontainerを作って/セットアップして」「開発環境をコンテナ化して」と依頼した時
-  (2) ユーザーが「VS Codeのリモートコンテナ開発環境を整えて」「Codespaces対応にして」と依頼した時
-  (3) ユーザーが「このリポジトリにdevcontainer.jsonを追加して」「.devcontainerを用意して」と依頼した時
-  (4) ユーザーが「Dev Containers導入の計画を立てて」「コンテナ開発環境の導入方針を検討して」と依頼した時
-  (5) モノレポ/複数アプリに対し「各サービスをコンテナ開発できるようにして」と依頼した時
-  (6) ユーザーが明示的に「devcontainerizer スキル」の実行を指示した時
-  「Dev Container」「devcontainer」「開発コンテナ」「リモートコンテナ」「Codespaces」「開発環境のDocker化」がプロジェクト/リポジトリという文脈と組み合わさったら積極的に発火する。
-  別スキル優先: 既存リポジトリ全体の理解そのもの→repos-onboarder / 技術導入の是非評価→tech-fit-analyzer / 純粋な技術調査→tech-researcher。
+  リポジトリ構成と既存Docker資産を調べ、Dev Containers構成の設計・生成または導入計画を作成する。Dev Container、devcontainer.json、Codespaces、開発環境のコンテナ化を依頼された時に使用する。導入価値の評価はtech-fit-analyzer、リポジトリ理解はrepos-onboarderを優先する。
 argument-hint: "[プロジェクトパス]"
 ---
 

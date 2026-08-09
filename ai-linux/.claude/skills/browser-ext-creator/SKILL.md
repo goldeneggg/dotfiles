@@ -1,17 +1,7 @@
 ---
 name: browser-ext-creator
 description: |
-  ブラウザ拡張機能の開発を支援するスキル。
-  Chrome (Manifest V3) と Firefox に対応したブラウザ拡張を設計・実装する。
-  以下の状況で使用:
-    (1) ユーザーが「ブラウザ拡張を作って」「Chrome拡張を実装して」「Firefox拡張を開発して」と依頼した時
-    (2) ユーザーが明示的に「browser-ext-creator スキル」の実行を指示した時
-    (3) 特定のウェブサイトの機能拡張や自動化を求められた時
-    (4) content script、background script、popup UIなどの拡張機能コンポーネントの実装が必要な時
-    (5) 「YouTubeの動画速度を変えるChrome拡張が欲しい」のようにサイト名+機能で拡張を依頼された時
-    (6) 「GitHubのPRページにボタンを追加したい」のようにページ埋め込みUIを求められた時
-    (7) 「ページ内のテキストを選択したらAPIに投げる拡張を作って」のように外部API連携を含む拡張を依頼された時
-    (8) 「Tampermonkeyスクリプトを正式なChrome拡張にしたい」のように拡張への変換を求められた時
+  Chrome Manifest V3とFirefox向けブラウザ拡張を設計・実装する。Safari拡張、MV2からMV3への移行、Tampermonkeyスクリプト単体の作成には使用しない。Chrome/Firefox拡張、content script、background、popup、ページ埋め込みUI、外部API連携、Tampermonkeyから拡張への変換で使用する。
 argument-hint: "[機能の説明]"
 ---
 
