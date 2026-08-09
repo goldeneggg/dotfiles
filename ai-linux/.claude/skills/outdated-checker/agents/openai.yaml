@@ -1,0 +1,4 @@
+interface:
+  display_name: "Outdated Checker"
+  short_description: "依存ツールとライブラリの古いバージョンを調査・更新"
+  default_prompt: "Use $outdated-checker to audit this project against current stable releases and explain breaking upgrade changes."
