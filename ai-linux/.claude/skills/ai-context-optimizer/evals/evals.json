@@ -1,0 +1,72 @@
+{
+  "skill_name": "ai-context-optimizer",
+  "evals": [
+    {
+      "id": 1,
+      "name": "review-only",
+      "prompt": "このリポジトリのAGENTS.mdをレビューして、問題点を教えて。",
+      "expected_output": "レビュー・モードを選択し、対象製品と適用スコープを確認した上で、カテゴリ別評価と具体的な改善案を提示する。ファイルは編集しない。",
+      "assertions": [
+        {"id": "selects-review-mode", "text": "レビュー・モードとして処理する"},
+        {"id": "does-not-edit", "text": "対象ファイルを変更しない"},
+        {"id": "uses-three-categories", "text": "3カテゴリの適用可能な項目を評価する"}
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "optimize-existing",
+      "prompt": "CLAUDE.mdをプロジェクトの現状に合わせて最適化して。",
+      "expected_output": "最適化モードを選択し、リポジトリの事実に基づく最小差分を適用する。明示された編集依頼に再承認を求めず、変更後に再評価する。",
+      "assertions": [
+        {"id": "selects-optimize-mode", "text": "最適化モードとして処理する"},
+        {"id": "edits-without-duplicate-approval", "text": "追加承認を要求せず、依頼範囲の編集を行う"},
+        {"id": "revalidates", "text": "変更後に事実確認と再評価を行う"}
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "create-new",
+      "prompt": "この新規プロジェクト用のAGENTS.mdを作成して。",
+      "expected_output": "新規作成モードを選択し、対象製品の探索規則とプロジェクト構成を調査して、必要最小限のAGENTS.mdを作成・検証する。",
+      "assertions": [
+        {"id": "selects-create-mode", "text": "新規作成モードとして処理する"},
+        {"id": "grounds-in-repository", "text": "コマンドと規約をリポジトリから確認する"},
+        {"id": "keeps-content-minimal", "text": "一般論ではなくプロジェクト固有の必要事項を優先する"}
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "partial-update",
+      "prompt": "AGENTS.mdのテストコマンドだけ現状に合わせて直して。",
+      "expected_output": "最適化モードとして指定箇所だけを調査・修正し、他のセクションを変更しない。",
+      "assertions": [
+        {"id": "limits-scope", "text": "テストコマンドに変更範囲を限定する"},
+        {"id": "verifies-command", "text": "修正後のコマンドがリポジトリに存在することを確認する"}
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "negative-ordinary-prompt",
+      "prompt": "TypeScriptのリファクタリングを依頼するプロンプトを改善して。",
+      "expected_output": "通常プロンプトの添削であり、ai-context-optimizerは暗黙発火しない。",
+      "assertions": [
+        {"id": "does-not-trigger", "text": "ai-context-optimizerを選択しない"}
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "negative-tool-config",
+      "prompt": "Codexのconfig.tomlと権限設定に問題がないか診断して。",
+      "expected_output": "コンテキストファイル以外の設定診断であり、ai-context-optimizerは暗黙発火しない。",
+      "assertions": [
+        {"id": "does-not-trigger", "text": "ai-context-optimizerを選択しない"}
+      ],
+      "files": []
+    }
+  ]
+}
