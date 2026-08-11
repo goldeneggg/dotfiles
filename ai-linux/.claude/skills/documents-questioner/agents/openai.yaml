@@ -1,0 +1,4 @@
+interface:
+  display_name: "複数資料の質問設計"
+  short_description: "複数ソースから根拠付き回答を得る質問プロンプトを生成"
+  default_prompt: "$documents-questioner を使って、読み込ませた複数ソースから必要な情報を根拠付きで得る質問プロンプトを作成してください。"
