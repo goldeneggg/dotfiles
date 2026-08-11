@@ -14,7 +14,7 @@ A dotfiles repository using GNU Stow for symlink-based configuration management.
 # macOS only - requires Homebrew pre-installed
 make install-brew-pkgs
 
-# Main setup (prompts for GitHub credentials)
+# Main setup (uses account values configured in Makefile; does not prompt)
 make setup
 ```
 
@@ -23,7 +23,7 @@ make setup
 ```sh
 make reset              # Update dotfiles (skip go install)
 make reset-with-goget   # Update dotfiles with go install
-make work               # Full upgrade: asdf + rust + gems + pips + npms
+make work               # Update asdf + Rust + gems + pips + npms, then run brew update
 ```
 
 ### Package Installation
@@ -65,6 +65,12 @@ make watches-sync            # Sync all watch repos
 make watches-update-and-sync # Update and sync all watch repos
 make copilot-cli             # Launch Copilot CLI with MCP config
 ```
+
+## Execution Safety
+
+- Do not run `make setup`, `make reset`, `make reset-with-goget`, `make work`, `make asdf-*`, or package install/upgrade targets unless the user explicitly requests it. Before execution, identify affected system locations, package or runtime changes, and external updates.
+- Stow setup can replace existing files in `$HOME`; inspect the target packages and state the impact before running it.
+- No standard test, lint, or format target is defined. For changed Bash scripts, run `bash -n <file>`; use `make -n <target>` to inspect a recipe before a state-changing Make command.
 
 ## Architecture
 
