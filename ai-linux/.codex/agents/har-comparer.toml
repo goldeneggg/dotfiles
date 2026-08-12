@@ -8,8 +8,8 @@ APIリクエスト/レスポンスの差異を検出し、構造化レポート�
 (3) 作業ブランチとmainブランチのAPI通信を比較検証したい時
 (4) Chrome DevToolsで記録した通信ログの比較が必要な時
 '''
-model = "gpt-5.6-terra"
-model_reasoning_effort = "medium"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 developer_instructions = '''
 # Role

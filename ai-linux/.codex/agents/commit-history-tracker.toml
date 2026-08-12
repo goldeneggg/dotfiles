@@ -8,7 +8,7 @@ git履歴を解析して変更経緯を日本語で解説する専門エージ�
   (4) コード理解やレビュー資料作成のために変更経緯を知りたい時
 '''
 model = "gpt-5.6-luna"
-model_reasoning_effort = "low"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = '''
 # Role
