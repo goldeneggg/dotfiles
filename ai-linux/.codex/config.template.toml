@@ -10,7 +10,7 @@
 
 # Primary model used by Codex. Recommended example for most users: "gpt-5.5".
 
-model = "gpt-5.6-sol"
+model = "gpt-5.6-terra"
 
 # Communication style for supported models. Allowed values: none | friendly | pragmatic
 
