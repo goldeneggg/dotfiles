@@ -2,7 +2,7 @@
 name: task-artifact-reviewer
 description: |
   タスクドキュメントと実装成果物を突き合わせ、受け入れ条件・スコープ・退行リスク・コード品質をレビューする。タスク要件を伴わないPRレビューはpr-reviewerを優先する。task-performerの成果物や、PR・ブランチ・コミットがタスク要件を満たすか確認する依頼で使用する。
-argument-hint: "[タスクファイルパス] [PR番号/URL or ブランチ名 or コミットハッシュ] [--base ベースブランチ] [--outline 概要] [--output file,pr-comment] [--rule ルールファイル,...]"
+argument-hint: "[タスクファイルパス] [PR番号/URL or ブランチ名 or コミットハッシュ] [--base ベースブランチ] [--outline 概要] [--output file,pr-comment,pr-comment-with-approve] [--rule ルールファイル,...]"
 ---
 
 # Task Artifact Reviewer
@@ -68,7 +68,7 @@ pr-reviewer スキルの汎用レビューを呼び出しつつ、「タスク�
 |---|---|---|
 | `--base` | `--base develop` | ブランチの差分取得に使用し、明示指定時は同じ指定を転送 |
 | `--outline` | `--outline "認証変更のレビュー"` | 指定値を転送し、自動生成のタスク要約は追加しない |
-| `--output` | `--output file,pr-comment` | `file` / `pr-comment` の指定値をそのまま転送 |
+| `--output` | `--output file,pr-comment-with-approve` | `file` / `pr-comment` / `pr-comment-with-approve` の指定値をそのまま転送。`pr-comment-with-approve` の承認可否は `pr-reviewer` の条件に従う |
 | `--rule` | `--rule rules/security.md,rules/api.md` | カンマ区切りのルールファイルパスをそのまま転送 |
 
 `--outline` が指定されていない場合のみ、タスク要約を自動生成して `--outline` に渡す。`--base` が未指定の場合は、差分取得・`pr-reviewer` ともに既定値 `main` を使用する。`pr-reviewer` が受け付けないオプションは本スキル独自に処理せず、引数解析失敗としてユーザーに確認する。
