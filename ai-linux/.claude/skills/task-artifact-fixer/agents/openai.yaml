@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Artifact Fixer"
+  short_description: "タスク要件に照らしてPR指摘・CI失敗を検証し修正"
+  default_prompt: "$task-artifact-fixer を使って、タスク要件に照らしPRレビューコメントまたはCI失敗を検証して修正してください。"
