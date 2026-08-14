@@ -11,7 +11,7 @@ description: |
 ## 呼び出し
 
 ```text
-$task-artifact-fixer <対象タスクファイルパス> <PRレビューコメントURL or PRのCI失敗URL> [--commit | --commit-push | --commit-push-reply] [--no-agent]
+$task-artifact-fixer <対象タスクファイルパス> <PRレビューコメントURL or PRのCI失敗URL> [--commit | --commit-push | --commit-push-reply] [--request-review] [--no-agent]
 ```
 
 2つの位置引数を必須とし、順序を固定する。
@@ -26,7 +26,7 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 
 - `--commit`: 最終レビュー承認後、変更ファイルをステージし、コミットログファイルを出力して `git commit -F` を実行する。task-performer の `--commit` と同じ挙動にする。
 - `--commit-push`: `--commit` を暗黙に有効化し、コミット成功後に対象PRのheadブランチへ通常の `git push` を実行する。force pushは行わない。
-- `--commit-push-reply`: レビューコメントURL専用。`--commit-push` を暗黙に有効化し、push成功後に検証結果と修正・検証内容をコメント投稿する。`discussion_r<ID>` のURLは、対象が返信ならその `in_reply_to`、それ以外なら `ID` をスレッド先頭コメントIDとして `in_reply_to` に渡し、同じレビューthreadへ返信する。`issuecomment-<ID>` と `pullrequestreview-<ID>` のURLはPRへ次の新規コメントを投稿する。コメント投稿成功後、元コメントのユーザーがbotではなく、当該PRの既存review（`GET /pulls/{PR}/reviews`）のauthor集合に含まれる場合だけ、そのユーザーをreview requestする。
+- `--commit-push-reply`: レビューコメントURL専用。`--commit-push` を暗黙に有効化し、push成功後に検証結果と修正・検証内容をコメント投稿する。`discussion_r<ID>` のURLは、対象が返信ならその `in_reply_to`、それ以外なら `ID` をスレッド先頭コメントIDとして `in_reply_to` に渡し、同じレビューthreadへ返信する。`issuecomment-<ID>` と `pullrequestreview-<ID>` のURLはPRへ次の新規コメントを投稿する。
 
   ```text
   > {レビューコメントURL}
@@ -34,9 +34,10 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
   {返信コメント}
   ```
 
+- `--request-review`: `--commit-push-reply` との併用時だけ有効。返信投稿成功後、元コメントのユーザーがbotではなく、当該PRの既存review（`GET /pulls/{PR}/reviews`）のauthor集合に含まれる場合だけ、そのユーザーをreview requestする。
 - `--no-agent`: task-starter 関連ドキュメントの読み込みだけをメインスレッド内で行う。調査・テスト等の他工程の委譲方針は変えない。
 
-`--commit-push-reply` と他のcommit系オプションが併記された場合は `--commit-push-reply` として扱う。`--commit-push-reply` をCI失敗URLと併用した場合は、外部操作を行わず入力エラーとして扱う。オプションなしの場合は、最終レビュー承認後に対象ファイルのステージングとコミットログファイルの出力まで行い、commit・push・返信は行わない。
+`--commit-push-reply` と他のcommit系オプションが併記された場合は `--commit-push-reply` として扱う。`--commit-push-reply` をCI失敗URLと併用した場合、および `--request-review` を `--commit-push-reply` なしで指定した場合は、外部操作を行わず入力エラーとして扱う。オプションなしの場合は、最終レビュー承認後に対象ファイルのステージングとコミットログファイルの出力まで行い、commit・push・返信・review requestは行わない。
 
 ## スコープ
 
@@ -47,7 +48,8 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 - 妥当と判定した問題への最小修正、回帰テスト、Lint・型チェック
 - task-starter 形式での `PROGRESS.md` と進捗一覧への結果反映
 - オプションに応じたコミット・push
-- `--commit-push-reply` によるレビューthread返信または引用付きPRコメント、および条件を満たすコメント投稿者へのreview request
+- `--commit-push-reply` によるレビューthread返信または引用付きPRコメント
+- `--request-review` 指定時の、条件を満たすコメント投稿者へのreview request
 
 ### 含まないもの
 
@@ -73,17 +75,18 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 - **編集開始: Low freedom** — 判定結果と修正計画を提示し、ユーザー承認後に編集する。
 - **重いテスト: Low freedom** — DB・コンテナ・外部サービスを使うテストは無断実行しない。
 - **commit・push: Low freedom** — 指定オプションと最終レビュー承認の両方がある場合だけ実行する。
-- **返信・review request: Low freedom** — `--commit-push-reply`、最終レビュー承認、commitとpushの成功がすべて揃う場合だけ、指定コメントだけへ投稿する。
+- **返信: Low freedom** — `--commit-push-reply`、最終レビュー承認、commitとpushの成功がすべて揃う場合だけ、指定コメントだけへ投稿する。
+- **review request: Low freedom** — `--request-review`、最終レビュー承認、commit・push・返信投稿の成功がすべて揃う場合だけ、条件を満たす元コメント投稿者へ依頼する。
 
 ## ワークフロー
 
 ### Phase 1: 入力と作業状態を確定する
 
 1. 最初に `../_shared/references/task-management-contract.md` を読み、以降のタスク文書更新へ適用する。
-2. 引数からタスクファイル、対象URL、4オプションを解析する。不足・不明・競合があれば推測せず確認する。`--commit-push-reply` ではレビューコメントURLであることも確認する。
+2. 引数からタスクファイル、対象URL、5オプションを解析する。不足・不明・競合があれば推測せず確認する。`--commit-push-reply` ではレビューコメントURLであること、`--request-review` が指定される場合は `--commit-push-reply` も指定されることを確認する。
 3. `git rev-parse --show-toplevel`、`git status --short --branch`、`gh auth status` を確認する。
 4. URLから `owner/repo`、PR番号、対象ID（comment / review / run / job / check）を抽出する。
-5. `gh pr view` でPRのstate、head/baseブランチ、head SHA、head repositoryを取得し、ローカルのbranch・HEAD・remoteと照合する。`--commit-push-reply` では既存reviewのauthor集合も取得し、元コメント投稿者がこの集合に含まれるかだけを判定する。
+5. `gh pr view` でPRのstate、head/baseブランチ、head SHA、head repositoryを取得し、ローカルのbranch・HEAD・remoteと照合する。`--request-review` 指定時は既存reviewのauthor集合も取得し、元コメント投稿者がこの集合に含まれるかだけを判定する。
 6. ローカルがPR headと一致しない場合は編集せず、安全な切替・更新方法を提示してユーザーに確認する。
 7. PRが `CLOSED` または `MERGED` の場合は既定で読み取り専用の検証に留める。別ブランチでの追補修正を求められた場合だけ、対象ブランチとスコープを確認して続行する。
 
@@ -221,7 +224,8 @@ Phase 7 の最終承認後、コード変更がある場合だけ次を実行す
    - オプションなし: ステージングとログ出力で終了する。
    - `--commit`: `git commit -F {log_path}` を実行し、commit SHAを報告する。
    - `--commit-push`: commit成功後、URLから確認したPR head repository・branchとpush先が一致することを再確認し、通常の `git push` を実行する。upstream未設定時だけ `git push -u {remote} {branch}` を使う。
-   - `--commit-push-reply`: `--commit-push` の全手順を実行する。push成功後、Phase 7の判定・修正・検証結果だけに基づく簡潔な返信本文を作成する。`discussion_r<ID>` なら、対象コメントが返信の場合は `in_reply_to`、それ以外は `ID` をスレッド先頭コメントIDとして `gh api repos/{owner}/{repo}/pulls/{PR}/comments -f body={reply} -F in_reply_to={thread_root_id}` で同じthreadへ投稿する。それ以外なら `gh pr comment {PR} --body {quoted_reply}` で引用付き新規コメントを投稿する。投稿成功後に限り、元コメント投稿者がbotでなく、Phase 1で取得した既存reviewのauthor集合に含まれる場合は `gh pr edit {PR} --add-reviewer {login}` でreview requestする。ユーザーが集合に含まれない場合とbotの場合はrequestを行わず、その理由を報告する。
+   - `--commit-push-reply`: `--commit-push` の全手順を実行する。push成功後、Phase 7の判定・修正・検証結果だけに基づく簡潔な返信本文を作成する。`discussion_r<ID>` なら、対象コメントが返信の場合は `in_reply_to`、それ以外は `ID` をスレッド先頭コメントIDとして `gh api repos/{owner}/{repo}/pulls/{PR}/comments -f body={reply} -F in_reply_to={thread_root_id}` で同じthreadへ投稿する。それ以外なら `gh pr comment {PR} --body {quoted_reply}` で引用付き新規コメントを投稿する。
+   - `--request-review`: `--commit-push-reply` による返信投稿の成功後に限り、元コメント投稿者がbotでなく、Phase 1で取得した既存reviewのauthor集合に含まれる場合は `gh pr edit {PR} --add-reviewer {login}` でreview requestする。ユーザーが集合に含まれない場合とbotの場合はrequestを行わず、その理由を報告する。
 5. pushまたは返信投稿が失敗した場合は、その時点で後続の外部操作を行わず正確なエラーを報告する。review requestだけが失敗した場合は、返信済みであることとエラーを分けて報告する。force push、別remoteへのpush、認証変更で回避しない。
 
 ## エラーハンドリング
@@ -236,6 +240,7 @@ Phase 7 の最終承認後、コード変更がある場合だけ次を実行す
 | dirty working tree | 重複の有無を調べ、重なる場合だけstash・commit・中断の判断を求める |
 | CIログ取得不能 | check提供元とURLを提示し、ログ提供を依頼する |
 | `--commit-push-reply` とCI失敗URLの併用 | 入力エラーとして、レビューコメントURLを指定するよう案内する |
+| `--request-review` の単独指定 | 入力エラーとして、`--commit-push-reply` との併用を案内する |
 | 返信投稿失敗 | review requestを行わず、投稿先・エラー・commit/pushの成否を分けて報告する |
 | review request失敗 | 返信済みの状態を保持し、エラーと手動で依頼する対象ユーザーを報告する |
 | diffが想定より大きい | 原因仮説を見直し、500行超なら続行前に再承認を得る |
@@ -247,6 +252,7 @@ Phase 7 の最終承認後、コード変更がある場合だけ次を実行す
 - CIを通すためだけにテスト削除、skip追加、閾値緩和を行わない。
 - 機密情報をログへ保存またはコードへハードコードしない。
 - オプションなしでcommit、`--commit-push` または `--commit-push-reply` なしでpushを行わない。
-- `--commit-push-reply` と最終レビュー承認なしにPRコメント返信・review requestを行わない。
+- `--commit-push-reply` と最終レビュー承認なしにPRコメント返信を行わない。
+- `--request-review`、`--commit-push-reply`、最終レビュー承認、commit・push・返信投稿の成功がすべて揃わない限りreview requestを行わない。
 - ユーザー承認なしにconversationのresolve・workflow再実行を行わない。
 - `git reset --hard`、無断stash、無断checkout、force pushを行わない。
