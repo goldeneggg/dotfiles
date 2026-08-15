@@ -112,7 +112,7 @@ model_reasoning_summary = "auto"
 
 # External notifier program (argv array). When unset: disabled.
 
-# notify = ["notify-send", "Codex"]=
+# この設定ではHOMEを `~` とは書けないようなので、templateには変数で書いておき、実ファイルをHOMEの実パスに置換する
 notify = [ "$CODEX_CONFIG_YOUR_HOME_DIR/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended" ]
 
 ################################################################################
@@ -167,19 +167,20 @@ allow_login_shell = true
 
 # - danger-full-access (no sandbox; extremely risky)
 
-sandbox_mode = "workspace-write"
+# sandbox / permission profile に関する設定は、全てプロジェクトに委ねるので、ユーザースコープはコメントアウト ここから
+# sandbox_mode = "workspace-write"
 
-# この設定ではHOMEを `~` とは書けないようなので、templateには変数で書いておき、実ファイルをHOMEの実パスに置換する
-[sandbox_workspace_write]
-writable_roots = [
-  "$CODEX_CONFIG_YOUR_HOME_DIR/Documents/codex",
-  # "$CODEX_CONFIG_YOUR_HOME_DIR/go/pkg/mod", # ユーザースコープではなくプロジェクトに委ねる
-  # "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/go-build", # ユーザースコープではなくプロジェクトに委ねる
-  "$CODEX_CONFIG_YOUR_HOME_DIR/.npm",
-  # "$CODEX_CONFIG_YOUR_HOME_DIR/.docker", # ユーザースコープではなくプロジェクトに委ねる
-  # "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/ms-playwright" # ユーザースコープではなくプロジェクトに委ねる
-]
-network_access = true
+# [sandbox_workspace_write]
+# writable_roots = [
+#   "$CODEX_CONFIG_YOUR_HOME_DIR/Documents/codex",
+#   # "$CODEX_CONFIG_YOUR_HOME_DIR/go/pkg/mod", # ユーザースコープではなくプロジェクトに委ねる
+#   # "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/go-build", # ユーザースコープではなくプロジェクトに委ねる
+#   "$CODEX_CONFIG_YOUR_HOME_DIR/.npm",
+#   # "$CODEX_CONFIG_YOUR_HOME_DIR/.docker", # ユーザースコープではなくプロジェクトに委ねる
+#   # "$CODEX_CONFIG_YOUR_HOME_DIR/Library/Caches/ms-playwright" # ユーザースコープではなくプロジェクトに委ねる
+# ]
+# network_access = true
+# sandbox / permission profile に関する設定は、全てプロジェクトに委ねるので、ユーザースコープはコメントアウト ここまで
 
 # FIXME: 20260710 以下理由でpermission profileは無効化し、sandbox_modeで制御する方針に変更中
 # - codex cli だと正常機能するdeny, read, write の権限設定が、codex appだと期待通り機能しない

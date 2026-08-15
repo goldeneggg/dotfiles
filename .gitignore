@@ -25,3 +25,4 @@ Claude
 .mcp.full.json
 .copilot
 **/.codex/config.toml
+!/.codex/config.toml
