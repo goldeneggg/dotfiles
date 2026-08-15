@@ -18,7 +18,7 @@ model = "gpt-5.6-terra"
 
 # Optional model override for /review. Default: unset (uses current session model).
 
-# review_model = "gpt-5.5"
+# review_model = "gpt-5.6"
 
 # Provider id selected from [model_providers]. Default: "openai".
 
@@ -28,9 +28,9 @@ model_provider = "openai"
 
 # oss_provider = "ollama"
 
-# Preferred service tier. Built-in examples: fast | flex; model catalogs can add more.
+# Preferred service tier. Use fast or another tier supported by the active model.
 
-# service_tier = "flex"
+# service_tier = "fast"
 
 # Optional manual model metadata. When unset, Codex uses model or preset defaults.
 
@@ -718,7 +718,7 @@ model_migrations = { "gpt-5.4" = "gpt-5.5" }
 
 # shell_tool = true
 
-# apps = false
+# apps = true
 
 hooks = true
 
@@ -736,7 +736,7 @@ default_mode_request_user_input = true
 
 # personality = true
 
-# network_proxy = false
+# network_proxy = true # required to enforce permission-profile domain rules
 
 # fast_mode = true
 
@@ -1024,7 +1024,7 @@ args = ["run", "-i", "--rm", "--init", "-e", "MCP_TRANSPORT=stdio", "mcp/context
 
 # approvals_reviewer = "user" # user | auto_review
 
-# default_tools_approval_mode = "auto" # auto | prompt | approve
+# default_tools_approval_mode = "auto" # auto | prompt | writes | approve
 
 #
 
@@ -1038,7 +1038,7 @@ args = ["run", "-i", "--rm", "--init", "-e", "MCP_TRANSPORT=stdio", "mcp/context
 
 # approvals_reviewer = "auto_review"
 
-# default_tools_approval_mode = "prompt" # auto | prompt | approve
+# default_tools_approval_mode = "prompt" # auto | prompt | writes | approve
 
 #
 
@@ -1080,13 +1080,13 @@ args = ["run", "-i", "--rm", "--init", "-e", "MCP_TRANSPORT=stdio", "mcp/context
 
 # For example, a CI profile could live at $CODEX_HOME/ci.config.toml:
 
-# model = "gpt-5.4"
+# model = "gpt-5.6-terra"
 
 # approval_policy = "on-request"
 
 # sandbox_mode = "read-only"
 
-# service_tier = "flex" # or another supported service tier id
+# service_tier = "fast" # or another supported service tier id
 
 # oss_provider = "ollama"
 
