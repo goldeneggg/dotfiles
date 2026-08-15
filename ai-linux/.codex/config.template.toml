@@ -38,6 +38,8 @@ model_provider = "openai"
 
 # model_auto_compact_token_limit = 64000 # tokens; unset uses model defaults
 
+# model_auto_compact_token_limit_scope = "total" # total | body_after_prefix; default: total
+
 # tool_output_token_limit = 12000 # tokens stored per tool output
 
 # model_catalog_json = "/absolute/path/to/models.json" # optional startup-only model catalog override
@@ -385,6 +387,26 @@ web_search = "cached"
 
 [agents]
 
+# Enable or disable multi-agent tools. Default: true
+
+# enabled = true
+
+# Maximum concurrently open spawned-agent threads, excluding the primary thread. When unset, Codex chooses the default.
+
+# max_concurrent_threads_per_session = 6
+
+# Default model for spawned agents. An explicit spawn model takes precedence.
+
+# default_subagent_model = "gpt-5.6-terra"
+
+# Default reasoning effort for spawned agents. An explicit spawn effort takes precedence.
+
+# default_subagent_reasoning_effort = "high"
+
+# Record a model-visible message when an agent turn is interrupted. Default: true
+
+# interrupt_message = true
+
 # Maximum concurrently open agent threads. Default: 6
 
 # max_threads = 6
@@ -478,6 +500,20 @@ include_only = []
 # Experimental: run via user shell profile. Default: false
 
 experimental_use_profile = false
+
+# Canonical case-insensitive filters. "include" entries create an allowlist.
+
+# Excludes apply before explicit set values and the include allowlist.
+
+# Don't combine filters with legacy exclude or
+
+# include_only arrays in the same configuration layer.
+
+# [shell_environment_policy.filters]
+
+# "AWS_*" = "exclude"
+
+# "AZURE_*" = "exclude"
 
 ################################################################################
 
@@ -630,6 +666,12 @@ show_tooltips = true
 
 # alternate_screen = "auto"
 
+# Working directory for resumed or forked sessions: current | session.
+
+# Leave unset to choose when the current and saved session directories differ.
+
+# resume_cwd = "session"
+
 # Ordered list of footer status-line item IDs. When unset, Codex uses:
 
 # ["model-with-reasoning", "context-remaining", "current-dir"].
@@ -679,6 +721,8 @@ show_tooltips = true
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4
+
+# "gpt-5.6-terra" = 1
 
 # Enable or disable analytics for this machine. When unset, Codex uses its default behavior.
 
@@ -733,6 +777,8 @@ default_mode_request_user_input = true
 # shell_snapshot = true
 
 # multi_agent = true
+
+# remote_plugin = true
 
 # personality = true
 
@@ -1135,6 +1181,18 @@ args = ["run", "-i", "--rm", "--init", "-e", "MCP_TRANSPORT=stdio", "mcp/context
 # [tools]
 
 # view_image = true
+
+################################################################################
+
+# Windows (Windows only)
+
+################################################################################
+
+# [windows]
+
+# Native Windows sandbox mode (Windows only): unelevated | elevated
+
+# sandbox = "unelevated"
 
 ################################################################################
 
