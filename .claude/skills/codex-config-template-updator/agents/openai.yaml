@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Config Template Updator"
+  short_description: "Codex設定テンプレートを公式仕様と比較して更新"
+  default_prompt: "$codex-config-template-updator で ai-linux/.codex/config.template.toml を公式サンプルと比較して更新・提案して。"
