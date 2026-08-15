@@ -826,10 +826,6 @@ default_mode_request_user_input = true
 command = "docker"
 args = ["run", "-i", "--rm", "--init", "-e", "MCP_TRANSPORT=stdio", "mcp/context7:latest"]
 
-[mcp_servers.drawio]
-command = "npx"
-args = ["-y", "@drawio/mcp"]
-
 # [mcp_servers.chrome-devtools]
 # command = "npx"
 # args = ["-y", "chrome-devtools-mcp@latest"]
@@ -1166,7 +1162,7 @@ trace_exporter = "none"
 
 # Metrics exporter: none | statsig | otlp-http | otlp-grpc
 
-metrics_exporter = "statsig"
+metrics_exporter = "none"
 
 # Example OTLP/HTTP exporter configuration
 
