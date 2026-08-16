@@ -1,28 +1,24 @@
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
-default_permissions = "dotfiles-workspace"
 
-[permissions.dotfiles-workspace]
-description = "dotfilesリポジトリを編集するための標準権限"
+default_permissions = "dotfiles-workspace-net"
+
+[permissions.dotfiles-workspace-net]
+description = "Workspace editing with unrestricted command network access."
 extends = ":workspace"
 
-# Permission Profiles では ~/path 形式のホームディレクトリ相対パスを
-# filesystem および workspace_roots に記述できる。追加の書込み先が必要に
-# なった場合だけここへ最小限の許可を追加する。
+[permissions.repodocs-workspace-net.filesystem]
+# codex doctor の実行でsqliteを読み取りたい場合に必要
+"~/.codex" = "read"
 
-[permissions.dotfiles-workspace.network]
+[permissions.dotfiles-workspace-net.network]
 enabled = true
 
-[permissions.dotfiles-workspace.network.domains]
-"*" = "allow"
-
 # Context7 MCP が通常の Linux Docker daemon に接続するために必要。
-[permissions.dotfiles-workspace.network.unix_sockets]
+[permissions.dotfiles-workspace-net.network.unix_sockets]
 "/var/run/docker.sock" = "allow"
 
-# sync-mcp-begin
 [mcp_servers.context7]
 command = "docker"
 args = ["run", "-i", "--rm", "--init", "-e", "MCP_TRANSPORT=stdio", "mcp/context7:latest"]
 env_vars = ["PATH"]
-# sync-mcp-end
