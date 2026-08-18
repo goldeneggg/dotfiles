@@ -727,7 +727,7 @@ show_tooltips = true
 # Enable or disable analytics for this machine. When unset, Codex uses its default behavior.
 
 [analytics]
-enabled = true
+enabled = false
 
 # Control whether users can submit feedback from `/feedback`. Default: true
 
