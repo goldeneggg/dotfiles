@@ -1,8 +1,8 @@
 ---
 name: pr-reviewer
 description: |
-  GitHub PRまたはローカルブランチをベースと比較し、コード品質・セキュリティ・規約準拠・退行リスクを静的レビューする。タスク要件との適合確認はtask-artifact-reviewerを優先する。PR URL・番号・ブランチのレビュー、結果のファイル保存・PRコメント投稿・条件付き承認で使用する。
-argument-hint: "{owner/repo} {PR番号} or {PR URL} or {ブランチ名} [--base ベースブランチ] [--outline 概要] [--output file,pr-comment,pr-comment-with-approve] [--rule ルールファイル,...]"
+  GitHub PRまたはローカルブランチをベースと比較し、コード品質・セキュリティ・規約準拠・退行リスクを静的レビューする。タスク要件との適合確認はtask-artifact-reviewerを優先する。PR URL・番号・ブランチのレビュー、変更説明を取得しないblindレビュー、結果のファイル保存・PRコメント投稿・条件付き承認で使用する。
+argument-hint: "{owner/repo} {PR番号} or {PR URL} or {ブランチ名} [--base ベースブランチ] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve] [--rule ルールファイル,...]"
 context: fork
 ---
 
@@ -15,6 +15,7 @@ Git/GitHubを用いたアプリケーション開発における包括的なコ�
 ## Degrees of Freedom
 
 - **引数の解析: Low freedom** — 以下の「引数の解析」セクションのパターンに厳密に従う。パターンに合致しない場合は必ずユーザーに確認する
+- **blind モードの情報境界: Low freedom** — `--blind` では変更目的を示す情報を取得・推測しない。「`--blind` オプション」とレビュープロセスのモード別手順に厳密に従う
 - **レビュー観点の重み付け: Medium freedom** — [レビュー評価基準](references/review-criteria.md) の5観点は必須。ただし、変更内容に応じて重点を置く観点をエージェントが判断してよい
 - **外部情報の収集: High freedom** — MCPツールやWebSearchの使用判断はエージェントに委ねる。不明な技術・ライブラリに遭遇した場合は積極的に調査してよい
 - **フィードバックの粒度: Medium freedom** — [レビュー評価基準](references/review-criteria.md) の重要度判定は固定。ただし各指摘の説明の詳しさは問題の複雑さに応じて調整してよい
@@ -31,16 +32,26 @@ Git/GitHubを用いたアプリケーション開発における包括的なコ�
 | `https://github.com/{owner}/{repo}/pull/{num}` | `https://github.com/goldeneggg/dotfiles/pull/123` | GitHub PRレビュー（URL） |
 | `{owner/repo} {PR番号}` | `goldeneggg/dotfiles 123` | GitHub PRレビュー |
 | `{owner/repo} {PR番号} --outline {概要}` | `goldeneggg/dotfiles 123 --outline 認証機能の追加` | GitHub PRレビュー（概要付き） |
+| `{owner/repo} {PR番号} --blind` | `goldeneggg/dotfiles 123 --blind` | GitHub PRのblindレビュー |
 | `{owner/repo} {PR番号} --output {出力先}` | `goldeneggg/dotfiles 123 --output file` | GitHub PRレビュー（追加出力先指定） |
 | `{ブランチ名}` | `feature/new-api` | ローカルブランチレビュー（base: main） |
 | `{ブランチ名} --base {ベースブランチ}` | `feature/new-api --base develop` | ローカルブランチレビュー（base指定） |
+| `{ブランチ名} --blind` | `feature/new-api --blind` | ローカルブランチのblindレビュー |
 | 引数なし | （空） | ユーザーにレビュー対象を確認 |
 
-**URL解析ルール**: `https://github.com/{owner}/{repo}/pull/{num}` 形式のURLから `owner/repo` と PR番号を抽出します。URLに `--outline` や `--output` 等のオプションを後続させることも可能です。
+**URL解析ルール**: `https://github.com/{owner}/{repo}/pull/{num}` 形式のURLから `owner/repo` と PR番号を抽出します。URLに `--outline`、`--blind`、`--output` 等のオプションを後続させることも可能です。
 
 **`--output` オプション**: チャット表示に加えて追加の出力先を指定します。値は `file`（ファイル出力）、`pr-comment`（PRコメント投稿）、`pr-comment-with-approve`（PRコメント投稿と条件付き承認）です。カンマ区切りで併記すると複数の出力を実行します（例: `--output file,pr-comment-with-approve`）。`pr-comment-with-approve` は `pr-comment` を内包するため、両方が指定されてもコメントは1件だけ投稿します。未指定の場合はチャット表示のみ（従来通りの挙動）。値の詳細は「出力の実行」セクションを参照。`file` / `pr-comment` / `pr-comment-with-approve` 以外の値が渡された場合は不正な値としてユーザーに確認します。
 
 **`--rule` オプション**: レビュー時に追加で適用するルール・観点を記載したファイルを指定します。カンマ区切りで複数指定可能（例: `--rule rules/security.md,rules/api-design.md`）。指定されたファイルをレビュー開始前に読み込み、「レビューの実施」（ステップ3）で通常の5観点に加えてルールファイルの内容を追加の評価軸として適用します。ファイルが見つからない場合はエラーとしてユーザーに報告します。
+
+**`--blind` オプション**: 変更目的や実装者の主張によるアンカリングを避け、diff と既存コードから欠陥・退行を探索するフラグです。値は取りません。
+
+- GitHub PRではPRタイトル・本文・コミットメッセージ・関連Issue・ラベル・作成者・レビューコメントを取得しない
+- ローカルブランチではコミット履歴・コミットメッセージを取得せず、ブランチ名から変更目的を推測しない
+- diff、diff外の既存コード、プロジェクトの公開規約、`--rule` の明示ルール、必要な公式仕様は使用してよい
+- `--outline` と同時指定された場合は、どちらか一方を選ぶようユーザーに確認し、レビューを開始しない
+- `--output` の `file` と `pr-comment` は併用できる。変更目的への適合を確認できないため、`pr-comment-with-approve` とは併用せず、どちらかの変更をユーザーに確認する
 
 **パースに失敗した場合**: 引数がどのパターンにも合致しない場合は、ユーザーに正しい形式を提示して再入力を求めます。
 
@@ -72,7 +83,7 @@ Git/GitHubを用いたアプリケーション開発における包括的なコ�
 
 **GitHub PRレビューの場合：**
 
-以下の2コマンドを**並列実行**してdiffとPR説明を同時に取得します：
+通常モードでは、以下の2コマンドを**並列実行**してdiffとPR説明を同時に取得します：
 
 ```bash
 # 並列実行1: diff取得
@@ -80,6 +91,12 @@ gh pr diff {pr_num} --repo {repo}
 
 # 並列実行2: PR説明取得
 gh pr view {pr_num} --repo {repo} --json title,body --jq '.title + "\n\n" + .body'
+```
+
+`--blind` ではPR説明やその他のメタデータを取得せず、次のコマンドだけを実行します：
+
+```bash
+gh pr diff {pr_num} --repo {repo}
 ```
 
 **ローカルブランチレビューの場合：**
@@ -95,15 +112,18 @@ git diff {base_branch}..{target_branch}
 - 指定あり → 変更内容を理解するための主要なコンテキストとして使用
 - PRレビューで未指定 → 上記で取得したPRの説明を使用
 - ブランチレビューで未指定 → diff自体からコンテキストを推測
+- `--blind` → `--outline` とPR説明のどちらも使用せず、変更目的を推測しない
 
 ### 2. 変更内容の理解
 
-- **まず**、outline/コンテキストを読みます：
+通常モードでは、**まず** outline/コンテキストを読みます：
   - PRレビューの場合: `{outline}` が提供されていればそれを使用、なければPRの説明を使用
   - ブランチレビューの場合: `{outline}` が提供されていればそれを使用、なければdiffから推測
 
-- **次に**、diff出力を分析して、どのコードが変更・追加・削除されたかを理解
-- コンテキストと実際のコード変更の両方に基づいて、変更の範囲と目的を特定
+`--blind` では、diff出力を最初に分析し、どのコードが変更・追加・削除されたか、既存の振る舞いがどう変わるかを特定します。変更の目的や正当性は推測せず、観測できる挙動と影響範囲だけを扱います。
+
+- 通常モードでは、コンテキストと実際のコード変更の両方に基づいて変更の範囲と目的を特定
+- `--blind` を含む全モードで、diff外の既存コードを読み、呼び出し元・公開契約・周辺実装との整合性を確認
 - 言語固有の規約についてはプロジェクトドキュメント（CLAUDE.md）のコンテキストを考慮
 
 ### 3. ルールファイルの読み込み（`--rule` 指定時のみ）
@@ -117,6 +137,8 @@ git diff {base_branch}..{target_branch}
 ### 4. レビューの実施
 
 レビュー開始前に [レビュー評価基準](references/review-criteria.md) を全文読み、必須5観点を変更内容へ適用する。
+
+`--blind` では5観点を維持するが、PR説明やoutlineとの一致は判定しない。観測できる挙動変化と影響範囲を列挙し、それが意図された変更かどうかは結論づけない。詳細はレビュー評価基準の「デグレ（リグレッション）と影響範囲」に従う。
 
 **追加レビュー観点（`--rule` 指定時）：**
 
@@ -137,6 +159,8 @@ git diff {base_branch}..{target_branch}
 レビュー結果を [レビュー評価基準](references/review-criteria.md) の重要度とPR承認判断に従って分類する。
 
 **レビュー完了時の報告:**
+
+`--blind` の場合は、サマリー見出しの直後に `**レビュー前提**: PR説明・outline・コミットメッセージを参照せず、diffと既存コードをレビュー` と記載する。
 
 レビュー完了時は、以下の形式で総合判定を提示します：
 
@@ -189,6 +213,7 @@ git diff {base_branch}..{target_branch}
 - 不明点は必ずユーザーに確認してから進める
 - レビュータスクは徹底的かつ粘り強く完了させ、開発者がコード品質を向上させるのに役立つ実用的なフィードバックに焦点を当てる
 - 必要に応じて MCP ツール（fetch、context7、WebFetch、WebSearch）で外部ソースから最新の公式仕様とベストプラクティスを収集
+- **`--blind` では変更目的を示す情報を後から補完しない** — PR説明・コミットメッセージ・関連Issue・レビューコメントを、確認や指摘の棄却を目的として途中取得しない
 - **テスト実行・Lint実行・ビルド・コード修正は一切行わない** — 詳細は「スコープ」を参照。「動作確認のため」「確認のため」を理由にした実行も禁止
 - **レポート出力前に「報告前チェック」を必ず実施**し、第三者可読性を担保する — 参照可否・GitHub auto-link 回避・スキル名秘匿は [レポート公開指針](references/public-reporting.md) に従う
 
@@ -209,8 +234,20 @@ git diff {base_branch}..{target_branch}
   - GitHub PR: `pr-reviewer` スキル（例: `owner/repo 123` を指定）
   - ローカルブランチ: `pr-reviewer` スキル（例: `feature/xxx` を指定）
   - オプション付き: `pr-reviewer` スキル（例: `owner/repo 123 --outline 概要` を指定）
+  - blindレビュー: `pr-reviewer` スキル（例: `owner/repo 123 --blind` を指定）
   - 出力先指定: `pr-reviewer` スキル（例: `owner/repo 123 --output file,pr-comment` を指定）
 - 引数なしの場合はレビュー対象を質問
+
+### `--blind` と非互換オプションの同時指定
+
+**原因:**
+- `--blind` と `--outline` が同時指定されている
+- `--blind` と、`pr-comment-with-approve` を含む `--output` が同時指定されている
+
+**対処:**
+- レビューを開始せず、`--blind` と `--outline` のどちらを使用するかユーザーに確認
+- 出力先は `pr-comment-with-approve` から `pr-comment` へ変更するか、`--blind` を外すかユーザーに確認
+- 指定を黙って無視したり、自動的に通常モードへ切り替えたりしない
 
 ### diff取得失敗
 
@@ -246,7 +283,7 @@ git diff {base_branch}..{target_branch}
 **対処:**
 - 「変更が検出されませんでした」と報告
 - ブランチ名やPR番号が正しいか確認を依頼
-- `git log` でコミット履歴の確認を提案
+- 通常モードでは `git log` でコミット履歴の確認を提案。`--blind` ではコミット履歴を取得せず、対象指定の再確認だけを依頼
 
 ### 巨大なdiff（10,000行以上）
 
