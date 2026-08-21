@@ -2,8 +2,6 @@
 name: pr-reviewer
 description: |
   GitHub PRまたはローカルブランチをベースと比較し、コード品質・セキュリティ・規約準拠・退行リスクを静的レビューする。タスク要件との適合確認はtask-artifact-reviewerを優先する。PR URL・番号・ブランチのレビュー、変更説明を取得しないblindレビュー、結果のファイル保存・PRコメント投稿・条件付き承認で使用する。
-argument-hint: "{owner/repo} {PR番号} or {PR URL} or {ブランチ名} [--base ベースブランチ] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve] [--rule ルールファイル,...]"
-context: fork
 ---
 
 # pr-reviewer
@@ -24,6 +22,8 @@ Git/GitHubを用いたアプリケーション開発における包括的なコ�
 - **出力先の解釈: Low freedom** — 「出力の実行」セクションのファイル命名規則・投稿手順に厳密に従う。`--output` の値の解釈や投稿可否判定を独自に緩めない
 
 ## 引数の解析
+
+`$ARGUMENTS` の形式: `{owner/repo} {PR番号} or {PR URL} or {ブランチ名} [--base ベースブランチ] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve] [--rule ルールファイル,...]`
 
 `$ARGUMENTS` を以下のパターンでパースします：
 

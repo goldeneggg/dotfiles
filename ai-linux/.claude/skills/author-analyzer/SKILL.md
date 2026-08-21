@@ -2,8 +2,6 @@
 name: author-analyzer
 description: |
   GitHubリポジトリ内の特定authorのコミット・PR・Issueを横断分析し、実績・評価ポイント・得意分野を根拠付きMarkdownレポートにまとめる。GitHub usernameを指定した貢献分析、採用・評価・1on1、キャリア棚卸し、ポートフォリオ作成で使用する。単一PRレビューはpr-reviewer、コミットメッセージ提案はcommiterを優先する。
-argument-hint: "<author> [owner/repo ...] [--since YYYY-MM-DD] [--until YYYY-MM-DD]"
-context: fork
 ---
 
 # author-analyzer
@@ -26,6 +24,8 @@ GitHubリポジトリにおける特定authorのコミット・PR・Issueを横�
 - **評価ポイントの言語化: High freedom** — データから読み取れる強みを自然言語で表現してよい。ただし数値根拠を必ず併記する
 
 ## 引数の解析
+
+`$ARGUMENTS` の形式: `<author> [owner/repo ...] [--since YYYY-MM-DD] [--until YYYY-MM-DD]`
 
 `$ARGUMENTS` を以下のルールでパースする:
 
