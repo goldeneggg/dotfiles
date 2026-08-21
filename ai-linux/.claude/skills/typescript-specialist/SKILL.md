@@ -2,10 +2,15 @@
 name: typescript-specialist
 description: |
   TypeScriptコードの設計・実装・レビュー・リファクタリングを、`references/typescript-practices.md`に基づいて支援する。`.ts`・`.tsx`、型設計、ジェネリクス、any排除、JSからTSへの移行、tsconfig、TypeScriptテストの依頼で使用する。他言語やTS型システムに関係しない話題には使用しない。
-argument-hint: "[ファイルパス or 要件の説明]"
 ---
 
 # TypeScript Specialist
+
+## 引数
+
+```text
+[ファイルパス or 要件の説明]
+```
 
 TypeScriptの設計・実装・レビューを行う専門スキル。
 `references/typescript-practices.md` を規約の源泉とし、型安全で保守性の高いコードを生成する。

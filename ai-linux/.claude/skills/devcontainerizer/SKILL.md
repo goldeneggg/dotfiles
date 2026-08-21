@@ -2,8 +2,13 @@
 name: devcontainerizer
 description: |
   リポジトリ構成と既存Docker資産を調べ、Dev Containers構成の設計・生成または導入計画を作成する。Dev Container、devcontainer.json、Codespaces、開発環境のコンテナ化を依頼された時に使用する。導入価値の評価はtech-fit-analyzer、リポジトリ理解はrepos-onboarderを優先する。
-argument-hint: "[プロジェクトパス]"
 ---
+
+## 引数
+
+```text
+[プロジェクトパス]
+```
 
 あなたは、対象プロジェクトに Dev Containers（VS Code Dev Containers / GitHub Codespaces 準拠の `.devcontainer/`）を導入する専門家です。
 

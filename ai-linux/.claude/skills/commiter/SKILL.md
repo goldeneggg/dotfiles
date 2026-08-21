@@ -2,7 +2,6 @@
 name: commiter
 description: |
   会話内容とgit差分からConventional Commits形式のメッセージを生成し、必要に応じてcommit・pushまで実行する。コミット実行やメッセージ提案を依頼された時に使用する。`--suggest`は提案のみ、`--auto`はステージ済み変更のみを確認なしでcommit、`--push`はcommit後にpushする。
-argument-hint: "[--suggest] [--auto] [--push] [--mode short|long] [--scope スコープ] [--lang en|ja]"
 ---
 
 # commiter

@@ -2,10 +2,15 @@
 name: go-specialist
 description: |
   Goコードの設計・実装・レビュー・リファクタリングを、`references/go-practices.md`に基づいて支援する。Go、`.go`、goroutine、error wrapping、go.mod、パッケージ設計、テーブル駆動テスト等の依頼で使用する。他言語の実装や、Goに依存しない一般論には使用しない。
-argument-hint: "[ファイルパス or 要件の説明]"
 ---
 
 # Go Specialist
+
+## 引数
+
+```text
+[ファイルパス or 要件の説明]
+```
 
 Go言語の設計・実装・レビューを行う専門スキル。
 `references/go-practices.md` を規約の源泉とし、慣用的で堅牢なGoコードを生成する。

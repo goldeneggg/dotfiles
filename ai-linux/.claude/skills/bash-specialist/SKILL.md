@@ -2,10 +2,15 @@
 name: bash-specialist
 description: |
   Bashスクリプトの設計・実装・レビュー・リファクタリングを、`references/bash-coding-practices.md`に基づいて支援する。Bash、shell、`.sh`、CLI、自動化、セットアップ、CI/CDスクリプトの依頼や、trap・set -euo pipefail等のBash固有相談で使用する。単純なワンライナーや他言語のCLI実装には使用しない。
-argument-hint: "[スクリプトパス or 要件の説明]"
 ---
 
 # Bash Specialist
+
+## 引数
+
+```text
+[スクリプトパス or 要件の説明]
+```
 
 Bashスクリプトの設計・実装・レビューを行う専門スキル。
 `references/bash-coding-practices.md` を規約の源泉とし、堅牢で読みやすいスクリプトを生成する。

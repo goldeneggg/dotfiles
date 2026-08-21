@@ -2,7 +2,6 @@
 name: pr-creator
 description: |
   現在のブランチをpushし、pr-descriptionで本文とタイトル候補を生成してGitHub PRを作成する。説明文だけならpr-description、レビューはpr-reviewer、既存PRの修正はlocal-autofix-pr、コミットだけならcommiterを優先する。PR作成、ドラフト、ラベル・レビュアー設定で使用する。
-argument-hint: "[--base ブランチ] [--draft] [--reviewer ユーザー] [--label ラベル] [--template テンプレートパス]"
 ---
 
 # pr-creator

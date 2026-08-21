@@ -2,10 +2,15 @@
 name: japanese-specialist
 description: |
   日本語ドキュメントの新規作成・添削・検証を、`references/japanese-writing-practices.md`の日本語ライティング規範に基づいて支援する。README・設計書・仕様書・手順書・ブログ記事などの日本語文書を書く、直す、校正する、推敲する、チェックする依頼で使用する。文体統一、誤字脱字、冗長表現、表記ゆらぎ、読みやすさの検証を求められたら積極的に使用する。コードのコメントだけの修正や、日本語以外の文書には使用しない。
-argument-hint: "[対象ファイルパス or 作成する文書の説明] [--verify で検証のみ]"
 ---
 
 # Japanese Specialist
+
+## 引数
+
+```text
+[対象ファイルパス or 作成する文書の説明] [--verify で検証のみ]
+```
 
 日本語ドキュメントの新規作成・添削・検証を行う専門スキル。
 `references/japanese-writing-practices.md` を規約の源泉とし、日本語として適切で読みやすい文書を保証する。

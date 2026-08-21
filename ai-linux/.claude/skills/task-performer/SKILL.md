@@ -8,10 +8,15 @@ description: |
     (3) ユーザーが明示的に「task-performer スキル」の実行を指示した時
     (4) task-starterで作成したtodos/配下のタスクの実装を依頼された時
     (5) 「このタスクドキュメントに基づいて実装して」と依頼された時
-argument-hint: "[タスクファイルパス] [--commit] [--no-agent] [--auto]"
 ---
 
 # Task Performer
+
+## 引数
+
+```text
+[タスクファイルパス] [--commit] [--no-agent] [--auto]
+```
 
 TODOタスクを読み込み、計画・実装・テスト・Lintまでを一貫して実行する。
 

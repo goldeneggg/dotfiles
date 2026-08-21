@@ -2,10 +2,15 @@
 name: task-progress-reporter
 description: |
   task-starter形式のプロジェクトを読み取り専用で精査し、現状・残タスク・優先順位・次の一手を報告する。新規計画はtask-starter、実装はtask-performer、成果物レビューはtask-artifact-reviewerを優先する。todos・progresses・logsを含むプロジェクトの進捗、未着手、消化状況の確認で使用する。
-argument-hint: "[プロジェクトパス or todos/ のパス]"
 ---
 
 # Task Progress Reporter
+
+## 引数
+
+```text
+[プロジェクトパス or todos/ のパス]
+```
 
 task-starter で生成したプロジェクト構造を走査し、完了/進行中/未着手を判定して、
 未着手タスクの着手しやすさ分類と推奨対応順序を中心とした進捗レポートを出力する。

@@ -2,7 +2,6 @@
 name: task-artifact-reviewer
 description: |
   タスクドキュメントと実装成果物を突き合わせ、受け入れ条件・スコープ・退行リスク・コード品質をレビューする。タスク要件を伴わないPRレビューはpr-reviewerを優先する。task-performerの成果物や、PR・ブランチ・コミットがタスク要件を満たすか確認する依頼で使用する。
-argument-hint: "[タスクファイルパス] [PR番号/URL or ブランチ名 or コミットハッシュ] [--base ベースブランチ] [--outline 概要] [--output file,pr-comment,pr-comment-with-approve] [--rule ルールファイル,...]"
 ---
 
 # Task Artifact Reviewer

@@ -2,7 +2,6 @@
 name: local-autofix-pr
 description: |
   PRのCI失敗と未解決レビューコメントをローカルで対話的に修正し、push前にdiffを確認してcommit・pushする。ブロッカーがなければ変更せず終了する。PRレビューはpr-reviewer、GitHub Actions失敗の単独調査・修正はgh-action-error-fixerを優先する。赤いchecks、lint・型・テスト失敗、suggestion、CHANGES_REQUESTEDへの対応で使用する。
-argument-hint: "[prompt] [--pr <番号>] [--ci-only] [--reviews-only] [--no-push]"
 ---
 
 # local-autofix-pr

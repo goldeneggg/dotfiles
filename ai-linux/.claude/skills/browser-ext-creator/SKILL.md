@@ -2,10 +2,15 @@
 name: browser-ext-creator
 description: |
   Chrome Manifest V3とFirefox向けブラウザ拡張を設計・実装する。Safari拡張、MV2からMV3への移行、Tampermonkeyスクリプト単体の作成には使用しない。Chrome/Firefox拡張、content script、background、popup、ページ埋め込みUI、外部API連携、Tampermonkeyから拡張への変換で使用する。
-argument-hint: "[機能の説明]"
 ---
 
 # Browser Extension Creator
+
+## 引数
+
+```text
+[機能の説明]
+```
 
 ブラウザ拡張機能（Chrome Manifest V3 / Firefox）の設計・実装を支援するスキル。
 

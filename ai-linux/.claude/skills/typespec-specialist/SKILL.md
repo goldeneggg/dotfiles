@@ -2,10 +2,15 @@
 name: typespec-specialist
 description: |
   TypeSpec 1.xによるAPIスキーマの設計・実装・レビュー、プロジェクト設定、OpenAPI・JSON Schemaからの移行を支援する。`.tsp`、tspconfig、Visibility、Versioning、`@typespec/openapi3`に関する依頼で使用する。OpenAPIの直接編集、TypeScript型・Zod、Swagger UI設定だけの依頼には使用しない。
-argument-hint: "[.tspファイルパス or OpenAPIファイルパス]"
 ---
 
 # TypeSpec specialist
+
+## 引数
+
+```text
+[.tspファイルパス or OpenAPIファイルパス]
+```
 
 TypeSpec を「信頼できる情報源（Single Source of Truth）」として位置付け、堅牢で保守性の高い API スキーマを設計・検証する専門スキル。
 

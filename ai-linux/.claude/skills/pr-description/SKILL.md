@@ -2,7 +2,6 @@
 name: pr-description
 description: |
   会話コンテキストとgit差分からPR説明文をMarkdownファイルへ出力し、Conventional Commits形式のタイトル候補も提示する。PR作成そのものはpr-creator、コードレビューはpr-reviewerを優先する。PR本文・PRタイトル案・テンプレートに沿った説明文の作成で使用する。
-argument-hint: "<出力先パス> [--base ブランチ] [--template テンプレートパス] [--format フォーマット指示]"
 ---
 
 # pr-description
