@@ -202,6 +202,7 @@ def create_directories(project_path: Path) -> None:
         "references",
         "files",
         "specs",
+        "drafts/doubt",
         "todos",
         "progresses",
         "logs",
@@ -244,6 +245,26 @@ def create_progresses_readme(project_path: Path) -> None:
     )
 
 
+def create_doubt_status(project_path: Path) -> None:
+    """Create the independent adversarial review state in Markdown."""
+    updated_at = datetime.now().astimezone().isoformat(timespec="seconds")
+    content = f"""# Doubt Review Status
+
+- **state**: not_started
+- **active_cycle**: none
+- **completed_cycles**: 0
+- **maximum_cycles**: 3
+- **checkpoint**: none
+- **reviewer_input**: none
+- **result**: none
+- **updated_at**: {updated_at}
+- **note**: none
+"""
+    (project_path / "drafts" / "doubt" / "STATUS.md").write_text(
+        content, encoding="utf-8"
+    )
+
+
 def init_project(
     base_dir: str,
     project_name: str,
@@ -280,6 +301,7 @@ def init_project(
     create_readme(project_path, project_name, description, fmt)
     create_todos_readme(project_path, project_name, fmt)
     create_progresses_readme(project_path)
+    create_doubt_status(project_path)
 
     return project_path
 
