@@ -6,7 +6,7 @@ Phase 1 でユーザーが **HTML形式** を選んだ場合のドキュメン�
 
 ## 適用範囲と拡張子
 
-HTML選択時は、進捗正本を除くドキュメントを `.html` で生成する。`progresses/{ID}/PROGRESS.md` だけは、`../../_shared/references/task-management-contract.md` に従ってMarkdownへ固定する。
+HTML選択時は、進捗正本と独立反証レビュー資料を除くドキュメントを `.html` で生成する。`progresses/{ID}/PROGRESS.md` と `drafts/doubt/**/*.md` はMarkdownへ固定する。
 
 | ドキュメント | Markdown時 | HTML時 |
 | --- | --- | --- |
@@ -16,6 +16,7 @@ HTML選択時は、進捗正本を除くドキュメントを `.html` で生成�
 | TODO | `todos/{ID}/README.md` | `todos/{ID}/README.html` |
 | 現状分析 | `references/{name}.md` | `references/{name}.html` |
 | 進捗正本 | `progresses/{ID}/PROGRESS.md` | `progresses/{ID}/PROGRESS.md` |
+| 独立反証レビュー | `drafts/doubt/**/*.md` | `drafts/doubt/**/*.md` |
 
 `README.html` と `todos/README.html` は `init_project.py --format html` が雛形を生成する。`specs/` `todos/{ID}/` `references/` は Claude がテンプレートを元に生成する。
 
