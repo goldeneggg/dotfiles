@@ -23,7 +23,7 @@ Git/GitHubを用いたアプリケーション開発における包括的なコ�
 
 ## 引数の解析
 
-`$ARGUMENTS` の形式: `{owner/repo} {PR番号} or {PR URL} or {ブランチ名} [--base ベースブランチ] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve] [--rule ルールファイル,...]`
+`$ARGUMENTS` の形式: `{owner/repo} {PR番号} or {PR URL} or {ブランチ名} [--base ベースブランチ] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve,pr-thread] [--rule ルールファイル,...]`
 
 `$ARGUMENTS` を以下のパターンでパースします：
 
@@ -41,7 +41,7 @@ Git/GitHubを用いたアプリケーション開発における包括的なコ�
 
 **URL解析ルール**: `https://github.com/{owner}/{repo}/pull/{num}` 形式のURLから `owner/repo` と PR番号を抽出します。URLに `--outline`、`--blind`、`--output` 等のオプションを後続させることも可能です。
 
-**`--output` オプション**: チャット表示に加えて追加の出力先を指定します。値は `file`（ファイル出力）、`pr-comment`（PRコメント投稿）、`pr-comment-with-approve`（PRコメント投稿と条件付き承認）です。カンマ区切りで併記すると複数の出力を実行します（例: `--output file,pr-comment-with-approve`）。`pr-comment-with-approve` は `pr-comment` を内包するため、両方が指定されてもコメントは1件だけ投稿します。未指定の場合はチャット表示のみ（従来通りの挙動）。値の詳細は「出力の実行」セクションを参照。`file` / `pr-comment` / `pr-comment-with-approve` 以外の値が渡された場合は不正な値としてユーザーに確認します。
+**`--output` オプション**: チャット表示に加えて追加の出力先を指定します。値は `file`（ファイル出力）、`pr-comment`（PRコメント投稿）、`pr-comment-with-approve`（PRコメント投稿と条件付き承認）、`pr-thread`（指摘ごとのレビュー・スレッド投稿）です。カンマ区切りで併記すると複数の出力を実行します（例: `--output file,pr-comment-with-approve`）。`pr-comment-with-approve` は `pr-comment` を内包するため、両方が指定されてもコメントは1件だけ投稿します。`pr-thread` は `file` とのみ併用可能で、`pr-comment` または `pr-comment-with-approve` と併記された場合は、同じ指摘の二重投稿を避けるためユーザーにどちらを使うか確認します。未指定の場合はチャット表示のみ（従来通りの挙動）。値の詳細は「出力の実行」セクションを参照。`file` / `pr-comment` / `pr-comment-with-approve` / `pr-thread` 以外の値が渡された場合は不正な値としてユーザーに確認します。
 
 **`--rule` オプション**: レビュー時に追加で適用するルール・観点を記載したファイルを指定します。カンマ区切りで複数指定可能（例: `--rule rules/security.md,rules/api-design.md`）。指定されたファイルをレビュー開始前に読み込み、「レビューの実施」（ステップ3）で通常の5観点に加えてルールファイルの内容を追加の評価軸として適用します。ファイルが見つからない場合はエラーとしてユーザーに報告します。
 
@@ -207,6 +207,15 @@ git diff {base_branch}..{target_branch}
 - 条件を満たさない場合は、コメント投稿のみで完了し、承認操作は行わない。その理由（重要度件数または最終結論）をチャットで報告する
 - 承認の実行後、成功時は承認したことをチャットで報告する。失敗時はエラーメッセージを報告するが、投稿済みコメントを取り消さない
 
+**`pr-thread`（レビュー・スレッド投稿）:**
+
+- **前提条件**: GitHub PRレビュー（PR番号が確定しているモード）でのみ実行可能。ローカルブランチレビューでは投稿先の PR が存在しないため、投稿は行わない（詳細は「エラーハンドリング」参照）
+- 各指摘について、PR の diff 内の1行に対応する `path`、行番号、`LEFT` または `RIGHT` の side を、diff とレビュー根拠から確定する。対応先を確定できない指摘、または diff 外の行しか根拠にできない指摘を、近い行へ推測して投稿してはならない
+- 対応先を確定できた指摘だけを、1指摘につき1スレッドとして投稿する。投稿本文は [指摘の記述指針](references/finding-writing.md) を満たす内容とし、GitHub 側で既に表示されるパス・行番号を重複記載しない
+- 対応可能な指摘が0件の場合は GitHub API を呼び出さず、投稿しなかった理由と対象外の指摘をチャットで報告する
+- 投稿には GitHub GraphQL API を使用する。具体的な手順、入力検証、失敗時の停止条件は [PRスレッド投稿手順](references/pr-thread-posting.md) を読み、厳密に従う
+- 成功時は作成されたレビューの URL と投稿スレッド数をチャットで報告する。`pr-thread` 自体は承認操作を行わない
+
 ## ガイドライン
 
 - **ユーザーとのすべてのコミュニケーションは日本語で行う** — 質問、フィードバック、説明、その他すべてのやり取り
@@ -235,7 +244,7 @@ git diff {base_branch}..{target_branch}
   - ローカルブランチ: `pr-reviewer` スキル（例: `feature/xxx` を指定）
   - オプション付き: `pr-reviewer` スキル（例: `owner/repo 123 --outline 概要` を指定）
   - blindレビュー: `pr-reviewer` スキル（例: `owner/repo 123 --blind` を指定）
-  - 出力先指定: `pr-reviewer` スキル（例: `owner/repo 123 --output file,pr-comment` を指定）
+  - 出力先指定: `pr-reviewer` スキル（例: `owner/repo 123 --output file,pr-thread` を指定）
 - 引数なしの場合はレビュー対象を質問
 
 ### `--blind` と非互換オプションの同時指定
@@ -310,15 +319,17 @@ git diff {base_branch}..{target_branch}
 - レート制限の場合は `gh api rate_limit` で状況確認を促す
 - 一時的な障害の場合は時間をおいて再試行を提案
 
-### `--output` の値が不正
+### `--output` の値が不正または併用不可
 
 **原因:**
-- `file` / `pr-comment` 以外の値が指定されている（例: `--output slack`）
+- `file` / `pr-comment` / `pr-comment-with-approve` / `pr-thread` 以外の値が指定されている（例: `--output slack`）
 - カンマ区切りの記法が誤っている
+- `pr-thread` と `pr-comment` または `pr-comment-with-approve` が併記されている
 
 **対処:**
-- 受け付ける値が `file`、`pr-comment`、`pr-comment-with-approve`（カンマ区切りで併記可）のみであることを提示
-- 正しい形式の例を示して再入力を依頼: `pr-reviewer` スキル（例: `owner/repo 123 --output file,pr-comment-with-approve` を指定）
+- 受け付ける値が `file`、`pr-comment`、`pr-comment-with-approve`、`pr-thread` であることを提示
+- `pr-thread` は `file` とのみ併記できることを説明し、いずれかの投稿方式を選ぶよう依頼する
+- 正しい形式の例を示して再入力を依頼: `pr-reviewer` スキル（例: `owner/repo 123 --output file,pr-thread` を指定）
 
 ### `--rule` で指定されたファイルが見つからない
 
@@ -331,15 +342,15 @@ git diff {base_branch}..{target_branch}
 - 該当ファイルをスキップし、他のルールファイル（存在するもの）と通常の5観点でレビューを続行
 - すべてのルールファイルが見つからない場合は `--rule` なしと同等の通常レビューを実行し、その旨を報告
 
-### ローカルブランチレビューで `pr-comment` または `pr-comment-with-approve` が指定された
+### ローカルブランチレビューで PR 投稿出力が指定された
 
 **原因:**
-- ローカルブランチレビュー（PR番号が確定していないモード）では投稿先の PR コメント欄および承認対象が存在しない
+- ローカルブランチレビュー（PR番号が確定していないモード）では投稿先の PR コメント欄、レビュー・スレッドおよび承認対象が存在しない
 
 **対処:**
-- 「ローカルブランチレビューではPRコメント投稿はできません」とエラーを案内
+- 「ローカルブランチレビューではPRコメント・レビュー・スレッドの投稿はできません」とエラーを案内
 - `--output file` への変更、またはPR番号を指定したGitHub PRレビューへの切り替えを提案
-- `pr-comment` / `pr-comment-with-approve` 以外の出力先（チャット表示・`file`）は通常通り実行する
+- `pr-comment` / `pr-comment-with-approve` / `pr-thread` 以外の出力先（チャット表示・`file`）は通常通り実行する
 
 ### PRコメント投稿失敗
 
@@ -352,6 +363,17 @@ git diff {base_branch}..{target_branch}
 - エラーメッセージをユーザーに提示
 - `gh auth status` で権限を確認するよう促す
 - PRの状態（クローズ・マージ済みでないか）の確認を依頼
+- 投稿に失敗した場合でも、レポート内容自体はチャット表示（または`file`出力）で確実に伝える
+
+### PRスレッド投稿失敗
+
+**原因:**
+- GitHub GraphQL API の権限不足、対象 PR の状態変更、または行位置の検証失敗
+- API 呼び出し後にネットワークが切断され、投稿成否を確定できない
+
+**対処:**
+- API が返した明確なエラーメッセージはそのまま報告し、投稿済みとみなさない
+- 成否が不明な通信エラーでは再試行しない。重複スレッドを避けるため、ユーザーに PR 上の投稿状況の確認を依頼する
 - 投稿に失敗した場合でも、レポート内容自体はチャット表示（または`file`出力）で確実に伝える
 
 ### PR承認失敗

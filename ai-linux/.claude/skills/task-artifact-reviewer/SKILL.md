@@ -67,7 +67,7 @@ pr-reviewer スキルの汎用レビューをタスク計画・進捗・実装�
 |---|---|---|
 | `--base` | `--base develop` | ブランチの差分取得に使用し、明示指定時は同じ指定を転送 |
 | `--outline` | `--outline "認証変更のレビュー"` | Phase 4 の要件整合性を解釈する補助情報として保持する。独立した汎用レビューをアンカリングしないよう Phase 5 には転送しない |
-| `--output` | `--output file,pr-comment-with-approve` | `file` / `pr-comment` / `pr-comment-with-approve` の指定値をそのまま転送。`pr-comment-with-approve` の承認可否は `pr-reviewer` の条件に従う |
+| `--output` | `--output file,pr-thread` | `file` / `pr-comment` / `pr-comment-with-approve` / `pr-thread` の指定値をそのまま転送。`pr-thread` の投稿可否・位置対応・失敗時の扱い、ならびに `pr-comment` 系との併用可否は `pr-reviewer` の条件に従う |
 | `--rule` | `--rule rules/security.md,rules/api.md` | カンマ区切りのルールファイルパスをそのまま転送 |
 
 Phase 5 では、ユーザー指定や自動生成のタスク要約ではなく、次の固定 `--outline` を渡す。
@@ -86,7 +86,7 @@ Phase 5 では、ユーザー指定や自動生成のタスク要約ではなく
    - タスクファイルパス（`{task_path}`）
    - 成果物指定（`{artifact}` と種別: PR / branch / commit / range）
    - ベースブランチ（branch モード時のみ。未指定なら `main`）
-   - `pr-reviewer` 転送引数（`--base` / `--output` / `--rule`。指定されたもののみ）
+   - `pr-reviewer` 転送引数（`--base` / `--output` / `--rule`。指定されたもののみ。`pr-thread` を含む場合は `pr-reviewer` の投稿前提をそのまま適用）
    - 要件整合性レビューの補助情報（ユーザー指定の `--outline`。指定時のみ）
 2. いずれかが不明なら推奨案を含む複数の選択肢を提示してユーザーに確認する。推測で進めない。
 3. **作業ディレクトリの git リポジトリ確認**: `git rev-parse --show-toplevel` で確認。branch / commit モードはリポジトリ内である必要がある。
