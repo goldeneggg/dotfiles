@@ -213,6 +213,17 @@ task-starter形式では、影響する全 `AC-ID` を修正後の証跡で再�
 
 コード変更がない判定ではcommit・pushを行わず、調査結果だけを報告して終了する。
 
+### PRコメント返信の記述
+
+PRコメント返信は、タスク文書やローカルの進捗を知らないレビュアーが単独で読んでも理解できる公開文書として作成する。タスク文書は判定のための内部資料にとどめ、返信内でその存在や内容の管理方法を説明しない。
+
+- 結論、対応内容、検証結果をこの順で簡潔に書く。コードを変更しない場合は、結論と確認できた事実だけを示す。
+- タスク番号、作業項目ID、受け入れ条件ID、タスク文書のパス・名称、進捗・ログのパスを本文へ書かない。`NNN`、`T-01`、`AC-01` などの内部識別子も使わない。
+- 内部の受け入れ条件や作業項目は、確認した期待動作と理由に言い換える。たとえば「`AC-01`を満たす」ではなく、何がどの条件で期待どおりに動くかを具体的に書く。
+- 読み手が確認できるPR差分内のファイルパスやコード識別子は、必要な場合だけ使う。専門用語や略語は初出時に短く説明し、主語・条件・結果を省略しない。
+
+投稿直前に、タスク文書を読めないレビュアーでも返信の意図と結論を理解できること、内部資料への参照や識別子が残っていないこと、記載した事実をPR差分・コード・検証結果で裏付けられることを確認する。満たさない場合は、投稿前に書き直す。
+
 ### Phase 8: ステージング・commit・pushを行う
 
 Phase 7 の最終承認後、コード変更がある場合だけ次を実行する。
@@ -224,7 +235,7 @@ Phase 7 の最終承認後、コード変更がある場合だけ次を実行す
    - オプションなし: ステージングとログ出力で終了する。
    - `--commit`: `git commit -F {log_path}` を実行し、commit SHAを報告する。
    - `--commit-push`: commit成功後、URLから確認したPR head repository・branchとpush先が一致することを再確認し、通常の `git push` を実行する。upstream未設定時だけ `git push -u {remote} {branch}` を使う。
-   - `--commit-push-reply`: `--commit-push` の全手順を実行する。push成功後、Phase 7の判定・修正・検証結果だけに基づく簡潔な返信本文を作成する。`discussion_r<ID>` なら、対象コメントが返信の場合は `in_reply_to`、それ以外は `ID` をスレッド先頭コメントIDとして `gh api repos/{owner}/{repo}/pulls/{PR}/comments -f body={reply} -F in_reply_to={thread_root_id}` で同じthreadへ投稿する。それ以外なら `gh pr comment {PR} --body {quoted_reply}` で引用付き新規コメントを投稿する。
+   - `--commit-push-reply`: `--commit-push` の全手順を実行する。push成功後、Phase 7の判定・修正・検証結果だけに基づき、上記「PRコメント返信の記述」に従う簡潔な返信本文を作成する。`discussion_r<ID>` なら、対象コメントが返信の場合は `in_reply_to`、それ以外は `ID` をスレッド先頭コメントIDとして `gh api repos/{owner}/{repo}/pulls/{PR}/comments -f body={reply} -F in_reply_to={thread_root_id}` で同じthreadへ投稿する。それ以外なら `gh pr comment {PR} --body {quoted_reply}` で引用付き新規コメントを投稿する。
    - `--request-review`: `--commit-push-reply` による返信投稿の成功後に限り、元コメント投稿者がbotでなく、Phase 1で取得した既存reviewのauthor集合に含まれる場合は `gh pr edit {PR} --add-reviewer {login}` でreview requestする。ユーザーが集合に含まれない場合とbotの場合はrequestを行わず、その理由を報告する。
 5. pushまたは返信投稿が失敗した場合は、その時点で後続の外部操作を行わず正確なエラーを報告する。review requestだけが失敗した場合は、返信済みであることとエラーを分けて報告する。force push、別remoteへのpush、認証変更で回避しない。
 
