@@ -1,0 +1,4 @@
+interface:
+  display_name: "PR Fixer"
+  short_description: "指定PRの単一レビュー指摘・CI失敗を検証して最小修正"
+  default_prompt: "$pr-fixer を使って、指定したPRレビューコメントまたはCI失敗を検証して修正してください。"
