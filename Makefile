@@ -72,7 +72,7 @@ upgrade-brew-pkgs:
 USEVER_NODEJS := 26
 USEVER_PYTHON := 3.14
 USEVER_RUBY := 4.0
-USEVER_TERRAFORM := 1.15
+USEVER_TERRAFORM := 1.16
 
 asdf-latest = $(shell asdf latest $1 $2)
 
