@@ -1,0 +1,90 @@
+name: Task
+description: Track a concrete engineering or maintenance task
+title: "[Task]: "
+labels:
+  - task
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for concrete engineering, maintenance, migration,
+        infrastructure, documentation, or operational work.
+
+        For user-visible defects, use Bug report.
+        For new capabilities, use Feature request.
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: What needs to be accomplished?
+      placeholder: Describe the outcome, not merely the activity.
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Why is this task necessary now?
+      placeholder: |
+        This task is needed because ...
+        Relevant context:
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: Define observable conditions that indicate this task is complete.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Clarify what is explicitly in scope or out of scope when useful.
+      placeholder: |
+        In scope:
+        - ...
+
+        Out of scope:
+        - ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List blocking issues, external dependencies, migrations, or sequencing constraints.
+      placeholder: |
+        - Depends on #...
+        - Blocked by ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: implementation-notes
+    attributes:
+      label: Implementation notes
+      description: |
+        Add relevant constraints or technical notes if they are already known.
+        Do not treat a tentative implementation idea as a requirement.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add related issues, documents, risks, or other useful context.
+    validations:
+      required: false

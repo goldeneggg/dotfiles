@@ -1,0 +1,94 @@
+name: Feature request
+description: Propose a new capability or significant user-facing improvement
+title: "[Feature]: "
+labels:
+  - enhancement
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please start with the problem or desired outcome rather than a specific implementation.
+
+        A proposed solution is welcome, but understanding the underlying need is more important.
+
+  - type: checkboxes
+    id: existing-issue
+    attributes:
+      label: Existing issue check
+      description: Please search existing issues before filing a new request.
+      options:
+        - label: I searched the existing issues and did not find an equivalent request.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem, limitation, or unmet need are you trying to address?
+      placeholder: |
+        Currently, users who ... cannot ...
+        This causes ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired-outcome
+    attributes:
+      label: Desired outcome
+      description: Describe what should become possible, without prescribing implementation details.
+      placeholder: |
+        Users should be able to ...
+        Success would mean ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: Who needs this, and in what situation?
+      placeholder: |
+        This is needed when ...
+        The primary users are ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: If you have an implementation or API design in mind, describe it here.
+      placeholder: Optional. Focus on the desired outcome above first.
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe alternative approaches or existing workarounds, if any.
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: |
+        If you can define observable conditions for completion, list them here.
+        Avoid tying them unnecessarily to a particular implementation.
+      placeholder: |
+        - [ ] Users can ...
+        - [ ] Existing behavior for ... remains unchanged
+        - [ ] ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add related issues, designs, screenshots, benchmarks, or other supporting information.
+    validations:
+      required: false

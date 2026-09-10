@@ -1,0 +1,100 @@
+name: Bug report
+description: Report a reproducible problem or unexpected behavior
+title: "[Bug]: "
+labels:
+  - bug
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug.
+
+        Please describe the observable problem rather than assuming its root cause.
+        Do not include passwords, API keys, access tokens, or other sensitive data.
+
+  - type: checkboxes
+    id: existing-issue
+    attributes:
+      label: Existing issue check
+      description: Please search existing issues before filing a new report.
+      options:
+        - label: I searched the existing issues and did not find a duplicate.
+          required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Briefly describe the problem and its impact.
+      placeholder: |
+        When ..., the application ...
+        This prevents / causes ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen instead?
+      placeholder: Describe the expected observable behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happens?
+      placeholder: Describe the actual observable behavior, including relevant error messages.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest reliable sequence that reproduces the problem.
+      placeholder: |
+        1. Start with ...
+        2. Configure ...
+        3. Run ...
+        4. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Provide only environment information relevant to the problem.
+      value: |
+        - Version / commit:
+        - OS:
+        - Runtime:
+        - Browser:
+        - Relevant configuration:
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: |
+        Paste only the relevant portion of logs.
+        Remove credentials, tokens, personal data, and other secrets before submitting.
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: |
+        Add screenshots, traces, related issues, known workarounds,
+        frequency, regression information, or anything else useful for diagnosis.
+    validations:
+      required: false
