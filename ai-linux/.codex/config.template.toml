@@ -349,7 +349,7 @@ disable_paste_burst = false
 
 # Track Windows onboarding acknowledgement (Windows only). Default: false
 
-windows_wsl_setup_acknowledged = false
+#windows_wsl_setup_acknowledged = false
 
 # Check for updates on startup. Default: true
 
