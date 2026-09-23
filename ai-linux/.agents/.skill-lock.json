@@ -1,0 +1,17 @@
+{
+  "version": 3,
+  "skills": {
+    "doubt-driven-development": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/addyosmani/agent-skills.git",
+      "skillPath": "skills/doubt-driven-development/SKILL.md",
+      "skillFolderHash": "2a25398c4f73f715c1fe5110ca789fdb7de30983",
+      "installedAt": "2026-09-21T09:00:17.030Z",
+      "updatedAt": "2026-09-21T09:00:17.030Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  }
+}
