@@ -129,6 +129,10 @@
   # ----- command
   # new branch
   nb = "!f() { git fetch origin && git switch -c $1 --no-track origin/${2:-main}; }; f"
+  # new branch with worktree
+  nbwt = "!f() { branch=$1; base=${2:-main}; repo=$(basename $(git rev-parse --show-toplevel)); dir=$(printf '%s' $branch | tr '/' '-'); git fetch origin && git worktree add -b $branch ../${repo}-${dir} origin/$base; }; f"
+  # detach to specific commit
+  detach = "!f() { git switch --detach $1; }; f"
 
   # # grep or
   # #grepbase = grep -I --full-name -n --color
@@ -162,21 +166,15 @@
   # gr-and-go-cached = "!f() { git --no-pager gr-and-go-pager-cached $@; }; f"
   # gr-and-go-exc-comment = "!f() { git --no-pager gr-and-go-pager-exc-comment $@; }; f"
 
-  ## using hub
-  open = browse
-  pullreq = pull-request
-  openpr = "!f() { hub browse -- `git log --merges --oneline --reverse --ancestry-path $1...master | grep 'Merge pull request #' | head -n 1 | cut -f5 -d' ' | sed -e 's%#%pull/%'`; }; f"
-  hoge = "!f() { echo arg=$@; }; f"
-
-  ## merge commit
-  ### 該当commit hashとターゲットブランチを指定
-  find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
-  ### find-mergeの結果をgit logする
-  show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git log --pretty=\"format:%ad %h %s\" --date=iso $merge | head -n 1'"
-  ## pull request
-  show-pr = !"f() { git log --merges --pretty=\"format:%ad %h %s\" --date=iso --reverse --ancestry-path $1...${2:-master} | grep 'Merge pull request #' | head -n 1; }; f"
-  pr-list = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-pr ${hash} ${1:-master}; done | sort | uniq'"
-  pr-list2 = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-merge ${hash} ${1:-master} | grep \"pull request #\"; done | sort | uniq'"
+  # ## merge commit
+  # ### 該当commit hashとターゲットブランチを指定
+  # find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
+  # ### find-mergeの結果をgit logする
+  # show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git log --pretty=\"format:%ad %h %s\" --date=iso $merge | head -n 1'"
+  # ## pull request
+  # show-pr = !"f() { git log --merges --pretty=\"format:%ad %h %s\" --date=iso --reverse --ancestry-path $1...${2:-master} | grep 'Merge pull request #' | head -n 1; }; f"
+  # pr-list = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-pr ${hash} ${1:-master}; done | sort | uniq'"
+  # pr-list2 = "!sh -c 'hashes=($(git hashes $0)) && for hash in ${hashes[@]}; do git show-merge ${hash} ${1:-master} | grep \"pull request #\"; done | sort | uniq'"
 
 # include local settings
 [include]
