@@ -27,8 +27,10 @@ alias gasl='gat slack'
 alias gapl='gat play'
 
 ##- hub
-eval "$(hub alias -s)"
-alias h='hub'
+# deprecate hub on 2026/09/25
+#eval "$(hub alias -s)"
+#alias h='hub'
+alias h='git'
 
 #-- docker
 alias dl='docker ps -l -q'

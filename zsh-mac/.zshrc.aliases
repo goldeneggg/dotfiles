@@ -26,8 +26,10 @@ alias nv=nvim
 alias vimdiff='nvim -d'
 
 ##- hub
-eval "$(hub alias -s)"
-alias h='hub'
+# deprecate hub on 2026/09/25
+#eval "$(hub alias -s)"
+#alias h='hub'
+alias h='git'
 
 #-- herdr
 alias hd='herdr'

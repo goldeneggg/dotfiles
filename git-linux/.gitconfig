@@ -51,6 +51,7 @@
 #   log = diff-so-fancy | less --tabs=1,5 -RFX
 
 [alias]
+  # ----- shortcut
   # fetch,pull,checkout
   ft = fetch
   fa = fetch --all
@@ -124,6 +125,10 @@
 
   # rebase
   reb = rebase
+
+  # ----- command
+  # new branch
+  nb = "!f() { git fetch origin && git switch -c $1 --no-track origin/${2:-main}; }; f"
 
   # # grep or
   # #grepbase = grep -I --full-name -n --color
