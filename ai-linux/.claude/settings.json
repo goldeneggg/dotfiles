@@ -92,9 +92,7 @@
     ],
     "defaultMode": "acceptEdits"
   },
-  "model": "opus[1m]",
-  "hooks": {
-  },
+  "hooks": {},
   "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true,
@@ -133,5 +131,10 @@
   "autoMemoryEnabled": false,
   "verbose": false,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  }
 }
