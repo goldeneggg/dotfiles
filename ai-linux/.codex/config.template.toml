@@ -477,9 +477,9 @@ enabled = false
 
 # inherit: all (default) | core | none
 
-# TODO: core に変えると作業にどのようなメリット・デメリットが発生するかを検証する（検証中）
-#inherit = "all"
-inherit = "core"
+# Note: SSH_AUTH_SOCK 変数がcodexセッションに引き継がれず、SSH署名git commitが失敗するので、allに変更
+#inherit = "core"
+inherit = "all"
 
 # Skip default excludes for names containing KEY/SECRET/TOKEN (case-insensitive). Default: false
 
