@@ -61,23 +61,43 @@ def render_html(title: str, body: str) -> str:
 
 def readme_markdown(project_name: str, description: str) -> str:
     """README.md の内容を返す（Markdown）。"""
-    overview = description if description else "<!-- プロジェクトの概要を記載 -->"
+    overview = description if description else "<!-- 誰のどの問題を解決し、何を実現するか -->"
     return f"""# {project_name}
 
 ## 概要
 
 {overview}
 
-## 目的
+## なぜ必要か
 
-<!-- プロジェクトの目的を記載 -->
+<!-- 現在の困りごとと原因。実施しない場合に残る問題 -->
 
-## ステータス
+## 何を変えるか
 
-- [ ] 計画中
-- [ ] 開発中
-- [ ] レビュー中
-- [ ] 完了
+<!-- 主要な変更について、現在と完成後の違いを説明する -->
+
+## どう進めるか
+
+<!-- 意味のある段階ごとに、作業・必要な理由・成果と、対応するTODOへのリンクを書く -->
+
+## 今回の範囲
+
+<!-- 対象と対象外を区別する -->
+
+## 完了の判断
+
+<!-- 期待する結果と確認方法の要点。詳細な条件は仕様へリンクする -->
+
+## 未決事項
+
+<!-- 計画を左右する不明点と決め方。なければこの節は削除する -->
+
+## 詳細資料
+
+<!-- 仕様と調査根拠へのリンクを、文書の生成後に追加する -->
+
+- [作業の順序と個別タスク](todos/README.md)
+- [現在の進捗](progresses/README.md)
 """
 
 
@@ -87,22 +107,36 @@ def readme_html(project_name: str, description: str) -> str:
     overview = (
         f"<p>{html.escape(description)}</p>"
         if description
-        else "<p><!-- プロジェクトの概要を記載 --></p>"
+        else "<p><!-- 誰のどの問題を解決し、何を実現するか --></p>"
     )
     body = f"""<h1>{esc_name}</h1>
 
 <h2>概要</h2>
 {overview}
 
-<h2>目的</h2>
-<p><!-- プロジェクトの目的を記載 --></p>
+<h2>なぜ必要か</h2>
+<!-- 現在の困りごとと原因。実施しない場合に残る問題 -->
 
-<h2>ステータス</h2>
+<h2>何を変えるか</h2>
+<!-- 主要な変更について、現在と完成後の違いを説明する -->
+
+<h2>どう進めるか</h2>
+<!-- 意味のある段階ごとに、作業・必要な理由・成果と、対応するTODOへのリンクを書く -->
+
+<h2>今回の範囲</h2>
+<!-- 対象と対象外を区別する -->
+
+<h2>完了の判断</h2>
+<!-- 期待する結果と確認方法の要点。詳細な条件は仕様へリンクする -->
+
+<h2>未決事項</h2>
+<!-- 計画を左右する不明点と決め方。なければこの節は削除する -->
+
+<h2>詳細資料</h2>
+<!-- 仕様と調査根拠へのリンクを、文書の生成後に追加する -->
 <ul>
-  <li><input type="checkbox" disabled> 計画中</li>
-  <li><input type="checkbox" disabled> 開発中</li>
-  <li><input type="checkbox" disabled> レビュー中</li>
-  <li><input type="checkbox" disabled> 完了</li>
+  <li><a href="todos/README.html">作業の順序と個別タスク</a></li>
+  <li><a href="progresses/README.md">現在の進捗</a></li>
 </ul>
 """
     return render_html(esc_name, body)
@@ -112,72 +146,92 @@ def todos_readme_markdown(project_name: str) -> str:
     """todos/README.md（ロードマップ雛形）の内容を返す（Markdown）。"""
     return f"""# タスクロードマップ: {project_name}
 
+目的と完成後の姿は[全体説明](../README.md)、現在の状態は[進捗一覧](../progresses/README.md)を参照する。この文書では、着手する順序と待つ必要がある作業を説明する。
+
 > このファイルは雛形です。タスク分割完了後（Phase 4）に
 > `references/templates/roadmap-template.md` をベースに以下を埋めてください:
 >
 > - タスク一覧表（前提・並行グループ・推定時間）
-> - Mermaid 依存DAG
-> - クリティカルパス
-> - 並行可能タスク群と非干渉性の根拠
-> - 推奨ワークロード（Subagents並列 / /goal / worktree など Claude Code 機能の活用法）
+> - 作業の依存関係図（Mermaid）
+> - 完了までの見通し（全体の所要時間を決める経路・合計時間・待ち時間）
+> - 並行できる作業と、同時に進めても衝突しない理由
+> - 作業の進め方（実行順と待ち条件）
+> - 完了の判断と進捗の記録先。必要ならAIへの実行指示を付録に記載
 
 ## タスク一覧
 
 <!-- ここにタスク表を記載 -->
 
-## 依存DAG
+## 作業の依存関係
 
 <!-- ここに Mermaid graph TD を記載 -->
 
-## クリティカルパス
+## 完了までの見通し
 
-<!-- 最長経路と合計推定時間 -->
+<!-- 最長経路・合計作業時間・外部の待ち時間 -->
 
-## 並行可能タスク群
+## 並行できる作業
 
-<!-- Group A, B... と所属タスク -->
+<!-- 同時に行う作業が分かるグループ名、所属タスク、前提、分担・統合方法 -->
 
-## 推奨ワークロード
+## 作業の進め方（実行順と待ち条件）
 
-<!-- Step 1, 2, 3 ... の具体的な実行手順 -->
+<!-- 作業順・着手条件・受け渡す成果 -->
+
+## 完了の判断と進捗
+
+<!-- 完了条件の要点と定義元の仕様へのリンク。進捗は progresses/README.md と各 PROGRESS.md へ案内する -->
+
+## 付録: AIへの実行指示（必要な場合のみ）
+
+<!-- 採用する実行手段の指示だけを記載し、必要がなければ節ごと削除する -->
 """
 
 
 def todos_readme_html(project_name: str) -> str:
     """todos/README.html（ロードマップ雛形）の内容を返す（自己完結HTML）。
 
-    HTMLでは Mermaid 依存DAG を <pre class="mermaid"> に書くと自動描画される。
+    HTMLでは作業の依存関係図を <pre class="mermaid"> に書くと自動描画される。
     """
     esc_name = html.escape(project_name)
     title = f"タスクロードマップ: {esc_name}"
     body = f"""<h1>タスクロードマップ: {esc_name}</h1>
+
+<p>目的と完成後の姿は<a href="../README.html">全体説明</a>、現在の状態は<a href="../progresses/README.md">進捗一覧</a>を参照する。この文書では、着手する順序と待つ必要がある作業を説明する。</p>
 
 <blockquote>
   <p>このファイルは雛形です。タスク分割完了後（Phase 4）に
   <code>references/templates/roadmap-template.md</code> をベースに以下を埋めてください:</p>
   <ul>
     <li>タスク一覧表（前提・並行グループ・推定時間）</li>
-    <li>Mermaid 依存DAG（<code>&lt;pre class="mermaid"&gt;graph TD ...&lt;/pre&gt;</code> で記述すると自動描画）</li>
-    <li>クリティカルパス</li>
-    <li>並行可能タスク群と非干渉性の根拠</li>
-    <li>推奨ワークロード（Subagents並列 / /goal / worktree など Claude Code 機能の活用法）</li>
+    <li>作業の依存関係図（Mermaid。<code>&lt;pre class="mermaid"&gt;graph TD ...&lt;/pre&gt;</code> で記述すると自動描画）</li>
+    <li>完了までの見通し（全体の所要時間を決める経路・合計時間・待ち時間）</li>
+    <li>並行できる作業と、同時に進めても衝突しない理由</li>
+    <li>作業の進め方（実行順と待ち条件）</li>
+    <li>完了の判断と進捗の記録先。必要ならAIへの実行指示を付録に記載</li>
   </ul>
 </blockquote>
 
 <h2>タスク一覧</h2>
 <!-- ここにタスク表を記載 -->
 
-<h2>依存DAG</h2>
+<h2>作業の依存関係</h2>
 <!-- ここに <pre class="mermaid">graph TD ...</pre> を記載 -->
 
-<h2>クリティカルパス</h2>
-<!-- 最長経路と合計推定時間 -->
+<h2>完了までの見通し</h2>
+<!-- 最長経路・合計作業時間・外部の待ち時間 -->
 
-<h2>並行可能タスク群</h2>
-<!-- Group A, B... と所属タスク -->
+<h2>並行できる作業</h2>
+<!-- 同時に行う作業が分かるグループ名、所属タスク、前提、分担・統合方法 -->
 
-<h2>推奨ワークロード</h2>
-<!-- Step 1, 2, 3 ... の具体的な実行手順 -->
+<h2>作業の進め方（実行順と待ち条件）</h2>
+<!-- 作業順・着手条件・受け渡す成果 -->
+
+<h2>完了の判断と進捗</h2>
+<!-- 完了条件の要点と定義元の仕様へのリンク。進捗は progresses/README.md と各 PROGRESS.md へ案内する -->
+
+<h2>付録: AIへの実行指示（必要な場合のみ）</h2>
+<!-- 採用する実行手段の指示だけを記載し、必要がなければ節ごと削除する -->
 """
     return render_html(title, body)
 
@@ -257,6 +311,9 @@ def create_doubt_status(project_path: Path) -> None:
 - **checkpoint**: none
 - **reviewer_input**: none
 - **result**: none
+- **reader_check**: pending
+- **reader_check_result**: none
+- **reader_check_reason**: 対象未生成
 - **updated_at**: {updated_at}
 - **note**: none
 """

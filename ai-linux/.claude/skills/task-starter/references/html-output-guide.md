@@ -20,6 +20,8 @@ HTML選択時は、進捗正本と独立反証レビュー資料を除くドキ�
 
 `README.html` と `todos/README.html` は `init_project.py --format html` が雛形を生成する。`specs/` `todos/{ID}/` `references/` は Claude がテンプレートを元に生成する。
 
+Markdownと同じ文書の役割・執筆基準を適用する。ルート `README.html` に全体を説明し、概要説明用の別文書は通常作らない。詳細文書へのリンクは `.html`、進捗一覧へのリンクは `progresses/README.md` にする。
+
 ## 共有HTMLシェルの使い方
 
 全HTMLは `references/templates/html-shell.html` を単一ソースとして使う。スクリプトもこのシェルを使うので、Claude が手書きする際も同じシェルに揃えることで体裁が統一される。
@@ -38,9 +40,8 @@ HTML選択時は、進捗正本と独立反証レビュー資料を除くドキ�
 
 | Markdown | HTML |
 | --- | --- |
-| `# 見出し` / `## 見出し` | `<h1>` / `<h2>` / `<h3>` |
+| `# 見出し` / `## 見出し` / `### 見出し` | `<h1>` / `<h2>` / `<h3>` |
 | `- 項目` | `<ul><li>項目</li></ul>` |
-| `- [ ] 項目` | `<li><input type="checkbox" disabled> 項目</li>` |
 | `> 引用` | `<blockquote>...</blockquote>` |
 | 表（パイプ記法） | `<table><tr><th>...</th></tr>...</table>` |
 | `` `code` `` / コードブロック | `<code>` / `<pre><code>` |
@@ -52,19 +53,21 @@ TODOの「タスクの目的」は、`<h2>タスクの目的</h2>` と3項目の
 
 TODOの「作業内容」と「受け入れ条件」はチェックボックスへ変換しない。`W-01` / `AC-01` のIDを `<strong>` で保持した静的なリストにし、状態と検証根拠は `PROGRESS.md` だけに記録する。
 
-## Mermaid 図（ロードマップの依存DAG）
+TODOの節順はMarkdownと揃え、目的・作業内容・受け入れ条件を先に置く。「実行メモ」は `<h2>`、その中の「開発原則チェック」等は `<h3>` とし、重要な前提・制約は該当作業・条件の近くにも残す。
+
+## Mermaid 図（ロードマップの作業の依存関係）
 
 Markdownの ` ```mermaid ... ``` ` ブロックは、HTMLでは **`<pre class="mermaid">`** に置く。シェルが `startOnLoad` で自動描画する。
 
 ```html
 <pre class="mermaid">
 graph TD
-  001[001-setup]
-  002[002-xxx]
-  001 --> 002
+  task001["001: 仕様を決める"]
+  task002["002: 処理を実装する"]
+  task001 --> task002
 
   classDef parallel fill:#cfe8ff,stroke:#1e88e5;
-  class 002 parallel;
+  class task002 parallel;
 </pre>
 ```
 
@@ -97,7 +100,7 @@ parallelizable: false
 - **Markdown時**: 各 `todos/{ID}/README.md` 冒頭の YAML フロントマターを読む
 - **HTML時**: 各 `todos/{ID}/README.html` の `<script type="application/x-task-meta">` ブロックを Read で取得し、内部のYAMLをパースする
 
-いずれも `id` / `depends_on` / `parallel_group` を集約して依存DAG・クリティカルパスを算出する。
+いずれも `id` / `depends_on` / `parallel_group` を集約して、作業の依存関係図と全体の所要時間を決める経路を求める。
 
 ## task-performer との互換に関する注意
 
