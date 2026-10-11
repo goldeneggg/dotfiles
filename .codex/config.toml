@@ -7,9 +7,13 @@ default_permissions = "dotfiles-workspace-net"
 description = "Workspace editing with unrestricted command network access."
 extends = ":workspace"
 
-[permissions.repodocs-workspace-net.filesystem]
+[permissions.dotfiles-workspace-net.filesystem]
 # codex doctor の実行でsqliteを読み取りたい場合に必要
 "~/.codex" = "read"
+
+[permissions.dotfiles-workspace-net.filesystem.":workspace_roots"]
+# これが無いとgit commitが権限不足でエラーになる
+".git" = "write"
 
 [permissions.dotfiles-workspace-net.network]
 enabled = true

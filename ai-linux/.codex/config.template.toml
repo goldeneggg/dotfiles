@@ -1275,7 +1275,7 @@ description = "project-A specific profile"
 [permissions.project-A.workspace_roots]
 "/path/to/project-B" = true
 
-# workspace_roots には追加しないが、個別にreaed,write, denyを設定する先のディレクトリ設定
+# workspace_roots には追加しないが、個別にread,write, denyを設定する先のディレクトリ設定
 # 「readだけ許可したディレクトリを追加する」場合はこの設定を活用
 [permissions.project-A.filesystem]
 "/path/to/project-C" = "read"
