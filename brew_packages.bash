@@ -15,6 +15,7 @@ function ins() {
 
   for app in ${MY_BREW_PKGS[@]}
   do
+    echo "---------- $(date +'%Y-%m-%d %H:%M:%S') START $app"
     brew install ${app}
   done
 
@@ -25,6 +26,7 @@ function ins() {
 
   for caskapp in ${MY_BREW_CASKS[@]}
   do
+    echo "---------- $(date +'%Y-%m-%d %H:%M:%S') START $caskapp"
     brew install --cask ${caskapp}
   done
 
@@ -37,12 +39,14 @@ function ins() {
 function upd() {
   for app in ${MY_BREW_PKGS[@]}
   do
+    echo "---------- $(date +'%Y-%m-%d %H:%M:%S') START $app"
     # See: https://github.com/Homebrew/brew/issues/22597 (2026/06)
     HOMEBREW_NO_ASK=1 brew upgrade ${app}
   done
 
   for caskapp in ${MY_BREW_CASKS[@]}
   do
+    echo "---------- $(date +'%Y-%m-%d %H:%M:%S') START $caskapp"
     # See: https://github.com/Homebrew/brew/issues/22597 (2026/06)
     HOMEBREW_NO_ASK=1 brew upgrade --cask ${caskapp}
   done
