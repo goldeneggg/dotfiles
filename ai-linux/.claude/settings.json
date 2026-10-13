@@ -92,6 +92,7 @@
     ],
     "defaultMode": "acceptEdits"
   },
+  "model": "opus",
   "hooks": {},
   "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
@@ -128,13 +129,13 @@
   "language": "japanese",
   "alwaysThinkingEnabled": true,
   "effortLevel": "high",
-  "autoMemoryEnabled": false,
-  "verbose": false,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
   "modelSettings": {
     "claude-opus-5-5": {
       "effortLevel": "high"
     }
-  }
+  },
+  "autoMemoryEnabled": false,
+  "verbose": false,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
