@@ -11,7 +11,7 @@ description: |
 ## 呼び出し
 
 ```text
-$task-artifact-fixer <対象タスクファイルパス> <PRレビューコメントURL or PRのCI失敗URL> [--commit | --commit-push | --commit-push-reply] [--request-review] [--no-agent]
+$task-artifact-fixer <対象タスクファイルパス> <PRレビューコメントURL or PRのCI失敗URL> [--commit | --commit-push | --commit-push-reply] [--request-review] [--no-agent] [--auto]
 ```
 
 2つの位置引数を必須とし、順序を固定する。
@@ -36,8 +36,17 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 
 - `--request-review`: `--commit-push-reply` との併用時だけ有効。返信投稿成功後、元コメントのユーザーがbotではなく、当該PRの既存review（`GET /pulls/{PR}/reviews`）のauthor集合に含まれる場合だけ、そのユーザーをreview requestする。
 - `--no-agent`: task-starter 関連ドキュメントの読み込みだけをメインスレッド内で行う。調査・テスト等の他工程の委譲方針は変えない。
+- `--auto`: Phase 4の修正計画提示後と、条件を満たしたPhase 7の作業結果報告後の承認待ちを省略する。既存の各オプションと併用できる。詳細は下記「`--auto` の動作」に従う。
 
-`--commit-push-reply` と他のcommit系オプションが併記された場合は `--commit-push-reply` として扱う。`--commit-push-reply` をCI失敗URLと併用した場合、および `--request-review` を `--commit-push-reply` なしで指定した場合は、外部操作を行わず入力エラーとして扱う。オプションなしの場合は、最終レビュー承認後に対象ファイルのステージングとコミットログファイルの出力まで行い、commit・push・返信・review requestは行わない。
+`--commit-push-reply` と他のcommit系オプションが併記された場合は `--commit-push-reply` として扱う。`--commit-push-reply` をCI失敗URLと併用した場合、および `--request-review` を `--commit-push-reply` なしで指定した場合は、外部操作を行わず入力エラーとして扱う。commit系オプションなしの場合は、最終レビュー承認後（`--auto` では下記の承認相当条件を満たした後）に対象ファイルのステージングとコミットログファイルの出力まで行い、commit・push・返信・review requestは行わない。
+
+### `--auto` の動作
+
+task-performerと同様、計画と作業結果の提示は省略せず、定例の承認待ちだけを省略する。Phase 4では判定根拠と最小修正計画を提示してPhase 5へ進む。Phase 7では全受け入れ条件が `充足` で、実行した検証に失敗がなく、下記の確認事項が未解決でない場合だけ、作業結果報告後を最終レビューの承認相当として扱う。task-starter形式では全 `AC-ID`、独立したタスクMarkdownでは記載された全受け入れ条件を対象とする。未充足・未確認が残る場合は承認相当にせず、スコープ内の追加検証・修正、または必要な判断の確認へ戻る。
+
+安全性やスコープに影響しない選択は、推奨案または最も安全で可逆な既定値を採用し、Phase 7で報告する。`--auto` はcommit・push・返信・review requestを暗黙に有効化しない。併用されたオプションの指定を、その範囲の操作への明示的な許可として扱い、同じ操作の許可を再確認しない。
+
+**`--auto` でも省略しない確認:** 対象URL・リポジトリの曖昧さ、ローカルHEADとPR headの不一致、重なるユーザー変更、要件の重大な曖昧さ・仕様判断、原因未確定、DBスキーマ変更、破壊的・不可逆・復旧困難な操作、重いテストのローカル実行など高コストな操作、当初スコープの拡張、必要な権限・情報の不足、テスト・Lint・pre-commit処理が3回修正しても解決しない場合の続行判断、想定外に大きい差分に対する再承認。指定オプションで許可された範囲を超える外部操作は自動実行しない。該当作業だけを保留し、独立して安全に進められる作業は継続する。
 
 ## スコープ
 
@@ -72,18 +81,18 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 - **対象URLの解決: Low freedom** — URLから特定できたコメントまたはcheckだけを扱う。曖昧なら確認する。
 - **指摘の判定: Medium freedom** — 指定の分類と必要な反証確認を行い、根拠を明示する。
 - **修正方法: High freedom** — タスク要件と既存実装に合う最小の方法を選ぶ。
-- **編集開始: Low freedom** — 判定結果と修正計画を提示し、ユーザー承認後に編集する。
+- **編集開始: Low freedom** — 判定結果と修正計画を提示し、通常モードではユーザー承認後に編集する。`--auto` では承認待ちを省略するが、省略しない確認事項を先に解消する。
 - **重いテスト: Low freedom** — DB・コンテナ・外部サービスを使うテストは無断実行しない。
-- **commit・push: Low freedom** — 指定オプションと最終レビュー承認の両方がある場合だけ実行する。
-- **返信: Low freedom** — `--commit-push-reply`、最終レビュー承認、commitとpushの成功がすべて揃う場合だけ、指定コメントだけへ投稿する。
-- **review request: Low freedom** — `--request-review`、最終レビュー承認、commit・push・返信投稿の成功がすべて揃う場合だけ、条件を満たす元コメント投稿者へ依頼する。
+- **commit・push: Low freedom** — 指定オプションと最終レビュー承認（`--auto` では承認相当条件の充足）の両方がある場合だけ実行する。
+- **返信: Low freedom** — `--commit-push-reply`、最終レビュー承認（`--auto` では承認相当条件の充足）、commitとpushの成功がすべて揃う場合だけ、指定コメントだけへ投稿する。
+- **review request: Low freedom** — `--request-review`、最終レビュー承認（`--auto` では承認相当条件の充足）、commit・push・返信投稿の成功がすべて揃う場合だけ、条件を満たす元コメント投稿者へ依頼する。
 
 ## ワークフロー
 
 ### Phase 1: 入力と作業状態を確定する
 
 1. 最初に `../_shared/references/task-management-contract.md` を読み、以降のタスク文書更新へ適用する。
-2. 引数からタスクファイル、対象URL、5オプションを解析する。不足・不明・競合があれば推測せず確認する。`--commit-push-reply` ではレビューコメントURLであること、`--request-review` が指定される場合は `--commit-push-reply` も指定されることを確認する。
+2. 引数からタスクファイル、対象URL、各オプションを解析し、`--auto` の有無と許可された操作範囲を記録する。不足・不明・競合があれば推測せず確認する。`--commit-push-reply` ではレビューコメントURLであること、`--request-review` が指定される場合は `--commit-push-reply` も指定されることを確認する。
 3. `git rev-parse --show-toplevel`、`git status --short --branch`、`gh auth status` を確認する。
 4. URLから `owner/repo`、PR番号、対象ID（comment / review / run / job / check）を抽出する。
 5. `gh pr view` でPRのstate、head/baseブランチ、head SHA、head repositoryを取得し、ローカルのbranch・HEAD・remoteと照合する。`--request-review` 指定時は既存reviewのauthor集合も取得し、元コメント投稿者がこの集合に含まれるかだけを判定する。
@@ -153,7 +162,7 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 
 #### 判定後の分岐
 
-- `妥当`、`部分的に妥当`、`PR変更による回帰`、`リポジトリ内の不備`: 根拠と最小修正計画を提示し、ユーザー承認を得てPhase 5へ進む。
+- `妥当`、`部分的に妥当`、`PR変更による回帰`、`リポジトリ内の不備`: 根拠と最小修正計画を提示し、ユーザー承認を得てPhase 5へ進む。`--auto` では承認待ちを省略するが、「`--auto` でも省略しない確認」に該当する未解決事項を先に解消する。
 - `対応済み・outdated`、`不当`、環境要因、無関係な既存障害: コードを変更せず、根拠と推奨アクションを報告する。
 - `仕様判断が必要`、`原因未確定`: 不足情報と推奨案を示してユーザーに確認する。推測で修正しない。
 
@@ -161,7 +170,7 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 
 ### Phase 5: 最小修正を実装する
 
-1. 承認後、task-starter形式では `PROGRESS.md` を `進行中` にし、最終更新を更新して進捗一覧を同期する。既に `進行中` なら不要な書き換えをしない。
+1. 計画承認後（`--auto` ではPhase 4の計画提示と必要な確認の解消後）、task-starter形式では `PROGRESS.md` を `進行中` にし、最終更新を更新して進捗一覧を同期する。既に `進行中` なら不要な書き換えをしない。
 2. 編集対象ファイルを直前に読み直す。
 3. 原因へ直接対応する最小差分を実装する。本番コードを変更する場合は、問題を再現して修正後に通る回帰テストを可能な範囲で追加する。
 4. 自動生成物は所定の生成コマンドで更新し、直接編集しない。
@@ -180,12 +189,12 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 
 task-starter形式では、影響する全 `AC-ID` を修正後の証跡で再評価する。他の `AC-ID` は既存根拠を無断で置き換えない。今回の問題により既存の充足判定が崩れた場合は `未充足` に戻す。
 
-- 全 `AC-ID` が `充足` で、ユーザーが作業結果を承認した場合だけ `完了` とする。
+- 全 `AC-ID` が `充足` で、ユーザーが作業結果を承認した場合（`--auto` では承認相当条件を満たした場合）だけ `完了` とする。
 - 未確認・未充足が残る場合は `進行中` または `ブロック中` とし、残作業・ブロッカーを具体化する。
 - 状態または最終更新を変えたら `sync_progress_index.py` で一覧を同期し、不一致を残さない。
 - 生ログは `logs/{task-id}/`、要約と相対証跡パスは `PROGRESS.md` の成果へ記録する。
 
-次の形式で結論から報告し、コード変更がある場合は最終承認を求める。
+次の形式で結論から報告し、コード変更がある場合は最終承認を求める。`--auto` では「`--auto` の動作」の承認相当条件を満たした場合だけ承認待ちを省略してPhase 8へ進む。受け入れ条件の不足を埋めるために指定対象外の修正へ広げない。
 
 ```markdown
 ## 判定
@@ -226,13 +235,13 @@ PRコメント返信は、タスク文書やローカルの進捗を知らない
 
 ### Phase 8: ステージング・commit・pushを行う
 
-Phase 7 の最終承認後、コード変更がある場合だけ次を実行する。
+Phase 7 の最終承認後（`--auto` では承認相当条件を満たした後）、コード変更がある場合だけ次を実行する。
 
-1. `.git/hooks/pre-commit` と `.githooks/pre-commit` を確認する。存在する場合は内容を読み、定義されたformat・Lint等を `git add` 前に直接実行して成功させる。
+1. `.git/hooks/pre-commit` と `.githooks/pre-commit` を確認する。存在する場合は内容を読み、定義されたformat・Lint等を `git add` 前に直接実行して成功させる。失敗時は原因特定後に修正して再実行し、3回修正しても解決しない場合は `--auto` でも続行判断を求める。失敗したまま後続操作へ進まない。
 2. 今回変更したコード・テスト・設定だけを `git add` する。`todos/`、`progresses/`、`logs/` のタスク管理ファイルはステージしない。
-3. task-starter形式なら `logs/{task-id}/commit-{YYYYmmddHHMMSS}-{title}.txt` に、それ以外はユーザーが承認した場所に、Conventional Commits形式・各行72文字以内のコミットログを出力する。メッセージへタスクパス、タスクID、ローカルログパスを含めない。
+3. task-starter形式なら `logs/{task-id}/commit-{YYYYmmddHHMMSS}-{title}.txt` に、それ以外はユーザーが承認した場所に、Conventional Commits形式・各行72文字以内のコミットログを出力する。独立タスクで `--auto` が指定され、出力先が未指定なら、task-performerと同様にリポジトリルートへ同じファイル名で出力する。メッセージへタスクパス、タスクID、ローカルログパスを含めない。
 4. オプションに従う。
-   - オプションなし: ステージングとログ出力で終了する。
+   - commit系オプションなし（`--auto` 単独指定を含む）: ステージングとログ出力で終了する。
    - `--commit`: `git commit -F {log_path}` を実行し、commit SHAを報告する。
    - `--commit-push`: commit成功後、URLから確認したPR head repository・branchとpush先が一致することを再確認し、通常の `git push` を実行する。upstream未設定時だけ `git push -u {remote} {branch}` を使う。
    - `--commit-push-reply`: `--commit-push` の全手順を実行する。push成功後、Phase 7の判定・修正・検証結果だけに基づき、上記「PRコメント返信の記述」に従う簡潔な返信本文を作成する。`discussion_r<ID>` なら、対象コメントが返信の場合は `in_reply_to`、それ以外は `ID` をスレッド先頭コメントIDとして `gh api repos/{owner}/{repo}/pulls/{PR}/comments -f body={reply} -F in_reply_to={thread_root_id}` で同じthreadへ投稿する。それ以外なら `gh pr comment {PR} --body {quoted_reply}` で引用付き新規コメントを投稿する。
@@ -262,8 +271,8 @@ Phase 7 の最終承認後、コード変更がある場合だけ次を実行す
 - 検証前にレビュー提案コードを適用しない。
 - CIを通すためだけにテスト削除、skip追加、閾値緩和を行わない。
 - 機密情報をログへ保存またはコードへハードコードしない。
-- オプションなしでcommit、`--commit-push` または `--commit-push-reply` なしでpushを行わない。
-- `--commit-push-reply` と最終レビュー承認なしにPRコメント返信を行わない。
-- `--request-review`、`--commit-push-reply`、最終レビュー承認、commit・push・返信投稿の成功がすべて揃わない限りreview requestを行わない。
+- commit系オプションなしでcommit、`--commit-push` または `--commit-push-reply` なしでpushを行わない。`--auto` 単独ではいずれも許可されない。
+- `--commit-push-reply` と最終レビュー承認（`--auto` では承認相当条件の充足）が揃わない限りPRコメント返信を行わない。
+- `--request-review`、`--commit-push-reply`、最終レビュー承認（`--auto` では承認相当条件の充足）、commit・push・返信投稿の成功がすべて揃わない限りreview requestを行わない。
 - ユーザー承認なしにconversationのresolve・workflow再実行を行わない。
 - `git reset --hard`、無断stash、無断checkout、force pushを行わない。
