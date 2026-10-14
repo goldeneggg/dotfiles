@@ -1,6 +1,6 @@
 ## GPT-6 Astra 適合性監査ガイドライン
 
-このドキュメントは、AGENTS.md・CLAUDE.md と Agent Skill を、GPT-6 Astra / 現行の高性能 coding agent に適した状態になっているかを監査する際に使用する想定のガイドラインです。
+このドキュメントは、AGENTS.md と Agent Skill を、GPT-6 Astra / 現行の高性能 coding agent に適した状態になっているかを監査する際に使用する想定のガイドラインです。
 
 目的は、単純に指示を短くすることではありません。
 古いモデルの能力不足を補うために追加された scaffolding や handholding を減らしつつ、プロジェクト固有の制約、安全要件、品質基準、業務ルール、非自明なワークフローは維持してください。

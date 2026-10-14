@@ -2,7 +2,7 @@
 
 ## プロジェクトとタスク
 
-- 適用される `AGENTS.md` / `CLAUDE.md` と、スキルの役割を混同していないか。
+- 適用される `AGENTS.md` と、スキルの役割を混同していないか。
 - build、test、lint、format、generate、install、releaseの実コマンドを把握したか。
 - ソース以外の書込先として、build成果物、cache、temp、lockfile、DB、socketを把握したか。
 - network、Docker、GUI、クラウドCLI、MCP、秘密情報が必要な操作を把握したか。

@@ -195,15 +195,8 @@ copilot-cli:
 #
 # ----------
 .PHONY: sync-claude-to-codex
-sync-claude-to-codex: sync-claudemd-to-agentsmd sync-claude-permissions-to-codex sync-claude-mcpconf-to-codex sync-claude-subagents-to-codex sync-claude-skills-to-codex
+sync-claude-to-codex: sync-claude-permissions-to-codex sync-claude-mcpconf-to-codex sync-claude-subagents-to-codex sync-claude-skills-to-codex
 	@echo "Sync from Claude to Codex completed."
-
-# ----------
-# sync Contexts
-# ----------
-.PHONY: sync-claudemd-to-agentsmd
-sync-claudemd-to-agentsmd: ## CLAUDE.md を再帰的に探索し、同ディレクトリに AGENTS.md symlink を作成する
-	@./scripts/sync_claudemd_to_agentsmd.bash "$(or $(DIR),.)"
 
 # ----------
 # sync MCP configurations
