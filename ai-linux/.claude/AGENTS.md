@@ -1,4 +1,4 @@
-<!-- This file is stowed to ~/.claude/rules/AGENTS.md as user-scope rules -->
+<!-- This file is stowed to ~/.claude/AGENTS.md and shared with Codex via ~/.codex/AGENTS.md -->
 # Personal Rules
 
 ## 作業ルール
