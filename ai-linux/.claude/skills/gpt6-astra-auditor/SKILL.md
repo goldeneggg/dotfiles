@@ -1,6 +1,6 @@
 ---
 name: gpt6-astra-auditor
-description: AGENTS.md・CLAUDE.md・Agent Skill群のGPT-6 Astra／現行の高性能coding agentへの適合性を監査する。過剰な手順制約、承認境界、完了条件、Skill routing、段階的な情報開示の点検や、その監査に基づく修正案・修正を求められた時に使用する。
+description: AGENTS.md・Agent Skill群のGPT-6 Astra／現行の高性能coding agentへの適合性を監査する。過剰な手順制約、承認境界、完了条件、Skill routing、段階的な情報開示の点検や、その監査に基づく修正案・修正を求められた時に使用する。
 ---
 
 # GPT-6 Astra Auditor
@@ -23,7 +23,7 @@ description: AGENTS.md・CLAUDE.md・Agent Skill群のGPT-6 Astra／現行の高
 
 ### 1. 対象を確定する
 
-ユーザー指定があればその範囲を対象とする。指定がなければ現在のリポジトリのルートから、`AGENTS.md`、`CLAUDE.md`、`SKILL.md`を再帰的に列挙する。各`SKILL.md`の親ディレクトリを一つのAgent Skillとして扱う。
+ユーザー指定があればその範囲を対象とする。指定がなければ現在のリポジトリのルートから、`AGENTS.md`、`SKILL.md`を再帰的に列挙する。各`SKILL.md`の親ディレクトリを一つのAgent Skillとして扱う。
 
 隠しディレクトリやgitignore対象も探索し、`.git`の内部は除く。シンボリックリンクは実体で重複・循環を避け、リポジトリ外へのリンクを自動探索の起点にしない。列挙した対象と、読めないファイルや探索除外範囲を記録する。対象がなければその旨を報告する。
 
@@ -37,7 +37,7 @@ description: AGENTS.md・CLAUDE.md・Agent Skill群のGPT-6 Astra／現行の高
 
 ### 3. ガイドラインに沿って監査する
 
-ガイドラインの6観点と7分類を用い、各指示の所在（ファイル・行または節）、現在の記述、分類、問題点、agentへの影響を示す。CLAUDE.mdにもAGENTS.mdと同じ監査・報告形式を適用する。
+ガイドラインの6観点と7分類を用い、各指示の所在（ファイル・行または節）、現在の記述、分類、問題点、agentへの影響を示す。
 
 ルールの存在意図と現在の必要性を分けて評価する。安全境界、プロジェクト固有要件、非自明な制約は保持し、判断材料が足りない項目は`NEEDS_HUMAN_DECISION`にする。Skillの重複は実際に比較した範囲で判断する。
 
@@ -46,7 +46,7 @@ description: AGENTS.md・CLAUDE.md・Agent Skill群のGPT-6 Astra／現行の高
 ガイドラインの報告形式は、以下のモード別の範囲で適用する。
 
 - **未指定**: Executive summary、Rule-by-rule audit、Skills auditを報告する。「変更案」欄は分類理由と改善の方向性にとどめ、具体的な置換文、Proposed rewrite、Diff rationaleは作成しない。
-- **`--proposal`**: 監査結果に具体的な変更案を加え、変更が必要なAGENTS.md・CLAUDE.md・SKILL.mdの完全な改訂案とDiff rationaleを示す。維持するファイルはその旨を示す。判断未確定の箇所は元の制約を保ったまま、案の中で要確認と明示する。
+- **`--proposal`**: 監査結果に具体的な変更案を加え、変更が必要なAGENTS.md・SKILL.mdの完全な改訂案とDiff rationaleを示す。維持するファイルはその旨を示す。判断未確定の箇所は元の制約を保ったまま、案の中で要確認と明示する。
 - **`--fix`**: 監査結果に基づき、対象の文書・Skill内の必要なファイルを修正する。この指定を修正の依頼として扱い、通常の対象内編集について重ねて承認を求めない。未確定の判断は変更せず報告に残し、独立して実施できる修正は進める。対象外へのルール移動が必要な場合は移動案として報告し、元のルールを保持する。
 
 `--fix`では既存のユーザー変更を維持し、編集後の差分、参照リンク、frontmatter、指示の適用範囲、保持すべき制約を確認する。スクリプトを変更した場合は変更に適した検証を実施する。監査対象に記載されたインストール・公開などの操作は、監査修正の一環として実行しない。

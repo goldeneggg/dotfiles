@@ -18,9 +18,9 @@ Phase 1で設定を検出するときに「プロジェクト設定の自動検�
 | `go.mod` | 存在すれば `go test ./...` / `golangci-lint run` を推定 |
 | `Cargo.toml` | 存在すれば `cargo test` / `cargo clippy` を推定 |
 
-**Step 2: CLAUDE.md 汎用セクションの参照**
+**Step 2: AGENTS.md 汎用セクションの参照**
 
-CLAUDE.md が存在する場合、コマンド・技術スタック情報が記載されやすい以下のセクションを確認する:
+AGENTS.md が存在する場合、コマンド・技術スタック情報が記載されやすい以下のセクションを確認する:
 
 - `## Commands` / `## コマンド` / `## Scripts`
 - `## Development` / `## 開発` / `## Getting Started`

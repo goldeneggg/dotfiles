@@ -10,7 +10,7 @@
 - **ファイル名・ディレクトリ**: `*integration*` / `*e2e*` / `*_db_test*` / `tests/integration/` / `it/` などの命名
 - **テストマーカー・ビルドタグ**: `@pytest.mark.integration` / `@pytest.mark.slow` / `//go:build integration` / JUnit `@Tag("integration")` など
 - **依存の兆候**: testcontainers・docker-compose・実DB接続・外部APIモックなしの通信を必要とする
-- **CLAUDE.md / プロジェクト設定**: テスト分類やローカル実行方針の記載があれば最優先で従う
+- **AGENTS.md / プロジェクト設定**: テスト分類やローカル実行方針の記載があれば最優先で従う
 
 判定に用いた根拠は Phase 7 報告に簡潔に残す。
 

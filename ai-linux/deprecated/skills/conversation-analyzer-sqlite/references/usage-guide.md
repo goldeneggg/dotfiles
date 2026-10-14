@@ -220,7 +220,7 @@ ORDER BY edits DESC LIMIT 20;
 ```
 
 複数セッションで何度も編集されているファイル = リファクタ or 分割候補。
-CLAUDE.md / SKILL.md / shell rc が上位に来やすい。
+AGENTS.md / SKILL.md / shell rc が上位に来やすい。
 
 ---
 
@@ -394,7 +394,7 @@ SQL
 1. **まず1回フルレポートを回す**: 「直近60日の総合レポート + スキルROI + hookヘルス を出して」と analyzer に依頼。
 2. **週次レビューを定例化**: schedule スキル経由で毎週月曜にレポート生成を仕込む（routine化）。
 3. **発見を skill-creator に還流**: 発火していないスキルの description を `run_loop.py` で最適化。
-4. **CLAUDE.md / hook の調整**: 中断・hookエラーの多い箇所を修正 → 次月レポートで効果測定。
+4. **AGENTS.md / hook の調整**: 中断・hookエラーの多い箇所を修正 → 次月レポートで効果測定。
 
 このサイクルが回り始めると、`conversations.db` は自分専用の observability データレイクとして機能する。
 2か月分以上のデータが溜まっていれば、すでに統計的な意味のある差分が見える段階である。

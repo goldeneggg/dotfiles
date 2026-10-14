@@ -313,7 +313,7 @@ project_doc_max_bytes = 32768
 
 # Ordered fallbacks when AGENTS.md is missing at a directory level. Default: []
 
-project_doc_fallback_filenames = ["CLAUDE.md"]
+# project_doc_fallback_filenames = []
 
 # Project root marker filenames used when searching parent directories. Default: [".git"]
 

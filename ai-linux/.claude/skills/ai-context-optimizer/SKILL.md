@@ -1,7 +1,7 @@
 ---
 name: ai-context-optimizer
 description: |
-  CLAUDE.md、AGENTS.md、.cursorrules、.cursor/rules/ 等のAIコーディング支援向けコンテキストファイルをレビュー、最適化、または新規作成する。「コンテキストファイルを見直して」「CLAUDE.mdを改善して」「AGENTS.mdを作成して」等の依頼で使用する。通常のプロンプト添削や、コンテキストファイル以外のツール設定診断には使用しない。
+  AGENTS.md、.cursorrules、.cursor/rules/ 等のAIコーディング支援向けコンテキストファイルをレビュー、最適化、または新規作成する。「コンテキストファイルを見直して」「AGENTS.mdを改善して」「AGENTS.mdを作成して」等の依頼で使用する。通常のプロンプト添削や、コンテキストファイル以外のツール設定診断には使用しない。
 ---
 
 # Optimize AI Context
@@ -17,7 +17,7 @@ AIコーディング支援向けコンテキストファイルを、対象製品
 
 ### 対象
 
-- CLAUDE.md、AGENTS.md、AGENTS.override.md、.cursorrules、.cursor/rules/ 等
+- AGENTS.md、AGENTS.override.md、.cursorrules、.cursor/rules/ 等
 - プロジェクト固有のAI向け指示ファイル
 
 ### 対象外

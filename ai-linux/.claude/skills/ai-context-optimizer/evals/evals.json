@@ -16,7 +16,7 @@
     {
       "id": 2,
       "name": "optimize-existing",
-      "prompt": "CLAUDE.mdをプロジェクトの現状に合わせて最適化して。",
+      "prompt": "AGENTS.mdをプロジェクトの現状に合わせて最適化して。",
       "expected_output": "最適化モードを選択し、リポジトリの事実に基づく最小差分を適用する。明示された編集依頼に再承認を求めず、変更後に再評価する。",
       "assertions": [
         {"id": "selects-optimize-mode", "text": "最適化モードとして処理する"},
