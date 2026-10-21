@@ -2,6 +2,8 @@
 
 既存の OpenAPI 仕様や JSON Schema を TypeSpec に移行するための実践ガイド。`references/best-practices.md` 全章を、移行作業の文脈で再構成したもの。
 
+確認日: 2026-10-21。compiler・OpenAPI emitter 1.17.0の仕様を確認。変換元の版と、使用するCLIの対応範囲を個別に確認する。
+
 ---
 
 ## 1. 全体方針
@@ -22,7 +24,7 @@
 | 形式 | 識別ポイント | 移行優先度 |
 |---|---|---|
 | OpenAPI 3.1 | ルートに `openapi: 3.1.x`、`$schema` を含むことがある | 直接変換しやすい（JSON Schema 2020-12 互換） |
-| OpenAPI 3.0 | `openapi: 3.0.x`、`nullable: true` の使用 | 3.1 化を兼ねた整理推奨 |
+| OpenAPI 3.0 | `openapi: 3.0.x`、`nullable: true` の使用 | 出力も3.0を指定して比較し、仕様版の変更は依頼に含まれる場合だけ行う |
 | Swagger 2.0 | `swagger: "2.0"`、`definitions` セクション | 一度 OpenAPI 3 に上げてから移行する方が安全 |
 | JSON Schema 単体 | `$schema` URI で draft を判定 | データモデル部分のみ TypeSpec model に変換 |
 | YAML / JSON | 拡張子と先頭文字 | 中身は同じスキーマなので形式は問わない |
@@ -33,14 +35,15 @@
 
 ### 3.1 公式コンバータ
 
-OpenAPI 3.0 → TypeSpec の自動変換ツールは Microsoft が提供している。代表的なものは npm レジストリで `@typespec/openapi3-to-typespec` 等の名称で探せる（パッケージ名・ステータスは時期により変動するため要確認）。
+`@typespec/openapi3` パッケージに含まれる `tsp-openapi3` CLIを使う。ローカルへ導入済みのパッケージで実行する:
 
 ```bash
-npx @typespec/openapi3-to-typespec convert ./openapi.yaml --output ./tsp/
+npx tsp-openapi3 ./openapi.yaml --output-dir ./tsp/
 ```
 
 **強み**: モデル定義・パス・パラメータ・レスポンス構造を機械的に展開してくれる。
 **弱み**: 名前空間ネスト・Visibility・エラーモデル統一などの「設計判断」は反映されない。
+一度限りの移行の叩き台であり、生成TypeSpecの形状は将来変わり得る。JSON Schema単体やSwagger 2.0を同じCLIで変換できると想定しない。
 
 ### 3.2 部分的な手動移行
 
@@ -171,16 +174,18 @@ model User {
 npx tsp compile .
 ```
 
-`tsp-output/schema/openapi.yaml` を元の `openapi.yaml` と diff し、意図しない変化がないかを確認する。
+configとcompile結果から実際の出力先を確認し、元の `openapi.yaml` と意味を比較する。`tsp-output/schema/` はその出力先を設定した場合だけ使われる。
 
 ### 6.2 差分の典型カテゴリ
 
 | 差分の種類 | 対処 |
 |---|---|
 | プロパティ順序の違い | 通常は無視可（OpenAPI 仕様上意味なし） |
-| `additionalProperties: false` の有無 | TypeSpec のデフォルト挙動を確認し必要に応じて `@withSpread` 等を調整 |
+| 追加プロパティの許容範囲 | `Record<T>`、`Record<never>`、`seal-object-schemas` と対象OpenAPI版を確認。全モデルの一律封鎖は契約を変え得る |
 | `nullable` 表現の違い | OpenAPI 3.1 では `type: [..., "null"]` 形式に変わる |
 | `description` の脱落 | 元仕様に存在した `description` は `@doc` または `/** */` で復元 |
+
+1.14以降のOpenAPI 3.1/3.2では `$ref` の隣接キーワードが不要な `allOf` なしで出力される。1.17では `Record<T>` のindexerに `additionalProperties` を使うようになり、継承・封鎖モデルでは `unevaluatedProperties` を使う。表記差だけで互換性違反とせず、検証する値の範囲を比較する。
 
 ### 6.3 クライアント生成テスト
 
@@ -193,8 +198,8 @@ npx tsp compile .
 | 落とし穴 | 説明 | 対処 |
 |---|---|---|
 | `discriminator` の表現差 | OpenAPI と TypeSpec の `discriminator` 解釈に微妙な差がある | `@discriminator` デコレータの公式ドキュメントを必ず確認 |
-| `oneOf` / `anyOf` | TypeSpec の union と OpenAPI の `oneOf`/`anyOf` は厳密には別物 | union は `oneOf` に近い意味で出力される。意図と違う場合は手動調整 |
-| `$ref` の循環参照 | TypeSpec は名前空間で解決するが、深い循環は警告対象 | フラットな共通モデル層を作って解消 |
+| `oneOf` / `anyOf` | 通常のunionは既定で `anyOf` 等に出力され、排他的な検証を保証しない | 元契約が排他的なら `@TypeSpec.OpenAPI.oneOf` を検討し、生成仕様を確認する |
+| `$ref` の循環参照 | 名前付きモデルの再帰参照と、inline化できない循環を区別する | 診断が出た場合だけ対象を確認し、公開モデルを不要に再設計しない |
 | `allOf` の継承 | TypeSpec では `extends` または `is` で表現 | 多重継承相当が必要なら spread 演算子の併用 |
 | `examples` の脱落 | `@example` デコレータで明示的に書き戻す必要がある | 重要な API は手動で例を再追加 |
 | `@defaultResponse` の誤用 | `@statusCode` 付きモデルや `@error` モデルに `@defaultResponse` を付けると 1.13.0 で警告 | `@error` モデルは用途に応じて使い分ける |
@@ -217,3 +222,10 @@ npx tsp compile .
 - [ ] CI追加が依頼されていればcompile・format checkを組み込んでいる（`references/tspconfig-cookbook.md`参照）
 
 検証を実行できない場合は理由と未検証範囲を報告し、チェック済み・成功と扱わない。
+
+## 9. 公式情報
+
+- https://typespec.io/docs/emitters/openapi3/cli/
+- https://typespec.io/docs/emitters/openapi3/reference/emitter/
+- https://typespec.io/release-notes/typespec-1-14-0/
+- https://typespec.io/release-notes/typespec-1-17-0/

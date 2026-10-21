@@ -1,5 +1,7 @@
 # tspconfig.yaml クックブック
 
+確認日: 2026-10-21。compiler・OpenAPI emitter 1.17.0を基準とする。既存プロジェクトではlockfileの版を優先する。
+
 `tspconfig.yaml` は TypeSpec プロジェクトの設定ファイルであり、エミッター・Linter・出力先・コンパイラオプションを一元管理する。CI と開発環境で同じ設定が再現されることを担保するため、原則としてリポジトリにコミットする。
 
 このドキュメントは `references/best-practices.md` の章 10「Linter による品質ゲート」と章 11「下流ツールチェーン統合」を補強するレシピ集である。
@@ -56,7 +58,17 @@ features:
   - function-declarations
 ```
 
-利用可能なフラグ一覧は `tsp info features` で確認できる。
+利用可能なフラグ一覧はローカルCLIの `tsp info features` で確認する。flagの追加は実験的機能を採用する判断であり、安定化ではない。
+
+| 機能 | 1.17.0でのflag |
+|---|---|
+| 関数宣言 | `function-declarations` |
+| メタデータ保存用デコレータ | `auto-decorators` |
+| unionの共通基底型制約 | `union-extends` |
+| 宣言式 | `declaration-expressions` |
+| ライブラリのIDE型情報 | `type-info-provider` |
+
+必要なflagだけを列挙し、機能を宣言するプロジェクト・ライブラリに設定する。導入版と例は [`language-updates.md`](./language-updates.md) を参照。
 
 ---
 
@@ -76,6 +88,7 @@ options:
 ```
 
 OpenAPI 3.1 は JSON Schema 2020-12 完全互換であり、`nullable` 等の差分が解消されている。新規プロジェクトでは原則 3.1 を選ぶ。
+これはこの資料の選択指針であり、emitterの既定値は3.0.0。下流ツールが対応する版を明示する。1.17.0では `3.2.0` も指定可能。
 
 ### 2.2 OpenAPI 3.0 と 3.1 を併存出力
 
@@ -105,20 +118,27 @@ options:
 
 API 仕様（OpenAPI）とイベント/メッセージスキーマ（JSON Schema 単体）を併用するシステムで有効。
 
+### 2.4 注釈付きenum（1.14以降、OpenAPI 3.1以上）
+
+```yaml
+emit:
+  - "@typespec/openapi3"
+options:
+  "@typespec/openapi3":
+    openapi-versions:
+      - 3.1.0
+    enum-strategy: annotated
+```
+
+enumメンバーのdoc・summaryを `oneOf` / `const` のdescription・titleとして出力する。下流のenum処理に影響するため、生成物を確認して採用する。3.0出力では警告され、従来のenum形式になる。
+
+`file-type: [yaml, json]` で両形式を出す場合は、`output-file: "openapi.{version}.{file-type}"` のように拡張子を分ける。
+
 ---
 
 ## 3. Linter 設定の選び方
 
-`@typespec/http` には複数のルールセットが用意されている。現場運用では「厳格度」と「ノイズ量」のトレードオフを踏まえて選択する。
-
-| ルールセット | 想定運用 | 特徴 |
-|---|---|---|
-| `@typespec/http/all` | 新規プロジェクト・厳しめの規約を敷きたい場合 | 全ルール有効。指摘数は多いが、ベストプラクティス徹底に最適 |
-| `@typespec/http/recommended` | 既存プロジェクトの段階導入 | 重要ルールに絞られる。CI 通過率が現実的 |
-
-選択指針:
-- 新規開発で white-box から書く場合は `all` から始め、不要ルールを `disable` で除く方が後悔しにくい。
-- 既存大型プロジェクトに後付けする場合は `recommended` から導入し、段階的に強化する。
+1.17.0の `@typespec/http` は `all` と `op-reference-container-route` ルールを提供する。`recommended` ルールセットや `no-unused-routes` ルールは提供していない。段階導入では実在するルールを `enable` で選ぶ。
 
 ### 3.1 個別ルールの上書き
 
@@ -128,21 +148,18 @@ linter:
     - "@typespec/http/all"
   disable:
     "@typespec/http/op-reference-container-route": "プロジェクト固有のルーティング戦略のため除外"
-  enable:
-    "@typespec/http/no-unused-routes": true
 ```
 
 `disable` には必ず除外理由を文字列で添える。後続のメンテナーが判断しやすい。
 
 ### 3.2 ルールオプションの設定（1.12.0 以降）
 
-Linter ルールが型付きオプションを受け付けるようになった。ルール作者が `defaultOptions` を定義し、利用側はオプション値を渡せる:
+Linterルールが型付きオプションを受け付けるようになった。以下は独自ライブラリを導入済みで、そのルールが対応する場合の例:
 
 ```yaml
 linter:
   enable:
-    # デフォルトオプションで有効化
-    "@typespec/my-lib/no-model-with-name": true
+    # デフォルト値で使う場合は、下のオブジェクトの代わりにtrueを指定
     # カスタムオプション付きで有効化
     "@typespec/my-lib/no-model-with-name":
       bannedName: "Bar"
@@ -150,7 +167,23 @@ linter:
 
 ### 3.3 カスタムルールセットの拡張
 
-組織独自のガイドライン（例: `displayName` フィールド必須化）は、社内パッケージとして Linter プラグインを公開し `extends` で読み込ませると複数リポジトリで再利用できる。
+独自の検査ロジックはライブラリに実装する。既存ルールの選択・設定だけを共有する場合、1.16以降は単独のYAMLファイルを参照できる:
+
+```yaml
+# tspconfig.yaml
+linter:
+  extends:
+    - "file:../common-rules.yaml"
+```
+
+```yaml
+# ../common-rules.yaml
+extends:
+  - "@typespec/http/all"
+```
+
+`file:` の相対パスは、それを記述したconfig・rulesetファイルから解決する。ライブラリ内のruleset定義には `file:` を使えない。
+1.15以降の短縮名（例: `http/op-reference-container-route`）はライブラリのロードが必要で、衝突した場合は完全名を使用する。
 
 ---
 
@@ -214,7 +247,7 @@ services/
     └── ...
 ```
 
-共通設定を抽出したい場合、YAML アンカー機能か、組織共通の base config を npm パッケージとして配り `extends` させる運用が現実的。
+共通設定はトップレベルの `extends: ../tspconfig.base.yaml` でファイルを参照できる。YAMLアンカーは同一ファイル内の再利用に限る。Linter専用の共有には3.3の `linter.extends` を使う。
 
 ---
 
@@ -224,5 +257,11 @@ services/
 |---|---|---|
 | `Cannot find emitter "@typespec/openapi3"` | パッケージ未インストール | `npm install -D @typespec/openapi3` |
 | `output-dir` が想定と違う | `{output-dir}` の解決順序の誤解 | `--output-dir` CLI オプションで上書き、または絶対パス指定 |
-| Linter 警告が出ない | `extends` のパッケージ名タイポ | `npx tsp compile . --diagnostics-level verbose` で確認 |
+| Linter 警告が出ない | ルール名の誤り、ライブラリ未ロード、対象コードなし | 公式Linter一覧とconfig・import・通常のcompile診断を照合する |
 | `tsp format` がファイルを書き換えない | 設定でフォーマット対象外 | `**/*.tsp` 等の glob を CLI で指定 |
+
+## 7. 公式情報
+
+- https://typespec.io/docs/handbook/configuration/configuration/
+- https://typespec.io/docs/libraries/http/reference/linter/
+- https://typespec.io/docs/emitters/openapi3/reference/emitter/

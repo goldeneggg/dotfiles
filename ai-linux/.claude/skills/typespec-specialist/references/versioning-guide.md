@@ -2,6 +2,8 @@
 
 `@typespec/versioning` は API のバージョン進化を単一コードベースで管理するためのライブラリ。`references/best-practices.md` の章 6 を補強する詳細ガイド。
 
+確認日: 2026-10-21。確認版はcompiler 1.17.0、versioning 0.87.0。パッケージごとの `peerDependencies` を確認し、compilerの番号をversioningへ流用しない。
+
 ---
 
 ## 1. ステータスと採用判断
@@ -67,7 +69,7 @@ model User {
 
 v1 ではプロパティが存在せず、v2 で追加される。v2 以降のクライアントは `email` を期待でき、v1 クライアントは送信しない。
 
-### 3.2 名前変更（後方互換）
+### 3.2 名前変更の履歴
 
 ```typespec
 model User {
@@ -78,7 +80,7 @@ model User {
 }
 ```
 
-v1 では `userName`、v2 以降は `name`。生成される OpenAPI は両バージョンで適切な名前になる。
+v1では `userName`、v2以降は `name`。各版の仕様を再現するもので、同じAPI版内での名前変更を後方互換にする機能ではない。
 
 ### 3.3 必須から任意へ
 
@@ -103,11 +105,11 @@ emit:
   - "@typespec/openapi3"
 options:
   "@typespec/openapi3":
-    emitter-output-dir: "{output-dir}/openapi/{version}"
-    output-file: "openapi.yaml"
+    emitter-output-dir: "{output-dir}/openapi"
+    output-file: "{version}/openapi.yaml"
 ```
 
-`{version}` 変数を使うことで、`enum Versions` の各メンバごとに OpenAPI ファイルが生成される。クライアント SDK 生成パイプラインでは、各バージョンを独立した出力ディレクトリで管理することが多い。
+`{version}` はemitterの `output-file` で展開するサービスのAPI版。`emitter-output-dir` の共通補間変数と混同しない。この例では各API版のディレクトリへ出力する。`openapi-versions` に指定するOpenAPI仕様の版とも別物である。
 
 ---
 
@@ -151,8 +153,16 @@ model User {
 
 ## 7. プレビュー追従の指針
 
-`@typespec/versioning` のメジャーアップデートでデコレータ名や引数が変わる可能性に備えて:
+`@typespec/versioning` の更新でデコレータ名や引数が変わる可能性に備えて:
 
-- **バージョン管理コードの集約**: 進化系デコレータは可能な限り 1 ファイル（例: `models/versions.tsp`）に集めると、ライブラリ更新時の差し替え範囲が局所化できる
-- **CI でリリースノート確認**: `npm outdated @typespec/versioning` を定期的に実行し、メジャー更新時はリリースノートを必読する
+- **バージョン列挙の集約**: `Versions` enumは共通ファイルへ置き、進化系デコレータは対象宣言の近くに置いて変更条件を追えるようにする
+- **公開版と変更内容の確認**: `npm outdated @typespec/versioning` と公式リリースノートを確認する。0.xではminor更新でも互換性を検証する
 - **生成 OpenAPI の差分監視**: バージョン文字列を含む OpenAPI を Git にコミットしておけば、デコレータ仕様変更による出力差分を PR で検知できる
+
+1.17の宣言式を使って `@versioned(enum Versions { ... })` と書く方法もあるが、`declaration-expressions` が必要な実験的構文である。通常の独立したenum宣言は引き続き使用できる。
+
+公式情報:
+
+- https://typespec.io/docs/libraries/versioning/guide/
+- https://typespec.io/docs/emitters/openapi3/reference/emitter/
+- https://typespec.io/release-notes/typespec-1-17-0/

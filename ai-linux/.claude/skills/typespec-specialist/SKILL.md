@@ -1,6 +1,6 @@
 ---
 name: typespec-specialist
-description: TypeSpec 1.xのAPIスキーマ設計・実装・レビュー、プロジェクト設定、OpenAPI・JSON Schemaからの移行を支援する。OpenAPI直接編集、TypeScript型・Zod、Swagger UI設定だけの依頼は対象外。
+description: TypeSpecのAPIスキーマ設計・実装・レビュー、プロジェクト設定、OpenAPI・JSON Schemaからの移行、言語仕様の変更・非推奨構文・実験的機能への対応を支援する。.tspやtspconfig.yamlの変更、TypeSpecの更新に伴う互換性確認で使用する。OpenAPI直接編集、TypeScript型・Zod、Swagger UI設定だけの依頼は対象外。
 ---
 
 # TypeSpec Specialist
@@ -16,13 +16,17 @@ description: TypeSpec 1.xのAPIスキーマ設計・実装・レビュー、プ�
 - `references/versioning-guide.md`: バージョニング時。
 - `references/migration-openapi.md`: 移行時。
 - `references/tspconfig-cookbook.md`: 設定・CI連携時。
+- `references/language-updates.md`: 言語仕様の変更、functions、auto decorators、union extends、宣言式、更新時の互換性確認。
 
 関連節と横断的な契約・安全制約を読む。
-文書の執筆時点のバージョンを対象環境の最新版と扱わない。
-既存のpackage.json・lockfileと公式仕様を確認し、構文とパッケージの互換性を判断する。
-新規にバージョンを選ぶ場合は各パッケージの公開版と対応条件を確認する。
+文書の確認版（compiler 1.17.0、2026-10-21）を、対象環境の版や将来の最新版と扱わない。
+既存のpackage.json・lockfile・ローカルCLIから実際のcompiler、ライブラリ、emitterの版を特定する。
+新規に版を選ぶ場合や最新仕様を尋ねられた場合は、npmの公開版・engines・peerDependenciesと公式リリースノートを照合する。0.xパッケージをcompilerと同じ番号にそろえない。
+対象版から採用版までの変更を公式リリースノートで確認し、関連する言語・ライブラリ・emitterの仕様を読む。資料と矛盾したら対象版の公式仕様と最小コンパイル例で解決する。
 
-<!-- 要確認: 既存資料の版依存ルールは維持する。本文と資料の矛盾は対象版の公式仕様で解決し、記憶で上書きしない。 -->
+安定機能、安定パッケージ内の実験的機能、プレビューライブラリを区別する。
+実験的機能は導入版、必要なfeature flag、下流emitterの対応、既存設定を確認し、依頼に必要な場合に採用する。資料への掲載だけを理由に有効化しない。
+依存更新や公開契約の変更が依頼範囲に含まれず必要になった場合は、影響と選択肢を示して確認する。
 
 作業範囲・完了条件はユーザーの依頼と本文のモード別制約に従う。参照資料の再設計やCI追加の例を、依頼範囲を広げる根拠にしない。
 
@@ -32,7 +36,7 @@ description: TypeSpec 1.xのAPIスキーマ設計・実装・レビュー、プ�
 2. 規模に合ったmain.tspまたはmodels/routes構成を選ぶ。
 3. 公開モデル・操作の命名とドキュメント、入力・出力Visibility、エラー応答、認証を設計する。
 4. 必要なpackage.json、tspconfig、モデル、操作を生成する。既存契約とユーザー変更を保持する。
-5. 利用可能な環境でcompile、format check、生成物の確認を実施する。
+5. プロジェクトのpackage managerとローカルCLIでcompile、format check、生成物の確認を実施する。設定例の存在しないルール・オプションや、実験的機能の警告も確認する。
 6. コード生成・CI連携・エディタ設定は、依頼に必要な範囲を実施し、それ以外は必要時だけ提案する。
 
 ## 移行
@@ -55,4 +59,5 @@ description: TypeSpec 1.xのAPIスキーマ設計・実装・レビュー、プ�
 作成・変更内容と、実施したcompile・生成物比較・format等の結果を報告する。
 実行可能な検証を「実行してください」と案内するだけで終了しない。
 実行不能なら環境上の理由と未検証範囲を示し、成功を想定だけで断定しない。
-プレビュー機能を使用した場合は、その依存と変更リスクを明示する。
+使用したcompiler・関連パッケージの版と、版依存の判断に使った公式情報を示す。
+実験的機能・プレビューライブラリを使用した場合は、feature flag・依存と変更リスクを明示する。

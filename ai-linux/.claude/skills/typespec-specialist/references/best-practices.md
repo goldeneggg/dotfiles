@@ -1,22 +1,33 @@
 # TypeSpec による API スキーマ設計のベストプラクティス
 
-> **バージョン情報（執筆時点: 1.13.0）**
+> **バージョン情報（確認日: 2026-10-21、compiler 1.17.0）**
 >
 > TypeSpec は 2025-05-06 に 1.0 GA。コアおよび主要拡張は 1.x 系で進化中で、プロダクション利用が公式にサポートされている。具体的な最新版は `npm view @typespec/<pkg> version` で確認すること。
 >
 > **パッケージ番号体系の注意**: TypeSpec は「コア / 安定拡張」と「プレビュー拡張」で番号体系が分かれている。`package.json` を書く際はこの違いを意識する。
 >
-> | カテゴリ | パッケージ | 番号体系 | 1.13.0 時点の版 | ステータス |
+> | カテゴリ | パッケージ | 番号体系 | 確認版 | ステータス |
 > |---|---|---|---|---|
-> | コア | `@typespec/compiler` | 1.x | 1.13.0 | 安定（Stable） |
-> | 安定拡張 | `@typespec/openapi`, `@typespec/openapi3`, `@typespec/json-schema` | 1.x | 1.13.0 | 安定（Stable） |
-> | HTTP プロトコル | `@typespec/http` | 1.x | 1.13.0 | 安定（1.0 はコア 1.0 GA と同時に到達） |
-> | プレビュー拡張 | `@typespec/versioning`, `@typespec/rest`, `@typespec/xml`, `@typespec/streams`, `@typespec/sse`, `@typespec/protobuf` | 0.x | 0.83.0 | プレビュー（API 変更の可能性あり） |
-> | コード生成 | `@typespec/http-client-*`, `@typespec/http-server-*`（.NET / JS / Java / Python） | 0.x | — | プレビュー |
+> | コア | `@typespec/compiler` | 1.x | 1.17.0 | 安定（Stable） |
+> | 安定拡張 | `@typespec/openapi`, `@typespec/openapi3`, `@typespec/json-schema` | 1.x | 1.17.0 | 安定（Stable） |
+> | HTTP プロトコル | `@typespec/http` | 1.x | 1.17.0 | 安定 |
+> | プレビュー拡張 | `@typespec/versioning`, `@typespec/rest` | 0.x | 0.87.0 | プレビュー（API 変更の可能性あり） |
+> | その他の拡張・コード生成 | `@typespec/xml`, `@typespec/protobuf`, `@typespec/http-client-*` 等 | パッケージごと | 個別確認 | 公開版と安定性を個別確認 |
 >
 > 各パッケージの最新バージョンは `npm view <pkg> version` で確認すること。プレビュー拡張は独自の 0.x サイクルでリリースされるため、`package.json` に書く際は実バージョンを必ず確認する。
+> 1.17.0のcompilerはNode.js >=22を要求する。導入時は `engines`・`peerDependencies` も確認する。安定パッケージ内でも実験的機能は別扱いにする。
 
 TypeSpec を利用して API スキーマを実装する際は、単一のコードベースを「信頼できる情報源（Single Source of Truth）」とし、一貫性のある API 定義・クライアントコード・ドキュメントを生成できるように設計する。
+
+## 目次
+
+- 1〜2: 名前空間・タグ、共通パラメータとモデル
+- 3〜4: 応答・PATCH、Visibility
+- 5〜7: routing、versioning、認証
+- 8〜9: 命名・doc、プロジェクト構成
+- 10〜11: Linter・feature flags、下流統合
+
+言語の変更履歴と実験的機能は [`language-updates.md`](./language-updates.md) を参照する。
 
 ---
 
@@ -25,7 +36,7 @@ TypeSpec を利用して API スキーマを実装する際は、単一のコー
 API のモデルや操作（Operation）は、名前空間を使用して論理的にグループ化する。特にネストされた名前空間を活用することで、以下の利点が得られる。
 
 - **整理と管理の向上**: 関連する操作（例: CRUD 操作など）をまとめることで、API の全体構造が把握しやすくなる
-- **Operation ID の明確化**: OpenAPI などの仕様を出力する際、TypeSpec は名前空間をプレフィックスとして `operationId` に自動付与する（例: `Pets_listPets`）。どのリソースに対する操作であるかが明確になる
+- **Operation ID の管理**: OpenAPIの `operationId` は `@operationId` またはemitterの `operation-id-strategy` で制御する。既定の `parent-container` と、サービス配下の完全修飾名を使う `fqn` を区別し、名前空間の変更で既存IDを変えないか確認する
 - **名前の衝突回避**: 異なるリソース間で同名の操作やモデルが存在した場合の衝突を防ぐ
 
 ### `@tag` デコレータによる操作グルーピング
@@ -46,7 +57,7 @@ interface SearchRoutes {
 }
 ```
 
-特定の op のみ別タグを当てたい場合は op 単位で `@tag` を併記すれば上書きできる。
+op単位の `@tag` は上位のタグと集約される。上書きとして扱わず、単一タグにしたい場合は上位へ付ける範囲を見直す。
 
 ### `@tagMetadata` によるタグの順序・メタデータ制御（1.13.0 以降）
 
@@ -99,12 +110,13 @@ op getUser(...CommonHeaders, @path id: string): User;
 namespace DefaultResponse;
 
 model Response<T> {
-  @statusCode statusCode: int32;
+  @statusCode statusCode: 200;
   data: T;
-  error: ResponseError;
 }
 
+@error
 model ResponseError {
+  @statusCode statusCode: 400;
   message: string;
   code?: string;
 }
@@ -113,8 +125,8 @@ model ResponseError {
 各エンドポイントではこのラッパーを使い回す。
 
 ```typespec
-op getSearch(): DefaultResponse.Response<SearchModel.Search[]>;
-op getUser(@path id: string): DefaultResponse.Response<User>;
+op getSearch(): DefaultResponse.Response<SearchModel.Search[]> | DefaultResponse.ResponseError;
+op getUser(@path id: string): DefaultResponse.Response<User> | DefaultResponse.ResponseError;
 ```
 
 ### PATCH 操作と部分更新（1.0 以降の変更点）
@@ -187,7 +199,7 @@ model TodoQueryParams {
 
 これにより POST 用・GET 用といった似たようなモデルを複数作成する（型の増殖）必要がなくなり、単一の論理モデルを維持したままシンプルに管理できる。
 
-### `FilterVisibility` の活用（1.11.0 以降推奨、1.13.0 でも継続）
+### `FilterVisibility` の活用（1.11.0 以降）
 
 `@withVisibilityFilter` デコレータは 1.11.0 で **非推奨** となった。代わりに `FilterVisibility` テンプレートを使用する。`FilterVisibility` はデコレータメタデータの保持に関するバグが修正されており、より正確なビジビリティ変換を提供する。
 
@@ -256,9 +268,20 @@ interface ProtectedRoutes {
 複数の認証方式を許可する場合は union で並べる:
 
 ```typespec
-@useAuth(BearerAuth | OAuth2Auth<["read", "write"]>)
+@useAuth(BearerAuth | ServiceOAuth)
 namespace MyApi;
+
+model ServiceOAuth is OAuth2Auth<[
+  {
+    type: OAuth2FlowType.authorizationCode;
+    authorizationUrl: "https://auth.example.com/authorize";
+    tokenUrl: "https://auth.example.com/token";
+    scopes: ["read", "write"];
+  }
+]>;
 ```
+
+`OAuth2Auth` の第1引数はフローの配列であり、scope文字列の配列ではない。認証方式のunionはOR、tupleはANDを表す。
 
 ---
 
@@ -306,6 +329,8 @@ internal model InternalConfig {
   debugMode: boolean;
 }
 ```
+
+`internal` はTypeSpecコードのアクセス制御であり、認証制御や生成仕様からの除外を保証するものではない。
 
 ### 重複インポート・自己インポートの警告（1.12.0 以降）
 
@@ -386,22 +411,16 @@ linter:
     - "@typespec/http/all"
 ```
 
-ルールセットの選び方:
-
-| ルールセット | 想定運用 |
-|---|---|
-| `@typespec/http/all` | 新規プロジェクト・厳しめの規約 |
-| `@typespec/http/recommended` | 既存プロジェクトの段階導入 |
+1.17.0のHTTPライブラリは `@typespec/http/all` と `op-reference-container-route` ルールを提供する。`@typespec/http/recommended` は存在しない。ルールセットやルール名は対象版の公式リファレンスで確認し、段階導入では必要なルールを個別に有効化する。
 
 ### Linter ルールのオプション設定（1.12.0 以降）
 
-個別ルールにオプションを渡せるようになった。ルール作者が `defaultOptions` を定義し、利用側は `tspconfig.yaml` でカスタム値を渡す:
+個別ルールにオプションを渡せるようになった。以下はオプション対応の独自ライブラリを導入済みの場合の例であり、組み込みルールではない:
 
 ```yaml
 linter:
   enable:
-    # デフォルトオプションで有効化
-    "@typespec/my-lib/no-model-with-name": true
+    # デフォルト値で使う場合は、下のオブジェクトの代わりにtrueを指定
     # カスタムオプション付きで有効化
     "@typespec/my-lib/no-model-with-name":
       bannedName: "Bar"
@@ -418,6 +437,7 @@ features:
 ```
 
 詳細は [`tspconfig-cookbook.md`](./tspconfig-cookbook.md) を参照。
+フラグの有効化は機能の安定化を意味しない。`auto-decorators`、`union-extends`、`declaration-expressions` 等の条件と例は [`language-updates.md`](./language-updates.md) を参照。
 
 `tsp compile . --stats`（1.1.0 以降）でパフォーマンスや複雑度の統計情報を確認できる。リポジトリの成長に伴うコンパイル時間劣化の検知に有用。
 
@@ -448,7 +468,7 @@ OpenAPI (openapi.yaml)
 
 | 用途 | ツール例 | ステータス |
 |---|---|---|
-| OpenAPI 3.0/3.1 出力 | `@typespec/openapi3` | 安定（1.x） |
+| OpenAPI 3.0/3.1/3.2 出力 | `@typespec/openapi3` | 安定（1.x）、下流ツールの対応版も確認 |
 | JSON Schema 出力 | `@typespec/json-schema` | 安定（1.x） |
 | Go サーバーコード生成 | `oapi-codegen` | 外部ツール |
 | TypeScript クライアント生成 | `@typespec/http-client-js` | プレビュー（0.x） |
@@ -456,7 +476,7 @@ OpenAPI (openapi.yaml)
 | Java / Python クライアント生成 | `@typespec/http-client-java` / `@typespec/http-client-python` | プレビュー（0.x） |
 | ドキュメント生成 | `@redocly/cli`, Swagger UI | 外部ツール |
 
-このアプローチにより、バックエンドとフロントエンドが同じ OpenAPI ファイルから生成されるため、スキーマから乖離した実装が生まれにくくなる。TypeSpec のスキーマを更新して再コンパイルするだけで、コンパイルエラーとして不整合を即座に検出できる。
+同じOpenAPIを起点にすると仕様の乖離を抑えられる。ただしTypeSpecのcompileだけでは実装や下流ジェネレータとの整合性を保証しない。対象プロジェクトの生成・型チェック・契約検証も必要に応じて実施する。
 
 OpenAPI/JSON Schema からの移行については [`migration-openapi.md`](./migration-openapi.md) を参照。
 
@@ -474,4 +494,7 @@ OpenAPI/JSON Schema からの移行については [`migration-openapi.md`](./mi
 > - [TypeSpec リリース一覧（GitHub）](https://github.com/microsoft/typespec/releases)（最新版は実環境で `npm view @typespec/compiler version` を確認）
 > - [Microsoft Learn — TypeSpec Overview](https://learn.microsoft.com/en-us/azure/developer/typespec/overview)
 > - [microsoft/typespec リポジトリ](https://github.com/microsoft/typespec)
+> - https://typespec.io/docs/libraries/http/reference/linter/
+> - https://typespec.io/docs/emitters/openapi3/reference/emitter/
+> - 最新仕様の根拠は [`language-updates.md`](./language-updates.md) の公式情報も参照
 > - [microsoft/typespec petstore サンプル](https://github.com/microsoft/typespec/blob/main/packages/samples/specs/rest/petstore/petstore.tsp)（`@service(#{ title: ... })` 構文の正規例）
