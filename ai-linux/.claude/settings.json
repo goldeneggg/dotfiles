@@ -92,7 +92,6 @@
     ],
     "defaultMode": "acceptEdits"
   },
-  "model": "opus",
   "hooks": {},
   "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
