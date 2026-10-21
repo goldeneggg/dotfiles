@@ -1,11 +1,17 @@
 # Go 1.27 固有ガイド
 
-対象: `go`ディレクティブが1.27以上のモジュール、Go 1.27への移行、または1.27固有機能の相談。
+対象: `go`ディレクティブまたは実行toolchainが1.27以上のモジュール、Go 1.27への移行、または1.27固有機能の相談。
 
 この資料は1.27系列の機能と互換性判断を補助する。利用可能な機能を無条件に採用する一覧ではない。
-同一minor系列では最新patchを公式Release Historyで確認し、セキュリティ修正を取り込む。
+同一minor系列の最新patchは公式Release Historyで確認し、現行指定または実行環境が古い場合は更新を提案する。`go`または`toolchain`ディレクティブは依頼範囲に含まれる場合だけ変更する。
 
 最終確認日: 2026-10-21
+
+## 適用軸
+
+- 言語仕様とGo 1.27で追加された標準ライブラリsymbolは、`go`ディレクティブとfileのbuild constraintsが定める言語版で判断する。実行toolchainが新しいだけでは導入しない。
+- toolchain、compiler、runtime、linker、既存標準ライブラリの実装変更は、古い`go`ディレクティブのモジュールをGo 1.27 toolchainでbuild・testする場合にも影響する。特に3〜6章の該当項目を確認する。
+- `go mod tidy`のrequire block統合のように`go`ディレクティブを条件とするtoolchain挙動は、各項目の条件を優先する。
 
 ## 1. 言語仕様
 
@@ -68,10 +74,12 @@ ch <- format
 - `go 1.26`以下のモジュールへ上記構文を導入しない。新しいtoolchainを指定していても、`go`ディレクティブの言語版とは別に判断する。
 - 最低Go版の引き上げは公開互換性と利用者のtoolchainへ影響するため、明示的な移行として扱う。
 - `go test`は`stdversion` vet checkを既定実行し、`go`ディレクティブやfileのbuild tagより新しい標準ライブラリsymbolを検出する。診断を回避せず、最低Go版または使用APIを整合させる。
+- `go.mod`の`godebug`とsourceの`//go:debug`で、削除済みの`asynctimerchan`、`tlsunsafeekm`、`tlsrsakex`、`tls3des`、`tls10server`、`x509keypairleaf`、`gotypesalias`を設定していないか確認する。削除前の旧値では`go`コマンドが失敗し、削除時点の最終既定値だけが受理される。
 
 ## 3. Toolchainと解析
 
 - `go fix`には`atomictypes`、`embedlit`、`slicesbackward`、`unsafefuncs` modernizerがある。まずdiffを確認し、コメント、API互換性、性能特性をレビューしてから採用する。
+- `go fix`の`fmtappendf` analyzerは削除され、`waitgroup`は`waitgroupgo`へ改名された。CIやscriptでanalyzer名を指定している場合は更新する。
 - `go mod tidy`は`go 1.27`以上のモジュールで`require` blockをdirect / indirectの最大2つへ統合する。生成形を手編集で戻さない。
 - 1.27の`gofmt`はarchitecture間でalignmentを統一したため、以前整形済みのfileにも少量の空白差分が出る場合がある。
 - vetのprintf analyzerは、`E`自身が`error`を実装する場合の`*E`を`%w`でwrapする疑わしいコードを診断する。実際のdynamic error型と`errors.Is` / `errors.As`契約を確認する。
@@ -80,7 +88,7 @@ ch <- format
 
 ### go/types・解析tool
 
-- generic methodでは`types.Signature`の`RecvTypeParams`と`TypeParams`が同時に存在し得る。
+- `go/types.Signature`ではreceiver側の型parameterを`RecvTypeParams`、generic method固有の型parameterを`TypeParams`から取得する。generic typeのgeneric methodでは両方が非nilになり得るため、片方だけを前提にしない。
 - alias宣言は常に`*types.Alias`として表現される。削除された`gotypesalias`切替を前提にしない。
 - 型をhash key相当に扱う場合は`go/types.Hasher`または`HasherIgnoreTags`を使い、文字列化やpointer identityで代用しない。
 - parser、type checker、lint、generatorが1.27構文を扱える版か確認する。
@@ -101,6 +109,7 @@ ch <- format
 - `encoding/json` v1はv2実装をbackendに使うが、公開behaviorは互換を保つ。v1からの移行を強制しない。
 - error textは変わり得るため、完全一致ではなくerror contractや構造を検証する。
 - `GOEXPERIMENT=nojsonv2`は一時的な診断・回避策であり、恒久設計にしない。
+- 試験提供中の`GOEXPERIMENT=jsonv2`を使っていたコードでは、`inline` tagの`embed`への改名、`format`・`unknown` tag、`DiscardUnknownMembers`、`SkipFunc`の削除を確認する。`jsontext.Token`の数値accessorはerrorも返すため、呼び出し側を更新する。
 
 ### Testとnetwork
 
@@ -117,7 +126,7 @@ ch <- format
 
 ### その他
 
-- 標準`uuid` packageをbasic UUID生成・解析の候補にする。既存third-party API、DB表現、version選択を確認せず機械的に置換しない。
+- 標準ライブラリの`uuid` package（import path `uuid`）をbasic UUID生成・解析の候補にする。既存third-party API、DB表現、version選択を確認せず機械的に置換しない。
 - `bytes.CutLast` / `strings.CutLast`、`net/url.URL.Clone` / `Values.Clone`で手書き処理を簡潔かつ安全にできる場合がある。
 - flate、gzip、zlib、zip、pngは同じ意味でもencoded bytesが変わり得る。byte列自体が契約でない限り、decode後の意味を検証する。
 - Unicode tableはUnicode 17へ更新された。文字分類や正規表現のgolden差分を移行時に確認する。
