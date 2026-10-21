@@ -1,372 +1,113 @@
-# Go言語 コーディング規約 (Go 1.24+)
-
-## 目次
-
-1. [命名規則](#1-命名規則)
-2. [エラーハンドリング](#2-エラーハンドリング)
-3. [コードフォーマット](#3-コードフォーマット)
-4. [コメント](#4-コメント)
-5. [関数の設計](#5-関数の設計)
-6. [並行処理](#6-並行処理)
-7. [テスト](#7-テスト)
-8. [パッケージ構成と依存関係](#8-パッケージ構成と依存関係)
-9. [パフォーマンス](#9-パフォーマンス)
-10. [セキュリティ](#10-セキュリティ)
-
----
-
-## 1. 命名規則
-
-### レビュー観点
-- パッケージ名が短く、小文字で、内容を表しているか
-- エクスポートされる識別子が大文字で始まり、されない識別子が小文字で始まっているか
-- `mixedCaps` / `MixedCaps` が適切に使用されているか（アンダースコアは通常避ける）
-  - ただしstructのjsonタグの項目名は `snake_case` で統一
-- 変数名・関数名が役割や動作を的確に表しているか
-- 略語は一貫性を保ち、一般的なもの（`HTTP`, `URL`）は全大文字
-- インターフェース名は `-er` 接尾辞が慣例（`Reader`, `Writer`）
-
-### 修正例
-
-```go
-// Before: エクスポートすべき関数が小文字
-func calculateValue() int { return 0 }
-
-// After
-// CalculateValue computes and returns the value.
-func CalculateValue() int { return 0 }
-```
-
-```go
-// Before: 曖昧な変数名
-func processData(d []string) {
-    for _, val := range d { /* ... */ }
-}
-
-// After
-func processData(lines []string) {
-    for _, line := range lines { /* ... */ }
-}
-```
-
----
-
-## 2. エラーハンドリング
-
-### レビュー観点
-- エラーを返す関数は最後の戻り値として `error` 型を返しているか
-- エラーが `_` に捨てられていないか
-- エラーを `%w` でラップしてコンテキスト情報を追加しているか（`errors.Is`/`errors.As` での判定を維持するため）
-- エラーメッセージが問題の原因特定に役立つ具体性を持っているか
-- `panic` の使用が真に回復不可能な状況に限定されているか
-- `defer` でのリソース解放時に発生したエラーを適切に処理しているか
-- `log.Fatalf`/`log.Fatalln` ではなく `log.Panicf`/`log.Panicln` を使用しているか
-  - `log.Fatal*` は `os.Exit(1)` を呼ぶためdeferブロックが実行されない
-
-### 修正例
-
-```go
-// Before: エラー無視
-func writeToFile(filename string, data []byte) {
-    os.WriteFile(filename, data, 0644)
-}
-
-// After: エラーをラップして返す
-func writeToFile(filename string, data []byte) error {
-    if err := os.WriteFile(filename, data, 0644); err != nil {
-        return fmt.Errorf("writeToFile: ファイル '%s' への書き込みに失敗: %w", filename, err)
-    }
-    return nil
-}
-```
-
-```go
-// Before: 元のエラー情報が欠落
-return errors.New("データベースクエリ失敗")
-
-// After: %w でラップ
-return fmt.Errorf("データベースクエリ失敗: %w", err)
-```
-
----
-
-## 3. コードフォーマット
-
-### レビュー観点
-- `gofmt` または `goimports` でフォーマット済みか
-- import文が整理されているか（標準パッケージ → サードパーティの順）
-
-フォーマット違反を検出したら `gofmt -w <ファイル名>` の実行を促す。
-
----
-
-## 4. コメント
-
-### レビュー観点
-- エクスポートされるパッケージ・関数・型・変数・定数にGodoc形式のコメントがあるか
-  - Godocコメントは全て英語で統一
-- コメントが「なぜ」を説明しているか（「何を」ではなく）
-- 自明な処理や古くなったコメントが残っていないか
-- 複雑なアルゴリズムやトリッキーなコードに説明があるか
-- TODOコメントに対応内容と可能なら担当者・期日があるか
-
-### 修正例
-
-```go
-// Before: Godocコメントなし
-func Add(a, b int) int { return a + b }
-
-// After
-// Add adds two integers and returns the result.
-func Add(a, b int) int { return a + b }
-```
-
----
-
-## 5. 関数の設計
-
-### レビュー観点
-- 関数が単一の責務を持っているか
-- 関数名が処理内容を正確に反映しているか
-- 引数は3つ程度まで（多い場合は構造体やオプションパターンを検討）
-- ポインタレシーバと値レシーバの使い分けが適切か
-- 名前付き戻り値を多用しすぎていないか
-- 副作用がドキュメント化されているか、関数名から推測できるか
-- グローバル変数の変更を極力避けているか
-
-### 修正例
-
-```go
-// Before: 複数の責務が混在した長大な関数
-func processOrder(orderID, customerID string, items []string, paymentType string) error {
-    // 注文取得 → 在庫確認 → 支払い → ステータス更新 → メール送信が全て1関数に...
-    return nil
-}
-
-// After: 各責務を分離し、メイン関数は制御フローのみ
-func processOrder(orderID, customerID string, items []string, paymentType string) error {
-    order, err := fetchOrderDetails(orderID)
-    if err != nil {
-        return fmt.Errorf("注文詳細の取得に失敗: %w", err)
-    }
-    if err := checkAndUpdateInventory(items); err != nil {
-        return fmt.Errorf("在庫処理に失敗: %w", err)
-    }
-    if err := processPayment(order, paymentType); err != nil {
-        return fmt.Errorf("支払い処理に失敗: %w", err)
-    }
-    if err := updateOrderStatus(orderID, "processed"); err != nil {
-        return fmt.Errorf("注文ステータス更新に失敗: %w", err)
-    }
-    if err := sendOrderConfirmationEmail(customerID, order); err != nil {
-        log.Printf("顧客 %s への注文確認メール送信に失敗: %v", customerID, err)
-    }
-    return nil
-}
-```
-
----
-
-## 6. 並行処理
-
-### レビュー観点
-- goroutineの起動と終了が適切に管理されているか（`sync.WaitGroup` の使用など）
-- channelのバッファサイズが適切か
-- channelのクローズは送信側が行っているか
-- `select` 文がタイムアウトやキャンセル処理（`context` パッケージ）を考慮しているか
-- 共有リソースへのアクセスが `sync.Mutex` / `sync.RWMutex` で保護されているか
-- デッドロックやgoroutineリークのリスクがないか
-- Go 1.22+ではループ変数が各イテレーションで再宣言されるため、不要な `v := v` コピーが残っていれば削除を推奨
-
-### 修正例
-
-```go
-// Before: WaitGroupなし
-func processTasks(tasks []func()) {
-    for _, task := range tasks {
-        go task()
-    }
-}
-
-// After
-func processTasks(tasks []func()) {
-    var wg sync.WaitGroup
-    for _, task := range tasks {
-        wg.Add(1)
-        go func(t func()) {
-            defer wg.Done()
-            t()
-        }(task)
-    }
-    wg.Wait()
-}
-```
-
-```go
-// Before: mapへの並行書き込み（ランタイムpanic）
-func countWords(words []string) map[string]int {
-    counts := make(map[string]int)
-    for _, word := range words {
-        go func(w string) {
-            counts[w]++
-        }(word)
-    }
-    time.Sleep(100 * time.Millisecond)
-    return counts
-}
-
-// After: Mutex + WaitGroup で保護
-func countWords(words []string) map[string]int {
-    counts := make(map[string]int)
-    var mu sync.Mutex
-    var wg sync.WaitGroup
-    for _, word := range words {
-        wg.Add(1)
-        go func(w string) {
-            defer wg.Done()
-            mu.Lock()
-            counts[w]++
-            mu.Unlock()
-        }(word)
-    }
-    wg.Wait()
-    return counts
-}
-```
-
----
-
-## 7. テスト
-
-### レビュー観点
-- `TestXxx` 命名規則に従っているか
-- テーブル駆動テストを活用してパターンを網羅しているか
-- 正常系だけでなくエラーケースや境界値もカバーしているか
-- 各テストが独立しており、他のテスト結果に影響を与えないか
-- `t.Parallel()` で並列化し実行時間を短縮しているか
-- ヘルパー関数に `t.Helper()` を付与しているか
-- モック・スタブで外部依存性を排除しているか（インターネットアクセスは極力避け、テストサーバーで代替）
-- ポート番号は `13000`, `28080` のように競合しにくい番号を使用（`3000`, `8080` は避ける）
-- `go test` 実行時は `-shuffle on -race -cover` を付ける
-
-### 修正例
-
-```go
-// Before: 個別のアサーション
-func TestAdd(t *testing.T) {
-    if Add(1, 2) != 3 { t.Error("Add(1, 2) should be 3") }
-    if Add(-1, -1) != -2 { t.Error("Add(-1, -1) should be -2") }
-}
-
-// After: テーブル駆動テスト
-func TestAdd(t *testing.T) {
-    testCases := []struct {
-        name string
-        a, b int
-        want int
-    }{
-        {"positive numbers", 1, 2, 3},
-        {"negative numbers", -1, -1, -2},
-        {"zero values", 0, 0, 0},
-        {"mixed values", -5, 10, 5},
-    }
-    for _, tc := range testCases {
-        t.Run(tc.name, func(t *testing.T) {
-            if got := Add(tc.a, tc.b); got != tc.want {
-                t.Errorf("Add(%d, %d) = %d; want %d", tc.a, tc.b, got, tc.want)
-            }
-        })
-    }
-}
-```
-
----
-
-## 8. パッケージ構成と依存関係
-
-### レビュー観点
-- パッケージが単一の目的や関連する機能セットに焦点を当てているか
-- パッケージ間に循環依存がないか
-- `internal` パッケージで意図しない外部利用を防いでいるか
-- `go.mod` が適切に管理され、未使用の依存が残っていないか（`go mod tidy` で整理）
-- 巨大なパッケージ（god package）になっていないか（`utils` のような汎用パッケージは責務ごとに分割）
-
----
-
-## 9. パフォーマンス
-
-### レビュー観点
-- ループ内で不要なメモリアロケーションがないか（`append` の事前キャパシティ指定不足など）
-- 多数の文字列結合に `+` ではなく `strings.Builder` を使用しているか
-- 頻繁に呼ばれるループ内で `defer` を使っていないか
-- channelの不必要なブロッキングや過度なバッファリングがないか
-- `sync.Mutex` のロック範囲が適切か
-
-### 修正例
-
-```go
-// Before: キャパシティ未指定で頻繁な再割り当て
-var result []string
-for i := 0; i < n; i++ {
-    result = append(result, fmt.Sprintf("item-%d", i))
-}
-
-// After: 事前にキャパシティを指定
-result := make([]string, 0, n)
-for i := 0; i < n; i++ {
-    result = append(result, fmt.Sprintf("item-%d", i))
-}
-```
-
-```go
-// Before: ループ内で + 演算子（O(n²)）
-var s string
-for _, part := range parts {
-    s += part
-}
-
-// After: strings.Builder を使用
-var sb strings.Builder
-for _, part := range parts {
-    sb.WriteString(part)
-}
-return sb.String()
-```
-
----
-
-## 10. セキュリティ
-
-### レビュー観点
-- ユーザー入力を検証・サニタイズしているか（SQLインジェクション、XSS、コマンドインジェクション対策）
-- `os/exec` で外部入力を直接コマンドとして実行していないか
-- ハードコードされた認証情報（APIキー、パスワード）がないか
-- セキュリティ用途の乱数に `math/rand` ではなく `crypto/rand` を使用しているか
-- エラーメッセージが内部情報を過度に漏洩していないか
-- ファイルパス操作でパストラバーサルの脆弱性がないか
-- `html/template` / `text/template` で適切にエスケープしているか
-- `gosec` で問題が検知されないか
-  - テスト用ダミー値など明らかに問題ない箇所のみ `// #nosec ${エラーコード}` を許可
-
-### 修正例
-
-```go
-// Before: SQLインジェクション
-query := "SELECT id, name, email FROM users WHERE username = '" + username + "'"
-row := db.QueryRow(query)
-
-// After: プレースホルダを使用
-query := "SELECT id, name, email FROM users WHERE username = ?"
-row := db.QueryRow(query, username)
-```
-
-```go
-// Before: ハードコードされたAPIキー
-apiKey := "THIS_IS_A_SECRET_API_KEY"
-
-// After: 環境変数から読み込む
-apiKey := os.Getenv("MY_APP_API_KEY")
-if apiKey == "" {
-    log.Panicln("環境変数 MY_APP_API_KEY が設定されていません")
-}
-```
+# Go コーディングの普遍原則
+
+この文書は、特定のGoリリースへ依存しにくい設計・実装・レビュー原則を定める。
+言語版固有の構文、標準ライブラリ、toolchain挙動は対応する版別資料を参照する。
+
+優先順位は、ユーザーの要件、リポジトリ内の規約と公開契約、この文書の順とする。
+一般原則を機械的に適用して、互換性やプロジェクトの一貫性を壊さない。
+
+## 1. 命名とAPI
+
+- パッケージ名は短く、小文字で、利用側から意味が分かる名前にする。
+- 識別子は`mixedCaps` / `MixedCaps`を使い、一般的な略語は一貫させる。
+- 名前は責務と単位を表し、型から明らかな情報を重複させない。
+- interfaceは利用側で、必要な振る舞いだけを表す小さな単位として定義する。
+- 戻り値をinterfaceにするのは、契約上必要な場合に限る。実装の差し替えを目的化しない。
+- zero valueを安全かつ有用にできる型は、その性質を活かす。
+- 公開APIの追加・変更では、互換性、所有権、nilの意味、並行利用の可否を明示する。
+
+## 2. エラー
+
+- エラーを無視する場合は、安全である理由をコードまたは文脈から明らかにする。
+- 呼び出し側が原因を判定する必要がある場合は、`%w`、sentinel、型付きerrorを用いて`errors.Is` / `errors.As`の契約を保つ。
+- 内部実装を公開契約にしたくない場合は、無条件にwrapしない。必要な文脈を加えつつ、公開するerror chainを設計する。
+- エラーメッセージは、失敗した操作と対象を示す。呼び出し階層で同じ文脈を重複させない。
+- 通常の入力不備、I/O失敗、外部サービス障害に`panic`を使わない。ライブラリは原則としてerrorを返す。
+- `log.Fatal*`と`os.Exit`はdeferを実行しない。CLIでは終了判断を最上位に集約し、下位層はerrorを返す。
+- `panic`は破られた内部不変条件など、継続不能なプログラミングエラーへ限定する。通常の終了処理を`log.Panic*`へ置き換えない。
+- close、flush、commit等の後処理errorを、結果の完全性に応じて返却・結合・記録する。
+
+## 3. Formatとコメント
+
+- Goソースは対象toolchainの`gofmt`で整形する。import整理はプロジェクト既定のgoimports等に従う。
+- コメントは非自明な制約、理由、互換性、並行性、所有権を説明する。コードの逐語説明は避ける。
+- エクスポートされた識別子のdoc commentは、公開APIとして必要な情報を記載し、識別子名から始める。
+- TODOには可能なら追跡先や完了条件を付ける。
+- 生成コードは生成元を正本とし、直接編集しない。
+
+## 4. 関数、型、パッケージ
+
+- 関数は一つのまとまりある責務を持たせる。長さや引数個数だけで機械的に分割しない。
+- 引数が同種で取り違えやすい、任意設定が増える、または不変条件を共有する場合は、型や設定structを検討する。
+- receiverはコピーコスト、mutation、同期、method setの一貫性から値・ポインタを選ぶ。
+- 名前付き戻り値は、意味を明確にする場合やdeferで結果を扱う場合に限定する。
+- `context.Context`はキャンセルや期限を伝播する処理で第一引数に置き、structへ保存しない。nilを渡さない。
+- `internal`は外部利用を禁止する境界として使う。`pkg`や`utils`を慣例だけで作らず、責務からパッケージを分ける。
+- interface、generics、reflectionは、問題を単純化する場合に使う。将来の可能性だけで抽象化を増やさない。
+
+## 5. 並行処理と資源管理
+
+- 起動したgoroutineごとに、終了条件、待機方法、キャンセル経路、errorの扱いを設計する。
+- channelをcloseする責任は、原則として送信側または所有者へ置く。受信側から安易にcloseしない。
+- shared mutable stateは、mutex、atomic、channel ownership等の一貫した方法で保護する。
+- mutexを保持したまま、外部コード、ブロッキングI/O、予測不能に長い処理を呼ばない。
+- channel bufferは、負荷制御やプロトコル上の理由から決める。停止問題を隠すために増やさない。
+- timer、ticker、body、file、connection等は、所有者と解放時点を明確にする。
+- `time.Sleep`による同期や、処理完了を期待した固定待機を避ける。観測可能な同期点またはテスト支援APIを使う。
+
+## 6. テスト
+
+- 公開動作、error contract、境界値、キャンセル、並行性、回帰条件を優先してテストする。
+- テーブル駆動テストやsubtestは、重複を減らし失敗条件を明瞭にする場合に使う。
+- `t.Parallel()`は、テストが独立しており、共有状態や順序依存がなく、並列化の利益がある場合に使う。
+- helperには`testing.TB.Helper`を付け、失敗位置を呼び出し側へ戻す。
+- 外部network、clock、乱数、processへの依存を制御し、決定的に再現できるテストを優先する。
+- network testは`httptest`や`net.Listen("tcp", "127.0.0.1:0")`等でOSにportを割り当てさせる。固定portは並列実行やCIで衝突するため、契約上必要なテスト以外では使わない。
+- 文字列化されたerror全体、圧縮結果、map順序等の非契約部分へgolden testを固定しない。
+- プロジェクト既定のテストコマンドを優先し、関連package、全体、追加検証の順で実行する。
+- race detectorは並行性を扱う変更やリリース前検証で、対応環境を確認して使う。coverageは未試験領域の手掛かりであり、正しさの証明として扱わない。
+- `-shuffle=on`は順序依存を探す目的で使い、再現時は報告されたseedを保持する。
+
+## 7. Modulesと依存関係
+
+- `go.mod`の`go`ディレクティブと`toolchain`ディレクティブを区別する。
+- 新しい構文や標準ライブラリAPIは、モジュールが宣言する最低Go版で利用可能か確認する。
+- 依存追加は標準ライブラリと既存依存で要件を満たせない場合に行い、保守性・ライセンス・供給網リスクを確認する。
+- `go mod tidy`は意図しない変更を含み得るため差分を確認し、`go.mod`と`go.sum`を一緒に整合させる。
+- library moduleでは、不要な最低Go版引き上げや依存更新を機能変更へ混ぜない。
+
+## 8. パフォーマンスと観測性
+
+- 最適化前にbenchmark、profile、trace、実運用metricでbottleneckを確認する。
+- sliceのcapacity、文字列構築、allocation削減は、サイズが予測でき効果がある経路で適用する。
+- `strings.Builder`、`bytes.Buffer`、手動poolは、単純なコードより有利か計測して選ぶ。
+- loop内の`defer`は資源保持期間と測定結果から判断し、安全な解放を犠牲にして除去しない。
+- benchmarkでは入力規模、allocation、warm-up、比較対象を揃え、単発の数値で結論を出さない。
+- log、trace label、metric labelへsecretや高cardinality値を入れない。
+
+## 9. セキュリティ
+
+- 外部入力は信頼境界で検証し、SQL、shell、template、path、URL等の利用先に適した安全なAPIを使う。
+- `os/exec`へ外部入力をshell commandとして連結しない。引数を分離し、必要ならallowlistを使う。
+- credentialやtokenをソース、テストfixture、logへ含めない。
+- セキュリティ用途の乱数・hash・署名は`crypto/*`を使い、独自方式を作らない。
+- path traversal、symlink、TOCTOU、permission、temporary fileの扱いを脅威モデルに応じて確認する。
+- HTTP serverではtimeout、body size、header制限、TLS、proxy境界を確認する。
+- `unsafe`、cgo、experimental APIは必要性と境界を明示し、代替手段と追加検証を検討する。
+- gosec等の診断を抑制する場合は、具体的なrule IDと安全である理由を残す。
+
+## 10. このスキルのプロジェクト既定値
+
+リポジトリに別の規約または外部契約がない場合だけ、次を既定値とする。
+
+- doc commentは英語で記述する。
+- JSON field nameは`snake_case`を使う。
+
+既存API、schema、生成コード、接続先サービスの契約が異なる場合は、互換性を優先する。
+
+## 11. レビュー報告
+
+- 指摘には重大度、ファイルと位置、発生条件、影響、最小の改善案を含める。
+- 推測と確認済み事実を分ける。
+- バージョン依存の指摘には、必要な言語版またはAPI導入版を示す。
+- 実行したformat、解析、テストと、環境上実行できなかった検証を明記する。
