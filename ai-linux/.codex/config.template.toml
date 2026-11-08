@@ -478,8 +478,8 @@ enabled = false
 # inherit: all (default) | core | none
 
 # Note: SSH_AUTH_SOCK 変数がcodexセッションに引き継がれず、SSH署名git commitが失敗するので、allに変更
-#inherit = "core"
 inherit = "all"
+#inherit = "core"
 
 # Skip default excludes for names containing KEY/SECRET/TOKEN (case-insensitive). Default: false
 
@@ -487,7 +487,7 @@ ignore_default_excludes = false
 
 # Case-insensitive glob patterns to remove (e.g., "AWS**", "AZURE**"). Default: []
 
-exclude = []
+# exclude = []
 
 # Explicit key/value overrides (always win). Default: {}
 
@@ -495,7 +495,7 @@ set = {}
 
 # Whitelist; if non-empty, keep only matching vars. Default: []
 
-include_only = []
+# include_only = []
 
 # Experimental: run via user shell profile. Default: false
 
@@ -509,11 +509,13 @@ experimental_use_profile = false
 
 # include_only arrays in the same configuration layer.
 
-# [shell_environment_policy.filters]
-
+[shell_environment_policy.filters]
 # "AWS_*" = "exclude"
-
 # "AZURE_*" = "exclude"
+# "GITHUB_*" = "exclude"
+# "GH_*" = "exclude"
+"*_PASSWORD" = "exclude"
+"*_PASSWD" = "exclude"
 
 ################################################################################
 
