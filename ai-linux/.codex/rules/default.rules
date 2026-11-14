@@ -18,39 +18,9 @@ prefix_rule(
 )
 
 prefix_rule(
-    pattern = [["cp", "\\cp"]],
-    decision = "prompt",
-    justification = "Synced from Claude permissions.ask: Bash(cp *)",
-)
-
-prefix_rule(
-    pattern = [["curl", "\\curl"]],
-    decision = "prompt",
-    justification = "Synced from Claude permissions.ask: Bash(curl *)",
-)
-
-prefix_rule(
-    pattern = [["ps", "\\ps"]],
-    decision = "allow",
-    justification = "Synced from Claude permissions.ask: Bash(ps *)",
-)
-
-prefix_rule(
-    pattern = [["pgrep", "\\pgrep"]],
-    decision = "allow",
-    justification = "Synced from Claude permissions.ask: Bash(pgrep *)",
-)
-
-prefix_rule(
     pattern = [["kill", "\\kill"]],
     decision = "prompt",
     justification = "Synced from Claude permissions.ask: Bash(kill *)",
-)
-
-prefix_rule(
-    pattern = [["mv", "\\mv"]],
-    decision = "prompt",
-    justification = "Synced from Claude permissions.ask: Bash(mv *)",
 )
 
 prefix_rule(
@@ -63,24 +33,6 @@ prefix_rule(
     pattern = [["rmdir", "\\rmdir"]],
     decision = "prompt",
     justification = "Synced from Claude permissions.ask: Bash(rmdir *)",
-)
-
-prefix_rule(
-    pattern = [["touch", "\\touch"]],
-    decision = "allow",
-    justification = "Synced from Claude permissions.ask: Bash(touch *)",
-)
-
-prefix_rule(
-    pattern = [["wget", "\\wget"]],
-    decision = "prompt",
-    justification = "Synced from Claude permissions.ask: Bash(wget *)",
-)
-
-prefix_rule(
-    pattern = [["git", "\\git"], "push"],
-    decision = "prompt",
-    justification = "Synced from Claude permissions.ask: Bash(git push *)",
 )
 
 prefix_rule(

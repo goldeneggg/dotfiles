@@ -80,15 +80,9 @@
     "ask": [
       "Bash(chmod *)",
       "Bash(chown *)",
-      "Bash(cp *)",
-      "Bash(curl *)",
       "Bash(kill *)",
-      "Bash(mv *)",
       "Bash(rm *)",
-      "Bash(rmdir *)",
-      "Bash(touch *)",
-      "Bash(wget *)",
-      "Bash(git push *)"
+      "Bash(rmdir *)"
     ],
     "defaultMode": "acceptEdits"
   },
@@ -110,6 +104,29 @@
     "codex@openai-codex": true,
     "security-guidance@claude-plugins-official": true,
     "terraform-provider-development@hashicorp": true
+  },
+  "mcpServers": {
+    "context7": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--init",
+        "-e", "MCP_TRANSPORT=stdio",
+        "mcp/context7:latest"
+      ]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--categoryExtensions=true",
+        "--isolated",
+        "--chromeArg=--window-size=2538,1403"
+      ]
+    }
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
