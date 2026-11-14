@@ -774,6 +774,12 @@ js_repl = false
 # See: https://github.com/openai/codex/issues/24750
 default_mode_request_user_input = true
 
+# See:
+#   https://gigazine.net/news/20261015-codex-cli-background-daemon/
+#   https://github.com/openai/codex/issues/48195
+#   https://github.com/openai/codex/issues/53547
+daemon_auto_start = false
+
 # unified_exec = true
 
 # shell_snapshot = true
