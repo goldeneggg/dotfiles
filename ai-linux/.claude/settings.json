@@ -105,29 +105,6 @@
     "security-guidance@claude-plugins-official": true,
     "terraform-provider-development@hashicorp": true
   },
-  "mcpServers": {
-    "context7": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "--init",
-        "-e", "MCP_TRANSPORT=stdio",
-        "mcp/context7:latest"
-      ]
-    },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--categoryExtensions=true",
-        "--isolated",
-        "--chromeArg=--window-size=2538,1403"
-      ]
-    }
-  },
   "extraKnownMarketplaces": {
     "openai-codex": {
       "source": {
