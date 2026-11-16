@@ -7,11 +7,18 @@ description: 現在のブランチからGitHub PRを作成する。pr-descriptio
 
 ## 引数
 
-`[--base branch] [--draft] [--reviewer users] [--label labels] [--template path] [--format 指示]`
+`[--base branch] [--draft] [--reviewer users] [--label labels] [--template path] [--format 指示] [--issue <Issue URL | ファイルパス>]`
 
 日本語で進める。
 PR作成・push・指定されたメタデータ設定を担当する。
 PR作成後のCI修正、レビュー、merge、closeは対象外とする。
+
+## Issueコンテキスト
+
+`--issue` は対応するIssueのURLまたはローカルファイルパスを受け取る。相対パスはスキル呼び出し時のカレントディレクトリを基準に解決する。
+指定時は本文生成・PR作成の前に、URLなら利用可能な連携ツールまたはCLIでIssueのタイトル・本文を取得し、ファイルなら内容を読む。理解に必要なコメント・参照資料も読み、目的・背景・要件・受け入れ条件を整理する。
+読み取ったコンテキストをpr-descriptionへ引き継ぎ、PRの目的と説明に反映する。
+指定内容を取得・読込できない場合は原因と不足情報を示して確認し、Issueを理解した前提で作業を進めない。
 
 ## 準備
 
@@ -21,7 +28,7 @@ PR作成後のCI修正、レビュー、merge、closeは対象外とする。
 4. 未コミット変更の扱いが既に指定されていれば従う。そうでなければ差分を確認して、含めるか必要な判断だけ求める。
 5. main/masterからの作成では適切な作業ブランチを具体化する。
 6. 本文の出力先をセッション固有の一時ディレクトリ内に決める。ブランチ名を未加工でパスへ埋め込まない。
-7. pr-descriptionへ `<出力先パス> --base <確定したbase>` と、指定されたtemplate・formatを渡し、本文とタイトル候補を準備する。生成時のbase・headのSHAを記録する。
+7. pr-descriptionへ `<出力先パス> --base <確定したbase>` と、指定されたtemplate・format・`--issue`を渡し、本文とタイトル候補を準備する。Issueのファイルは解決済みの絶対パスで渡し、読み取ったコンテキストも共有する。生成時のbase・headのSHAを記録する。
 8. ユーザーまたは呼び出し元からPRタイトルのprefix・形式が明示されている場合は、その指定をpr-descriptionのタイトル候補より優先し、最終タイトルへ反映する。
 9. 本文生成とPR作成でbase・headが一致することを確認する。生成後に比較対象が変わった場合は、差分を再確認して本文を更新し、更新後の内容で必要な確認を行う。
 

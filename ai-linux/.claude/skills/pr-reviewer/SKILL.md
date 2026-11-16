@@ -7,7 +7,7 @@ description: GitHub PRまたはローカルブランチを静的レビューし�
 
 ## 入力
 
-`<PR URL | owner/repo PR番号 | ブランチ名> [--base branch] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve,pr-thread] [--rule files]`
+`<PR URL | owner/repo PR番号 | ブランチ名> [--base branch] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve,pr-thread] [--rule files] [--issue <Issue URL | ファイルパス>]`
 
 baseは未指定ならmain。
 出力は既定でチャットのみ。
@@ -27,6 +27,14 @@ pr-threadはfileとのみ併用可能とする。
 固定対象を受け取った場合は、可変のPR・branchからdiffや既存コードを取り直さない。比較方式・端点・diffの対応を確認し、不足・不一致を黙って別の版で補わない。
 結果とともに、使用したリポジトリ・比較端点・比較方式・diffのdigestを呼出し元へ返す。固定対象による委譲では出力オプションを受け取らず、結果の返却だけを行う。
 
+## Issueコンテキスト
+
+`--issue` は対応するIssueのURLまたはローカルファイルパスを受け取る。相対パスはスキル呼び出し時のカレントディレクトリを基準に解決する。
+`--blind` とは併用不可とし、併記された場合はIssueを取得・読込する前に入力エラーとして訂正を求める。
+指定時はレビューの前に、URLなら利用可能な連携ツールまたはCLIでIssueのタイトル・本文を取得し、ファイルなら内容を読む。理解に必要なコメント・参照資料も読み、目的・背景・要件・受け入れ条件を整理する。
+読み取ったコンテキストを変更目的・期待動作の判断材料とし、対象版の差分・既存契約と照合する。
+指定内容を取得・読込できない場合は原因と不足情報を示して確認し、Issueを理解した前提で作業を進めない。
+
 ## 静的レビューの境界
 
 コード編集、commit、merge、close、テスト、lint・静的解析ツール、build、format、CI実行・確認を行わない。
@@ -38,7 +46,7 @@ diff外の既存コードの検索・読込は行ってよい。
 blindではPRタイトル・本文・コミットメッセージ・Issue・ラベル・作成者・レビューコメントを取得しない。
 ブランチ名から目的を推測しない。
 diff、既存コード、公開規約、明示rule、必要な公式仕様だけを使う。
-outlineおよびpr-comment-with-approveとは併用しない。
+outline、`--issue`およびpr-comment-with-approveとは併用しない。
 途中で目的情報を取得して補完しない。
 
 ## 調査
@@ -49,7 +57,7 @@ outlineおよびpr-comment-with-approveとは併用しない。
 4. rule指定があれば読む。不在のruleは影響を示し、読めた範囲のレビューを続ける。
 5. 巨大diffはファイル単位で分割し、確認範囲を記録して続行する。無断で対象を縮小しない。
 
-通常モードではoutlineを優先し、なければPR説明またはdiffから変更目的を理解する。
+通常モードではoutlineを優先し、なければPR説明またはdiffから変更目的を理解する。`--issue` 指定時は「Issueコンテキスト」に従って読み取り、outlineの有無にかかわらず判断材料に含める。
 目的の説明だけで実装の正しさを判断しない。
 
 ## 説明中の主張の検証
