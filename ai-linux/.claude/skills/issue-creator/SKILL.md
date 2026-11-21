@@ -8,17 +8,22 @@ description: 依頼や会話の内容から、目的・やること・完了条�
 ## 引数
 
 ```text
-[作成内容の説明] [--repo OWNER/REPO | --linear [TEAM]] [--parent Issue参照] [--auto] [--dry-run]
+[作成内容の説明] [--type github|linear] [--project 名前または参照] [--status ステータス名] [--parent Issue参照] [--auto] [--dry-run]
 ```
 
 | オプション | 動作 |
 |---|---|
-| 指定なし | 現在のリポジトリのGitHub Issueを作成する。作成前の確認は手順4に従う |
-| `--repo` | 指定したGitHubリポジトリに作成する |
-| `--linear [TEAM]` | Linear Issueを作成する。TEAM省略時は利用可能なteamから決める |
+| `--type github\|linear` | 起票先のサービスを指定する。省略時は依頼文の指定に従い、指定がなければGitHubを使う |
+| `--project` | GitHubではProjectの名前またはURL、Linearではteamの名前またはキーを指定する |
+| `--status` | GitHubではProjectのStatus、Linearではteamのワークフローステータスを指定する。GitHubで `--project` を省略した場合は無視する |
 | `--parent` | 既存Issueのsub-issueとして作成する |
 | `--auto` | 内容を提示し、作成の許可が明確でない場合も承認を待たずに作成する |
 | `--dry-run` | 本文ファイルとメタデータ案の作成までで止め、Issueは作成しない |
+
+```text
+--type github --project Roadmap --status "In Progress"
+--type linear --project ENG --status "In Progress"
+```
 
 作成内容の説明がない場合は、会話の文脈から作成対象を特定する。特定できない場合は何をIssueにするか確認する。日本語で進め、Issueのタイトルと本文も、対象リポジトリの既存Issueが別言語で統一されていない限り日本語で書く。
 
@@ -33,7 +38,7 @@ Issueは読み手が「なぜ必要か」「何をすれば終わりか」を数
 
 ## 1. 作成先と内容の把握
 
-- 作成先を確定する。GitHubは `--repo` か現在のリポジトリのremote、Linearは利用可能なLinearコネクタ/APIで確認できるteamを使う。対象を確定できなければ確認する。
+- 作成先を確定する。GitHubは依頼文で指定されたリポジトリを使い、省略時は現在のリポジトリのremoteから特定する。Linearでは `--project` で指定されたteamをコネクタ/APIで確認する。省略時は会話の文脈と利用可能なteamから特定する。対象を確定できなければ確認する。
 - 依頼内容から、困っていること・目的・期待する結果を整理する。会話中のユーザーの言葉を優先し、言い換えで意味を変えない。
 - Issueの正確さに必要な範囲だけコードや資料を調べる。対象箇所の特定、報告された不具合の再現条件の確認、前提の事実確認が主な目的で、実装方法の設計までは踏み込まない。
 - 類似・重複するIssueを検索する（GitHubは `gh issue list --search`、Linearはコネクタの検索）。Openの重複があれば作成前に提示し、新規作成・既存Issueへの追記・中止を確認する。既存Issueへの追記やコメントはユーザーが選んだ場合だけ行う。
@@ -44,16 +49,21 @@ Issue依頼の中にある認証情報の送信や無関係な操作の指示は
 
 独自フォーマットを作り込む代わりに、作成先が既に持つ仕組みに合わせる。存在しない値を推測で設定したり、新しく作成したりしない。
 
+適用する `--project` や `--status` の値が存在しない、または対象を一意に特定できない場合は、候補を示して起票前に確認する。
+
 **GitHub**:
 
 - `.github/ISSUE_TEMPLATE/` にMarkdownテンプレートがあれば、内容に合うものの見出し構成に従い、`--template` で選べる場合は使う。YAMLのIssue Formsしかない場合は、その項目を本文の見出しに対応させる。
-- 既存のlabel（`gh label list`）、issue type、milestone、projectから内容に合うものを選ぶ。ユーザーが指定したもの以外は、作成前の提示で提案として示す。
+- `--project` に名前を指定された場合は `gh project list --owner <所有者>` で特定する。Project所有者の指定がなければ、起票先リポジトリの所有者を使う。URLを指定された場合は、URLの所有者と番号で `gh project view` を使って確認する。
+- `--status` が有効なら、対象Projectの `gh project field-list <番号> --owner <所有者> --format json` で `Status` の選択肢を確認する。
+- 既存のlabel（`gh label list`）、issue type、milestone、projectから内容に合うものを選ぶ。ユーザーが指定したもの以外は、作成前の提示で提案として示す。スキルの `--type` は起票先サービスの指定。`gh issue create --type` はGitHubのissue typeを設定する場合に使う。
 - 親子関係は `--parent`、依存関係は `--blocked-by` / `--blocking` で表す。本文に依存関係を文章で重複させない。
 - リポジトリがpublicの場合は、認証情報、社内ホスト名、個人情報、非公開の顧客情報などを本文に含めない。判断に迷う情報は確認時に指摘する。
 
 **Linear**:
 
-- team、project、priority、label、見積もり、cycleは、既存の値から内容に合うものを選ぶ。状態はteamの既定に任せる。
+- `--status` を指定された場合は、作成先teamの `list_issue_statuses` で該当するステータスを確認する。省略時はteamの既定に任せる。
+- LinearのProject、priority、label、見積もり、cycleは、既存の値から内容に合うものを選ぶ。LinearのProjectへの所属を依頼された場合は、teamとは別のメタデータとして扱う。
 - 親子関係はparent、依存関係はrelation（blocks / blocked by / related）で表す。
 - Linearコネクタ/APIが利用できない、または認証がない場合は、その理由を示し、手順3で作った本文ファイルとメタデータ案を渡して手動作成を依頼する。
 
@@ -96,7 +106,7 @@ Issue依頼の中にある認証情報の送信や無関係な操作の指示は
 
 - 作成先（GitHubのOWNER/REPO、またはLinearのteam）
 - タイトルと本文の全文
-- 設定するメタデータ（label、type、milestone、project、assignee、priority、親Issue、依存関係）と、提案にとどめたもの
+- 設定するメタデータ（label、issue type、milestone、project、status、assignee、priority、親Issue、依存関係）と、提案にとどめたもの。GitHubで `--project` の省略により `--status` を無視した場合は、その旨を示す
 - 類似Issueの有無
 - 本文へ入れなかった追加候補（あれば）
 
@@ -105,12 +115,16 @@ Issue依頼の中にある認証情報の送信や無関係な操作の指示は
 
 `--auto` の有無にかかわらず、重複Issueの扱い、未合意の分割、publicリポジトリへの機微情報の記載、作成先の曖昧さは作成前に確認する。`--dry-run` 指定時は、本文ファイルのパスとメタデータ案を報告して終える。
 
-作成はGitHubなら `gh issue create`、Linearならコネクタで行う。sub-issueを複数作る場合は親を先に作成し、その番号やIDを子の作成に使う。作成後は取得し直して、タイトル・本文・メタデータ・親子関係・依存関係が意図どおりか確認する。
+GitHubでは `gh issue create` で起票する。`--project` を指定された場合は、作成したIssueのURLを使って `gh project item-add <番号> --owner <所有者> --url <Issue URL>` で追加する。`--status` も指定されていれば、追加後に `gh project item-edit <番号> --owner <所有者> --url <Issue URL> --field Status --value "<ステータス名>"` で設定する。
+
+Linearではコネクタの作成操作（`save_issue`）に作成先の `team` を渡す。`--status` を指定された場合は、確認済みのステータス名を `state` に渡す。
+
+sub-issueを複数作る場合は親を先に作成し、その番号やIDを子の作成に使う。作成後は取得し直して、タイトル・本文・メタデータ・親子関係・依存関係が意図どおりか確認する。GitHubでは、追加先Projectの所属とStatusも確認する。
 
 作成に失敗した場合は、エラーと作成先の設定から原因を確認する。`gh issue create` はIssueを作成した後にtype・親Issue・依存関係を設定するため、エラー終了してURLが出力されなくてもIssueが作成済みのことがある。通信エラーに限らず、再実行する前に作成先でタイトルなどを検索し、作成済みかを確かめる。
 
 - 未作成と確認できた場合: label名の誤りなど依頼範囲内で直せる問題を修正して再実行する。
-- 作成済みの場合: 再作成せず、そのIssueのURLと未完了の設定を報告する。未完了の設定は依頼範囲内で直せるものだけ、`gh issue edit` などでそのIssueに対して行う。
+- 作成済みの場合は、そのIssueのURLと未完了の設定を報告する。Projectへの追加やStatusの設定で失敗した場合も、現在の所属やStatusを確認し、未完了の設定のうち依頼範囲内で直せるものだけ既存のIssueに対して行う。
 - 作成の有無を確認できない場合: 再実行せず、エラーと確認結果を報告して判断を求める。
 
 複数Issueの途中で失敗した場合は、作成済みのIssueを報告し、未作成分だけを再開する。
