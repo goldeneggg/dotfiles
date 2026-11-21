@@ -7,14 +7,14 @@ description: GitHub PRまたはローカルブランチを静的レビューし�
 
 ## 入力
 
-`<PR URL | owner/repo PR番号 | ブランチ名> [--base branch] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve,pr-thread] [--rule files] [--issue <Issue URL | ファイルパス>]`
+`<PR URL | owner/repo PR番号 | ブランチ名> [--base branch] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve,pr-thread,pr-thread-summary] [--rule files] [--issue <Issue URL | ファイルパス>]`
 
 baseは未指定ならmain。
 出力は既定でチャットのみ。
-fileは追加保存、pr-commentはCommentまたはRequest changesのReviewを一件Submit、pr-comment-with-approveはApproveも選択可能なReviewを一件Submit、pr-threadは指摘ごとのthread投稿とする。
+fileは追加保存、pr-commentはCommentまたはRequest changesのReviewを一件Submit、pr-comment-with-approveはApproveも選択可能なReviewを一件Submit、pr-threadは指摘ごとのスレッド投稿、pr-thread-summaryはスレッドとレビュー全体の要約コメントの投稿とする。
 
 pr-comment-with-approveとpr-commentの重複指定ではpr-comment-with-approveとして扱い、一件だけSubmitする。
-pr-threadはfileとのみ併用可能とする。
+pr-threadとpr-thread-summaryは、それぞれfileとのみ併用可能とする。
 不正な入力や競合するモードは黙って変更せず確認する。
 
 独立レビューからの呼出しでは、通常の成果物指定に代えて次の固定対象を受け取れる。この入力はPR・branch・単一commit・範囲のすべてに使用できる。
@@ -111,12 +111,12 @@ pr-comment / pr-comment-with-approve:
 - `gh api --method POST repos/{owner}/{repo}/pulls/{number}/reviews --input {JSONファイル}` でReviewを作成・Submitする。`event` を省略すると未提出のPENDINGになるため、必ず指定し、別途SubmitやApproveのリクエストは送らない。
 - 成功レスポンスの `state` が選んだ種別に対応する `COMMENTED` / `CHANGES_REQUESTED` / `APPROVED` であり、`submitted_at` があることを確認する。確認できた `html_url` とReview種別を報告する。PENDINGや状態不一致をSubmit完了として扱わず、成否が不明なら再送しない。
 
-pr-thread:
-- `references/pr-thread-posting.md` の手順を適用する。
-- diff内のpath・line・sideを確定できる指摘だけ投稿する。
-- 位置を推測しない。対象が0件なら投稿しない。
-- PR説明の検証結果と修正案はチャットと指定されたfileに含め、コード行へ紐付けて投稿しない。
-- このモードではapproveしない。
+**pr-thread / pr-thread-summary**
+
+- PR対象の場合は `references/pr-thread-posting.md` の手順でCommentを投稿する。
+- スレッド投稿の対象は、diff内のpath・line・sideを確定できるコードの指摘に限る。
+- PR説明の検証結果と修正案はチャットと指定されたfileに含める。
+- `pr-thread-summary` の要約には、総合判定、重要度別件数、主要な指摘、推奨アクション、未確認事項を含める。PR説明に対する検証結果や修正案があれば、その要点も含める。
 
 ローカルブランチにPR投稿が指定された場合は投稿せず、チャットと指定されたfile出力を完了する。
 

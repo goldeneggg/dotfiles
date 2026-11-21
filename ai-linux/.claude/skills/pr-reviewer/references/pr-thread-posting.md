@@ -1,6 +1,6 @@
 # PRスレッド投稿手順
 
-`--output pr-thread` が指定された場合だけ、この手順を使用する。
+`--output` に `pr-thread` または `pr-thread-summary` が指定された場合に、この手順を使用する。
 
 ## 投稿前の準備
 
@@ -10,7 +10,10 @@
 
 ## 投稿
 
-`AddPullRequestReviewInput` の `threads` を使い、すべてのスレッドを1回の `addPullRequestReview` mutation で送信する。`pullRequestId`、取得した `commitOID`、`event: COMMENT`、スレッド配列を含める。`gh api graphql --input {JSONファイル}` を使うと、本文に改行や引用符があっても安全に渡せる。
+`addPullRequestReview` mutation を1回実行する。`AddPullRequestReviewInput` に `pullRequestId`、取得した `commitOID`、`event: COMMENT` を設定し、投稿対象のスレッドがあれば `threads` に含める。`gh api graphql --input {JSONファイル}` で送信する。
+
+- `pr-thread` では `body` を省略し、スレッドの投稿対象が0件なら送信を省略する。
+- `pr-thread-summary` では、レビュー全体の要約コメントを `body` に設定する。スレッドの投稿対象が0件でも、`threads` を省略して要約を投稿する。
 
 ```graphql
 mutation AddPullRequestReview($input: AddPullRequestReviewInput!) {
@@ -23,7 +26,7 @@ mutation AddPullRequestReview($input: AddPullRequestReviewInput!) {
 }
 ```
 
-リクエストの JSON は、概ね次の構造にする。
+スレッドがある場合の `pr-thread-summary` のリクエスト例。
 
 ```json
 {
@@ -33,6 +36,7 @@ mutation AddPullRequestReview($input: AddPullRequestReviewInput!) {
       "pullRequestId": "PR node ID",
       "commitOID": "現在の head commit OID",
       "event": "COMMENT",
+      "body": "レビュー全体の要約",
       "threads": [
         {"path": "src/example.ts", "line": 42, "side": "RIGHT", "body": "指摘本文"}
       ]
@@ -41,7 +45,7 @@ mutation AddPullRequestReview($input: AddPullRequestReviewInput!) {
 }
 ```
 
-成功レスポンスの `pullRequestReview.url` を取得し、投稿済みスレッド数とともに報告する。投稿結果の確認に PR の既存レビューコメントを読み込む必要はない。
+レスポンスの `pullRequestReview.state` が `COMMENTED` であることを確認し、`pullRequestReview.url` と投稿済みスレッド数を報告する。`pr-thread-summary` では要約を投稿したことも報告する。投稿結果の確認に PR の既存レビューコメントを読み込む必要はない。
 
 ## 失敗時
 
