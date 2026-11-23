@@ -1,6 +1,6 @@
 ---
 name: browser-ext-creator
-description: Chrome Manifest V3とFirefox向けブラウザ拡張を設計・実装する。content script、background、popup、ページ埋め込みUI、外部API連携、Tampermonkeyからの変換を扱う。Safari、MV2移行、ストア公開は対象外。
+description: Chrome Manifest V3とFirefox向けブラウザ拡張を設計・実装する。content script、background、popup、ページ埋め込みUI、外部API連携、Tampermonkeyからの変換を扱う。指定時は検証後のcommit・push・GitHub PR作成まで行う。Safari、MV2移行、ストア公開は対象外。
 ---
 
 # Browser Extension Creator
@@ -11,14 +11,29 @@ description: Chrome Manifest V3とFirefox向けブラウザ拡張を設計・実
 実装、要件・権限・構文の検証、利用可能な環境での動作確認まで進める。
 テスト基盤の新設、CI/CD構築、ストア公開・審査は対象外とする。
 
+## 引数
+
+`機能要件 [--commit | --commit-push | --commit-push-pr]`
+
+| オプション | 実装・検証後の処理 |
+|---|---|
+| 指定なし | 変更を作業ツリーに残す |
+| `--commit` | 今回の変更をステージしてcommit |
+| `--commit-push` | commit後にpush |
+| `--commit-push-pr` | commit・push後にGitHub PRを作成 |
+
+複数指定された場合は、含まれる工程が最も多いオプションを採用し、実行範囲を伝える。オプションの明示指定を該当工程の実行許可として扱い、同じ許可を再確認せずに進める。
+
 ## 手順
 
 1. 会話と既存プロジェクトから、機能、対象ブラウザと最低対応バージョン、対象サイト、UI、API・保存・データ送信要件、配置先を整理する。既知情報は再質問しない。対象ブラウザや権限範囲など結果を大きく変える不足だけ確認する。
+   - オプション指定時は編集前にブランチ、作業ツリーとステージ済み差分を確認する。pushを伴う作業を既定ブランチから始める場合は、ユーザー指定とリポジトリ規約に沿って作業ブランチを用意する。
 2. `references/manifest-v3.md` の対象ブラウザに関係する節を読む。採用するAPI・manifestキーは同資料の公式参照先で対応バージョンと制約を確認し、安定版と実験的機能を区別する。外部通信・ユーザー入力・保存を扱う場合は `references/security.md` も読む。
 3. 既存構成を優先し、必要なmanifest、content script、background、popup、options、style、iconだけを用意する。新規両ブラウザ構成はchrome/とfirefox/を基本とする。
 4. `assets/chrome-template/` または `assets/firefox-template/` を基に、要件に合わせて実装する。既存ファイルを読む。無関係なファイルを上書きしない。
 5. 以下の検証を実施し、対象内の不備は再承認を待たず修正する。
-6. 生成物、導入方法、検証結果、ブラウザごとの未確認事項を報告する。
+6. オプションが指定されていれば、以下の後処理を行う。
+7. 生成物、導入方法、検証結果、ブラウザごとの未確認事項を報告する。後処理を指定された場合は、各工程の成否、commit SHA、push先、PR URLのうち該当する情報も報告する。
 
 ## 実装基準
 
@@ -36,6 +51,16 @@ manifestの構文、参照ファイルの存在、対象URL、権限、ブラウ
 既存のlint・build・テストがあれば変更に応じて実行する。
 実ブラウザで確認可能なら主要機能を確認し、不能なら静的確認と区別する。
 自己評価で見つけた要件内の不備は修正して該当項目を再検証する。
+
+## オプションに応じた後処理
+
+要件の未充足や実行した検証の失敗が残る場合は、該当箇所を修正・再検証してから後処理へ進む。
+
+1. 今回の差分だけをステージし、既存のステージ済み変更や同じファイル内のユーザー変更が混ざっていないことを確認する。分離できなければcommit対象をユーザーに確認する。対象差分が空なら理由を報告して後処理を終える。対象差分があれば[commiter](../commiter/SKILL.md)を`--auto`で使う。
+2. pushを含む場合はremote・追跡先・送信するコミット範囲を確認し、無関係なコミットを分離する。送信先や範囲を確定できなければ実行前に確認する。`--commit-push`では確定した送信先に通常のpushを行う。
+3. `--commit-push-pr`では[pr-creator](../pr-creator/SKILL.md)に対象差分・検証結果・pushとPR作成の実行許可を引き継ぐ。head・baseを確認し、依頼範囲内の差分であることを確かめてからpush・GitHub PR作成を順に行う。同じリポジトリ・head・baseのOpen PRがある場合は、pushを完了して既存PRのURLを報告する。
+
+各工程の成功を確認してから次に進む。失敗時は成功済みの工程を保持し、原因を解消できれば失敗した工程から再開する。通信エラーなどで成否が不明なら、commit履歴・remote・既存PRの該当箇所を確認して再試行を判断する。
 
 ## 保守と例外
 
