@@ -9,13 +9,17 @@ description: 会話とgit差分からConventional Commits形式のメッセー�
 
 ## 引数
 
-`[--suggest] [--auto] [--push] [--mode short|long] [--scope scope] [--lang en|ja] [--export-dir dir]`
+`[--suggest] [--auto] [--push] [--mode short|long] [--scope scope] [--lang en|ja] [--export-dir dir] [--guidelines <パス[,パス...]>]`
 
 - `--suggest`: 提案のみ。autoとpushは無効。
 - `--auto`: 既にステージ済みの変更だけをcommitする。git addは行わない。対象がなければ終了する。
 - `--push`: commit成功後にpushする。
 - modeはshort、langはenが既定。ユーザーの明示した言語を優先する。type・scopeは英語。
 - export-dirは提案モード専用。実行モードでは無視した旨を伝える。
+
+`--guidelines` はカンマ区切りのローカルファイルパスを受け取る。各パスの前後の空白を除き、相対パスは呼び出し時のカレントディレクトリを基準に解決する。
+指定時は作業の冒頭ですべての指定ファイルを読み、差分の確認、メッセージの作成、指定されたcommit・pushに適用する。操作の許可はユーザーの依頼と既存オプションに従う。
+空のパス、読込失敗、解消できない指示の競合があれば、該当箇所と理由を示し、影響する作業を進める前にユーザーに確認する。
 
 ## 差分と対象
 

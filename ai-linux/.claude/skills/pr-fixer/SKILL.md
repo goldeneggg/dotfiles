@@ -10,7 +10,7 @@ description: 指定したGitHub PRの単一レビューコメントまたはCI�
 ## 呼び出し
 
 ```text
-$pr-fixer <PRレビューコメントURL or PRのCI失敗URL> [--commit | --commit-push | --commit-push-reply] [--auto] [--request-review] [--no-agent] [--issue <Issue URL | ファイルパス>]
+$pr-fixer <PRレビューコメントURL or PRのCI失敗URL> [--commit | --commit-push | --commit-push-reply] [--auto] [--request-review] [--no-agent] [--issue <Issue URL | ファイルパス>] [--guidelines <パス[,パス...]>]
 ```
 
 位置引数は1つだけ必須とする。
@@ -40,6 +40,12 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 `--commit-push-reply` と他のcommit系オプションが併記された場合は `--commit-push-reply` として扱う。`--commit-push-reply` をCI失敗URLと併用した場合、および `--request-review` を `--commit-push-reply` なしで指定した場合は、外部操作を行わず入力エラーとして扱う。commit系オプション未指定の場合は、Phase 8で対象ファイルのステージングとコミットログファイルの出力まで行う。
 
 `--auto` の有無にかかわらず、対象や重要な仕様が確定できない場合、権限が不足する場合、既存のユーザー変更と重なる場合、依頼範囲の拡張や未承認の破壊的操作が必要な場合は、その判断に必要な情報を示して確認する。
+
+### 追加の作業ガイドライン
+
+`--guidelines` はカンマ区切りのローカルファイルパスを受け取る。各パスの前後の空白を除き、相対パスは呼び出し時のカレントディレクトリを基準に解決する。
+指定時は作業の冒頭ですべての指定ファイルを読み、指定された指摘・CI失敗の調査、修正・検証と指定された後処理に適用する。操作の許可はユーザーの依頼と既存オプションに従う。
+空のパス、読込失敗、解消できない指示の競合があれば、該当箇所と理由を示し、影響する作業を進める前にユーザーに確認する。
 
 ### Issueコンテキスト
 
