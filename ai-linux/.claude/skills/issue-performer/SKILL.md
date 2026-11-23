@@ -20,7 +20,7 @@ Issue参照先は1件指定する。受け付ける形式はGitHub Issue番号�
 | 指定なし | 変更を作業ツリーに残す。ステージング・commit・push・PR作成は行わない |
 | `--commit` | 今回の変更をステージしてcommit |
 | `--commit-push` | commit後にpush |
-| `--commit-push-pr` | commit・push後にGitHub PR作成 |
+| `--commit-push-pr` | commit・push後にGitHub PRをDraftで作成 |
 | `--auto` | 計画を提示したうえで承認待ちを省略。後処理は暗黙に有効化しない |
 | `--wip` | 実装の大枠を作り、Lintと必要なビルドだけを実行。本スキルからテストコマンドを直接実行しない |
 
@@ -88,9 +88,9 @@ Issueの目的と受け入れ条件、変更箇所、実装手順、検証方法
 
 ### PR作成
 
-`--commit-push-pr`指定時は[pr-creator](../pr-creator/SKILL.md)を読み、最終差分・検証結果・Issue URLを含む本文とタイトルを準備してGitHub PRを作成する。Linear URLの場合もPRは対象コードのGitHubリポジトリに作成する。PR作成・pushの許可は取得済みとして引き継ぎ、確定した送信先と内容を提示して続行する。
+`--commit-push-pr`指定時は[pr-creator](../pr-creator/SKILL.md)を`--draft`付きで使い、最終差分・検証結果・Issue URLを含む本文とタイトルを準備してGitHub PRをDraftで作成する。Linear URLの場合もPRは対象コードのGitHubリポジトリに作成する。PR作成・pushの許可は取得済みとして引き継ぎ、確定した送信先と内容を提示して続行する。
 
-`--wip`との併用時は、pr-creatorへ`--draft`と、PRタイトルの先頭に`[WIP] `を付ける形式指定を渡す。タイトルに同じprefixを重複させず、作成後にDraft状態とタイトルを確認する。
+`--wip`との併用時は、pr-creatorへPRタイトルの先頭に`[WIP] `を付ける形式指定も渡す。タイトルに同じprefixを重複させず、作成後にタイトルを確認する。
 
 同一リポジトリ・head・baseのOpen PRがある場合は重複作成せずURLを報告する。Issueへのコメント、状態変更・close、既存PRの説明更新、merge、デプロイはこれらのオプションに含めない。PRのIssue参照は通常のリンクとし、別途指定がなければ自動close用キーワードを付けない。
 

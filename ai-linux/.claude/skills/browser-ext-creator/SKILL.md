@@ -24,7 +24,7 @@ description: Chrome Manifest V3とFirefox向けブラウザ拡張を設計・実
 | 指定なし | 変更を作業ツリーに残す |
 | `--commit` | 今回の変更をステージしてcommit |
 | `--commit-push` | commit後にpush |
-| `--commit-push-pr` | commit・push後にGitHub PRを作成 |
+| `--commit-push-pr` | commit・push後にGitHub PRをDraftで作成 |
 
 commit系オプションが複数指定された場合は、含まれる工程が最も多いものを採用し、実行範囲を伝える。commit系オプションの明示指定を該当工程の実行許可として扱い、同じ許可を再確認せずに進める。
 
@@ -63,7 +63,7 @@ manifestの構文、参照ファイルの存在、対象URL、権限、ブラウ
 
 1. 今回の差分だけをステージし、既存のステージ済み変更や同じファイル内のユーザー変更が混ざっていないことを確認する。分離できなければcommit対象をユーザーに確認する。対象差分が空なら理由を報告して後処理を終える。対象差分があれば[commiter](../commiter/SKILL.md)を`--auto`で使う。
 2. pushを含む場合はremote・追跡先・送信するコミット範囲を確認し、無関係なコミットを分離する。送信先や範囲を確定できなければ実行前に確認する。`--commit-push`では確定した送信先に通常のpushを行う。
-3. `--commit-push-pr`では[pr-creator](../pr-creator/SKILL.md)に対象差分・検証結果・pushとPR作成の実行許可を引き継ぐ。head・baseを確認し、依頼範囲内の差分であることを確かめてからpush・GitHub PR作成を順に行う。同じリポジトリ・head・baseのOpen PRがある場合は、pushを完了して既存PRのURLを報告する。
+3. `--commit-push-pr`では[pr-creator](../pr-creator/SKILL.md)を`--draft`付きで使い、対象差分・検証結果・pushとPR作成の実行許可を引き継ぐ。head・baseを確認し、依頼範囲内の差分であることを確かめてからpushし、GitHub PRをDraftで作成する。同じリポジトリ・head・baseのOpen PRがある場合は、pushを完了して既存PRのURLを報告する。
 
 各工程の成功を確認してから次に進む。失敗時は成功済みの工程を保持し、原因を解消できれば失敗した工程から再開する。通信エラーなどで成否が不明なら、commit履歴・remote・既存PRの該当箇所を確認して再試行を判断する。
 
