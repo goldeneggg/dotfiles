@@ -7,14 +7,12 @@ description: GitHub PRまたはローカルブランチを静的レビューし�
 
 ## 入力
 
-`<PR URL | owner/repo PR番号 | ブランチ名> [--base branch] [--outline 概要 | --blind] [--output file,pr-comment,pr-comment-with-approve,pr-thread,pr-thread-summary] [--rule files] [--issue <Issue URL | ファイルパス>]`
+`<PR URL | owner/repo PR番号 | ブランチ名> [--base branch] [--outline 概要 | --blind] [--output file,pr-comment,pr-thread,pr-thread-summary] [--submit] [--rule files] [--issue <Issue URL | ファイルパス>]`
 
 baseは未指定ならmain。
-出力は既定でチャットのみ。
-fileは追加保存、pr-commentはCommentまたはRequest changesのReviewを一件Submit、pr-comment-with-approveはApproveも選択可能なReviewを一件Submit、pr-threadは指摘ごとのスレッド投稿、pr-thread-summaryはスレッドとレビュー全体の要約コメントの投稿とする。
-
-pr-comment-with-approveとpr-commentの重複指定ではpr-comment-with-approveとして扱い、一件だけSubmitする。
-pr-threadとpr-thread-summaryは、それぞれfileとのみ併用可能とする。
+出力は既定でチャットのみ。`--output` の `file` はレポートの追加保存、`pr-comment` はレポート全文の投稿、`pr-thread` は指摘ごとのスレッド投稿、`pr-thread-summary` はスレッドとレビュー全体の要約の投稿を指定する。
+PR向けの出力形式は一つ選べる。`file` はどの形式とも併用できる。
+`--submit` はレビュー結果に応じてGitHubにReviewを提出する。単独でも、任意の出力形式と組み合わせても指定できる。
 不正な入力や競合するモードは黙って変更せず確認する。
 
 独立レビューからの呼出しでは、通常の成果物指定に代えて次の固定対象を受け取れる。この入力はPR・branch・単一commit・範囲のすべてに使用できる。
@@ -25,7 +23,7 @@ pr-threadとpr-thread-summaryは、それぞれfileとのみ併用可能とす�
 - 同じSHAの既存コードを読む方法（リポジトリとSHAによる参照、または固定したsnapshot）。
 
 固定対象を受け取った場合は、可変のPR・branchからdiffや既存コードを取り直さない。比較方式・端点・diffの対応を確認し、不足・不一致を黙って別の版で補わない。
-結果とともに、使用したリポジトリ・比較端点・比較方式・diffのdigestを呼出し元へ返す。固定対象による委譲では出力オプションを受け取らず、結果の返却だけを行う。
+結果とともに、使用したリポジトリ・比較端点・比較方式・diffのdigestを呼出し元へ返す。固定対象による委譲では `--output` と `--submit` を受け取らず、結果の返却だけを行う。
 
 ## Issueコンテキスト
 
@@ -39,14 +37,14 @@ pr-threadとpr-thread-summaryは、それぞれfileとのみ併用可能とす�
 
 コード編集、commit、merge、close、テスト、lint・静的解析ツール、build、format、CI実行・確認を行わない。
 diff外の既存コードの検索・読込は行ってよい。
-外部投稿は指定された出力モードに限る。
+GitHubへの投稿・提出は、明示されたPR向けの出力形式または `--submit` に限る。
 
 ## Blind
 
 blindではPRタイトル・本文・コミットメッセージ・Issue・ラベル・作成者・レビューコメントを取得しない。
 ブランチ名から目的を推測しない。
 diff、既存コード、公開規約、明示rule、必要な公式仕様だけを使う。
-outline、`--issue`およびpr-comment-with-approveとは併用しない。
+`--outline`、`--issue`、`--submit` とは併用しない。
 途中で目的情報を取得して補完しない。
 
 ## 調査
@@ -83,7 +81,7 @@ Critical / High / Medium / Low件数、総合判定、推奨アクション、�
 根拠と矛盾する主張、確認不能・好みの記述を確定した事実として扱う説明、要件・規約に反する変更を好みだけで正当化する説明には、削除、条件や好みの明示、根拠の追記などの具体的な修正案を提示する。PR説明は直接編集しない。
 説明への指摘自体はコードの重要度件数へ加算せず、実装上の問題が確認できた場合は、その条件と影響に基づくコードの指摘として評価する。
 
-総合判定は `references/review-criteria.md` の件数基準を維持する。GitHubへSubmitするReview種別は、以下の出力基準で別に決定する。総合判定が承認可能でも、Highが残る場合はRequest changesとする。
+総合判定は `references/review-criteria.md` の件数基準を適用する。`--submit` で提出するReview種別は以下の表で決定する。
 
 ## 出力
 
@@ -94,31 +92,21 @@ file:
 - branchは `pr-review-{target}-vs-{base}.md`。スラッシュをハイフンへ置換する。
 - cwdへ保存する。同名の再実行レポートは読み取って更新してよい。
 
-pr-comment / pr-comment-with-approve:
-- PR対象の場合だけ、次の表を上から適用してReview種別を一つ選ぶ。指摘の重要度だけでなく、マージ前の修正を推奨するかをレポートの推奨アクションに明記する。
+### PRへの投稿・レビュー提出
 
-| レビュー結果 | pr-comment | pr-comment-with-approve |
-|---|---|---|
-| CriticalまたはHighが1件以上 | Request changes | Request changes |
-| Critical / Highは0件だが、Medium以下にマージ前の修正を推奨する指摘が残る | Comment | Comment |
-| Critical / Highは0件で承認可能（指摘なし、またはMedium以下の指摘がすべて任意対応・マージ後の対応でよい） | Comment | Approve |
-| 未確認事項などで承認可否を判断できない | Comment | Comment |
+投稿直前にPRの現在のhead SHAとレビュー対象のhead SHAを照合する。不一致なら投稿を中止し、再レビューが必要と報告する。ローカルブランチにPR向けの出力または `--submit` が指定された場合は、チャットと指定されたfile出力を完了し、投稿・提出にはPRの指定が必要であることを報告する。
 
-- CommentまたはRequest changesを選んだ場合は、その理由をレポートに含める。pr-commentでは承認可能でもApproveしない。
-- レポート全文をReview本文に含め、選んだ種別で一回のリクエストによりSubmitする。通常のPRコメントを先に投稿してから別途ReviewをSubmitすると投稿が二重になるため、`gh pr comment` は使わない。Approveできない場合もCommentまたはRequest changesでSubmitまで完了する。
-- 投稿直前にPRの現在のhead SHAとレビュー対象のhead SHAを照合する。変わっていた場合は投稿を中止し、再レビューが必要と報告する。
-- JSONエンコーダーで、レポート全文の `body`、レビュー対象のhead SHAの `commit_id`、選んだ種別に対応する `event`（`COMMENT` / `REQUEST_CHANGES` / `APPROVE`）を含むJSONファイルを作る。本文をシェル文字列連結で埋め込まない。
-- `gh api --method POST repos/{owner}/{repo}/pulls/{number}/reviews --input {JSONファイル}` でReviewを作成・Submitする。`event` を省略すると未提出のPENDINGになるため、必ず指定し、別途SubmitやApproveのリクエストは送らない。
-- 成功レスポンスの `state` が選んだ種別に対応する `COMMENTED` / `CHANGES_REQUESTED` / `APPROVED` であり、`submitted_at` があることを確認する。確認できた `html_url` とReview種別を報告する。PENDINGや状態不一致をSubmit完了として扱わず、成否が不明なら再送しない。
+`--submit` を指定した場合は、次の表を上から適用してReview種別を一つ選ぶ。推奨アクションには、マージ前に修正すべき点と、CommentまたはRequest changesを選んだ理由を明記する。
 
-**pr-thread / pr-thread-summary**
+| レビュー結果 | Review種別 | `event` | 提出後の `state` |
+|---|---|---|---|
+| CriticalまたはHighが1件以上 | Request changes | `REQUEST_CHANGES` | `CHANGES_REQUESTED` |
+| Medium以下にマージ前の修正を推奨する指摘がある、または未確認事項などで承認可否を判断できない | Comment | `COMMENT` | `COMMENTED` |
+| 承認可能（指摘なし、または任意対応・マージ後対応の指摘のみ） | Approve | `APPROVE` | `APPROVED` |
 
-- PR対象の場合は `references/pr-thread-posting.md` の手順でCommentを投稿する。
-- スレッド投稿の対象は、diff内のpath・line・sideを確定できるコードの指摘に限る。
-- PR説明の検証結果と修正案はチャットと指定されたfileに含める。
-- `pr-thread-summary` の要約には、総合判定、重要度別件数、主要な指摘、推奨アクション、未確認事項を含める。PR説明に対する検証結果や修正案があれば、その要点も含める。
-
-ローカルブランチにPR投稿が指定された場合は投稿せず、チャットと指定されたfile出力を完了する。
+- `--submit` を付けずに `pr-comment` を選んだ場合は、レポート全文を `gh pr comment <PR URL> --body-file <本文ファイル>` で通常のPRコメントとして一件投稿し、URLを報告する。
+- `--submit` を指定し、スレッド出力を選んでいない場合は、レポート全文を本文とするReviewを一件提出する。`pr-comment` との併用時もReview一件にまとめる。JSONエンコーダーで `body`、レビュー対象のhead SHAを示す `commit_id`、選んだ `event` を含むファイルを作り、`gh api --method POST repos/{owner}/{repo}/pulls/{number}/reviews --input <JSONファイル>` で送る。レスポンスの `state` が表と一致し、`submitted_at` があることを確認して、`html_url` とReview種別を報告する。
+- `pr-thread` と `pr-thread-summary` は [スレッド投稿手順](references/pr-thread-posting.md) に従う。`--submit` との併用時は、選んだReview種別とスレッドを一回のリクエストで提出する。PR説明の検証結果と修正案はチャットと指定されたfileに含める。
 
 ## エラー
 

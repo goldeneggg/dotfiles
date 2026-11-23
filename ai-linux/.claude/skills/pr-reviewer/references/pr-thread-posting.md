@@ -4,16 +4,17 @@
 
 ## 投稿前の準備
 
-1. PR の node ID と現在の head commit OID を GitHub GraphQL API で取得する。レビュー中に head が変わった場合は、古い diff へ投稿しないため投稿を中止し、再レビューを促す。
-2. 各指摘を `path`、`line`、`side`、`body` のオブジェクトへ変換する。`line` は対象 hunk の実ファイル行番号、`side` は追加・変更後の行なら `RIGHT`、削除前の行なら `LEFT` にする。複数行を対象にする場合だけ、連続した同一 side の `startLine` と `startSide` を加える。
-3. `path` はリポジトリルートからの相対パスにし、行位置は取得済み PR diff の hunk に存在することを再確認する。本文とパスをシェル文字列連結で JSON に埋め込まず、JSON エンコーダーを使用する。
+1. 各指摘を `path`、`line`、`side`、`body` のオブジェクトへ変換する。`line` は対象 hunk の実ファイル行番号、`side` は追加・変更後の行なら `RIGHT`、削除前の行なら `LEFT` にする。複数行を対象にする場合だけ、連続した同一 side の `startLine` と `startSide` を加える。
+2. `path` はリポジトリルートからの相対パスにし、行位置は取得済み PR diff の hunk に存在することを再確認する。本文とパスをシェル文字列連結で JSON に埋め込まず、JSON エンコーダーを使用する。
+3. 投稿直前に PR の node ID と現在の head commit OID を GitHub GraphQL API で取得する。head がレビュー対象と一致することを確認してから送信する。
 
 ## 投稿
 
-`addPullRequestReview` mutation を1回実行する。`AddPullRequestReviewInput` に `pullRequestId`、取得した `commitOID`、`event: COMMENT` を設定し、投稿対象のスレッドがあれば `threads` に含める。`gh api graphql --input {JSONファイル}` で送信する。
+`addPullRequestReview` mutation を1回実行する。`AddPullRequestReviewInput` に `pullRequestId`、レビュー対象の `commitOID`、`event` を設定し、投稿対象のスレッドを `threads` に含める。`--submit` を指定した場合は [Review種別の表](../SKILL.md#prへの投稿レビュー提出) の `event` を使い、省略時は `COMMENT` を使う。`gh api graphql --input <JSONファイル>` で送信する。
 
-- `pr-thread` では `body` を省略し、スレッドの投稿対象が0件なら送信を省略する。
-- `pr-thread-summary` では、レビュー全体の要約コメントを `body` に設定する。スレッドの投稿対象が0件でも、`threads` を省略して要約を投稿する。
+- `pr-thread` では、`--submit` で `COMMENT` または `REQUEST_CHANGES` を選んだ場合に限り、判定理由を簡潔に `body` に入れる。
+- `pr-thread-summary` では、総合判定、重要度別件数、主要な指摘、推奨アクション、未確認事項を `body` に要約する。PR説明の検証結果や修正案があれば、その要点も含める。
+- 投稿対象のスレッドが0件の場合、`pr-thread` で `--submit` が未指定なら送信を省略する。それ以外は `threads` を省略して送信する。
 
 ```graphql
 mutation AddPullRequestReview($input: AddPullRequestReviewInput!) {
@@ -21,22 +22,22 @@ mutation AddPullRequestReview($input: AddPullRequestReviewInput!) {
     pullRequestReview {
       url
       state
+      submittedAt
     }
   }
 }
 ```
 
-スレッドがある場合の `pr-thread-summary` のリクエスト例。
+`--output pr-thread --submit` で、任意対応の指摘を投稿しつつ承認するリクエスト例。
 
 ```json
 {
-  "query": "mutation AddPullRequestReview($input: AddPullRequestReviewInput!) { addPullRequestReview(input: $input) { pullRequestReview { url state } } }",
+  "query": "mutation AddPullRequestReview($input: AddPullRequestReviewInput!) { addPullRequestReview(input: $input) { pullRequestReview { url state submittedAt } } }",
   "variables": {
     "input": {
       "pullRequestId": "PR node ID",
-      "commitOID": "現在の head commit OID",
-      "event": "COMMENT",
-      "body": "レビュー全体の要約",
+      "commitOID": "レビュー対象の head commit OID",
+      "event": "APPROVE",
       "threads": [
         {"path": "src/example.ts", "line": 42, "side": "RIGHT", "body": "指摘本文"}
       ]
@@ -45,7 +46,7 @@ mutation AddPullRequestReview($input: AddPullRequestReviewInput!) {
 }
 ```
 
-レスポンスの `pullRequestReview.state` が `COMMENTED` であることを確認し、`pullRequestReview.url` と投稿済みスレッド数を報告する。`pr-thread-summary` では要約を投稿したことも報告する。投稿結果の確認に PR の既存レビューコメントを読み込む必要はない。
+レスポンスの `pullRequestReview.state` が `event` に対応し、`submittedAt` があることを確認する。`pullRequestReview.url`、Review種別、投稿済みスレッド数を報告する。`pr-thread-summary` では要約を投稿したことも報告する。
 
 ## 失敗時
 
