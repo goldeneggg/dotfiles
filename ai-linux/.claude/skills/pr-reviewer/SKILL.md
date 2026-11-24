@@ -7,10 +7,11 @@ description: GitHub PRまたはローカルブランチを静的レビューし�
 
 ## 入力
 
-`<PR URL | owner/repo PR番号 | ブランチ名> [--base branch] [--outline 概要 | --blind] [--output file,pr-comment,pr-thread,pr-thread-summary] [--submit] [--rule files] [--issue <Issue URL | ファイルパス>]`
+`<PR URL | owner/repo PR番号 | ブランチ名> [--base branch] [--outline 概要 | --blind] [--output file,pr-comment,pr-thread,pr-thread-summary,pr-thread-summary-after] [--submit] [--rule files] [--issue <Issue URL | ファイルパス>]`
 
 baseは未指定ならmain。
-出力は既定でチャットのみ。`--output` の `file` はレポートの追加保存、`pr-comment` はレポート全文の投稿、`pr-thread` は指摘ごとのスレッド投稿、`pr-thread-summary` はスレッドとレビュー全体の要約の投稿を指定する。
+出力は既定でチャットのみ。`--output` の `file` はレポートの追加保存、`pr-comment` はレポート全文の投稿、`pr-thread` は指摘ごとのスレッド投稿、`pr-thread-summary` はスレッドと要約を含むReviewの提出を指定する。
+`pr-thread-summary-after` は、スレッドを先に提出し、取得できたスレッドURLを添えた要約を通常のPRコメントとして後から投稿する。
 PR向けの出力形式は一つ選べる。`file` はどの形式とも併用できる。
 `--submit` はレビュー結果に応じてGitHubにReviewを提出する。単独でも、任意の出力形式と組み合わせても指定できる。
 不正な入力や競合するモードは黙って変更せず確認する。
@@ -41,7 +42,7 @@ GitHubへの投稿・提出は、明示されたPR向けの出力形式または
 
 ## Blind
 
-blindではPRタイトル・本文・コミットメッセージ・Issue・ラベル・作成者・レビューコメントを取得しない。
+blindではPRタイトル・本文・コミットメッセージ・Issue・ラベル・作成者・既存のレビューコメントを取得しない。
 ブランチ名から目的を推測しない。
 diff、既存コード、公開規約、明示rule、必要な公式仕様だけを使う。
 `--outline`、`--issue`、`--submit` とは併用しない。
@@ -106,7 +107,7 @@ file:
 
 - `--submit` を付けずに `pr-comment` を選んだ場合は、レポート全文を `gh pr comment <PR URL> --body-file <本文ファイル>` で通常のPRコメントとして一件投稿し、URLを報告する。
 - `--submit` を指定し、スレッド出力を選んでいない場合は、レポート全文を本文とするReviewを一件提出する。`pr-comment` との併用時もReview一件にまとめる。JSONエンコーダーで `body`、レビュー対象のhead SHAを示す `commit_id`、選んだ `event` を含むファイルを作り、`gh api --method POST repos/{owner}/{repo}/pulls/{number}/reviews --input <JSONファイル>` で送る。レスポンスの `state` が表と一致し、`submitted_at` があることを確認して、`html_url` とReview種別を報告する。
-- `pr-thread` と `pr-thread-summary` は [スレッド投稿手順](references/pr-thread-posting.md) に従う。`--submit` との併用時は、選んだReview種別とスレッドを一回のリクエストで提出する。PR説明の検証結果と修正案はチャットと指定されたfileに含める。
+- `pr-thread`、`pr-thread-summary`、`pr-thread-summary-after` は [スレッド投稿手順](references/pr-thread-posting.md) に従う。`--submit` との併用時は、選んだReview種別とスレッドを一回のリクエストで提出する。PR説明の検証結果と修正案はチャットと指定されたfileに含める。
 
 ## エラー
 
