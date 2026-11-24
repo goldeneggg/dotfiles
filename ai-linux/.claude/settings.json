@@ -75,19 +75,68 @@
       "Read(./secrets/**)",
       "Read(~/.aws/**)",
       "Read(~/.gnupg/**)",
-      "Read(~/.ssh/id_*)"
+      "Read(~/.ssh/id_*)",
+      "Bash(rm *--no-preserve-root*)"
     ],
     "ask": [
       "Bash(chmod *)",
       "Bash(chown *)",
-      "Bash(kill *)",
-      "Bash(rm *)",
-      "Bash(rmdir *)"
+      "Bash(kill *)"
     ],
     "defaultMode": "acceptEdits"
   },
   "model": "opus",
-  "hooks": {},
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "exec python3 \"$HOME/.claude/hooks/guard-rm.py\"",
+            "if": "Bash(rm *)",
+            "timeout": 10,
+            "onFailure": "block"
+          },
+          {
+            "type": "command",
+            "command": "exec python3 \"$HOME/.claude/hooks/guard-rm.py\"",
+            "if": "Bash(/bin/rm *)",
+            "timeout": 10,
+            "onFailure": "block"
+          },
+          {
+            "type": "command",
+            "command": "exec python3 \"$HOME/.claude/hooks/guard-rm.py\"",
+            "if": "Bash(/usr/bin/rm *)",
+            "timeout": 10,
+            "onFailure": "block"
+          },
+          {
+            "type": "command",
+            "command": "exec python3 \"$HOME/.claude/hooks/guard-rm.py\"",
+            "if": "Bash(rmdir *)",
+            "timeout": 10,
+            "onFailure": "block"
+          },
+          {
+            "type": "command",
+            "command": "exec python3 \"$HOME/.claude/hooks/guard-rm.py\"",
+            "if": "Bash(/bin/rmdir *)",
+            "timeout": 10,
+            "onFailure": "block"
+          },
+          {
+            "type": "command",
+            "command": "exec python3 \"$HOME/.claude/hooks/guard-rm.py\"",
+            "if": "Bash(/usr/bin/rmdir *)",
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      }
+    ]
+  },
   "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true,
@@ -125,7 +174,7 @@
   "effortLevel": "high",
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "high"
+      "effortLevel": "xhigh"
     },
     "claude-fable-5-2": {
       "effortLevel": "xhigh"
