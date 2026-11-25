@@ -20,7 +20,7 @@ Issue参照先は1件指定する。受け付ける形式はGitHub Issue番号�
 | 指定なし | 変更を作業ツリーに残す。ステージング・commit・push・PR作成は行わない |
 | `--commit` | 今回の変更をステージしてcommit |
 | `--commit-push` | commit後にpush |
-| `--commit-push-pr` | commit・push後にGitHub PRをDraftで作成 |
+| `--commit-push-pr` | commit・push後にDraft PRを作成し、起点がGitHub IssueならそのDevelopment欄にPRをリンク |
 | `--auto` | 計画を提示したうえで承認待ちを省略。後処理は暗黙に有効化しない |
 | `--wip` | 実装の大枠を作り、Lintと必要なビルドだけを実行。本スキルからテストコマンドを直接実行しない |
 
@@ -32,7 +32,7 @@ Issue参照先は1件指定する。受け付ける形式はGitHub Issue番号�
 
 ## 1. Issueとリポジトリの理解
 
-- GitHubは利用可能なコネクタまたは`gh`で取得する。`#123`は現在のリポジトリを確認して解決し、URLでは指定されたホスト・owner・repositoryを使用する。番号だけからPRと判断しない。
+- GitHubのIssue・PR操作には、対象ホストで認証済みのGitHub CLI（`gh`）を使う。GitHub Issueは `gh issue view` で取得する。`#123` は現在のリポジトリを確認して番号 `123` を渡し、URL指定ではそのURLを渡す。番号だけからPRと判断しない。
 - Linearは利用可能なLinearコネクタ/APIでURLのIssueを取得する。利用手段や認証がなく本文を取得できない場合は、その理由を示し、本文と必要なコメントの共有を求める。URLやタイトルだけから要件を推測して実装しない。
 - タイトル、本文、状態、要件に関わるコメント、必要な添付・参照仕様を読み、目的・期待動作・受け入れ条件を整理する。省略やページ分割があれば必要部分を追加取得する。本文とコメントの矛盾が実装判断に影響する場合は確認する。
 - 対象リポジトリの規約、関連コード、テスト・Lint・ビルドの設定を調べる。GitHub URLのリポジトリと作業場所が異なる場合や、Linearから対象コードを特定できない場合は、対象を確定してから編集する。
@@ -92,16 +92,37 @@ Issueの目的と受け入れ条件、変更箇所、実装手順、検証方法
 
 `--wip`との併用時は、pr-creatorへPRタイトルの先頭に`[WIP] `を付ける形式指定も渡す。タイトルに同じprefixを重複させず、作成後にタイトルを確認する。
 
-同一リポジトリ・head・baseのOpen PRがある場合は重複作成せずURLを報告する。Issueへのコメント、状態変更・close、既存PRの説明更新、merge、デプロイはこれらのオプションに含めない。PRのIssue参照は通常のリンクとし、別途指定がなければ自動close用キーワードを付けない。
+同一リポジトリ・head・baseに作成前からOpen PRがある場合は、そのURLを報告してPR作成手順を終える。PR本文にはIssue URLを記載し、別途指定がなければ自動close用キーワードを付けない。
 
-commit・push・PR作成が失敗した場合は、成功済み工程を保持して原因を確認する。既存の権限と依頼範囲内で修復できる入力・パス等の不備は修正し、失敗した工程から再開する。権限拡張や送信先の変更など新たな判断が必要な場合は、該当工程を保留して原因・成功済み工程・残作業を報告する。通信エラーで成否不明なら、commit履歴・remote・既存PRを照合し、重複実行を避けて再試行を判断する。
+起点がGitHub Issueの場合は、Draft PRの新規作成後に `gh` で元のIssueのDevelopment欄にリンクする。`issue_url` と `github_host` には解決済みのIssue URLとそのホスト名、`pr_url` には `gh pr create` が返したURLを使う。
+
+```sh
+issue_id=$(gh issue view "$issue_url" --json id --jq '.id') &&
+pr_id=$(gh pr view "$pr_url" --json id --jq '.id') &&
+gh api graphql --hostname "$github_host" -f issue="$issue_id" -f pr="$pr_id" -f query='
+  mutation($issue: ID!, $pr: ID!) {
+    addCloseIssueReferences(input: {issueId: $issue, pullRequestIds: [$pr]}) {
+      issue {
+        closedByPullRequestsReferences(first: 10, userLinkedOnly: true) {
+          nodes { url }
+        }
+      }
+    }
+  }' --jq '.data.addCloseIssueReferences.issue.closedByPullRequestsReferences.nodes[].url'
+```
+
+出力に `pr_url` が含まれることを確認してリンク成功とする。通信エラーで成否が不明な場合は、`gh api graphql` で同じIssueの `closedByPullRequestsReferences` を照会してから再試行を判断する。
+
+Issueへのコメント、状態変更・close、既存PRの説明更新、merge、デプロイはこれらのオプションに含めない。
+
+commit・push・PR作成・Issueリンクが失敗した場合は、成功済み工程を保持して原因を確認する。既存の権限と依頼範囲内で修復できる入力・パス等の不備は修正し、失敗した工程から再開する。権限拡張や送信先の変更など新たな判断が必要な場合は、該当工程を保留して原因・成功済み工程・残作業を報告する。通信エラーで成否不明なら、commit履歴・remote・既存PRを照合し、重複実行を避けて再試行を判断する。
 
 ## 5. 結果報告
 
 - 対象Issueのタイトル・URLと実装内容、主な変更ファイル
 - 受け入れ条件の判定と根拠
 - 実行した検証の結果、未実施・未確認の検証と理由
-- commit SHA、push先、PR URLなど、指定された後処理の成否
+- commit SHA、push先、PR URL、対象のGitHub Issueへのリンク確認結果など、指定された後処理の成否
 - 残作業、ブロッカー、スコープ外の発見があればその要点
 
-実装、検証、後処理の完了状況を区別し、Issue自体を更新していないことと矛盾する完了報告をしない。`--wip`指定時は完成と報告せず、実装済みの大枠、意図的な未実装部分、直接実行しなかったテスト、hook・CIで自動実行された検証、次に必要な作業を明記する。
+実装、検証、後処理の完了状況を区別する。`--wip`指定時は完成と報告せず、実装済みの大枠、意図的な未実装部分、直接実行しなかったテスト、hook・CIで自動実行された検証、次に必要な作業を明記する。
