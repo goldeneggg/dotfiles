@@ -8,6 +8,7 @@ import shlex
 import stat
 import subprocess
 import sys
+import tempfile
 import unicodedata
 from functools import cache
 from pathlib import Path
@@ -31,6 +32,8 @@ SAFE_DIRS = {
 # プロジェクト外の自動削除許可ディレクトリ
 SAFE_EXTERNAL_DIRS = {
     Path("/tmp").resolve(),  # macOS では /private/tmp、Linux では /tmp
+    # $TMPDIR（mktemp の作成先）。macOS では /private/var/folders/.../T
+    Path(tempfile.gettempdir()).resolve(),
 }
 
 # プロジェクト外にある場合に削除を禁止するシステムディレクトリ（macOS / Linux 共通）。
@@ -119,6 +122,17 @@ VARIABLE_REFERENCE = re.compile(
 )
 # glob とブレース展開（{a,b} / {1..3}）
 GLOB_CHARS = re.compile(r"[*?\[{}]")
+
+# shlex はクォートの種類を保持しないため、$ の解釈が bash と食い違い得る構文
+# （$'...' / $"..." / \$ / '...$...'）は判定しない
+QUOTED_DOLLAR = re.compile(r"\$['\"]|\\\$|'[^']*\$[^']*'")
+
+# コマンド探索・単語分割・cd・動的リンク等、シェルや rm の挙動自体を変える変数
+SHELL_BEHAVIOR_VARIABLES = {
+    "PATH", "IFS", "CDPATH", "GLOBIGNORE", "BASH_ENV", "ENV",
+    "SHELLOPTS", "BASHOPTS", "POSIXLY_CORRECT",
+}
+SHELL_BEHAVIOR_VARIABLE_PREFIXES = ("LD_", "DYLD_", "BASH_FUNC_")
 
 
 class UnresolvableCommand(Exception):
@@ -231,17 +245,18 @@ def inspect_recursive_target(path):
     return None
 
 
-def normalize_tmp_alias(path):
-    """macOS の /tmp を /private/tmp に統一する。"""
-    alias = Path("/tmp")
-    actual = Path("/private/tmp")
+def normalize_private_alias(path):
+    """macOS の /tmp と /var（$TMPDIR の親）を /private 配下に統一する。"""
+    for name in ("tmp", "var"):
+        alias = Path("/") / name
+        actual = Path("/private") / name
 
-    if (
-        alias.is_symlink()
-        and alias.resolve() == actual.resolve()
-        and path.is_relative_to(alias)
-    ):
-        return actual / path.relative_to(alias)
+        if (
+            alias.is_symlink()
+            and alias.resolve() == actual.resolve()
+            and path.is_relative_to(alias)
+        ):
+            return actual / path.relative_to(alias)
 
     return path
 
@@ -274,20 +289,15 @@ def git_index_paths(root):
 
 @cache
 def git_modified_paths(root):
-    """未コミットの変更（staged / unstaged）がある Git 管理下のパス。"""
-    entries = run_git(root, "status", "--porcelain=v1", "-z", "--untracked-files=no")
-    if entries is None:
-        return None
+    """HEAD から変更（staged / unstaged）がある Git 管理下のパス。
 
-    paths = []
-    entries = iter(entries)
-    for entry in entries:
-        status, path = entry[:2], entry[3:]
-        paths.append(path)
-        # rename / copy は直後の要素に元パスが続く
-        if status[0] in "RC":
-            paths.append(next(entries))
-    return paths
+    ls-files と同じく root 基準の相対パスで得るため --relative を付ける
+    （root がリポジトリのサブディレクトリでも照合できる）。
+    rename は元パスも含めるため --no-renames を付ける。
+    """
+    return run_git(
+        root, "diff", "HEAD", "--name-only", "--relative", "--no-renames", "-z",
+    )
 
 
 def contains_path(root, target, paths):
@@ -319,8 +329,8 @@ def classify_target(target, cwd, root, home, recursive):
     if not path.is_absolute():
         path = cwd / path
 
-    # macOS 標準の /tmp エイリアスを正規化
-    path = normalize_tmp_alias(canonicalize_case(path))
+    # macOS 標準の /tmp・/var エイリアスを正規化
+    path = normalize_private_alias(canonicalize_case(path))
 
     # シンボリックリンクは自動承認しない
     symlink_detected = has_symlink(path)
@@ -490,6 +500,14 @@ def literal_path(word, variables):
     return path
 
 
+def changes_shell_behavior(assignment):
+    name = assignment.split("=", 1)[0]
+    return (
+        name in SHELL_BEHAVIOR_VARIABLES
+        or name.startswith(SHELL_BEHAVIOR_VARIABLE_PREFIXES)
+    )
+
+
 def record_assignments(words, variables, unconditional):
     for word in words:
         name, value = word.split("=", 1)
@@ -544,6 +562,9 @@ def evaluate_command(command, cwd, root, home):
     確実に危険なら deny、未コミットの変更を消し得るなら ask、確実に安全なら allow。
     静的に判定できないものは hook で止めず、acceptEdits / auto mode 等の判定に任せる。
     """
+    if QUOTED_DOLLAR.search(command):
+        return None
+
     try:
         segments = split_segments(tokenize(command))
     except (ValueError, UnresolvableCommand):
@@ -568,6 +589,9 @@ def evaluate_command(command, cwd, root, home):
         command_index = 0
         while command_index < len(words) and ASSIGNMENT.match(words[command_index]):
             command_index += 1
+
+        if any(changes_shell_behavior(word) for word in words[:command_index]):
+            return None
 
         # 代入のみの segment は副作用がないため、他のコマンドとして扱わない
         # （コマンド置換は split_segments で拒否済み）
@@ -597,6 +621,9 @@ def evaluate_command(command, cwd, root, home):
                     if len(args) != 2 or args[1].startswith("-"):
                         raise UnresolvableCommand("Unsupported cd form")
                     destination = literal_path(args[1], variables)
+                    # CDPATH があると相対パスの cd 先が作業ディレクトリ基準にならない
+                    if os.environ.get("CDPATH") and not Path(destination).is_absolute():
+                        raise UnresolvableCommand("cd with CDPATH")
                 except UnresolvableCommand:
                     cwd_unknown = True
                     continue
