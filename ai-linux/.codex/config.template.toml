@@ -389,35 +389,35 @@ web_search = "cached"
 
 # Enable or disable multi-agent tools. Default: true
 
-# enabled = true
+enabled = true
 
 # Maximum concurrently open spawned-agent threads, excluding the primary thread. When unset, Codex chooses the default.
 
-# max_concurrent_threads_per_session = 6
+max_concurrent_threads_per_session = 6
 
 # Default model for spawned agents. An explicit spawn model takes precedence.
 
-# default_subagent_model = "gpt-5.6-terra"
+default_subagent_model = "gpt-6.2-sol"
 
 # Default reasoning effort for spawned agents. An explicit spawn effort takes precedence.
 
-# default_subagent_reasoning_effort = "high"
+default_subagent_reasoning_effort = "high"
 
 # Record a model-visible message when an agent turn is interrupted. Default: true
 
-# interrupt_message = true
+interrupt_message = true
 
 # Maximum concurrently open agent threads. Default: 6
 
-# max_threads = 6
+max_threads = 6
 
 # Maximum nested spawn depth. Root session starts at depth 0. Default: 1
 
-# max_depth = 1
+max_depth = 1
 
 # Default timeout per worker for spawn_agents_on_csv jobs. When unset, the tool defaults to 1800 seconds.
 
-# job_max_runtime_seconds = 1800
+job_max_runtime_seconds = 1800
 
 # [agents.reviewer]
 
