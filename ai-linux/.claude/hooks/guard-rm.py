@@ -90,10 +90,39 @@ RMDIR_SAFE_OPTIONS = {
     "--ignore-fail-on-non-empty",
 }
 
-# 自動承認の対象外とするシェル構文
-COMPLEX_SYNTAX = re.compile(
-    r"[;&|<>$`*?\[\]{}~\\\n\r()!#]"
+# 単純なコマンド列の区切りとして扱うトークン
+COMMAND_SEPARATORS = {";", "&&", "||", "|", "&", "\n"}
+
+# 区切り以外の記号（サブシェル・リダイレクト等）は対象を静的に確定できない
+SHELL_PUNCTUATION = ";&|()<>\n"
+
+# 分岐・ループ内での cd や変数代入は実行有無を追えないため、状態を不明にする
+SHELL_KEYWORDS = {
+    "if", "then", "elif", "else", "fi",
+    "for", "while", "until", "do", "done",
+    "case", "esac", "select", "function",
+    "{", "}", "!", "[[", "]]",
+}
+
+# シェル変数を書き換え得るコマンド
+VARIABLE_MUTATORS = {
+    "read", "export", "declare", "typeset", "local", "readonly", "unset",
+    "printf", "mapfile", "readarray", "getopts", "let",
+}
+
+# 作業ディレクトリと変数の両方を書き換え得るコマンド
+STATE_MUTATORS = {"source", ".", "eval", "exec", "pushd", "popd"}
+
+ASSIGNMENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*=")
+VARIABLE_REFERENCE = re.compile(
+    r"\$(?:\{([A-Za-z_][A-Za-z0-9_]*)\}|([A-Za-z_][A-Za-z0-9_]*))"
 )
+# glob とブレース展開（{a,b} / {1..3}）
+GLOB_CHARS = re.compile(r"[*?\[{}]")
+
+
+class UnresolvableCommand(Exception):
+    """削除対象を静的に確定できないコマンド。"""
 
 
 def decide(decision, reason):
@@ -173,7 +202,7 @@ def inspect_recursive_target(path):
     except (FileNotFoundError, NotADirectoryError):
         return None
     except OSError as exc:
-        return "ask", f"Cannot inspect recursive target: {exc}"
+        return "defer", f"Cannot inspect recursive target: {exc}"
 
     if not stat.S_ISDIR(mode):
         return None
@@ -187,9 +216,9 @@ def inspect_recursive_target(path):
                     entry_path = Path(entry.path)
                     try:
                         # node_modules 等には .env.example や .git が含まれ得るため、
-                        # 配下の保護名は deny ではなくユーザー確認にする。
+                        # 配下の保護名は deny にせず通常の権限フローに任せる。
                         if is_protected_entry(entry_path):
-                            return "ask", f"Protected entry inside target: {entry_path}"
+                            return "defer", f"Protected entry inside target: {entry_path}"
                         if stat.S_ISDIR(entry.stat(follow_symlinks=False).st_mode):
                             directories.append(entry_path)
                     except OSError as exc:
@@ -198,7 +227,7 @@ def inspect_recursive_target(path):
             inspection_error = exc
 
     if inspection_error is not None:
-        return "ask", f"Cannot inspect recursive target: {inspection_error}"
+        return "defer", f"Cannot inspect recursive target: {inspection_error}"
     return None
 
 
@@ -225,10 +254,9 @@ def has_symlink(path):
     )
 
 
-@cache
-def git_index_paths(root):
+def run_git(root, *args):
     result = subprocess.run(
-        ["git", "-C", str(root), "ls-files", "-z"],
+        ["git", "-C", str(root), *args],
         capture_output=True,
         timeout=3,
         check=False,
@@ -239,19 +267,41 @@ def git_index_paths(root):
     return os.fsdecode(result.stdout).split("\0")[:-1]
 
 
-def has_tracked_files(root, target):
-    """index と作業ツリーの名前が異なる場合も同じ対象か確認する。"""
+@cache
+def git_index_paths(root):
+    return run_git(root, "ls-files", "-z")
+
+
+@cache
+def git_modified_paths(root):
+    """未コミットの変更（staged / unstaged）がある Git 管理下のパス。"""
+    entries = run_git(root, "status", "--porcelain=v1", "-z", "--untracked-files=no")
+    if entries is None:
+        return None
+
+    paths = []
+    entries = iter(entries)
+    for entry in entries:
+        status, path = entry[:2], entry[3:]
+        paths.append(path)
+        # rename / copy は直後の要素に元パスが続く
+        if status[0] in "RC":
+            paths.append(next(entries))
+    return paths
+
+
+def contains_path(root, target, paths):
+    """target 自身か配下が paths に含まれるか。index と作業ツリーの名前の違いも考慮する。"""
+    # Git の状態を確認できない場合は含まれるものとして扱う
+    if paths is None:
+        return True
+
     relative = target.relative_to(root)
     depth = len(relative.parts)
     relative_name = str(relative)
     key = case_key(relative_name)
-    index_paths = git_index_paths(root)
 
-    # Git の状態を確認できない場合は自動承認しない
-    if index_paths is None:
-        return True
-
-    for index_path in index_paths:
+    for index_path in paths:
         prefix = "/".join(index_path.split("/", depth)[:depth])
         if prefix == relative_name:
             return True
@@ -262,7 +312,7 @@ def has_tracked_files(root, target):
 
 
 def classify_target(target, cwd, root, home, recursive):
-    """削除対象単位で allow / ask / deny を判定する。"""
+    """削除対象単位で allow / ask / deny / defer を判定する。"""
 
     path = Path(target)
 
@@ -320,16 +370,22 @@ def classify_target(target, cwd, root, home, recursive):
     if in_project:
         relative = resolved.relative_to(root)
 
-        if symlink_detected:
+        if contains_path(root, resolved, git_index_paths(root)):
+            # Bash の rm は checkpoint で戻せないため、未コミットの変更だけは確認する
+            if contains_path(root, resolved, git_modified_paths(root)):
+                return (
+                    "ask",
+                    f"Uncommitted changes or unverifiable Git state: {relative}"
+                )
             return (
-                "ask",
-                f"Symlink detected: {path}"
+                "defer",
+                f"Git tracked: {relative}"
             )
 
-        if has_tracked_files(root, resolved):
+        if symlink_detected:
             return (
-                "ask",
-                f"Git tracked or unverifiable: {relative}"
+                "defer",
+                f"Symlink detected: {path}"
             )
 
         if relative.parts[0] in SAFE_DIRS:
@@ -339,7 +395,7 @@ def classify_target(target, cwd, root, home, recursive):
             )
 
         return (
-            "ask",
+            "defer",
             f"Not allowlisted: {relative}"
         )
 
@@ -347,7 +403,7 @@ def classify_target(target, cwd, root, home, recursive):
     if in_external_temp:
         if symlink_detected:
             return (
-                "ask",
+                "defer",
                 f"Symlink detected: {path}"
             )
 
@@ -362,10 +418,234 @@ def classify_target(target, cwd, root, home, recursive):
             f"System directory: {resolved}"
         )
 
-    # その他のプロジェクト外パスはユーザー確認
+    # その他のプロジェクト外パスは通常の権限フローに任せる
     return (
-        "ask",
+        "defer",
         f"Outside permitted directories: {resolved}"
+    )
+
+
+def tokenize(command):
+    """クォートを解釈し、区切り記号を独立したトークンに分ける。"""
+    lexer = shlex.shlex(command, posix=True, punctuation_chars=SHELL_PUNCTUATION)
+    # 改行はコマンド区切りとして残す
+    lexer.whitespace = " \t\r"
+    lexer.whitespace_split = True
+    # shlex は語の途中の # でも行末まで捨てるが bash は語頭の # だけをコメントとみなす。
+    # 解釈差で後続の行を見落とさないよう、コメント処理を無効化して # を含む語は拒否する
+    lexer.commenters = ""
+    tokens = list(lexer)
+    if any("#" in token for token in tokens):
+        raise UnresolvableCommand("Comment or '#' in command")
+    return tokens
+
+
+def split_segments(tokens):
+    """(直前の区切り, 単語列, 直後の区切り) の列に分解する。"""
+    segments = []
+    words = []
+    separator_before = None
+
+    for token in tokens:
+        if "`" in token:
+            raise UnresolvableCommand("Command substitution")
+        if token in COMMAND_SEPARATORS:
+            segments.append((separator_before, words, token))
+            words = []
+            separator_before = token
+            continue
+        if all(char in SHELL_PUNCTUATION for char in token):
+            raise UnresolvableCommand(f"Subshell or redirection: {token}")
+        if "\n" in token:
+            raise UnresolvableCommand("Multi-line argument")
+        words.append(token)
+
+    segments.append((separator_before, words, None))
+    return [segment for segment in segments if segment[1]]
+
+
+def expand_variables(word, variables):
+    """同一コマンド内でリテラル代入された変数だけを展開する。"""
+
+    def replace(match):
+        name = match.group(1) or match.group(2)
+        if name not in variables:
+            raise UnresolvableCommand(f"Unresolved variable: ${name}")
+        return variables[name]
+
+    expanded = VARIABLE_REFERENCE.sub(replace, word)
+    if "$" in expanded:
+        raise UnresolvableCommand(f"Unsupported expansion: {word}")
+    return expanded
+
+
+def literal_path(word, variables):
+    """チルダ・変数を展開したパスを返す。glob 等の展開結果は確定できないため拒否する。"""
+    # bash は語頭の ~ と ~/ を $HOME に展開する（~user は扱わない）
+    if word == "~" or word.startswith("~/"):
+        word = "${HOME}" + word[1:]
+    path = expand_variables(word, variables)
+    if path.startswith("~") or GLOB_CHARS.search(path):
+        raise UnresolvableCommand(f"Unsupported expansion: {word}")
+    return path
+
+
+def record_assignments(words, variables, unconditional):
+    for word in words:
+        name, value = word.split("=", 1)
+        variables.pop(name, None)
+        if not unconditional:
+            continue
+        try:
+            value = expand_variables(value, variables)
+        except UnresolvableCommand:
+            continue
+        # 空白を含む値は未クォート参照で単語分割されるため追跡しない
+        if value.startswith("~") or ":~" in value or any(c.isspace() for c in value):
+            continue
+        variables[name] = value
+
+
+def parse_deletion_args(args):
+    """rm / rmdir の引数を (deny/defer 判定 or None, 対象, 再帰削除か) に分ける。"""
+    safe_options = (
+        RMDIR_SAFE_OPTIONS if args[0] in RMDIR_COMMANDS else RM_SAFE_OPTIONS
+    )
+
+    targets = []
+    end_options = False
+    recursive = False
+
+    for arg in args[1:]:
+        if not end_options and arg == "--":
+            end_options = True
+            continue
+
+        if not end_options and arg.startswith("-"):
+            if arg == "--no-preserve-root":
+                return ("deny", "Unsafe rm option"), [], False
+            if arg not in safe_options:
+                return ("defer", f"Unknown option: {arg}"), [], False
+            if arg in RM_RECURSIVE_OPTIONS:
+                recursive = True
+            continue
+
+        targets.append(arg)
+
+    if not targets:
+        return ("defer", "No explicit deletion target"), [], False
+
+    return None, targets, recursive
+
+
+def evaluate_command(command, cwd, root, home):
+    """コマンド全体の判定を返す。None は判定せず通常の権限フローへ委譲することを表す。
+
+    確実に危険なら deny、未コミットの変更を消し得るなら ask、確実に安全なら allow。
+    静的に判定できないものは hook で止めず、acceptEdits / auto mode 等の判定に任せる。
+    """
+    try:
+        segments = split_segments(tokenize(command))
+    except (ValueError, UnresolvableCommand):
+        return None
+
+    deletion_commands = RM_COMMANDS | RMDIR_COMMANDS
+    # cd の成否や && / || の分岐で取り得る作業ディレクトリをすべて保持する
+    current_cwds = {cwd}
+    seen_cwds = {cwd}
+    cwd_unknown = False
+    # ~ と $HOME の展開用。変数を書き換え得るコマンドの後は他の変数と同様に不明になる
+    variables = {"HOME": str(home)}
+    approval_reasons = []
+    deferred = False
+    has_other_commands = False
+    has_deletion = False
+
+    for separator_before, words, separator_after in segments:
+        if separator_before is not None and separator_before != "&&":
+            current_cwds = set(seen_cwds)
+
+        command_index = 0
+        while command_index < len(words) and ASSIGNMENT.match(words[command_index]):
+            command_index += 1
+
+        # 代入のみの segment は副作用がないため、他のコマンドとして扱わない
+        # （コマンド置換は split_segments で拒否済み）
+        if command_index == len(words):
+            unconditional = (
+                separator_before in (None, ";", "\n")
+                and separator_after in (None, ";", "\n", "&&")
+            )
+            record_assignments(words, variables, unconditional)
+            continue
+
+        args = words[command_index:]
+        head = args[0]
+
+        if head not in deletion_commands:
+            has_other_commands = True
+            if any(word in deletion_commands for word in args[1:]):
+                # xargs rm / git rm 等の間接実行
+                deferred = True
+            if head in SHELL_KEYWORDS or head in STATE_MUTATORS:
+                cwd_unknown = True
+                variables.clear()
+            elif head in VARIABLE_MUTATORS:
+                variables.clear()
+            elif head == "cd":
+                try:
+                    if len(args) != 2 or args[1].startswith("-"):
+                        raise UnresolvableCommand("Unsupported cd form")
+                    destination = literal_path(args[1], variables)
+                except UnresolvableCommand:
+                    cwd_unknown = True
+                    continue
+                current_cwds = {base / destination for base in current_cwds}
+                seen_cwds |= current_cwds
+            continue
+
+        has_deletion = True
+        try:
+            expanded_args = [head] + [
+                literal_path(arg, variables) for arg in args[1:]
+            ]
+        except UnresolvableCommand:
+            deferred = True
+            continue
+
+        rejection, targets, recursive = parse_deletion_args(expanded_args)
+        if rejection is not None:
+            if rejection[0] == "deny":
+                return rejection
+            deferred = True
+            continue
+
+        for target in targets:
+            if cwd_unknown and not Path(target).is_absolute():
+                deferred = True
+                continue
+            for target_cwd in sorted(current_cwds):
+                decision, reason = classify_target(
+                    target, target_cwd, root, home, recursive,
+                )
+                if decision == "deny":
+                    return decision, reason
+                if decision == "ask":
+                    approval_reasons.append(reason)
+                elif decision == "defer":
+                    deferred = True
+
+    if approval_reasons:
+        return "ask", "; ".join(dict.fromkeys(approval_reasons))
+
+    # hook の allow は Bash 呼び出し全体の確認を省くため、
+    # 他のコマンドを含む場合は判定せず通常の権限フローに任せる
+    if deferred or has_other_commands or not has_deletion:
+        return None
+
+    return (
+        "allow",
+        "All targets are permitted temporary files or generated artifacts",
     )
 
 
@@ -377,102 +657,9 @@ def main():
     cwd = canonicalize_case(Path(data["cwd"]).resolve())
     home = canonicalize_case(Path.home().resolve())
 
-    # 複雑なシェル構文は自動承認しない
-    if COMPLEX_SYNTAX.search(command):
-        return decide(
-            "ask",
-            "Complex shell syntax; approval required"
-        )
-
-    try:
-        args = shlex.split(command)
-    except ValueError:
-        return decide(
-            "ask",
-            "Cannot parse command safely"
-        )
-
-    # 間接実行・ラッパー経由は自動承認しない
-    if not args or args[0] not in (
-        RM_COMMANDS | RMDIR_COMMANDS
-    ):
-        return decide(
-            "ask",
-            "Indirect or wrapped deletion command"
-        )
-
-    is_rmdir = args[0] in RMDIR_COMMANDS
-
-    safe_options = (
-        RMDIR_SAFE_OPTIONS if is_rmdir else RM_SAFE_OPTIONS
-    )
-
-    targets = []
-    end_options = False
-    recursive = False
-
-    for arg in args[1:]:
-
-        if not end_options and arg == "--":
-            end_options = True
-            continue
-
-        if not end_options and arg.startswith("-"):
-
-            if arg == "--no-preserve-root":
-                return decide(
-                    "deny",
-                    "Unsafe rm option"
-                )
-
-            if arg not in safe_options:
-                return decide(
-                    "ask",
-                    f"Unknown option: {arg}"
-                )
-
-            if arg in RM_RECURSIVE_OPTIONS:
-                recursive = True
-            continue
-
-        targets.append(arg)
-
-    if not targets:
-        return decide(
-            "ask",
-            "No explicit deletion target"
-        )
-
-    # 全削除対象を評価する。
-    # Deny > Ask > Allow の優先順位を維持する。
-    approval_reasons = []
-
-    for target in targets:
-        decision, reason = classify_target(
-            target,
-            cwd,
-            root,
-            home,
-            recursive,
-        )
-
-        if decision == "deny":
-            return decide("deny", reason)
-
-        if decision == "ask":
-            approval_reasons.append(reason)
-
-    if approval_reasons:
-        return decide(
-            "ask",
-            "; ".join(approval_reasons)
-        )
-
-    return decide(
-        "allow",
-        "All targets are permitted temporary "
-        "files or generated artifacts"
-    )
+    result = evaluate_command(command, cwd, root, home)
+    if result is not None:
+        decide(*result)
 
 
 if __name__ == "__main__":

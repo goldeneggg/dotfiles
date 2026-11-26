@@ -178,6 +178,9 @@
     },
     "claude-fable-5-2": {
       "effortLevel": "xhigh"
+    },
+    "claude-sonnet-5-5": {
+      "effortLevel": "high"
     }
   },
   "autoMemoryEnabled": false,
