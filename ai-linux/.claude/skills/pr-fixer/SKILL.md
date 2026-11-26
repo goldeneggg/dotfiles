@@ -10,7 +10,7 @@ description: 指定したGitHub PRの単一レビューコメントまたはCI�
 ## 呼び出し
 
 ```text
-$pr-fixer <PRレビューコメントURL or PRのCI失敗URL> [--commit | --commit-push | --commit-push-reply] [--auto] [--request-review] [--no-agent] [--issue <Issue URL | ファイルパス>] [--guidelines <パス[,パス...]>]
+$pr-fixer <PRレビューコメントURL or PRのCI失敗URL> [--commit | --commit-push | --commit-push-reply] [--auto] [--request-review] [--issue <Issue URL | ファイルパス>] [--guidelines <パス[,パス...]>]
 ```
 
 位置引数は1つだけ必須とする。
@@ -34,7 +34,6 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
   ```
 
 - `--request-review`: `--commit-push-reply` との併用時だけ有効。返信投稿成功後、元コメントのユーザーがbotではなく、当該PRの既存reviewのauthor集合に含まれる場合だけreview requestする。
-- `--no-agent`: `task-artifact-fixer` との呼び出し互換性のため受理するが、処理は変えない。
 - `--issue <Issue URL | ファイルパス>`: 対応するIssueを判断材料として読み込む。コード変更がある場合は、fix後もIssue本文がWhat/Whyの正本（single source of truth）になっているかを確認し、`--commit-push` または `--commit-push-reply` 指定時は本文を同期する。それ以外の場合は更新案の提示に留める。修正対象は変えない。
 
 `--commit-push-reply` と他のcommit系オプションが併記された場合は `--commit-push-reply` として扱う。`--commit-push-reply` をCI失敗URLと併用した場合、および `--request-review` を `--commit-push-reply` なしで指定した場合は、外部操作を行わず入力エラーとして扱う。commit系オプション未指定の場合は、Phase 8で対象ファイルのステージングとコミットログファイルの出力まで行う。
@@ -85,12 +84,18 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 
 ### Phase 1: 入力と作業状態を確定する
 
-1. URLと各オプションを解析する。不足・不明・競合があれば推測せず確認する。`--commit-push-reply` ではレビューコメントURLであること、`--request-review` が指定される場合は `--commit-push-reply` も指定されることを確認する。
+1. URLと各オプションを解析する。未定義のオプションは入力エラーとし、外部取得・委譲・編集・投稿の前に訂正を求める。不足・不明・競合があれば推測せず確認する。`--commit-push-reply` ではレビューコメントURLであること、`--request-review` が指定される場合は `--commit-push-reply` も指定されることを確認する。
 2. `git rev-parse --show-toplevel`、`git status --short --branch`、`gh auth status` を確認する。
 3. URLから `owner/repo`、PR番号、対象ID（comment / review / run / job / check）を抽出する。
 4. `gh pr view` でPRのstate、title、body、head/baseブランチ、head SHA、head repositoryを取得し、ローカルのbranch・HEAD・remoteと照合する。`--request-review` 指定時は既存reviewのauthor集合も取得し、元コメント投稿者がこの集合に含まれるかだけを判定する。
-5. ローカルがPR headと一致しない場合は編集せず、安全な切替・更新方法を提示して確認する。
-6. PRが `CLOSED` または `MERGED` の場合は既定で読み取り専用の検証に留める。別ブランチでの追補修正を求められた場合だけ、対象ブランチとスコープを確認して続行する。
+5. PRが `CLOSED` または `MERGED` の場合は既定で読み取り専用の検証に留める。ローカルがPR headと一致しなくても、checkoutせず固定したPR headを参照して調査を続ける。別ブランチでの追補修正を求められた場合だけ、対象ブランチとスコープを確認して続行する。
+6. 編集する場合、ローカルが対象headと一致しなければ編集せず、安全な切替・更新方法を提示して確認する。
+
+### Phase 2–3での調査の分担
+
+親がPR・head SHA・対象IDと適用規約を確定した後、Phase 2と3のうち独立した実質的な調査を読み取り専用のサブエージェントへ並列に委譲する。レビューコメントでは指定コメントの主張・契約資料と、対象コード・呼び出し元・関連テストの調査に分ける。CI失敗ではログ・matrix比較と、対象headのworkflow・差分の調査に分ける。長いログや資料の読込も委譲対象とする。短い調査や先行結果がないと進められない調査は親が直接行う。
+
+依頼には目的、固定SHA（CIはrun・job IDも）、重複しない担当範囲、適用規約と `--guidelines` の関連指示を渡す。子には編集・checkout・テスト実行・投稿・環境変更をさせず、`path:line`、ログの位置またはURL、反証、未確認事項を返させる。親が結果を待って失敗や部分結果を区別し、根拠の矛盾・重複を解消して重要な箇所だけ原典と照合する。妥当性・根本原因の判定、修正、検証、承認、後処理は親が担当する。委譲ツールが使えない場合や上位指示で許可されない場合は直接調査し、委譲できなかった範囲と未確認事項を区別して報告する。
 
 ### Phase 2: PRとプロジェクトの判断材料を取得する
 
@@ -151,6 +156,8 @@ PRトップURLだけでコメントまたは失敗checkを一意に特定でき�
 ログ、PR差分、対象コード、同一checkの他matrix結果で因果関係を説明する。再実行だけで消えそうという理由でflakyと断定しない。指定問題の根本原因を直接解消するリポジトリ内修正だけを編集対象とする。
 
 #### 判定後の分岐
+
+Phase 1で読み取り専用とした場合は、判定にかかわらずPhase 7で根拠と推奨アクションを報告して終える。Phase 5・6・8へ進まない。
 
 - `妥当`、`部分的に妥当`、`PR変更による回帰`、`リポジトリ内の不備`: 根拠と最小修正計画を提示する。`--auto` 指定時はそのままPhase 5へ進み、未指定時はユーザー承認を得てから進む。
 - `対応済み・outdated`、`不当`、環境要因、無関係な既存障害: コードを変更せず、Phase 7で根拠と推奨アクションを報告する。
