@@ -1,6 +1,6 @@
 ---
 name: issue-performer
-description: GitHub Issue番号・Issue URLまたはLinear URLを起点に、要件理解、計画提示、実装、検証、指定時のcommit・push・PR作成まで行う。Issue単体の実装依頼に使用し、task文書を起点とする実装はtask-performerを使う。
+description: GitHub Issue番号・Issue URLまたはLinear URLを起点に、要件理解、計画提示、実装、検証、指定時のcommit・push・PR作成と1回限りのPRレビュー・初回CIフォローまで行う。Issue単体の実装依頼に使用し、task文書を起点とする実装はtask-performerを使う。
 ---
 
 # Issue Performer
@@ -10,7 +10,7 @@ Issueを実装要件の起点として、日本語で計画・実装・検証・
 ## 引数
 
 ```text
-[Issue参照先] [--commit | --commit-push | --commit-push-pr] [--auto] [--wip] [--guidelines <パス[,パス...]>]
+[Issue参照先] [--commit | --commit-push | --commit-push-pr | --commit-push-pr-follow-once] [--auto] [--wip] [--guidelines <パス[,パス...]>]
 ```
 
 Issue参照先は1件指定する。受け付ける形式はGitHub Issue番号（`#123`）、GitHub Issue URL、Linear Issue URL。
@@ -21,6 +21,7 @@ Issue参照先は1件指定する。受け付ける形式はGitHub Issue番号�
 | `--commit` | 今回の変更をステージしてcommit |
 | `--commit-push` | commit後にpush |
 | `--commit-push-pr` | commit・push後にDraft PRを作成し、起点がGitHub IssueならそのDevelopment欄にPRをリンク |
+| `--commit-push-pr-follow-once` | `--commit-push-pr`の処理後、新規PRの静的レビューと初回CIの確認を1回行い、失敗があれば対象を1件選んで修正・commit・push |
 | `--auto` | 計画を提示したうえで承認待ちを省略。後処理は暗黙に有効化しない |
 | `--wip` | 実装の大枠を作り、Lintと必要なビルドだけを実行。本スキルからテストコマンドを直接実行しない |
 
@@ -78,7 +79,7 @@ Issueの目的と受け入れ条件、変更箇所、実装手順、検証方法
 ## 4. オプションに応じた後処理
 
 指定された後処理は実行許可として扱う。実装・検証後に作業結果の定例承認を追加せず、指定範囲の処理を実行する。別スキルを使う際も、この許可と対象変更を引き継ぐ。
-`--guidelines` 指定時は、commiter・pr-creatorを呼び出す際にも解決済みの絶対パスで同じオプションを渡す。
+`--guidelines` 指定時は、commiter・pr-creator・pr-fixerを呼び出す際にも解決済みの絶対パスを元の順序で同じオプションに渡す。
 
 ### Commit
 
@@ -88,11 +89,11 @@ Issueの目的と受け入れ条件、変更箇所、実装手順、検証方法
 
 ### Push
 
-`--commit-push`または`--commit-push-pr`指定時は、remote・追跡先・送信するコミット範囲を確認して通常のpushを行う。無関係な未pushコミットを含む場合は、分離するか送信範囲を確認する。送信先を確定できない場合や既定ブランチへ直接pushする必要がある場合は、その操作を確認する。force pushや別remoteへの変更で失敗を回避しない。
+`--commit-push`、`--commit-push-pr`または`--commit-push-pr-follow-once`指定時は、remote・追跡先・送信するコミット範囲を確認して通常のpushを行う。無関係な未pushコミットを含む場合は、分離するか送信範囲を確認する。送信先を確定できない場合や既定ブランチへ直接pushする必要がある場合は、その操作を確認する。force pushや別remoteへの変更で失敗を回避しない。
 
 ### PR作成
 
-`--commit-push-pr`指定時は[pr-creator](../pr-creator/SKILL.md)を`--draft`付きで使い、最終差分・検証結果・Issue URLを含む本文とタイトルを準備してGitHub PRをDraftで作成する。Linear URLの場合もPRは対象コードのGitHubリポジトリに作成する。PR作成・pushの許可は取得済みとして引き継ぎ、確定した送信先と内容を提示して続行する。
+`--commit-push-pr`または`--commit-push-pr-follow-once`指定時は[pr-creator](../pr-creator/SKILL.md)を`--draft`付きで使い、最終差分・検証結果・Issue URLを含む本文とタイトルを準備してGitHub PRをDraftで作成する。Linear URLの場合もPRは対象コードのGitHubリポジトリに作成する。PR作成・pushの許可は取得済みとして引き継ぎ、確定した送信先と内容を提示して続行する。
 
 `--wip`との併用時は、pr-creatorへPRタイトルの先頭に`[WIP] `を付ける形式指定も渡す。タイトルに同じprefixを重複させず、作成後にタイトルを確認する。
 
@@ -117,7 +118,20 @@ gh api graphql --hostname "$github_host" -f issue="$issue_id" -f pr="$pr_id" -f 
 
 出力に `pr_url` が含まれることを確認してリンク成功とする。通信エラーで成否が不明な場合は、`gh api graphql` で同じIssueの `closedByPullRequestsReferences` を照会してから再試行を判断する。
 
-Issueへのコメント、状態変更・close、既存PRの説明更新、merge、デプロイはこれらのオプションに含めない。
+### PR作成後の1回限りのフォロー
+
+`--commit-push-pr-follow-once`指定時だけ、新規Draft PRの作成と、起点がGitHub Issueの場合のDevelopment欄へのリンクが成功した後に実行する。作成前からOpen PRがあり新規PRを作成しなかった場合は実行しない。このオプションは、以下のReview投稿と、必要な場合のpr-fixerによるcommit・push・PR本文更新・Issue本文同期を許可する。
+
+最初に `gh pr view "$pr_url" --json headRefOid` で作成時のhead SHAを取得して固定する。Issue番号は解決済みのIssue URLへ変換し、GitHub Issue URLまたはLinear Issue URLを `issue_url` として以後の呼び出しに使う。
+
+1. [pr-reviewer](../pr-reviewer/SKILL.md)を `$pr-reviewer "$pr_url" --output pr-thread-summary --issue "$issue_url"` で1回呼び出す。投稿の成否が不明な場合を含めて再呼び出ししない。レビューに失敗しても、PR URLと固定したhead SHAを安全に確認できる場合はCI確認を続ける。
+2. 固定したhead SHAのcheckを約10秒間隔で確認する。各取得時にPRの現在のhead SHAが固定値と一致することを確認し、異なれば監視と修正を停止する。監視開始から5分以内にcheckが1件も登録されなければ「CIなし」として終了する。checkが登録された場合は、監視開始から合計60分を上限として、すべてが `pass`、`fail`、`skipping`、`cancel` のいずれかになるまで待つ。期限内に完了しなければ、判明済みの失敗があっても修正を開始せず、未完了checkを報告する。workflowの再実行は行わない。
+3. `fail` がなければ終了する。失敗checkが同じGitHub Actions runに属する場合は、そのrun URLを修正対象とする。複数runが失敗した場合は、依存関係上流の失敗を優先し、判別できなければ開始時刻が最も早い失敗runを1件選ぶ。GitHub Actions以外では、選んだ失敗checkを一意に特定できるURLを使う。選ばなかった失敗は未処理として記録する。
+4. [pr-fixer](../pr-fixer/SKILL.md)を `$pr-fixer "$failure_url" --commit-push --auto --issue "$issue_url"` で1回だけ呼び出す。`--guidelines`指定時は、解決済み絶対パスを元の順序で追加する。pr-fixerの結果にかかわらず、レビューの再実行、fix後のCI待機、別の失敗への2回目のpr-fixer呼び出しは行わない。
+
+レビュー、CI待機、pr-fixerの各結果を区別して保持する。通信エラーや権限不足では成功済みの工程を取り消さず、1回限りの処理を重複実行しない。
+
+`--commit-push-pr-follow-once`でpr-fixerに委ねるPR本文更新・Issue本文同期・必要なdecision historyコメントは、この後処理に含む。それ以外のIssueへのコメント、状態変更・close、既存PRの説明更新、merge、デプロイはこれらのオプションに含めない。
 
 commit・push・PR作成・Issueリンクが失敗した場合は、成功済み工程を保持して原因を確認する。既存の権限と依頼範囲内で修復できる入力・パス等の不備は修正し、失敗した工程から再開する。権限拡張や送信先の変更など新たな判断が必要な場合は、該当工程を保留して原因・成功済み工程・残作業を報告する。通信エラーで成否不明なら、commit履歴・remote・既存PRを照合し、重複実行を避けて再試行を判断する。
 
@@ -127,6 +141,7 @@ commit・push・PR作成・Issueリンクが失敗した場合は、成功済み
 - 受け入れ条件の判定と根拠
 - 実行した検証の結果、未実施・未確認の検証と理由
 - commit SHA、push先、PR URL、対象のGitHub Issueへのリンク確認結果など、指定された後処理の成否
+- `--commit-push-pr-follow-once`指定時は、Review投稿結果、監視したhead SHA、checkの結果、選択した失敗URL、pr-fixerによるcommit・pushの結果、未処理の失敗やタイムアウト
 - 残作業、ブロッカー、スコープ外の発見があればその要点
 
 実装、検証、後処理の完了状況を区別する。`--wip`指定時は完成と報告せず、実装済みの大枠、意図的な未実装部分、直接実行しなかったテスト、hook・CIで自動実行された検証、次に必要な作業を明記する。
