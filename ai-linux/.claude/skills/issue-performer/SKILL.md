@@ -1,6 +1,6 @@
 ---
 name: issue-performer
-description: GitHub Issue番号・Issue URLまたはLinear URLを起点に、要件理解、計画提示、実装、検証、指定時のcommit・push・PR作成と1回限りのPRレビュー・初回CIフォローまで行う。Issue単体の実装依頼に使用し、task文書を起点とする実装はtask-performerを使う。
+description: GitHub Issue番号・Issue URLまたはLinear URLを起点に、要件理解、計画提示、実装、検証、指定時のcommit・push・PR作成と1回限りのPRレビュー・初回CIフォロー・Ready化まで行う。Issue単体の実装依頼に使用し、task文書を起点とする実装はtask-performerを使う。
 ---
 
 # Issue Performer
@@ -21,7 +21,7 @@ Issue参照先は1件指定する。受け付ける形式はGitHub Issue番号�
 | `--commit` | 今回の変更をステージしてcommit |
 | `--commit-push` | commit後にpush |
 | `--commit-push-pr` | commit・push後にDraft PRを作成し、起点がGitHub IssueならそのDevelopment欄にPRをリンク |
-| `--commit-push-pr-follow-once` | `--commit-push-pr`の処理後、新規PRの静的レビューと初回CIの確認を1回行い、失敗があれば対象を1件選んで修正・commit・push |
+| `--commit-push-pr-follow-once` | `--commit-push-pr`の処理後、新規PRの静的レビューと初回CIの確認を1回行い、失敗があれば対象を1件選んで修正・commit・pushする。その後、DraftならReady for reviewに変更 |
 | `--auto` | 計画を提示したうえで承認待ちを省略。後処理は暗黙に有効化しない |
 | `--wip` | 実装の大枠を作り、Lintと必要なビルドだけを実行。本スキルからテストコマンドを直接実行しない |
 
@@ -120,16 +120,17 @@ gh api graphql --hostname "$github_host" -f issue="$issue_id" -f pr="$pr_id" -f 
 
 ### PR作成後の1回限りのフォロー
 
-`--commit-push-pr-follow-once`指定時だけ、新規Draft PRの作成と、起点がGitHub Issueの場合のDevelopment欄へのリンクが成功した後に実行する。作成前からOpen PRがあり新規PRを作成しなかった場合は実行しない。このオプションは、以下のReview投稿と、必要な場合のpr-fixerによるcommit・push・PR本文更新・Issue本文同期を許可する。
+`--commit-push-pr-follow-once`指定時だけ、新規Draft PRの作成と、起点がGitHub Issueの場合のDevelopment欄へのリンクが成功した後に実行する。作成前からOpen PRがあり新規PRを作成しなかった場合は実行しない。このオプションは、以下のReview投稿、必要な場合のpr-fixerによるcommit・push・PR本文更新・Issue本文同期、フォロー後のReady for reviewへの変更を許可する。
 
 最初に `gh pr view "$pr_url" --json headRefOid` で作成時のhead SHAを取得して固定する。Issue番号は解決済みのIssue URLへ変換し、GitHub Issue URLまたはLinear Issue URLを `issue_url` として以後の呼び出しに使う。
 
 1. [pr-reviewer](../pr-reviewer/SKILL.md)を `$pr-reviewer "$pr_url" --output pr-thread-summary --issue "$issue_url"` で1回呼び出す。投稿の成否が不明な場合を含めて再呼び出ししない。レビューに失敗しても、PR URLと固定したhead SHAを安全に確認できる場合はCI確認を続ける。
-2. 固定したhead SHAのcheckを約10秒間隔で確認する。各取得時にPRの現在のhead SHAが固定値と一致することを確認し、異なれば監視と修正を停止する。監視開始から5分以内にcheckが1件も登録されなければ「CIなし」として終了する。checkが登録された場合は、監視開始から合計60分を上限として、すべてが `pass`、`fail`、`skipping`、`cancel` のいずれかになるまで待つ。期限内に完了しなければ、判明済みの失敗があっても修正を開始せず、未完了checkを報告する。workflowの再実行は行わない。
-3. `fail` がなければ終了する。失敗checkが同じGitHub Actions runに属する場合は、そのrun URLを修正対象とする。複数runが失敗した場合は、依存関係上流の失敗を優先し、判別できなければ開始時刻が最も早い失敗runを1件選ぶ。GitHub Actions以外では、選んだ失敗checkを一意に特定できるURLを使う。選ばなかった失敗は未処理として記録する。
+2. 固定したhead SHAのcheckを約10秒間隔で確認する。各取得時にPRの現在のhead SHAが固定値と一致することを確認し、異なれば監視と修正を停止する。監視開始から5分以内にcheckが1件も登録されなければ「CIなし」として修正を省略する。checkが登録された場合は、監視開始から合計60分を上限として、すべてが `pass`、`fail`、`skipping`、`cancel` のいずれかになるまで待つ。期限内に完了しなければ、判明済みの失敗があっても修正を開始せず、未完了checkを報告する。workflowの再実行は行わない。
+3. `fail` がなければ修正を省略する。失敗checkが同じGitHub Actions runに属する場合は、そのrun URLを修正対象とする。複数runが失敗した場合は、依存関係上流の失敗を優先し、判別できなければ開始時刻が最も早い失敗runを1件選ぶ。GitHub Actions以外では、選んだ失敗checkを一意に特定できるURLを使う。選ばなかった失敗は未処理として記録する。
 4. [pr-fixer](../pr-fixer/SKILL.md)を `$pr-fixer "$failure_url" --commit-push --auto --issue "$issue_url"` で1回だけ呼び出す。`--guidelines`指定時は、解決済み絶対パスを元の順序で追加する。pr-fixerの結果にかかわらず、レビューの再実行、fix後のCI待機、別の失敗への2回目のpr-fixer呼び出しは行わない。
+5. 前項までのフォローが終了したら `gh pr view "$pr_url" --json isDraft --jq '.isDraft'` でPRのDraft状態を確認する。`true`なら `gh pr ready "$pr_url"` でReady for reviewに変更し、再取得した `isDraft` が `false` であることを確認する。すでに `false` なら変更しない。レビュー、CI待機、pr-fixerの成否にかかわらずこの確認を行うが、PR URLを安全に特定できない場合は実行せず理由を報告する。
 
-レビュー、CI待機、pr-fixerの各結果を区別して保持する。通信エラーや権限不足では成功済みの工程を取り消さず、1回限りの処理を重複実行しない。
+レビュー、CI待機、pr-fixer、Ready化の各結果を区別して保持する。通信エラーや権限不足では成功済みの工程を取り消さず、1回限りの処理を重複実行しない。
 
 `--commit-push-pr-follow-once`でpr-fixerに委ねるPR本文更新・Issue本文同期・必要なdecision historyコメントは、この後処理に含む。それ以外のIssueへのコメント、状態変更・close、既存PRの説明更新、merge、デプロイはこれらのオプションに含めない。
 
@@ -141,7 +142,7 @@ commit・push・PR作成・Issueリンクが失敗した場合は、成功済み
 - 受け入れ条件の判定と根拠
 - 実行した検証の結果、未実施・未確認の検証と理由
 - commit SHA、push先、PR URL、対象のGitHub Issueへのリンク確認結果など、指定された後処理の成否
-- `--commit-push-pr-follow-once`指定時は、Review投稿結果、監視したhead SHA、checkの結果、選択した失敗URL、pr-fixerによるcommit・pushの結果、未処理の失敗やタイムアウト
+- `--commit-push-pr-follow-once`指定時は、Review投稿結果、監視したhead SHA、checkの結果、選択した失敗URL、pr-fixerによるcommit・pushの結果、未処理の失敗やタイムアウト、Draft状態の確認とReady化の結果
 - 残作業、ブロッカー、スコープ外の発見があればその要点
 
 実装、検証、後処理の完了状況を区別する。`--wip`指定時は完成と報告せず、実装済みの大枠、意図的な未実装部分、直接実行しなかったテスト、hook・CIで自動実行された検証、次に必要な作業を明記する。
